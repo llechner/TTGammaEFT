@@ -13,8 +13,9 @@ logger = logging.getLogger(__name__)
 from TTGammaEFT.Samples.color import color
 
 # Data directory
-try:    data_directory = sys.modules['__main__'].data_directory
-except: from TTGammaEFT.Tools.user import data_directory
+#try:    data_directory = sys.modules['__main__'].data_directory
+#except: from TTGammaEFT.Tools.user import data_directory
+from TTGammaEFT.Tools.user import data_directory2018 as data_directory
 
 # Take post processing directory if defined in main module
 #try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
@@ -80,13 +81,13 @@ directories = { key : [ os.path.join( data_directory, postprocessing_directory20
 
 # Samples
 DY_LO_18           = Sample.fromDirectory(name="DY_LO",            treeName="Events", isData=False, color=color.DY,              texName="DY (LO)",           directory=directories['DY_LO'])
-TT_pow_18          = Sample.fromDirectory(name="TTLep_pow",        treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",          directory=directories['TTLep_pow'])
-#TTbar_18           = Sample.fromDirectory(name="TTbar",            treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",          directory=directories['TTbar'])
-#singleTop_18       = Sample.fromDirectory(name="singleTop",        treeName="Events", isData=False, color=color.singleTop,       texName="single-t",          directory=directories['singleTop'])
+TT_pow_18          = Sample.fromDirectory(name="TTLep_pow",        treeName="Events", isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories['TTLep_pow'])
+#TTbar_18           = Sample.fromDirectory(name="TTbar",            treeName="Events", isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories['TTbar'])
+#singleTop_18       = Sample.fromDirectory(name="singleTop",        treeName="Events", isData=False, color=color.T,               texName="single-t",          directory=directories['singleTop'])
 #TTGLep_18          = Sample.fromDirectory(name="TTGLep",           treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTGLep'])
 #TTG_18             = Sample.fromDirectory(name="TTGLep",           treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG'])
-#ZGTo2LG_18         = Sample.fromDirectory(name="ZGTo2LG",          treeName="Events", isData=False, color=color.diBoson,         texName="Z#gamma",           directory=directories['ZGTo2LG'] )
-#ZGToLLG_18         = Sample.fromDirectory(name="ZGToLLG",          treeName="Events", isData=False, color=color.diBoson,         texName="Z#gamma",           directory=directories['ZGToLLG'] )
-other_18           = Sample.fromDirectory(name="other",            treeName="Events", isData=False, color=color.other,           texName="other",             directory=directories['other'])
+#ZGTo2LG_18         = Sample.fromDirectory(name="ZGTo2LG",          treeName="Events", isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGTo2LG'] )
+#ZGToLLG_18         = Sample.fromDirectory(name="ZGToLLG",          treeName="Events", isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGToLLG'] )
+other_18           = Sample.fromDirectory(name="other",            treeName="Events", isData=False, color=color.Other,           texName="other",             directory=directories['other'])
 
 signals = []
