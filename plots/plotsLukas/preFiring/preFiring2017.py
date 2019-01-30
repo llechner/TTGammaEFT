@@ -113,28 +113,35 @@ def getYieldPlot( index ):
                 binning   = [ 3, 0, 3 ],
                 )
 
-# Read variables and sequences
 read_variables  = ["weight/F", "ref_weight/F",
+                   "PV_npvs/I", "PV_npvsGood/I",
+                   "nJetGood/I", "nBTagGood/I",
+                   "JetGood[%s]" %nanoPlotJetVarString,
+                  ]
+
+if args.year != 2016:
+    nanoPlotPhotonVarString = nanoPlotPhotonVarString.replace("cutBased", "cutBasedBitmap")
+
+# Read variables and sequences
+read_variables  = ["weight/F", #"ref_weight/F",
                    "PV_npvs/I", "PV_npvsGood/I",
                    "nJet/I", "nBTag/I",
                    "nJetGood/I", "nBTagGood/I",
                    "Jet[%s]"         %nanoPlotJetVarString,
                    "JetGood[%s]"         %nanoPlotJetVarString,
-                   "nLeptonGood/I", "nLeptonTight/I", "nLeptonVeto/I", "nElectronGood/I", "nMuonGood/I",
-                   "nLepton/I", "nElectron/I", "nMuon/I",
-                   "Lepton[%s]"      %nanoPlotLeptonVarString,
-                   "LeptonGood[%s]"      %nanoPlotLeptonVarString,
-                   "nPhoton/I",
+                   "nLeptonGood/I","nElectronGood/I", "nMuonGood/I",
+                   "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
+                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
+                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
                    "nPhotonGood/I",
-                   "Photon[%s]"      %(nanoPlotPhotonVarString.replace('cutBased','cutBasedBitmap')),
-                   "PhotonGood[%s]"      %(nanoPlotPhotonVarString.replace('cutBased','cutBasedBitmap')),
-                   "METSig/F", "ht/F",
-                   "METSigGood/F", "htGood/F",
-                   "MET_pt/F", "MET_phi/F",
+                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
                    "mll/F", "mllgamma/F",
+                   "mlltight/F", "mllgammatight/F",
+                   "mLtight0Gamma/F",
+                   "ltight0GammadR/F", "ltight0GammadPhi/F",
                    "m3/F", "m3wBJet/F",
                    "lldR/F", "lldPhi/F", "bbdR/F", "bbdPhi/F",
-                   "photonJetdR/F", "photonLepdR/F", "leptonJetdR/F",
+                   "photonJetdR/F", "photonLepdR/F", "leptonJetdR/F", "tightLeptonJetdR/F",
                    "mL0Gamma/F",  "mL1Gamma/F",
                    "l0GammadR/F", "l0GammadPhi/F",
                    "l1GammadR/F", "l1GammadPhi/F",
@@ -144,27 +151,35 @@ read_variables  = ["weight/F", "ref_weight/F",
                   ]
 
 
+read_variables += [ "PhotonGood0_"              + var for var in nanoPlotPhotonVarString.split(",") ]
+#read_variables += [ "PhotonNoChgIso0_"         + var for var in nanoPlotPhotonVarString.split(",") ]
+#read_variables += [ "PhotonNoChgIsoNoSieie0_"  + var for var in nanoPlotPhotonVarString.split(",") ]
+read_variables += [ "PhotonGood1_"  + var for var in nanoPlotPhotonVarString.split(",") ]
+read_variables += [ "LeptonGood0_"  + var for var in nanoPlotLeptonVarString.split(",") ]
+read_variables += [ "LeptonGood1_"  + var for var in nanoPlotLeptonVarString.split(",") ]
+read_variables += [ "LeptonTight0_" + var for var in nanoPlotLeptonVarString.split(",") ]
+read_variables += [ "LeptonTight1_" + var for var in nanoPlotLeptonVarString.split(",") ]
 read_variables += [ 'Bj0_' + var for var in nanoPlotBJetVarString.split(',') ]
 read_variables += [ 'Bj1_' + var for var in nanoPlotBJetVarString.split(',') ]
 
 read_variables_MC = [\
-                     "isTTGamma/I", "isZGamma/I",
-                     "Photon[photonCat/I]",
-                     "PhotonGood[photonCat/I]",
+#                     "isTTGamma/I", "isZWGamma/I",
+#                     "Photon[photonCat/I]",
+#                     "PhotonGood[photonCat/I]",
 #                     "GenElectron[%s]" %nanoGenVarString,
 #                     "GenMuon[%s]"     %nanoGenVarString,
 #                     "GenPhoton[%s]"   %nanoGenVarString,
 #                     "GenJet[%s]"      %nanoGenJetVarString,
 #                     "GenBJet[%s]"     %nanoGenJetVarString,
 #                     "GenTop[%s]"      %nanoGenVarString,
-                     "reweightPU36fb/F", "reweightPU36fbDown/F", "reweightPU36fbUp/F", "reweightPU36fbVDown/F", "reweightPU36fbVUp/F",
-                     "reweightLeptonSF/F", "reweightLeptonSFUp/F", "reweightLeptonSFDown/F",
-                     "reweightLeptonTrackingSF/F",
-                     "reweightDilepTrigger/F", "reweightDilepTriggerUp/F", "reweightDilepTriggerDown/F",
-                     "reweightDilepTriggerBackup/F", "reweightDilepTriggerBackupUp/F", "reweightDilepTriggerBackupDown/F",
-                     "reweightPhotonSF/F", "reweightPhotonSFUp/F", "reweightPhotonSFDown/F",
-                     "reweightPhotonElectronVetoSF/F",
-                     "reweightBTag_SF/F", "reweightBTag_SF_b_Down/F", "reweightBTag_SF_b_Up/F", "reweightBTag_SF_l_Down/F", "reweightBTag_SF_l_Up/F",
+#                     "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
+#                     "reweightLeptonSF/F", "reweightLeptonSFUp/F", "reweightLeptonSFDown/F",
+#                     "reweightLeptonTrackingSF/F",
+#                     "reweightDilepTrigger/F", "reweightDilepTriggerUp/F", "reweightDilepTriggerDown/F",
+#                     "reweightDilepTriggerBackup/F", "reweightDilepTriggerBackupUp/F", "reweightDilepTriggerBackupDown/F",
+#                     "reweightPhotonSF/F", "reweightPhotonSFUp/F", "reweightPhotonSFDown/F",
+#                     "reweightPhotonElectronVetoSF/F",
+#                     "reweightBTag_SF/F", "reweightBTag_SF_b_Down/F", "reweightBTag_SF_b_Up/F", "reweightBTag_SF_l_Down/F", "reweightBTag_SF_l_Up/F",
                     ]
 
 # Sequence
@@ -199,9 +214,9 @@ for sample in mc + signals:
 #    sample.style          = styles.fillStyle( sample.color )
     sample.style          = styles.fillStyle( ROOT.kOrange-3 )
     sample.weight         = lambda event, sample: 1.
-#    sample.weight         = lambda event, sample: event.reweightDilepTriggerBackup*event.reweightPU36fb*event.reweightLeptonSF*event.reweightLeptonTrackingSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+#    sample.weight         = lambda event, sample: event.reweightDilepTriggerBackup*event.reweightPU*event.reweightLeptonSF*event.reweightLeptonTrackingSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 #    sample.weight         = lambda event, sample: event.reweightDilepTriggerBackup
-#    sample.weight         = lambda event, sample: event.reweightPU36fb
+#    sample.weight         = lambda event, sample: event.reweightPU
 #    sample.weight         = lambda event, sample: event.reweightLeptonSF
 #    sample.weight         = lambda event, sample: event.reweightLeptonTrackingSF
 #    sample.weight         = lambda event, sample: event.reweightPhotonSF

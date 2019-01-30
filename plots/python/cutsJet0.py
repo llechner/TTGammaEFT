@@ -27,7 +27,7 @@ cutsJet0.append( Plot(
     texX      = 'neHEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_neHEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0., 1 ],
+    binning   = [ 30, 0., 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -35,7 +35,7 @@ cutsJet0.append( Plot(
     texX      = 'neEmEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_neEmEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0., 1 ],
+    binning   = [ 30, 0., 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -43,7 +43,7 @@ cutsJet0.append( Plot(
     texX      = 'chEmEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_chEmEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0., 1 ],
+    binning   = [ 30, 0., 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -51,7 +51,7 @@ cutsJet0.append( Plot(
     texX      = 'neHEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_neHEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 100, 0., 1 ],
+    binning   = [ 80, 0., 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -59,7 +59,7 @@ cutsJet0.append( Plot(
     texX      = 'neEmEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_neEmEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 100, 0., 1 ],
+    binning   = [ 80, 0., 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -67,7 +67,7 @@ cutsJet0.append( Plot(
     texX      = 'chEmEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_chEmEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 100, 0., 1 ],
+    binning   = [ 80, 0., 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -75,7 +75,7 @@ cutsJet0.append( Plot(
     texX      = 'neHEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_neHEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0.8, 1 ],
+    binning   = [ 30, 0.8, 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -83,7 +83,7 @@ cutsJet0.append( Plot(
     texX      = 'neEmEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_neEmEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0.8, 1 ],
+    binning   = [ 30, 0.8, 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -91,7 +91,7 @@ cutsJet0.append( Plot(
     texX      = 'chEmEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_chEmEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0.8, 1 ],
+    binning   = [ 30, 0.8, 1 ],
 ))
 
 cutsJet0.append( Plot(
@@ -99,7 +99,7 @@ cutsJet0.append( Plot(
     texX      = 'chHEF(jet_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Jet_chHEF[0] if event.nJet > 0 else defaultValue,
-    binning   = [ 40, 0, 1 ],
+    binning   = [ 30, 0, 1 ],
 ))
 
 cutsJet0.append( Plot(
