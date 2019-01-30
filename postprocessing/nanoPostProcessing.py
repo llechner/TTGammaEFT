@@ -277,14 +277,14 @@ if sample.isData:
     from FWCore.PythonUtilities.LumiList import LumiList
 
     # Apply golden JSON
- #   if options.year == 2016:
- #       sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
- #   elif options.year == 2017:
- #       sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
- #   elif options.year == 2018:
- #       sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
- #   else:
- #       raise NotImplementedError
+    if options.year == 2016:
+        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt'
+    elif options.year == 2017:
+        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+    elif options.year == 2018:
+        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+    else:
+        raise NotImplementedError
 
     lumiList = LumiList( os.path.expandvars( sample.json ) )
     logger.info( "Loaded json %s", sample.json )

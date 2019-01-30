@@ -1,7 +1,7 @@
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample DYJetsToLL_M50_LO #SPLIT19
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample TTLep_pow #SPLIT22
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample TTSemiLep_pow #SPLIT8
-python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample TTHad_pow #SPLIT2
+python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample TTHad_pow #SPLIT20
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample TTLep_NLO #SPLIT43
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample TToLeptons_sch_amcatnlo #SPLIT69
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v4 --fileBasedSplitting --sample WW #SPLIT83

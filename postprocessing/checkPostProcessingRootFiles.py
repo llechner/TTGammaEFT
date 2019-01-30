@@ -50,15 +50,18 @@ dictList = getDataDictList( file )
 year     = dictList[0]['year']
 isData   = "Run" in args.file
 
-directory = os.path.expandvars( os.path.join (user.postprocessing_output_directory, getattr( user, "postprocessing_%sdirectory%i"%("data" if isData else "", year) ) ) )
+directory = os.path.expandvars( os.path.join ( getattr( user, "data_%sdirectory%i"% ("data" if isData else "", year)), getattr( user, "postprocessing_%sdirectory%i"%("data" if isData else "", year) ) ) )
+#directory = os.path.expandvars( os.path.join (user.data_directoryPrefiring, user.postprocessing_directoryPrefiring))
 
 for ppEntry in dictList:
+    print "checking sample %s" %ppEntry['sample']
     path      = os.path.join( directory, ppEntry['sample'] )
     if not os.path.isdir( path ):
         print "Sample not processed: %s" %ppEntry["sample"]
         continue
     rootFiles = [ item for item in os.listdir( path ) if item.endswith(".root") ]
     if len(rootFiles) != ppEntry['nFiles']:
+        print "len root files", len(rootFiles), "len processed", ppEntry['nFiles']
         missingFiles = [ int(item.split("_")[-1].split(".root")[0]) for item in rootFiles ]
         missingFiles = list( set( range(ppEntry['nFiles']) ) - set( missingFiles ) )
         missingFiles.sort()
@@ -76,6 +79,14 @@ for ppEntry in dictList:
         chain    = ROOT.TChain('Events')
         chain.AddFile( filepath )
         nEntries = chain.GetEntries()
+        allBranches = [item.GetName() for item in list(chain.GetListOfBranches()) if item.GetName().startswith('nMuon')]
+        if not allBranches:
+            print file
+            print allBranches
+        allBranches = [item.GetName() for item in list(chain.GetListOfBranches()) if item.GetName().startswith('nElectronTight')]
+        if not allBranches:
+            print file
+            print allBranches
         del chain
         if nEntries < 100:
             print "Number of events in file %s lower than 100! Found %i events! Corrupt ROOT file?" %(file, nEntries)
