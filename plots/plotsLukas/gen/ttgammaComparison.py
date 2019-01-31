@@ -102,7 +102,8 @@ def drawPlots( plots, mode ):
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
-	                       ratio = None,
+                           ratio = {'yRange': (0.7, 1.3), 'histos':[(1,0)], 'texY':'Ratio'},
+#	                       ratio = None,
 	                       logX = False, logY = log, sorting = True,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},
@@ -178,7 +179,8 @@ sequence = []
 
 lumi_scale = 136.6
 
-comparisonSamples = [ [TTG_SingleLeptFromT_1L_test_SM], [TTG_SingleLeptFromT_3LBuggy_test_SM], [TTG_SingleLeptFromT_3LPatched_test_SM] ]
+comparisonSamples = [ [TTG_SingleLeptFromT_3LPatched_SM], [TTG_SingleLeptFromT_1L_SM] ]
+#comparisonSamples = [ [TTG_SingleLeptFromT_3LBuggy_SM], [TTG_SingleLeptFromT_3LPatched_SM], [TTG_SingleLeptFromT_1L_SM] ]
 signals = []
 
 # Sample definition
@@ -237,7 +239,7 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    plots += [ getYieldPlot( index ) ]
+    if mode != 'all': plots += [ getYieldPlot( index ) ]
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
