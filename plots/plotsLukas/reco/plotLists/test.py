@@ -1,4 +1,4 @@
-r#!/usr/bin/env python
+#!/usr/bin/env python
 ''' Define list of plots for plot script
 '''
 

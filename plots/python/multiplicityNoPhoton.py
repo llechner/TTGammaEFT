@@ -12,17 +12,9 @@ from RootTools.core.standard          import *
 from TTGammaEFT.Tools.constants       import defaultValue
 
 # plotList
-multiplicity = []
+multiplicityNoPhoton = []
     
-multiplicity.append( Plot(
-    name      = 'nPhoton',
-    texX      = 'N_{#gamma}',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nPhoton,
-    binning   = [ 4, 0, 4 ],
-))
-
-multiplicity.append( Plot(
+multiplicityNoPhoton.append( Plot(
     name      = 'nLepton',
     texX      = 'N_{l}',
     texY      = 'Number of Events',
@@ -30,7 +22,7 @@ multiplicity.append( Plot(
     binning   = [ 4, 0, 4 ],
 ))
 
-multiplicity.append( Plot(
+multiplicityNoPhoton.append( Plot(
     name      = 'nElectron',
     texX      = 'N_{e}',
     texY      = 'Number of Events',
@@ -38,7 +30,7 @@ multiplicity.append( Plot(
     binning   = [ 4, 0, 4 ],
 ))
 
-multiplicity.append( Plot(
+multiplicityNoPhoton.append( Plot(
     name      = 'nMuon',
     texX      = 'N_{#mu}',
     texY      = 'Number of Events',
@@ -46,7 +38,7 @@ multiplicity.append( Plot(
     binning   = [ 4, 0, 4 ],
 ))
 
-multiplicity.append( Plot(
+multiplicityNoPhoton.append( Plot(
     name      = 'nJet',
     texX      = 'N_{jet}',
     texY      = 'Number of Events',
@@ -54,7 +46,7 @@ multiplicity.append( Plot(
     binning   = [ 15, 0, 15 ],
 ))
 
-multiplicity.append( Plot(
+multiplicityNoPhoton.append( Plot(
     name      = 'nBJet',
     texX      = 'N_{bJet}',
     texY      = 'Number of Events',

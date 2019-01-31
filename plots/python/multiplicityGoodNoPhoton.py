@@ -67,7 +67,7 @@ multiplicityGoodNoPhoton.append( Plot(
     texX      = 'N_{jet}',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.nJetGood,
-    binning   = [ 10, 0, 10 ],
+    binning   = [ 15, 0, 15 ],
 ))
 
 multiplicityGoodNoPhoton.append( Plot(
