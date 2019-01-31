@@ -75,7 +75,7 @@ for ppEntry in dictList:
         if os.path.getsize( filepath ) < 100000:
             print "filesize of %s very small: %i bytes" % (file, os.path.getsize( filepath ))
 #            print "No further checks on file %s performed!" %file
-#            continue
+            continue
         chain    = ROOT.TChain('Events')
         chain.AddFile( filepath )
         nEntries = chain.GetEntries()

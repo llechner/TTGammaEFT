@@ -73,7 +73,9 @@ def jetIdBitMapToDict( val ):
     # Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto : 0 at: 0x5f1a030
     # in 80x no tightLepVeto exists, only 2 bits, bit3 is set to 0
     # create dictionary
-    idList = map( lambda x: int(x), "{0:03b}".format( val ) )
+    # however some entries of jets don't have a jedId entry, no clue why (very limited number of events e.g. in DY M50 Fall2017)
+    try: idList = map( lambda x: int(x), "{0:03b}".format( val ) )
+    except: idList = [ 0, 0, 0 ]
     return dict( zip( jetIdNamingList, idList ) )
 
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
