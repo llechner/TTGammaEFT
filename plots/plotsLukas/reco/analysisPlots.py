@@ -44,6 +44,9 @@ import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
+
+print getFilterCut( args.year, isData=True  )
+
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
 if args.signal:          args.plot_directory += "_signal_"+args.signal
@@ -53,16 +56,19 @@ if args.normalize:       args.plot_directory += "_normalize"
 # Samples
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed      import *
+#    from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed_ttOnly      import *
     if not args.noData:
         from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_postProcessed import *
 
 elif args.year == 2017:
     from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed        import *
+#    from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed_ttOnly      import *
     if not args.noData:
         from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
 
 elif args.year == 2018:
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
+#    from TTGammaEFT.Samples.nanoTuples_Autumn18_postProcessed       import *
     if not args.noData:
         from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_postProcessed import *
 
@@ -144,14 +150,17 @@ read_variables  = ["weight/F", "ref_weight/F",
                    "j1GammadR/F", "j1GammadPhi/F",
                   ]
 
+if args.year != 2016:
+    nanoPlotPhotonVarString = nanoPlotPhotonVarString.replace("cutBased", "cutBasedBitmap")
+
 read_variables += [ "PhotonGood0_"              + var for var in nanoPlotPhotonVarString.split(",") ]
 #read_variables += [ "PhotonNoChgIso0_"         + var for var in nanoPlotPhotonVarString.split(",") ]
 #read_variables += [ "PhotonNoChgIsoNoSieie0_"  + var for var in nanoPlotPhotonVarString.split(",") ]
 read_variables += [ "PhotonGood1_"  + var for var in nanoPlotPhotonVarString.split(",") ]
 read_variables += [ "LeptonGood0_"  + var for var in nanoPlotLeptonVarString.split(",") ]
 read_variables += [ "LeptonGood1_"  + var for var in nanoPlotLeptonVarString.split(",") ]
-#read_variables += [ "LeptonTight0_" + var for var in nanoPlotLeptonVarString.split(",") ]
-#read_variables += [ "LeptonTight1_" + var for var in nanoPlotLeptonVarString.split(",") ]
+read_variables += [ "LeptonTight0_" + var for var in nanoPlotLeptonVarString.split(",") ]
+read_variables += [ "LeptonTight1_" + var for var in nanoPlotLeptonVarString.split(",") ]
 read_variables += [ "Bj0_" + var for var in nanoPlotBJetVarString.split(",") ]
 read_variables += [ "Bj1_" + var for var in nanoPlotBJetVarString.split(",") ]
 
@@ -172,7 +181,7 @@ sequence = []
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
+    if args.onlyTTG: mc = [ TTG_16 ]
     else:            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
 elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
@@ -180,6 +189,7 @@ elif args.year == 2017:
 elif args.year == 2018:
     if args.onlyTTG: mc = [ ]
     else:            mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
+#    else:            mc = [ DY_LO_18, TT_pow_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -245,17 +255,29 @@ for index, mode in enumerate( allModes ):
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
 
-    if not args.noData:    data_sample.setSelectionString( [ getFilterCut( 2016, isData=True  ), leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ getFilterCut( 2016, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
+    if not args.noData:    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True  ), leptonSelection ] )
+    for sample in mc + signals: sample.setSelectionString( [ getFilterCut( args.year, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
+
+    if args.year == 2016:
+        TTG_16.addSelectionString( "isTTGamma==1" )
+        TT_pow_16.addSelectionString( "isTTGamma==0" )
+        ZG_16.addSelectionString( "isZWGamma==1" )
+        DY_LO_16.addSelectionString( "isZWGamma==0" )
+    if args.year == 2017:
+        TTG_17.addSelectionString( "isTTGamma==1" )
+        TT_pow_17.addSelectionString( "isTTGamma==0" )
+#    if args.year == 2018:
+#        TTG_18.addSelectionString( "isTTGamma==1" )
+#        TT_pow_18.addSelectionString( "isTTGamma==0" )
 
     # Overlap removal
-    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
-        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
-        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
+#    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
+#        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
+#        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
-    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
-        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+#    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
+#        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
+#        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
 #    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
 #        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )

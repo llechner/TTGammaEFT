@@ -1,0 +1,39 @@
+''' Class to interpret string based cuts
+'''
+
+# TTGamma Imports
+from TTGammaEFT.Tools.constants    import mZ
+from TTXPheno.Tools.CutInterpreter import CutInterpreter
+
+special_cuts = {
+    "OS":                "(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0",
+    "dilep":             "nGenLepton==2",
+    "dilepOS":           "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0",
+    "dilepSS":           "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])>0",
+    "dilepOFOS":         "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0&&nGenElectron==1&&nGenMuon==1",
+    "dilepOFSS":         "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])>0&&nGenElectron==1&&nGenMuon==1",
+    "dilepSFOS":         "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0&&(nGenElectron==2||nGenMuon==2)",
+    "dilepSFSS":         "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])>0&&(nGenElectron==2||nGenMuon==2)",
+    "offZll":            "abs(mll-%s)>15"%(mZ),
+    "offZllg":           "abs(mllgamma-%s)>15"%(mZ),
+    "offZSFll":          "((abs(mll-%s)>15&&(nGenElectron==2||nGenMuon==2))||(nGenElectron==1&&nGenMuon==1))"%(mZ),                      # Cut Z-Window only for SF dilep events
+    "offZSFllg":         "((abs(mllgamma-%s)>15&&(nGenElectron==2||nGenMuon==2))||(nGenElectron==1&&nGenMuon==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
+    "onZll":             "abs(mll-%s)<=15"%(mZ),
+    "onZllg":            "abs(mllgamma-%s)<=15"%(mZ),
+    "onZSFll":           "((abs(mll-%s)<=15&&(nGenElectron==2||nGenMuon==2))||(nGenElectron==1&&nGenMuon==1))"%(mZ),                     # Cut Z-Window only for SF dilep events
+    "onZSFllg":          "((abs(mllgamma-%s)<=15&&(nGenElectron==2||nGenMuon==2))||(nGenElectron==1&&nGenMuon==1))"%(mZ),                # Cut Z-Window only for SF dilep events
+    "mumu":              "nGenElectron==0&&nGenMuon==2",
+    "mue":               "nGenElectron==1&&nGenMuon==1",
+    "ee":                "nGenElectron==2&&nGenMuon==0",
+    "all":               "(1)",
+    "SF":                "(nGenElectron==2||nGenMuon==2)",
+  }
+
+continous_variables = [ ("met", "GenMET_pt"), ("pTG","GenPhoton_pt[0]"), ("mll", "mll"), ("mllgamma", "mllgamma") ]
+discrete_variables  = [ ("nJet", "nGenJet"), ("nBTag", "nGenBJet"), ("nLep","nGenLepton"), ("nPhoton","nGenPhoton") ]
+
+cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
+
+if __name__ == "__main__":
+    print cutInterpreter.cutString("dilepOS-pTG20-nPhoton1p-offZSFll-offZSFllg-mll40")
+

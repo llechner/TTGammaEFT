@@ -79,13 +79,13 @@ directories = { key : [ os.path.join( data_directory, postprocessing_directory20
 
 # Samples
 DY_LO_16           = Sample.fromDirectory(name="DY_LO",            treeName="Events", isData=False, color=color.DY,              texName="DY (LO)",           directory=directories['DY_LO'])
-TT_pow_16          = Sample.fromDirectory(name="TTLep_pow",        treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",          directory=directories['TTLep_pow'])
-TTbar_16           = Sample.fromDirectory(name="TTbar",            treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",          directory=directories['TTbar'])
-singleTop_16       = Sample.fromDirectory(name="singleTop",        treeName="Events", isData=False, color=color.singleTop,       texName="single-t",          directory=directories['singleTop'])
+TT_pow_16          = Sample.fromDirectory(name="TTLep_pow",        treeName="Events", isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories['TTLep_pow'])
+TTbar_16           = Sample.fromDirectory(name="TTbar",            treeName="Events", isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories['TTbar'])
+singleTop_16       = Sample.fromDirectory(name="singleTop",        treeName="Events", isData=False, color=color.T,               texName="single-t",          directory=directories['singleTop'])
 TTGLep_16          = Sample.fromDirectory(name="TTGLep",           treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTGLep'])
 #TTG_16             = Sample.fromDirectory(name="TTGLep",           treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG'])
-ZGTo2LG_16         = Sample.fromDirectory(name="ZGTo2LG",          treeName="Events", isData=False, color=color.diBoson,         texName="Z#gamma",           directory=directories['ZGTo2LG'] )
-ZGToLLG_16         = Sample.fromDirectory(name="ZGToLLG",          treeName="Events", isData=False, color=color.diBoson,         texName="Z#gamma",           directory=directories['ZGToLLG'] )
-other_16           = Sample.fromDirectory(name="other",            treeName="Events", isData=False, color=color.other,           texName="other",             directory=directories['other'])
+ZGTo2LG_16         = Sample.fromDirectory(name="ZGTo2LG",          treeName="Events", isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGTo2LG'] )
+ZGToLLG_16         = Sample.fromDirectory(name="ZGToLLG",          treeName="Events", isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGToLLG'] )
+other_16           = Sample.fromDirectory(name="other",            treeName="Events", isData=False, color=color.Other,           texName="other",             directory=directories['other'])
 
 signals = []

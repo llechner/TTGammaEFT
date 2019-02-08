@@ -13,8 +13,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Data directory
-try:    data_directory = sys.modules['__main__'].data_directory
-except: from TTGammaEFT.Tools.user import data_directory
+#try:    data_directory = sys.modules['__main__'].data_directory
+#except: from TTGammaEFT.Tools.user import data_datadirectory2018 as data_directory
+from TTGammaEFT.Tools.user import data_datadirectory2018 as data_directory
 
 # Take post processing directory if defined in main module
 #try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
@@ -24,7 +25,7 @@ from TTGammaEFT.Tools.user import postprocessing_datadirectory2018
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_datadirectory2018 ) )
 
 allSamples = [ 'MuonEG', 'DoubleMuon', 'EGamma', 'SingleMuon' ]
-lumi       = 58.83
+#lumi       = 58.83
 
 dirs = {}
 for ( run, version ) in [ ( 'A', '_ver1' ), ( 'A', '_ver2' ), ( 'A', '_ver3' ), ( 'B', '_ver1' ), ( 'B', '_ver2' ), ( 'C', '_ver1' ), ( 'C', '_ver2' ), ( 'C', '_ver3' ), ( 'D', '_ver2' ) ]:
@@ -41,11 +42,11 @@ for key in dirs:
 
 allSamples_Data25ns  = []
 for pd in allSamples:
-    vars()[ pd + '_Run2018' ] = getSample( pd, 'Run2018', lumi*1000, dirs )
+    vars()[ pd + '_Run2018' ] = getSample( pd, 'Run2018', 58.83*1000, dirs )
     allSamples_Data25ns += [ vars()[ pd + '_Run2018' ] ]
 
 Run2018      = Sample.combine( "Run2018", allSamples_Data25ns, texName = "Data" )
-Run2018.lumi = lumi*1000
+Run2018.lumi = 58.83*1000
 
 for s in allSamples_Data25ns:
   s.color   = ROOT.kBlack

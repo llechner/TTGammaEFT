@@ -14,7 +14,7 @@ from RootTools.core.standard          import *
 # Internal Imports
 from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreterOld  import cutInterpreter
-from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
+from TTGammaEFT.Tools.TriggerSelectorOld import TriggerSelector
 
 from Samples.Tools.metFilters         import getFilterCut
 from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVars, nanoPlotMuonVars, nanoPlotLeptonVars, nanoPlotTauVars, nanoPlotPhotonVars, nanoPlotJetVars, nanoPlotBJetVars
@@ -96,7 +96,7 @@ elif args.year == 2018:
     else:            mc = [ TTGLep_16, DY_LO_16, TT_pow_16, singleTop_16, ZGTo2LG_16, other_16 ]
 
 if args.noData:
-    if args.year == 2016:   lumi_scale = 35.92
+    if args.year == 2016:   lumi_scale = 35.9
     elif args.year == 2017: lumi_scale = 35.92
     elif args.year == 2018: lumi_scale = 35.92
     stack      = Stack( mc )
@@ -109,7 +109,7 @@ else:
     data_sample.read_variables = [ "event/I", "run/I" ]
     data_sample.scale          = 1
 
-    lumi_scale                 = data_sample.lumi * 0.001
+    lumi_scale                 = 35.9 #data_sample.lumi * 0.001
     stack                      = Stack( mc, data_sample )
 
 stack.extend( [ [s] for s in signals ] )
@@ -120,7 +120,7 @@ for sample in mc + signals:
     sample.style          = styles.fillStyle( sample.color )
     sample.weight         = lambda event, sample: event.reweightDilepTriggerBackup*event.reweightPU36fb*event.reweightLeptonSF*event.reweightLeptonTrackingSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 
-#weightString   = "weight*reweightDilepTriggerBackup*reweightPU36fb*reweightLeptonSF*reweightLeptonTrackingSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
+weightString   = "reweightDilepTriggerBackup*reweightPU36fb*reweightLeptonSF*reweightLeptonTrackingSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
 if args.small:
     for sample in stack.samples:
@@ -128,13 +128,13 @@ if args.small:
         sample.reduceFiles( factor=15 )
         sample.scale /= sample.normalization
 
-tr = TriggerSelector( args.year, None )
+tr = TriggerSelector( args.year )
 
 # Loop over channels
-#allModes = [ 'mumu', 'mue', 'ee', 'SF', 'all' ]
-allModes = [ 'mue', 'SF' ]
+allModes = [ 'mumu', 'mue', 'ee', 'SF', 'all' ]
+#allModes = [ 'mue', 'SF' ]
 
-print args.selection
+#print args.selection
 yields = {}
 for index, mode in enumerate( allModes ):
 
@@ -154,27 +154,34 @@ for index, mode in enumerate( allModes ):
 #    ZGToLLG_16.addSelectionString(   "isZGamma==1"  )
     DY_LO_16.addSelectionString(  "isZGamma==0"  )
 
-    print mode
+#    print mode
 
     mcTotal = 0
     for s in mc:
-        y = s.getYieldFromDraw( selectionString=cutInterpreter.cutString( args.selection ), weightString="weight*%f"%s.scale )['val']
+        y = s.getYieldFromDraw( selectionString=cutInterpreter.cutString( args.selection ), weightString="weight*%f*%s"%(s.scale,weightString) )['val']
         yields[mode][s.name] = y
         mcTotal += y
-        print s.name, "yield", y
-    print "MC Total:", mcTotal
+#        print s.name, "yield", y
+#    print "MC Total:", mcTotal
+    yields[mode]["MC"] = mcTotal
     if not args.noData:
-        y = data_sample.getYieldFromDraw( selectionString=cutInterpreter.cutString( args.selection ), weightString="weight*%f"%s.scale )['val']
+        y = data_sample.getYieldFromDraw( selectionString=cutInterpreter.cutString( args.selection ), weightString="weight" )['val']
         yields[mode][data_sample.name] = y
-        print data_sample.name, "yield", y
+#        print data_sample.name, "yield", y
 
+    
     # Get yields from draw
 
 allSamples = [data_sample] + mc if not args.noData else mc
 with open("logs/%s.log"%args.selection, "w") as f:
-    f.write(args.selection + "\n\n")
+    f.write(args.selection + "\n")
     for mode in allModes:
-        f.write("Mode: " + mode + "\n")
-    for s in allSamples:
-        f.write(s.name + ": " + str(yields[mode][s.name]) + "\n")
-        
+        f.write("\n Mode: " + mode + "\n")
+        for s in mc:
+            f.write(s.name + ":\t" + str(int(yields[mode][s.name])) + "\n")
+        f.write("\nMC total:\t" + str(int(yields[mode]["MC"])) + "\n")
+        if not args.noData:
+            f.write("data:\t" + str(int(yields[mode][data_sample.name])) + "\n")
+            r = yields[mode][data_sample.name] / yields[mode]["MC"]
+            f.write("R:\t" + str(r) + "\n\n")
+
