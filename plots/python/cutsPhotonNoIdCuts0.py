@@ -17,7 +17,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     name      = 'PhotonNoChgIsoNoSieie0_sieie',
     texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: PhotonNoChgIsoNoSieie0_sieie,
+    attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_sieie,
     binning   = [ 50, 0, 0.025 ],
 ))
 
