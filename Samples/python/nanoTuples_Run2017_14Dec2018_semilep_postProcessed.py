@@ -19,10 +19,10 @@ from TTGammaEFT.Tools.user import data_datadirectory2017 as data_directory
 
 # Take post processing directory if defined in main module
 #try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
-#except: from TTGammaEFT.Tools.user import postprocessing_datadirectory2017
-from TTGammaEFT.Tools.user import postprocessing_datadirectory2017
+#except: from TTGammaEFT.Tools.user import postprocessing_datadirectory
+from TTGammaEFT.Tools.user import postprocessing_datadirectorySemiLep2017 as postprocessing_datadirectory
 
-logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_datadirectory2017 ) )
+logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_datadirectory ) )
 
 allSamples = [ 'MuonEG', 'DoubleMuon', 'DoubleEG', 'SingleMuon', 'SingleElectron' ]
 lumi       = 41.86
@@ -38,7 +38,7 @@ for pd in allSamples:
     merge( pd, 'Run2017CDE', [ 'Run2017C', 'Run2017D', 'Run2017E' ], dirs )
 
 for key in dirs:
-    dirs[key] = [ os.path.join( data_directory, postprocessing_datadirectory2017, dir ) for dir in dirs[key] ]
+    dirs[key] = [ os.path.join( data_directory, postprocessing_datadirectory, dir ) for dir in dirs[key] ]
 
 allSamples_Data25ns  = []
 for pd in allSamples:

@@ -25,8 +25,7 @@ from TTGammaEFT.Tools.user import postprocessing_datadirectory2017
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_datadirectory2017 ) )
 
 allSamples = [ 'MuonEG', 'DoubleMuon', 'DoubleEG', 'SingleMuon', 'SingleElectron' ]
-#allSamples = [ 'SingleMuon' ]
-#lumi       = 41.86
+lumi       = 41.86
 
 dirs = {}
 for ( run, version ) in [ ( 'B', '' ), ( 'C', '' ), ( 'D', '' ), ( 'E', '' ), ( 'F', '' ) ]:
@@ -43,11 +42,11 @@ for key in dirs:
 
 allSamples_Data25ns  = []
 for pd in allSamples:
-    vars()[ pd + '_Run2017' ] = getSample( pd, 'Run2017', 41.86*1000, dirs )
+    vars()[ pd + '_Run2017' ] = getSample( pd, 'Run2017', lumi*1000, dirs )
     allSamples_Data25ns += [ vars()[ pd + '_Run2017' ] ]
 
 Run2017      = Sample.combine( "Run2017", allSamples_Data25ns, texName = "Data" )
-Run2017.lumi = 41.86*1000
+Run2017.lumi = lumi*1000
 
 for s in allSamples_Data25ns:
     s.color   = ROOT.kBlack

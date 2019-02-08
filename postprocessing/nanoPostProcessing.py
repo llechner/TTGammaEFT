@@ -553,12 +553,12 @@ def filler( event ):
         GenBJet     = getGoodParticles( genJetSelector(),    filterGenBJets( gJets )                    )
 
         # Store
-        if len(GenElectron) > 0: fill_vector_collection( event, "GenElectron", nanoGenVars,    GenElectron )
-        if len(GenMuon) > 0:     fill_vector_collection( event, "GenMuon",     nanoGenVars,    GenMuon )
-        if len(GenPhoton) > 0:   fill_vector_collection( event, "GenPhoton",   nanoGenVars,    GenPhoton )
-        if len(GenBJet) > 0:     fill_vector_collection( event, "GenBJet",     nanoGenJetVars, GenBJet )
-        if len(GenJet) > 0:      fill_vector_collection( event, "GenJet",      nanoGenJetVars, GenJet )
-        if len(GenTop) > 0:      fill_vector_collection( event, "GenTop",      nanoGenVars,    GenTop )
+        if len(GenElectron) > 0: fill_vector_collection( event, "GenElectron", nanoGenVars,    GenElectron[:20] )
+        if len(GenMuon) > 0:     fill_vector_collection( event, "GenMuon",     nanoGenVars,    GenMuon[:20] )
+        if len(GenPhoton) > 0:   fill_vector_collection( event, "GenPhoton",   nanoGenVars,    GenPhoton[:20] )
+        if len(GenBJet) > 0:     fill_vector_collection( event, "GenBJet",     nanoGenJetVars, GenBJet[:20] )
+        if len(GenJet) > 0:      fill_vector_collection( event, "GenJet",      nanoGenJetVars, GenJet[:20] )
+        if len(GenTop) > 0:      fill_vector_collection( event, "GenTop",      nanoGenVars,    GenTop[:20] )
         
 
         # EFT event weights
@@ -686,7 +686,7 @@ def filler( event ):
     if lt1: fill_vector( event, "LeptonTight1", nanoLeptonVars, lt1 )
 
     # Store all Leptons
-    fill_vector_collection( event, "Lepton",     nanoLeptonVars, allLeptons )
+    fill_vector_collection( event, "Lepton",     nanoLeptonVars, allLeptons[:20] )
 
     # Photons
     allPhotons = getSortedParticles( r, nanoPhotonVars, coll="Photon" )
@@ -728,11 +728,11 @@ def filler( event ):
     event.nJetGood  = len(looseJets)
 
     # store all loose jets
-    fill_vector_collection( event, "Jet",      nanoJetVars, allJets )
+    fill_vector_collection( event, "Jet",      nanoJetVars, allJets[:20] )
     # store all loose jets, cleaned against vetoLeptons and loose photons
-    fill_vector_collection( event, "JetClean", nanoJetVars, cleanJets )
+    fill_vector_collection( event, "JetClean", nanoJetVars, cleanJets[:20] )
     # store analysis jets
-    fill_vector_collection( event, "JetGood",  nanoJetVars, looseJets )
+    fill_vector_collection( event, "JetGood",  nanoJetVars, looseJets[:20] )
 
     # bJets
     allBJets   = filterBJets( allJets,   tagger=tagger, year=options.year )
@@ -807,7 +807,7 @@ def filler( event ):
     event.nPhotonGood  = len( mediumPhotons )
 
     # store all photons
-    fill_vector_collection( event, "Photon",      nanoPhotonVars, allPhotons )
+    fill_vector_collection( event, "Photon",      nanoPhotonVars, allPhotons[:20] )
 
     # Store analysis photons
     p0, p1 = ( mediumPhotons + [None, None] )[:2]

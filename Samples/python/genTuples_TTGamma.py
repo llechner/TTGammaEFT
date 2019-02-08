@@ -5,7 +5,7 @@ import os
 from RootTools.core.standard import *
 
 # TTGammaEFT
-from TTGammaEFT.Tools.user   import gridpack_directory
+from TTGammaEFT.Tools.user   import gridpack_directory, cache_directory
 
 def get_parser():
     import argparse
@@ -24,8 +24,7 @@ else:
     logger = logging.getLogger(__name__)
     ov = False
 
-from Samples.Tools.config import dbDir, redirector, redirector_global
-dbFile = dbDir+"DB_TTGamma_GEN.sql"
+dbFile = cache_directory+"DB_TTGamma_GEN.sql"
 
 logger.info("Using db file: %s", dbFile)
 

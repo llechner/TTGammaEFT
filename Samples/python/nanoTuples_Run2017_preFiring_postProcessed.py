@@ -15,16 +15,16 @@ logger = logging.getLogger(__name__)
 # Data directory
 #try:    data_directory = sys.modules['__main__'].data_directory
 #except: from TTGammaEFT.Tools.user import data_datadirectory2017 as data_directory
-from TTGammaEFT.Tools.user import data_datadirectory2017 as data_directory
+from TTGammaEFT.Tools.user import data_directoryPrefiring as data_directory
 
 # Take post processing directory if defined in main module
 #try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
 #except: from TTGammaEFT.Tools.user import postprocessing_datadirectory2017
-from TTGammaEFT.Tools.user import postprocessing_datadirectory2017
+from TTGammaEFT.Tools.user import postprocessing_directoryPrefiring as postprocessing_directory
 
-logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_datadirectory2017 ) )
+logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
 
-allSamples = [ 'MuonEG', 'DoubleMuon', 'DoubleEG', 'SingleMuon', 'SingleElectron' ]
+allSamples = [ 'SingleMuon' ]
 lumi       = 41.86
 
 dirs = {}
@@ -38,7 +38,7 @@ for pd in allSamples:
     merge( pd, 'Run2017CDE', [ 'Run2017C', 'Run2017D', 'Run2017E' ], dirs )
 
 for key in dirs:
-    dirs[key] = [ os.path.join( data_directory, postprocessing_datadirectory2017, dir ) for dir in dirs[key] ]
+    dirs[key] = [ os.path.join( data_directory, postprocessing_directory, dir ) for dir in dirs[key] ]
 
 allSamples_Data25ns  = []
 for pd in allSamples:

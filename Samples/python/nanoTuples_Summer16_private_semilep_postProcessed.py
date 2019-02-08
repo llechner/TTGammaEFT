@@ -19,10 +19,10 @@ from TTGammaEFT.Tools.user import data_directory2016 as data_directory
 
 # Take post processing directory if defined in main module
 #try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
-#except: from TTGammaEFT.Tools.user import postprocessing_directory2016
-from TTGammaEFT.Tools.user import postprocessing_directory2016
+#except: from TTGammaEFT.Tools.user import postprocessing_directory
+from TTGammaEFT.Tools.user import postprocessing_directorySemiLep2016 as postprocessing_directory
 
-logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory2016 ) )
+logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory ) )
 
 # Directories
 dirs = {}
@@ -30,12 +30,12 @@ dirs = {}
 dirs['DY_LO']            = ["DYJetsToLL_M10to50_LO", "DYJetsToLL_M50_LO_ext1_comb" ]
 
 dirs['TTLep_pow']        = ["TTLep_pow"]
-dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow", "TTSingleLep_pow" ] #wrong xsec in the samples file, thus have to take semilep twice till its fixed
+dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow", "TTSingleLep_pow"] #wrong x-sec in TTSingleLep_pow 2016, thus have to take twice for now
 dirs['TTbar']            = ["TTbar"]
 
 dirs['TTG']              = ["TTGJets_comb"]
 dirs['TTGLep']           = ["TTGLep"]
-dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGHad", "TTGSemiTbar"] #TTGSemiT
+dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGHad", "TTGSemiTbar" ] #TTGSemiT not available, thus taking TTGSemiTbar twice
 
 dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext", "T_tch_pow", "TBar_tch_pow" ]#, "TToLeptons_sch_amcatnlo" ]
 
@@ -83,7 +83,7 @@ dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
-directories = { key : [ os.path.join( data_directory, postprocessing_directory2016, dir) for dir in dirs[key] ] for key in dirs.keys() }
+directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
 DY_LO_16           = Sample.fromDirectory(name="DY_LO",            treeName="Events", isData=False, color=color.DY,              texName="DY (LO)",           directory=directories['DY_LO'])
