@@ -68,6 +68,7 @@ def get_parser():
     argParser.add_argument('--interpolationOrder',          action='store',         nargs='?',  type=int,                           default=2,                          help="Interpolation order for EFT weights.")
     argParser.add_argument('--triggerSelection',            action='store_true',                                                                                        help="Trigger selection?" )
     argParser.add_argument('--addPreFiringFlag',            action='store_true',                                                                                        help="Add flag for events w/o prefiring?" )
+    argParser.add_argument('--topReco',                     action='store_true',                                                                                        help="Run Top Reco?")
 
     return argParser
 
@@ -84,6 +85,9 @@ logger  = logger.get_logger(options.logLevel, logFile = logFile)
 
 import RootTools.core.logger as logger_rt
 logger_rt = logger_rt.get_logger(options.logLevel, logFile = None )
+
+import Samples.Tools.logger as logger_samples
+logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
 
 writeToDPM = options.targetDir == '/dpm/'
 
@@ -104,11 +108,12 @@ else:
     skimConds = ["(1)"]
 
 #Samples: Load samples
-maxN = None
+maxNFiles = None
 if options.small:
-    maxN = 100000
-    options.job = 1
-    options.nJobs = 10000000 # set high to just run over 1 input file
+    maxNFiles = 1
+    maxNEvents = 10
+    options.job = 0
+    options.nJobs = 1 # set high to just run over 1 input file
 
 # Currently use MC private production CMSSW 10_2_9 and Data central production 2016/2017: CMSSW 10_2_9, 2018:CMSSW 10_2_5
 if options.year == 2016:
@@ -139,12 +144,15 @@ assert isMC or len(samples)==1, "Don't concatenate data samples"
 if len(samples)>1:
     sample_name =  samples[0].name+"_comb"
     logger.info( "Combining samples %s to %s.", ",".join(s.name for s in samples), sample_name )
-    sample = Sample.combine(sample_name, samples, maxN = maxN)
+    sample = Sample.combine(sample_name, samples, maxN = maxNFiles)
     # Clean up
     for s in samples:
         sample.clear()
 elif len(samples)==1:
     sample = samples[0]
+
+if options.small:
+    sample.reduceFiles( to = 1 )
 
 # Cross section for postprocessed sample
 xSection = samples[0].xSection if isMC else None
@@ -451,6 +459,21 @@ if isMC:
         if var!='MC':
             new_variables += [ 'reweightBTag_'+var+'/F' ]
 
+# TopReco
+if options.topReco:
+    # Import the main top reco class
+    from Analysis.TopReco.TopReco import topReco
+    # Variables
+    for name in [ "lp", "lm", "jetB", "jetBbar", "Wp", "Wm", "neutrino", "neutrinoBar", "top", "topBar" ]:
+        for var in ["pt", "eta", "phi", "mass"]:
+            new_variables.append( "topReco_"+name+"_"+var+'/F' )
+    # Simple setter for top reco candidates
+    def setParticle( event, name, particle ):
+        setattr( event, "topReco_"+name+"_pt", particle.Pt() )
+        setattr( event, "topReco_"+name+"_eta", particle.Eta() )
+        setattr( event, "topReco_"+name+"_phi", particle.Phi() )
+        setattr( event, "topReco_"+name+"_mass", particle.M() )
+
 if isData:
     new_variables += ['jsonPassed/I']
 
@@ -559,7 +582,6 @@ def filler( event ):
         if len(GenBJet) > 0:     fill_vector_collection( event, "GenBJet",     nanoGenJetVars, GenBJet )
         if len(GenJet) > 0:      fill_vector_collection( event, "GenJet",      nanoGenJetVars, GenJet )
         if len(GenTop) > 0:      fill_vector_collection( event, "GenTop",      nanoGenVars,    GenTop )
-        
 
         # EFT event weights
         if options.addReweights:
@@ -846,6 +868,30 @@ def filler( event ):
     if len(looseJets) > 0 and len(selectedLeptons) > 0:
         event.leptonJetdR = min( deltaR( l, j ) for j in looseJets for l in selectedLeptons )
 
+    # Topreco
+    if options.topReco:
+        #topReco = TopReco( ROOT.Era.run2_13tev_2016_25ns, 2, 1, 0, 'btagDeepB', 0.6321 )
+        solution = topReco.evaluate( selectedLeptons, looseJets, met = {'pt':r.MET_pt, 'phi':r.MET_phi})
+        if solution:
+            print "t/tbar:", selectedLeptons[0]['pt'], r.MET_pt,r.MET_phi, solution.top.Pt(), solution.topBar.Pt()
+
+            event.topReco_nBTag   = solution.ntags
+            event.topReco_weight  = solution.weight
+            event.topReco_recMtop = solution.recMtop
+            event.topReco_met_pt  = solution.met.Pt()
+            event.topReco_met_phi = solution.met.Phi()
+            
+            setParticle(event, "lp",        solution.lp) 
+            setParticle(event, "lm",        solution.lm) 
+            setParticle(event, "jetB",      solution.jetB) 
+            setParticle(event, "jetBbar",   solution.jetBbar) 
+            setParticle(event, "Wp",        solution.Wplus) 
+            setParticle(event, "Wm",        solution.Wminus) 
+            setParticle(event, "neutrino",       solution.neutrino) 
+            setParticle(event, "neutrinoBar",    solution.neutrinoBar) 
+            setParticle(event, "top",       solution.top) 
+            setParticle(event, "topBar",    solution.topBar) 
+
     # Reweighting
     if isMC:
         # PU reweighting
@@ -913,9 +959,10 @@ logger.info( "Splitting into %i ranges of %i events on average. FileBasedSplitti
         (eventRanges[-1][1] - eventRanges[0][0])/len(eventRanges), 
         'Yes' if options.fileBasedSplitting else 'No',
         options.job)
-
 #Define all jobs
 jobs = [ (i, range) for i, range in enumerate( eventRanges ) ]
+
+#assert False, ""
 
 filename, ext = os.path.splitext( os.path.join( output_directory, sample.name + '.root' ) )
 
@@ -952,8 +999,9 @@ for ievtRange, eventRange in enumerate( eventRanges ):
 
     if options.small: 
         logger.info("Running 'small'. Not more than 10000 events") 
-        nMaxEvents = eventRange[1] - eventRange[0]
-        eventRange = ( eventRange[0], eventRange[0] +  min( [ nMaxEvents, maxN ] ) )
+        numEvents  = eventRange[1] - eventRange[0]
+        eventRange = ( eventRange[0], eventRange[0] +  min( [ numEvents, maxNEvents ] ) )
+        print eventRange[0], numEvents, maxNEvents
 
     # Set the reader to the event range
     reader.setEventRange( eventRange )
