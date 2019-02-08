@@ -22,6 +22,15 @@ class u_float():
             self.val    = float(val)
             self.sigma  = float(sigma)
 
+    @classmethod
+    def fromString(cls, uString):
+        s = uString.split('+-')
+        if len(s) == 2:
+            u = u_float(float(s[0]), float(s[1]))
+        else:
+            u = u_float(float(s[0]))
+        return u
+
     def __add__(self,other):
         if not type(other)==type(self):
             if other == 0 or other == None: return self

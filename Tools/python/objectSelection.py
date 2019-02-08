@@ -42,7 +42,7 @@ nanoPlotMuonVarString     = "eta/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,
 nanoPlotLeptonVarString   = ','.join( set( nanoPlotElectronVarString.split(',') + nanoPlotMuonVarString.split(',') ) )
 nanoPlotTauVarString      = "eta/F,phi/F,pt/F"
 nanoPlotPhotonVarString   = "eta/F,hoe/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,sieie/F,cutBased/I,pdgId/I,electronVeto/O,pixelSeed/O"
-nanoPlotJetVarString      = "btagCSVV2/F,btagDeepB/F,chEmEF/F,chHEF/F,eta/F,neEmEF/F,neHEF/F,phi/F,pt/F,nConstituents/I,jetId/I"
+nanoPlotJetVarString      = "btagCSVV2/F,btagDeepB/F,chEmEF/F,chHEF/F,eta/F,neEmEF/F,neHEF/F,phi/F,pt/F,nConstituents/I,jetId/I,cleanmask/O"
 nanoPlotBJetVarString     = 'pt/F,eta/F,phi/F'
 
 nanoPlotElectronVars = [item.split('/')[0] for item in nanoPlotElectronVarString.split(',')]
@@ -266,6 +266,7 @@ def jetSelector( year, noPtEtaCut=False ):
         # According to AN-2017/197
         # jetID cuts, pT and eta cuts
         def func(j):
+            if not j["cleanmask"]:                           return False
             if not noPtEtaCut:
                 if j["pt"]       <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
@@ -276,6 +277,7 @@ def jetSelector( year, noPtEtaCut=False ):
     elif year == 2017 or year == 2018:
         # jetID cuts, pT and eta cuts
         def func(j):
+            if not j["cleanmask"]:                           return False
             if not noPtEtaCut:
                 if j["pt"]       <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
