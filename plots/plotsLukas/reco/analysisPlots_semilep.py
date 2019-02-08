@@ -11,14 +11,17 @@ from math                             import isnan, ceil, pi
 # RootTools
 from RootTools.core.standard          import *
 
+from TTGammaEFT.Tools.helpers         import getCollection
+
 # Internal Imports
 from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 
 from Samples.Tools.metFilters         import getFilterCut
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVars, nanoPlotMuonVars, nanoPlotLeptonVars, nanoPlotTauVars, nanoPlotPhotonVars, nanoPlotJetVars, nanoPlotBJetVars
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVarString, nanoPlotMuonVarString, nanoPlotLeptonVarString, nanoPlotTauVarString, nanoPlotPhotonVarString, nanoPlotJetVarString, nanoPlotBJetVarString
+
+from TTGammaEFT.Tools.Variables       import NanoVariables
+from TTGammaEFT.Tools.objectSelection import filterBJets
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -52,19 +55,19 @@ if args.normalize:       args.plot_directory += "_normalize"
 
 # Samples
 if args.year == 2016:
-    from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed      import *
+    from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
     if not args.noData:
-        from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_postProcessed import *
+        from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import *
 
 elif args.year == 2017:
-    from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed        import *
+    from TTGammaEFT.Samples.nanoTuples_Fall17_private_semilep_postProcessed        import *
     if not args.noData:
-        from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
+        from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_semilep_postProcessed import *
 
 elif args.year == 2018:
-    from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
+    from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed      import *
     if not args.noData:
-        from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_postProcessed import *
+        from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_semilep_postProcessed import *
 
 # Text on the plots
 def drawObjects( plotData, dataMCScale, lumi_scale ):
@@ -83,20 +86,24 @@ scaling = { 1:0 }
 
 # Plotting
 def drawPlots( plots, mode, dataMCScale ):
+
+    logger.info( "Plotting mode: %s"%mode )
+
     for log in [False, True]:
-        plot_directory_ = os.path.join( plot_directory, 'analysisPlots%i'%args.year, args.plot_directory, args.selection, mode, "log" if log else "lin" )
+        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, "log" if log else "lin" )
 
         for plot in plots:
-            if not max(l[0].GetMaximum() for l in plot.histos): 
+            if not max(l[0].GetMaximum() for l in plot.histos):
+                logger.info( "Empty plot!" )
                 continue # Empty plot
             postFix = " (legacy)"
             if not args.noData: 
-                plot.histos[1][0].style          = styles.errorStyle( ROOT.kBlack )
+                plot.histos[1][0].style = styles.errorStyle( ROOT.kBlack )
                 if mode == "all":
                     plot.histos[1][0].legendText = "data" + postFix
-                if mode == "SF":
-                    plot.histos[1][0].legendText = "data (SF)" + postFix
-            extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue'] else ['png']
+            extensions_ = ["pdf", "png", "root"]
+
+            logger.info( "Plotting..." )
 
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
@@ -119,13 +126,27 @@ def getYieldPlot( index ):
                 binning   = [ 2, 0, 2 ],
                 )
 
+# get nano variable lists
+NanoVars        = NanoVariables( args.year )
+
+jetVarString     = NanoVars.getVariableString(   "Jet", postprocessed=True, data=(not args.noData), plot=True )
+jetVariableNames = NanoVars.getVariableNameList( "Jet", postprocessed=True, data=(not args.noData), plot=True )
+bJetVariables    = NanoVars.getVariables(        "BJet", postprocessed=True, data=(not args.noData), plot=True )
+leptonVariables  = NanoVars.getVariables(        "Lepton", postprocessed=True, data=(not args.noData), plot=True )
+photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
+
 # Read variables and sequences
-read_variables  = ["weight/F", "ref_weight/F",
+read_variables  = ["weight/F",
                    "PV_npvs/I", "PV_npvsGood/I",
                    "nJetGood/I", "nBTagGood/I",
-                   "JetGood[%s]" %nanoPlotJetVarString,
+                   "nJet/I", "nBTag/I",
+                   "Jet[%s]" %jetVarString,
+                   "JetGood[%s]" %jetVarString,
+                   "nLepton/I", "nElectron/I", "nMuon/I",
+                   "nLeptonGood/I", "nElectronGood/I", "nMuonGood/I",
                    "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
                    "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+                   "nPhoton/I",
                    "nPhotonGood/I",
                    "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
                    "mlltight/F", "mllgammatight/F",
@@ -135,16 +156,17 @@ read_variables  = ["weight/F", "ref_weight/F",
                    "photonJetdR/F", "tightLeptonJetdR/F",
                   ]
 
-read_variables += [ "PhotonGood0_"              + var for var in nanoPlotPhotonVarString.split(",") ]
-read_variables += [ "PhotonNoChgIso0_"         + var for var in nanoPlotPhotonVarString.split(",") ]
-read_variables += [ "PhotonNoChgIsoNoSieie0_"  + var for var in nanoPlotPhotonVarString.split(",") ]
-read_variables += [ "LeptonTight0_" + var for var in nanoPlotLeptonVarString.split(",") ]
-read_variables += [ "LeptonTight1_" + var for var in nanoPlotLeptonVarString.split(",") ]
-read_variables += [ "Bj0_" + var for var in nanoPlotBJetVarString.split(",") ]
-read_variables += [ "Bj1_" + var for var in nanoPlotBJetVarString.split(",") ]
+read_variables += map( lambda var: "PhotonGood0_"             + var, photonVariables )
+read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )
+read_variables += map( lambda var: "PhotonNoChgIsoNoSieie0_"  + var, photonVariables )
+read_variables += map( lambda var: "LeptonGood0_"             + var, leptonVariables )
+read_variables += map( lambda var: "LeptonGood1_"             + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTight0_"            + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTight1_"            + var, leptonVariables )
+read_variables += map( lambda var: "Bj0_"                     + var, bJetVariables )
+read_variables += map( lambda var: "Bj1_"                     + var, bJetVariables )
 
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
-                     "PhotonGood0_photonCat/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
                      "reweightLeptonSF/F", "reweightLeptonSFUp/F", "reweightLeptonSFDown/F",
                      "reweightLeptonTrackingSF/F",
@@ -155,8 +177,27 @@ read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
                      "reweightBTag_SF/F", "reweightBTag_SF_b_Down/F", "reweightBTag_SF_b_Up/F", "reweightBTag_SF_l_Down/F", "reweightBTag_SF_l_Up/F",
                     ]
 
+def clean_Jets( event, sample ):
+    allJets    = getCollection( event, 'Jet', jetVariableNames, 'nJet' )
+    allJets.sort( key = lambda j: -j['pt'] )
+    allJets    = list( filter( lambda j: j['cleanmask'] and j['pt']>30, allJets ) )
+
+    looseJets  = getCollection( event, 'JetGood', jetVariableNames, 'nJetGood' )
+    looseJets.sort( key = lambda j: -j['pt'] )
+    looseJets  = list( filter( lambda j: j['cleanmask'], looseJets ) )
+
+    event.nJet      = len( allJets )
+    event.nJetGood  = len( looseJets )
+    event.nBTag     = len( filterBJets( allJets,   tagger="DeepCSV", year=args.year ) )
+    event.nBTagGood = len( filterBJets( looseJets, tagger="DeepCSV", year=args.year ) )
+
+    for var in jetVariableNames:
+        for i, jet in enumerate( allJets[:2] ):
+            getattr( event, "Jet_" + var )[i] = jet[var]
+        for i, jet in enumerate ( looseJets[:2] ):
+            getattr( event, "JetGood_" + var )[i] = jet[var]
 # Sequence
-sequence = []
+sequence = [ clean_Jets ]
 
 # Sample definition
 if args.year == 2016:
@@ -191,7 +232,8 @@ for sample in mc + signals:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     sample.style          = styles.fillStyle( sample.color )
-    sample.weight         = lambda event, sample: event.reweightDilepTriggerBackup*event.reweightPU*event.reweightLeptonSF*event.reweightLeptonTrackingSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+    sample.weight         = lambda event, sample: event.reweightPU*event.reweightLeptonSF*event.reweightLeptonTrackingSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+#event.reweightDilepTriggerBackup
 
 if args.small:
     for sample in stack.samples:
@@ -200,7 +242,7 @@ if args.small:
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year, None )
+tr = TriggerSelector( args.year, None, singleLepton=True )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ), addOverFlowBin='upper' )
@@ -228,28 +270,32 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    plots += [ getYieldPlot( index ) ]
+    if mode in [ "mu", "e" ]: plots += [ getYieldPlot( index ) ]
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
 
-    if not args.noData:    data_sample.setSelectionString( [ getFilterCut( 2016, isData=True  ), leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ getFilterCut( 2016, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
-
+    if not args.noData:    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True  ), leptonSelection ] )
+    for sample in mc + signals: sample.setSelectionString( [ getFilterCut( args.year, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
+    
     # Overlap removal
     if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
+        print "overlap removal TTgamma"
         eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
         eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
     if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
+        print "overlap removal Zgamma"
         eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
         eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
     if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
+        print "overlap removal Wgamma"
         eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
         eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
     if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
+        print "overlap removal singleTop"
         eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
         eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
 

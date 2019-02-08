@@ -4,13 +4,15 @@
 
 # Standard Imports
 import sys
-from math                             import pi
+from math                              import pi
 import copy
 # RootTools
-from RootTools.core.standard          import *
+from RootTools.core.standard           import *
 
+from TTGammaEFT.plots.multiplicity     import multiplicity
 from TTGammaEFT.plots.multiplicityGood import multiplicityGood
 
 plotListData    = []
+plotListData   += multiplicity
 plotListData   += multiplicityGood
 plotListDataMC  = plotListData

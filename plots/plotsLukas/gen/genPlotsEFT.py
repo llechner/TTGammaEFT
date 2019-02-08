@@ -37,7 +37,7 @@ args = argParser.parse_args()
 from TTGammaEFT.Samples.genTuples_TTGamma_postProcessed      import *
 
 #signalSample = TTG_SingleLeptFromT_1L_test_EFT
-signalSample = TTG_DiLept_1L_small_EFT
+signalSample = TTG_DiLept_1L_EFT
 subdir       = signalSample.name
 
 # Logger
