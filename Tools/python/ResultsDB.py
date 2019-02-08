@@ -237,9 +237,9 @@ class ResultsDB:
         if overwrite and self.contains(key):
             logger.info("Overwriting old result.")
             self.removeObjects(key)
-
         logger.debug("Trying to write")
         columns = self.clean(key.keys()+["value"])
+
         if not sorted(columns) == sorted(self.columns):
             raise(ValueError("The columns don't match the table. Use the following: %s"%", ".join(self.columns)))
         
@@ -267,7 +267,6 @@ class ResultsDB:
                 time.sleep(0.01)
             except:
                 pass
-            return value
             self.close()
                 
 

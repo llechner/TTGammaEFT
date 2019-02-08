@@ -1,5 +1,5 @@
-allowedVars = [ "PhotonGood0_pt", "GenPhoton_pt[0]" ]
-texString  = { "PhotonGood0_pt":"p_{T}(#gamma)", "GenPhoton_pt[0]":"p_{T}(#gamma)" }
+allowedVars = [ "PhotonGood0_pt", "GenPhoton_pt[0]", "Jet_eta", "Jet_pt", "Jet_phi" ]
+texString  = { "PhotonGood0_pt":"p_{T}(#gamma)", "GenPhoton_pt[0]":"p_{T}(#gamma)", "Jet_eta":"#eta(jets)", "Jet_pt":"p_{T}(jets)", "Jet_phi":"#phi(jets)" }
 
 class Region:
 
@@ -33,7 +33,7 @@ class Region:
         for var in self.variables():
             svar = var
             s1=svar+">="+str(self.vals[var][0])
-            if self.vals[var][1]>-1: s1+="&&"+svar+"<"+str(self.vals[var][1])
+            if self.vals[var][1]>-999: s1+="&&"+svar+"<"+str(self.vals[var][1])
             res.append(s1)
         return "&&".join(res)
 
