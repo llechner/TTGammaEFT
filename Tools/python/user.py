@@ -29,7 +29,7 @@ if os.environ['USER'] in ['llechner']:
 
     data_directorySemiLep2016           = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
     data_directorySemiLep2017           = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
-    data_directorySemiLep2018           = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
+    data_directorySemiLep2018           = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
 
     data_datadirectorySemiLep2016       = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
     data_datadirectorySemiLep2017       = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
@@ -45,7 +45,7 @@ if os.environ['USER'] in ['llechner']:
 
     postprocessing_directory2016        = "TTGammaEFT_PP_2016_TTG_private_v4/dilep/"
     postprocessing_directory2017        = "TTGammaEFT_PP_2017_TTG_private_v5/dilep/"
-    postprocessing_directory2018        = "TTGammaEFT_PP_2018_TTG_private_v3/dilep/"
+    postprocessing_directory2018        = "TTGammaEFT_PP_2018_TTG_private_v4/dilep/"
 
     postprocessing_datadirectory2016    = "TTGammaEFT_PP_2016_TTG_Data_v4/dilep/"
     postprocessing_datadirectory2017    = "TTGammaEFT_PP_2017_TTG_Data_v4/dilep/"
@@ -53,7 +53,7 @@ if os.environ['USER'] in ['llechner']:
 
     postprocessing_directorySemiLep2016        = "TTGammaEFT_PP_2016_TTG_private_v4/semilep/"
     postprocessing_directorySemiLep2017        = "TTGammaEFT_PP_2017_TTG_private_v4/semilep/"
-    postprocessing_directorySemiLep2018        = "TTGammaEFT_PP_2018_TTG_private_v3/semilep/"
+    postprocessing_directorySemiLep2018        = "TTGammaEFT_PP_2018_TTG_private_v4/semilep/"
 
     postprocessing_datadirectorySemiLep2016    = "TTGammaEFT_PP_2016_TTG_Data_v4/semilep/"
     postprocessing_datadirectorySemiLep2017    = "TTGammaEFT_PP_2017_TTG_Data_v4/semilep/"

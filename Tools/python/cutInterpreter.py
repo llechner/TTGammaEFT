@@ -40,11 +40,12 @@ special_cuts = {
     "e":                 "nElectronTight==1",
   }
 
-continous_variables = [ ("metSig", "metSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt") ]
-discrete_variables  = [ ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepVeto","nLeptonVeto"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
+continous_variables = [ ("metSig", "metSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","Jet_eta[0]") ]
+discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepVeto","nLeptonVeto"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
 
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 
 if __name__ == "__main__":
-    print cutInterpreter.cutString("dilepOS-pTG20-nPhoton1p-offZSF-mll40")
+#    print cutInterpreter.cutString("dilepOS-pTG20-nPhoton1p-offZSF-mll40")
+    print cutInterpreter.cutString("etaj2.25To3-pTj100")
 
