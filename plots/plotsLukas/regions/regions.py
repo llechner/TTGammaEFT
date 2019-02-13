@@ -59,7 +59,7 @@ elif args.year == 2017:
 elif args.year == 2018:
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
     if not args.noData:
-        from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_postProcessed import *
+        from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_postProcessed import *
 
 # Gen Samples
 from TTGammaEFT.Samples.genTuples_TTGamma_postProcessed                    import *

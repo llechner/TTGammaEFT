@@ -13,14 +13,8 @@ logger = logging.getLogger(__name__)
 from TTGammaEFT.Samples.color import color
 
 # Data directory
-#try:    data_directory = sys.modules['__main__'].data_directory
-#except: from TTGammaEFT.Tools.user import data_directory2018 as data_directory
-from TTGammaEFT.Tools.user import data_directorySemiLep2018 as data_directory
-
-# Take post processing directory if defined in main module
-#try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
-#except: from TTGammaEFT.Tools.user import postprocessing_directory
-from TTGammaEFT.Tools.user import postprocessing_directorySemiLep2018 as postprocessing_directory
+from TTGammaEFT.Tools.user import data_directory1                        as data_directory
+from TTGammaEFT.Tools.user import postprocessing_directoryMC2018_semilep as postprocessing_directory
 
 logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory ) )
 

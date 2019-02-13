@@ -13,16 +13,10 @@ logger = logging.getLogger(__name__)
 from TTGammaEFT.Samples.color import color
 
 # Data directory
-#try:    data_directory = sys.modules['__main__'].data_directory
-#except: from TTGammaEFT.Tools.user import data_directory2016 as data_directory
-from TTGammaEFT.Tools.user import data_directory2016 as data_directory
+from TTGammaEFT.Tools.user import data_directory2                as data_directory
+from TTGammaEFT.Tools.user import postprocessing_directoryMC2016 as postprocessing_directory
 
-# Take post processing directory if defined in main module
-#try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
-#except: from TTGammaEFT.Tools.user import postprocessing_directory2016
-from TTGammaEFT.Tools.user import postprocessing_directory2016
-
-logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory2016 ) )
+logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory ) )
 
 # Directories
 dirs = {}
@@ -83,7 +77,7 @@ dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
-directories = { key : [ os.path.join( data_directory, postprocessing_directory2016, dir) for dir in dirs[key] ] for key in dirs.keys() }
+directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
 DY_LO_16           = Sample.fromDirectory(name="DY_LO",            treeName="Events", isData=False, color=color.DY,              texName="DY (LO)",           directory=directories['DY_LO'])

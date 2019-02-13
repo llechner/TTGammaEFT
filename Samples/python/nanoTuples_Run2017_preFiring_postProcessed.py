@@ -13,13 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Data directory
-#try:    data_directory = sys.modules['__main__'].data_directory
-#except: from TTGammaEFT.Tools.user import data_datadirectory2017 as data_directory
-from TTGammaEFT.Tools.user import data_directoryPrefiring as data_directory
-
-# Take post processing directory if defined in main module
-#try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
-#except: from TTGammaEFT.Tools.user import postprocessing_datadirectory2017
+from TTGammaEFT.Tools.user import data_directory1                   as data_directory
 from TTGammaEFT.Tools.user import postprocessing_directoryPrefiring as postprocessing_directory
 
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
