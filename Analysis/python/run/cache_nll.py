@@ -45,7 +45,7 @@ argParser.add_argument('--forceWriting',       action='store_true',             
 argParser.add_argument('--order',              action='store',      default=2,                                                                       help='Polynomial order of weight string (e.g. 2)')
 argParser.add_argument('--years',              action='store',      default=[ 2016, 2017 ], type=int, choices=[2016, 2017, 2018], nargs="*",         help="Which years to combine?")
 argParser.add_argument('--selections',         action='store',      default=[ "1l", "2l" ], type=str, choices=["1l", "2l"], nargs="*",               help="Which selections to combine?")
-argParser.add_argument('--binning',            action='store',      default=[50, -1, 1, 50, -1, 1 ], type=float, nargs=6,                            help="argument parameters")
+argParser.add_argument('--binning',            action='store',      default=[50, -2, 2, 50, -2, 2 ], type=float, nargs=6,                            help="argument parameters")
 argParser.add_argument('--cores',              action='store',      default=1,                       type=int,                                       help='number of cpu cores for multicore processing')
 argParser.add_argument('--checkOnly',          action='store_true',                                                                                  help='Just check if yield is already calculated', )
 argParser.add_argument('--inclusive',          action='store_true',                                                                                  help='run inclusive regions', )
@@ -61,14 +61,19 @@ else:
 combinedAnalysis = len(args.years) != 1 or len(args.selections) != 1
 
 tableName = "nllcache"
-if   "1l" in args.selections and len(args.selections) == 1: tableName += "_semilep"
-elif "2l" in args.selections and len(args.selections) == 1: tableName += "_dilep"
-elif len(args.selections) > 1:                              tableName += "_both"
-if len(args.years) > 1:                                     tableName += "_comb"
-if args.inclusive:                                          tableName += "_incl"
+cache_dir_yields = os.path.join(cache_directory, "yields")
+cache_dir_nll    = os.path.join(cache_directory, "nll")
+if not os.path.isdir(cache_dir_nll):
+    os.mkdir(cache_dir_nll)
+dbFile = "NLLcache"
+if   "1l" in args.selections and len(args.selections) == 1: dbFile += "_semilep"
+elif "2l" in args.selections and len(args.selections) == 1: dbFile += "_dilep"
+elif len(args.selections) > 1:                              dbFile += "_both"
+if len(args.years) > 1:                                     dbFile += "_comb"
+if args.inclusive:                                          dbFile += "_incl"
+dbFile += ".sql"
+dbPath = os.path.join(cache_dir_nll, dbFile)
 
-dbFile = "NLLcache.sql"
-dbPath = cache_directory + dbFile
 nllCache  = Cache( dbPath, tableName, ["cardname", "year", "WC1_name", "WC1_val", "WC2_name", "WC2_val", "nll_prefit", "nll_postfit" ] )
 if nllCache is None: raise
 
@@ -119,10 +124,9 @@ def isInDatabase( var1, var2 ):
     card = cardname.replace("var1", str(var1)).replace("var2", str(var2))
     res  = {'cardname':card, "year":"combined", "WC1_name":args.variables[0], "WC1_val":var1, "WC2_name":args.variables[1], "WC2_val":var2}
     nCacheFiles = nllCache.contains( res )
-
-    if args.checkOnly:
-        if not nCacheFiles: logger.info( "Limit not calculated for %s=%s, %s=%s!" %(args.variables[0], str(var1), args.variables[1], str(var2)) )
-        return True
+#    if args.checkOnly:
+#        if not nCacheFiles: logger.info( "Limit not calculated for %s=%s, %s=%s!" %(args.variables[0], str(var1), args.variables[1], str(var2)) )
+#        return True
 
     if nCacheFiles: return True
     else: return False
@@ -155,6 +159,11 @@ points2D += [ (varX, varY) for varY in yRange for varX in xRange] #2D plots
 
 if not args.overwrite:
     points2D = [ (x,y) for x,y in points2D if not isInDatabase( x, y ) ]
+
+    if args.checkOnly:
+        logger.info( "Limit not calculated for %i points" %(len(points2D)) )
+        sys.exit(0)
+
     if not points2D: sys.exit(0) #nothing to calculate
 
 w = {}
@@ -194,11 +203,11 @@ if 2017 in args.years:
 if 2018 in args.years:
     lumi_scale[2018]       = 58.83
     if "1l" in args.selections:
-        mc["1l"][2018]         = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
-        ttGSample["1l"][2018]  = None
+        mc["1l"][2018]         = [ TT_pow_18, singleTop_18 ]#, DY_LO_18, other_18 ]
+        ttGSample["1l"][2018]  = TTG_18
     if "2l" in args.selections:
-        mc["2l"][2018]         = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
-        ttGSample["2l"][2018]  = None
+        mc["2l"][2018]         = [ DY_LO_18, TT_pow_18, singleTop_18]#, other_18 ]
+        ttGSample["2l"][2018]  = TTG_18
 
 def calculation( (var1, var2) ):
     
@@ -240,11 +249,11 @@ def calculation( (var1, var2) ):
 
             signal_rate[region] = rate[sel][year][region][ttGSample[sel][year].name] * signal_genKFactor
 
-            signal_btagging_uncertainty   [region] = 1.03# if not i_region   else 1.01
-            signal_mistagging_uncertainty [region] = 1.03# if not i_region   else 1.01
-            signal_muonId_uncertainty     [region] = 1.03# if not i_region   else 1.01
-            signal_electronId_uncertainty [region] = 1.03# if not i_region   else 1.01
-            signal_jes_uncertainty        [region] = 1.03# if not i_region   else 1.01
+            signal_btagging_uncertainty   [region] = 1.04# if not i_region   else 1.01
+            signal_mistagging_uncertainty [region] = 1.04# if not i_region   else 1.01
+            signal_muonId_uncertainty     [region] = 1.04# if not i_region   else 1.01
+            signal_electronId_uncertainty [region] = 1.04# if not i_region   else 1.01
+            signal_jes_uncertainty        [region] = 1.04# if not i_region   else 1.01
 
             bin_name  = "Region_%i" %i_region
             nice_name = region.__str__()
@@ -306,7 +315,7 @@ def calculation( (var1, var2) ):
         for i in range(10):
             if nllCache.contains( res ): return
             logger.info("LIMIT NOT WRITTEN! RECOVERING DB FILE AND TRYING AGAIN!")
-            recoverDB( cache_directory, dbFile )
+            recoverDB( cache_dir_nll, dbFile )
             time.sleep(0.5)
             nllCache.add( res, nll_prefit, overwrite=True )
 
@@ -359,15 +368,13 @@ for i_sel, sel in enumerate(args.selections):
             electronId_uncertainty[sel][year][region] = {}
             muonId_uncertainty    [sel][year][region] = {}
 
-cache_dir = os.path.join(cache_directory, "yields")
-
 def getSMYields( year, sel ):
     for i_sample, sample in enumerate( mc[sel][year] + [ttGSample[sel][year]]):
 
         logger.info( "Getting yield for sample %s", sample.name )
 
         dbFilename = "yields_%s.sql"%sample.name
-        yieldDB = Cache( os.path.join( cache_dir, dbFilename ), "yields", [ "selection", "year", "small", "region", sample.name] )
+        yieldDB = Cache( os.path.join( cache_dir_yields, dbFilename ), "yields", [ "selection", "year", "small", "region", sample.name] )
         if not yieldDB: raise
 
         for i_region, region in enumerate(regions):
@@ -392,11 +399,11 @@ def setup( year, sel ):
         logger.info( "At gen region %s", genRegion )
 
         for i_sample, sample in enumerate( mc[sel][year] + [ttGSample[sel][year]] ):
-            btagging_uncertainty   [sel][year][region][sample.name] = 1.03 if not i_region else 1.01
-            mistagging_uncertainty [sel][year][region][sample.name] = 1.03 if not i_region else 1.01
-            jes_uncertainty        [sel][year][region][sample.name] = 1.03 if not i_region else 1.01
-            electronId_uncertainty [sel][year][region][sample.name] = 1.03 if not i_region else 1.01
-            muonId_uncertainty     [sel][year][region][sample.name] = 1.03 if not i_region else 1.01
+            btagging_uncertainty   [sel][year][region][sample.name] = 1.04# if not i_region else 1.01
+            mistagging_uncertainty [sel][year][region][sample.name] = 1.04# if not i_region else 1.01
+            jes_uncertainty        [sel][year][region][sample.name] = 1.04# if not i_region else 1.01
+            electronId_uncertainty [sel][year][region][sample.name] = 1.04# if not i_region else 1.01
+            muonId_uncertainty     [sel][year][region][sample.name] = 1.04# if not i_region else 1.01
                 
         # ttgamma (background) SM rates, genRates same for all years
         genSel = "&&".join( [ cutInterpreter.cutString( genSelection[sel] ), genRegion.cutString() ] )

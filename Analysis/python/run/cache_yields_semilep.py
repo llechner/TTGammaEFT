@@ -74,7 +74,7 @@ elif args.year == 2017:
     mc = [ DY_LO_17, TG_17, WJets_17, WG_17, TT_pow_17, singleTop_17, other_17, TTG_17 ]
 
 elif args.year == 2018:
-    mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ] #TTG missing
+    mc = [ TT_pow_18, TTG_18, singleTop_18 ]#, DY_LO_18, singleTop_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -112,9 +112,9 @@ if args.year == 2017:
     WJets_17.addSelectionString( "isZWGamma==0" )
     TG_17.addSelectionString(        "isSingleTopTch==1" )
     singleTop_17.addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
-#if args.year == 2018:
-#    TTG_18.addSelectionString( "isTTGamma==1" )
-#    TT_pow_18.addSelectionString( "isTTGamma==0" )
+if args.year == 2018:
+    TTG_18.addSelectionString( "isTTGamma==1" )
+    TT_pow_18.addSelectionString( "isTTGamma==0" )
 
 if args.small:
 
