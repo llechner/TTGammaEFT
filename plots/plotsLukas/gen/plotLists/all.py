@@ -8,9 +8,6 @@ from math                             import pi
 # RootTools
 from RootTools.core.standard          import *
 
-# TTGammaEFT
-from TTGammaEFT.Tools.constants       import defaultValue
-
 from TTGammaEFT.plots.genMet          import genMet
 from TTGammaEFT.plots.genPhoton0      import genPhoton0
 from TTGammaEFT.plots.genLepton0      import genLepton0

@@ -8,9 +8,6 @@ from math                             import pi
 # RootTools
 from RootTools.core.standard          import *
 
-# TTGammaEFT
-from TTGammaEFT.Tools.constants       import defaultValue
-
 # plotList
 met = []
     

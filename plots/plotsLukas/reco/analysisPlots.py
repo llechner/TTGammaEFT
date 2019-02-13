@@ -286,7 +286,7 @@ addPlots.append( Plot(
     name      = 'mll',
     texX      = 'M(ll) (GeV)',
     texY      = 'Number of Events / 4 GeV',
-    attribute = lambda event, sample: event.mll if event.nLeptonGood >= 2 else defaultValue,
+    attribute = lambda event, sample: event.mll if event.nLeptonGood >= 2 else -999,
     binning   = [ 50, 0, 200 ],
 ))
 
@@ -294,7 +294,7 @@ addPlots.append( Plot(
     name      = 'mll_Zpeak',
     texX      = 'M(ll) (GeV)',
     texY      = 'Number of Events / 4 GeV',
-    attribute = lambda event, sample: event.mll if event.nLeptonGood >= 2 else defaultValue,
+    attribute = lambda event, sample: event.mll if event.nLeptonGood >= 2 else -999,
     binning   = [ 50, 70, 110 ],
 ))
 

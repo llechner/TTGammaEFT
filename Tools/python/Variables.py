@@ -133,6 +133,9 @@ class NanoVariables:
                              Variable( "cleanmask",     "O", read=True,  write=True,  inData=True,  inPlot=True ),
                              Variable( "jetId",         "I", read=True,  write=True,  inData=True,  inPlot=True ),
 
+                             Variable( "isGood",        "I", read=False, write=True,  inData=True,  inPlot=True ),
+                             Variable( "isBJet",        "I", read=False, write=True,  inData=True,  inPlot=True ),
+
                              Variable( "area",          "F", read=True,  write=True,  inData=True,  inPlot=False ),
                              Variable( "btagCMVA",      "F", read=True,  write=True,  inData=True,  inPlot=False ),
                              Variable( "btagDeepC",     "F", read=True,  write=True,  inData=True,  inPlot=False ),
@@ -194,14 +197,14 @@ class NanoVariables:
 
 
         self.GenVariables = [\
-                             Variable( "pt",              "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "eta",             "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "phi",             "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "mass",            "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "pdgId",           "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "genParIdxMother", "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "status",          "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "statusFlags",     "I", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "pt",               "F", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "eta",              "F", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "phi",              "F", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "mass",             "F", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "pdgId",            "I", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "genPartIdxMother", "I", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "status",           "I", read=True,  write=True,  inData=False,  inPlot=False ),
+                             Variable( "statusFlags" ,     "I", read=True,  write=True,  inData=False,  inPlot=False ),
                             ]
 
         self.GenJetVariables = [\

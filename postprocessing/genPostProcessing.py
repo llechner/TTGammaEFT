@@ -25,8 +25,6 @@ from TTGammaEFT.Tools.observables                import deltaR, deltaR2
 from TTGammaEFT.Tools.genObjectSelection         import isGoodGenJet, isGoodGenLepton, isGoodGenPhoton
 from TTGammaEFT.Tools.genObjectSelection         import genJetId
 
-from TTGammaEFT.Tools.constants                  import defaultValue
-
 from TTGammaEFT.Tools.WeightInfo                 import WeightInfo
 from TTGammaEFT.Tools.HyperPoly                  import HyperPoly
 
