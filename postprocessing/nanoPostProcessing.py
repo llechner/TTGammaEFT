@@ -587,44 +587,6 @@ def filler( event ):
         if len(GenJet) > 0:      fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20] )
         if len(GenTop) > 0:      fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20] )
         
-
-        # EFT event weights
-        if options.addReweights:
-            event.nrw    = weightInfo.nid
-            lhe_weights  = reader.products['lhe'].weights()
-            weights      = []
-            param_points = []
-            for weight in lhe_weights:
-                # Store nominal weight (First position!) 
-                if weight.id == 'rwgt_1': event.rw_nominal = weight.wgt
-                if not weight.id in weightInfo.id: continue
-                pos = weightInfo.data[weight.id]
-                event.rw_w[pos] = weight.wgt
-                weights.append( weight.wgt )
-                interpreted_weight = interpret_weight(weight.id)
-                for var in weightInfo.variables:
-                    getattr( event, "rw_"+var )[pos] = interpreted_weight[var]
-                # weight data for interpolation
-                if not hyperPoly.initialized:
-                    param_points.append( tuple(interpreted_weight[var] for var in weightInfo.variables) )
-
-            # get list of values of ref point in specific order
-            ref_point_coordinates = [ weightInfo.ref_point_coordinates[var] for var in weightInfo.variables ]
-
-            # Initialize with Reference Point
-            if not hyperPoly.initialized: hyperPoly.initialize( param_points, ref_point_coordinates )
-            coeff = hyperPoly.get_parametrization( weights )
-
-            # = HyperPoly(weight_data, args.interpolationOrder)
-            event.np = hyperPoly.ndof
-            event.chi2_ndof = hyperPoly.chi2_ndof( coeff, weights )
-            #logger.debug( "chi2_ndof %f coeff %r", event.chi2_ndof, coeff )
-            if event.chi2_ndof>10**-6: logger.warning( "chi2_ndof is large: %f", event.chi2_ndof )
-            for n in xrange( hyperPoly.ndof ):
-                event.p_C[n] = coeff[n]
-
-            event.ref_weight = event.weight / event.p_C[0]
-
     elif isData:
         event.weight     = 1.
         event.ref_weight = 1.
@@ -736,7 +698,7 @@ def filler( event ):
 
     # Loose jets w/o pt/eta requirement
     allJets = list( filter( lambda j: recoJetSel_noPtEtaCut(j), allJets ) )
-    addJetFlags( allJets, selectedLeptons if isDilep else selectedTightLepton, mediumPhotons )
+    addJetFlags( allJets, selectedLeptons if isDiLep else selectedTightLepton, mediumPhotons )
     # Loose jets w/ pt/eta requirement (analysis jets)
     jets    = list( filter( lambda x: x["isGood"], allJets ) )
 
