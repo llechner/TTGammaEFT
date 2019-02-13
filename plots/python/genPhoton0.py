@@ -23,35 +23,11 @@ genPhoton0.append( Plot(
 ))
 
 genPhoton0.append( Plot(
-    name      = 'genPhoton0_pt_EFT40_wide',
-    texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 40 GeV',
-    attribute = lambda event, sample: event.GenPhoton_pt[0] if event.nGenPhoton > 0 else defaultValue,
-    binning   = [ 15, 20, 620 ],
-))
-
-genPhoton0.append( Plot(
-    name      = 'genPhoton0_pt_EFT100_wide',
+    name      = 'genPhoton0_pt_EFT',
     texX      = 'p_{T}(#gamma_{0}) (GeV)',
     texY      = 'Number of Events / 100 GeV',
     attribute = lambda event, sample: event.GenPhoton_pt[0] if event.nGenPhoton > 0 else defaultValue,
-    binning   = [ 6, 20, 620 ],
-))
-
-genPhoton0.append( Plot(
-    name      = 'genPhoton0_pt_EFT40',
-    texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 40 GeV',
-    attribute = lambda event, sample: event.GenPhoton_pt[0] if event.nGenPhoton > 0 else defaultValue,
-    binning   = [ 10, 20, 420 ],
-))
-
-genPhoton0.append( Plot(
-    name      = 'genPhoton0_pt_EFT100',
-    texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 100 GeV',
-    attribute = lambda event, sample: event.GenPhoton_pt[0] if event.nGenPhoton > 0 else defaultValue,
-    binning   = [ 4, 20, 420 ],
+    binning   = [ 5, 20, 520 ],
 ))
 
 genPhoton0.append( Plot(

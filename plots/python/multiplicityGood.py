@@ -71,11 +71,27 @@ multiplicityGood.append( Plot(
 ))
 
 multiplicityGood.append( Plot(
-    name      = 'nJetGood',
+    name      = 'nJetGood_wide',
     texX      = 'N_{jet}',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.nJetGood,
     binning   = [ 15, 0, 15 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nJetGood',
+    texX      = 'N_{jet}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nJetGood,
+    binning   = [ 6, 0, 6 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nJetGood_semi',
+    texX      = 'N_{jet}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nJetGood,
+    binning   = [ 6, 4, 10 ],
 ))
 
 multiplicityGood.append( Plot(

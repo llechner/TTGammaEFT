@@ -15,14 +15,6 @@ from TTGammaEFT.Tools.constants       import defaultValue
 cutsJetGood0 = []
     
 cutsJetGood0.append( Plot(
-    name      = 'jetGood0_nConstituents',
-    texX      = 'nConstituents(jet_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.JetGood_nConstituents[0] if event.nJetGood > 0 else defaultValue,
-    binning   = [ 5, 0, 5 ],
-))
-
-cutsJetGood0.append( Plot(
     name      = 'jetGood0_neHEF',
     texX      = 'neHEF(jet_{0})',
     texY      = 'Number of Events',
@@ -52,13 +44,5 @@ cutsJetGood0.append( Plot(
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.JetGood_chHEF[0] if event.nJetGood > 0 else defaultValue,
     binning   = [ 30, 0, 1 ],
-))
-
-cutsJetGood0.append( Plot(
-    name      = 'jetGood0_ID',
-    texX      = 'ID(jet_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.JetGood_jetId[0] if event.nJetGood > 0 else defaultValue,
-    binning   = [ 4, 0, 4 ],
 ))
 

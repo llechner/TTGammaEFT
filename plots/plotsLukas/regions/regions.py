@@ -152,15 +152,15 @@ def drawPlots( plots ):
 # Sample definition
 if args.year == 2016:
     mc = [ DY_LO_16, TT_pow_16, ZG_16, singleTop_16, other_16 ]
-    ttGammaSample       = TTG_16
+    ttGammaSample  = TTG_16
 
 elif args.year == 2017:
     mc = [ DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
-    ttGammaSample       = TTG_17
+    ttGammaSample = TTG_17
 
 elif args.year == 2018:
-    mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
-    ttGammaSample       = None
+    mc = [ DY_LO_18, TT_pow_18, singleTop_18]#, other_18 ]
+    ttGammaSample = TTG_18 
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92

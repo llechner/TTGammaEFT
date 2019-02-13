@@ -1,3 +1,4 @@
+y
 #!/usr/bin/env python
 ''' Define list of plots for plot script
 '''

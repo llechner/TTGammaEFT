@@ -19,27 +19,11 @@ beam.append(Plot(
     texX = 'N_{PV} (total)',
     texY = 'Number of Events',
     attribute = TreeVariable.fromString( "PV_npvs/I" ),
-    binning=[50,0,50],
-))
-
-beam.append(Plot(
-    name = 'PV_npvs_good',
-    texX = 'N_{PV} (good)',
-    texY = 'Number of Events',
-    attribute = TreeVariable.fromString( "PV_npvsGood/I" ),
-    binning=[50,0,50],
-))
-
-beam.append(Plot(
-    name = 'PV_npvs_wide',
-    texX = 'N_{PV} (total)',
-    texY = 'Number of Events',
-    attribute = TreeVariable.fromString( "PV_npvs/I" ),
     binning=[100,0,100],
 ))
 
 beam.append(Plot(
-    name = 'PV_npvs_good_wide',
+    name = 'PV_npvs_good',
     texX = 'N_{PV} (good)',
     texY = 'Number of Events',
     attribute = TreeVariable.fromString( "PV_npvsGood/I" ),

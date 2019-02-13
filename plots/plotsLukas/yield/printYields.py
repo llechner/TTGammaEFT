@@ -86,19 +86,19 @@ sequence = []
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TT_pow_16, TTGLep_16, DY_LO_16, singleTop_16, ZGTo2LG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_16 ]
+    else:            mc = [ TT_pow_16, TTG_16, DY_LO_16, singleTop_16, ZGTo2LG_16, other_16 ]
 elif args.year == 2017:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TTGLep_16, DY_LO_16, TT_pow_16, singleTop_16, ZGTo2LG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_17 ]
+    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
 elif args.year == 2018:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TTGLep_16, DY_LO_16, TT_pow_16, singleTop_16, ZGTo2LG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_18 ]
+    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18 ]#, singleTop_18, ZGTo2LG_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.9
-    elif args.year == 2017: lumi_scale = 35.92
-    elif args.year == 2018: lumi_scale = 35.92
+    elif args.year == 2017: lumi_scale = 
+    elif args.year == 2018: lumi_scale = 
     stack      = Stack( mc )
 else:
     if args.year == 2016:   data_sample = Run2016

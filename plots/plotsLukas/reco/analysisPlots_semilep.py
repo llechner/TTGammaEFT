@@ -207,8 +207,8 @@ elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
     else:            mc = [ TTG_17, DY_LO_17, TG_17, WJets_17, WG_17, TT_pow_17, singleTop_17, other_17 ]
 elif args.year == 2018:
-    if args.onlyTTG: mc = [ ]
-    else:            mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
+    if args.onlyTTG: mc = [ TTG_18 ]
+    else:            mc = [ TTG_18, TT_pow_18, singleTop_18]#, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92

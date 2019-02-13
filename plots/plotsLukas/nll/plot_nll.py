@@ -54,6 +54,7 @@ argParser.add_argument('--xyRange',            action='store',      default=[Non
 argParser.add_argument('--binMultiplier',      action='store',      default=3,                 type=int,                                             help='bin multiplication factor')
 argParser.add_argument('--skipMissingPoints',  action='store_true',                                                                                  help='Set missing NLL points to 999?')
 argParser.add_argument('--inclusive',          action='store_true',                                                                                  help='run inclusive regions', )
+argParser.add_argument('--tag',                action='store',      default="combined",        type=str,                                             help='bin multiplication factor')
 args = argParser.parse_args()
 
 args = argParser.parse_args()
@@ -66,14 +67,18 @@ logger_rt = logger_rt.get_logger( args.logLevel, logFile = None)
 
 
 tableName = "nllcache"
-if   "1l" in args.selections and len(args.selections) == 1: tableName += "_semilep"
-elif "2l" in args.selections and len(args.selections) == 1: tableName += "_dilep"
-elif len(args.selections) > 1:                              tableName += "_both"
-if len(args.years) > 1:                                     tableName += "_comb"
-if args.inclusive:                                          tableName += "_incl"
+cache_directory += "nll/"
+dbFile = "NLLcache"
+if   "1l" in args.selections and len(args.selections) == 1: dbFile += "_semilep"
+elif "2l" in args.selections and len(args.selections) == 1: dbFile += "_dilep"
+elif len(args.selections) > 1:                              dbFile += "_both"
+if len(args.years) > 1:                                     dbFile += "_comb"
+if args.inclusive:                                          dbFile += "_incl"
+if args.tag != "combined":                                  dbFile += "_%s"%args.tag
+dbFile += ".sql"
 
-dbFile = "NLLcache.sql"
 dbPath = cache_directory + dbFile
+
 nllCache  = Cache( dbPath, tableName, ["cardname", "year", "WC1_name", "WC1_val", "WC2_name", "WC2_val", "nll_prefit", "nll_postfit" ] )
 if nllCache is None: raise
 
@@ -99,6 +104,7 @@ cardname += [ args.variables[0], "var1", args.variables[1], "var2" ]
 cardname += [ selection[sel] for sel in args.selections ]
 cardname += [ 'small' if args.small else 'full' ]
 if args.inclusive: cardname += [ "incl" ]
+if args.tag != "combined": cardname += [ args.tag ]
 cardname  = '_'.join( cardname )
 
 lumi = {}
@@ -109,6 +115,7 @@ lumi_scale = sum( [ lumi[year] for year in args.years ])
 
 def getNllData( var1, var2 ):
     card = cardname.replace("var1", str(var1)).replace("var2", str(var2))
+
     res  = {'cardname':card, "year":"combined", "WC1_name":args.variables[0], "WC1_val":var1, "WC2_name":args.variables[1], "WC2_val":var2}
     nCacheFiles = nllCache.contains( res )
 
@@ -277,6 +284,7 @@ if not os.path.isdir( plot_directory_ ):
     try: os.makedirs( plot_directory_ )
     except: pass
 
+plotname = "%s%s"%("_".join(args.variables), "_%s"%args.tag if args.tag != "combined" else "")
 for e in [".png",".pdf",".root"]:
-    cans.Print( plot_directory_ + "/%s%s"%("_".join(args.variables), e) )
+    cans.Print( plot_directory_ + "/%s%s"%(plotname, e) )
 

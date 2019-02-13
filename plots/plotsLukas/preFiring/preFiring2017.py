@@ -79,15 +79,16 @@ def drawPlots( plots, mode ):
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos): 
                 continue # Empty plot
-            postFix = " (unprefirable)"
+#            postFix = " (unprefirable)"
 #            postFix = " (legacy)"
-            if not args.noData: 
-                plot.histos[1][0].style          = styles.errorStyle( ROOT.kBlack )
-                if mode == "all":
+#            if not args.noData: 
+            plot.histos[0][0].style          = styles.errorStyle( ROOT.kBlue )
+            plot.histos[1][0].style          = styles.errorStyle( ROOT.kBlack )
+#                if mode == "all":
 #                    plot.histos[1][0].legendText = "Data" + postFix
-                    plot.histos[1][0].legendText = "data" + postFix
-                if mode == "SF":
-                    plot.histos[1][0].legendText = "data" + postFix
+#                    plot.histos[1][0].legendText = "data" + postFix
+#                if mode == "SF":
+#                    plot.histos[1][0].legendText = "data" + postFix
             extensions_ = ["pdf", "png", "root"] if mode == 'all' else ['png']
 
             plotting.draw( plot,
@@ -193,13 +194,13 @@ stack      = Stack( [ Run2017 ], Run2017_noPreFiring )
 
 Run2017.texName = "data"
 Run2017.name    = "data"
-Run2017.style = styles.fillStyle( ROOT.kOrange-3 )
+Run2017.style = styles.errorStyle( ROOT.kBlue )#styles.fillStyle( ROOT.kOrange-3 )
 Run2017.scale = 1
 
 if args.small:
     for sample in stack.samples:
         sample.normalization=1.
-        sample.reduceFiles( factor=5 )
+        sample.reduceFiles( factor=50 )
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight

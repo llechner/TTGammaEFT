@@ -42,6 +42,6 @@ checksGood.append( Plot(
     name      = 'photonGood0_category',
     texX      = 'Category_{#gamma_{0}}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.PhotonGood_photonCat[0] if event.nPhotonGood > 0 else defaultValue,
+    attribute = lambda event, sample: event.PhotonGood0_photonCat if event.nPhotonGood > 0 else defaultValue,
     binning   = [ 4, 0, 4 ],
 ))

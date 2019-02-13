@@ -15,7 +15,7 @@ from TTGammaEFT.Tools.constants       import defaultValue
 jetGood1 = []
     
 jetGood1.append( Plot(
-    name      = 'jetGood1_pt',
+    name      = 'jetGood1_pt_wide',
     texX      = 'p_{T}(jet_{1}) (GeV)',
     texY      = 'Number of Events / 30 GeV',
     attribute = lambda event, sample: event.JetGood_pt[1] if event.nJetGood > 1 else defaultValue,
@@ -23,7 +23,7 @@ jetGood1.append( Plot(
 ))
 
 jetGood1.append( Plot(
-    name      = 'jetGood1_pt_tight',
+    name      = 'jetGood1_pt',
     texX      = 'p_{T}(jet_{1}) (GeV)',
     texY      = 'Number of Events / 10 GeV',
     attribute = lambda event, sample: event.JetGood_pt[1] if event.nJetGood > 1 else defaultValue,

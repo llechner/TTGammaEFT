@@ -232,8 +232,8 @@ elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
     else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
 elif args.year == 2018:
-    if args.onlyTTG: mc = [ ]
-    else:            mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
+    if args.onlyTTG: mc = [ TTG_18 ]
+    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18 ]#, other_18 ]
 #    else:            mc = [ DY_LO_18, TT_pow_18, other_18 ]
 
 if args.noData:
@@ -263,7 +263,7 @@ for sample in mc + signals:
 if args.small:
     for sample in stack.samples:
         sample.normalization=1.
-        sample.reduceFiles( factor=15 )
+        sample.reduceFiles( factor=5 )
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
@@ -387,9 +387,9 @@ for index, mode in enumerate( allModes ):
     if args.year == 2017:
         TTG_17.addSelectionString( "isTTGamma==1" )
         TT_pow_17.addSelectionString( "isTTGamma==0" )
-#    if args.year == 2018:
-#        TTG_18.addSelectionString( "isTTGamma==1" )
-#        TT_pow_18.addSelectionString( "isTTGamma==0" )
+    if args.year == 2018:
+        TTG_18.addSelectionString( "isTTGamma==1" )
+        TT_pow_18.addSelectionString( "isTTGamma==0" )
 
     # Overlap removal
 #    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):

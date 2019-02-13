@@ -14,7 +14,7 @@ argParser.add_argument('--logLevel',       action='store', default='INFO',      
 argParser.add_argument("--removeDir",      action='store_true',                                                             help="Remove the directory in the combine release after study is done?")
 argParser.add_argument("--cores",          action='store', default=6,               nargs='?',                              help="Run on n cores in parallel")
 argParser.add_argument("--cardfile",       action='store', default='',              nargs='?',                              help="which cardfile?")
-argParser.add_argument('--year',           action='store',      default=None,   type=int,  choices=[2016,2017,2018],                             help="Which year to plot?")
+argParser.add_argument('--year',           action='store',      default=None,   type=str,  choices=["2016","2017","2018","combined"],                             help="Which year to plot?")
 args = argParser.parse_args()
 
 
@@ -63,7 +63,7 @@ def wrapper():
     
     os.system(combineCommand)
 
-    plotDir = plot_directory + "/impacts%i/"%args.year
+    plotDir = plot_directory + "/impacts%s/"%args.year
     if not os.path.isdir(plotDir): os.makedirs(plotDir)
     shutil.copyfile(combineDirname+'/impacts.pdf', "%s/%s.pdf"%(plotDir,"impacts"))
 

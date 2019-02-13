@@ -61,6 +61,7 @@ argParser.add_argument('--binMultiplier',      action='store',      default=3,  
 argParser.add_argument('--skipMissingPoints',  action='store_true',                                                                                  help='Set missing NLL points to 999?')
 argParser.add_argument('--plotData',           action='store_true',                                                                                  help='Plot data points?')
 argParser.add_argument('--inclusive',          action='store_true',                                                                                  help='run inclusive regions', )
+argParser.add_argument('--tag',                action='store',      default="combined",        type=str,                                             help='tag for unc studies')
 args = argParser.parse_args()
 
 # Logger
@@ -77,13 +78,16 @@ subdir          = genSignalSample.name
 
 
 tableName = "nllcache"
-if   "1l" in args.selections and len(args.selections) == 1: tableName += "_semilep"
-elif "2l" in args.selections and len(args.selections) == 1: tableName += "_dilep"
-elif len(args.selections) > 1:                              tableName += "_both"
-if len(args.years) > 1:                                     tableName += "_comb"
-if args.inclusive:                                          tableName += "_incl"
+cache_directory += "nll/"
+dbFile = "NLLcache"
+if   "1l" in args.selections and len(args.selections) == 1: dbFile += "_semilep"
+elif "2l" in args.selections and len(args.selections) == 1: dbFile += "_dilep"
+elif len(args.selections) > 1:                              dbFile += "_both"
+if len(args.years) > 1:                                     dbFile += "_comb"
+if args.inclusive:                                          dbFile += "_incl"
+if args.tag != "combined":                                  dbFile += "_%s"%args.tag
+dbFile += ".sql"
 
-dbFile = "NLLcache.sql"
 dbPath = cache_directory + dbFile
 nllCache  = Cache( dbPath, tableName, ["cardname", "year", "WC1_name", "WC1_val", "WC2_name", "WC2_val", "nll_prefit", "nll_postfit" ] )
 if nllCache is None: raise
@@ -107,6 +111,8 @@ cardname += args.selections
 cardname += [ args.variables[0], "var1", args.variables[1], "var2" ]
 cardname += [ selection[sel] for sel in args.selections ]
 cardname += [ 'small' if args.small else 'full' ]
+if args.inclusive: cardname += [ "incl" ]
+if args.tag != "combined": cardname += [ args.tag ]
 cardname  = '_'.join( cardname )
 
 lumi = {}
@@ -220,8 +226,8 @@ def plot1D( dat, var, xmin, xmax, profiled=False ):
     func.SetLineColor(ROOT.kBlack)
     func.SetNpx(1000)
 
-    print var, '68', x68min, x68max
-    print var, '95', x95min, x95max
+    print " ".join(args.selections+map(str,args.years)), var, '68', x68min, x68max
+    print " ".join(args.selections+map(str,args.years)), var, '95', x95min, x95max
 
     ROOT.gStyle.SetPadLeftMargin(0.14)
     ROOT.gStyle.SetPadRightMargin(0.1)
@@ -319,8 +325,11 @@ def plot1D( dat, var, xmin, xmax, profiled=False ):
     latex1.DrawLatex(0.15, 0.92, '#bf{CMS} #it{Simulation Preliminary} ' + addon),
     latex1.DrawLatex(0.64, 0.92, '#bf{%3.1f fb{}^{-1} (13 TeV)}' % lumi_scale)
 
+    plotname = "%s%s%s"%(var, "_profiled" if profiled else "", "_%s"%args.tag if args.tag != "combined" else "")
     for e in [".png",".pdf",".root"]:
-        cans.Print( plot_directory_ + "/%s%s%s"%(var, "_profiled" if profiled else "", e) )
+        cans.Print( plot_directory_ + "/%s%s"%(plotname, e) )
+#    for e in [".png",".pdf",".root"]:
+#        cans.Print( plot_directory_ + "/%s%s%s"%(var, "_profiled" if profiled else "", e) )
 
 
 

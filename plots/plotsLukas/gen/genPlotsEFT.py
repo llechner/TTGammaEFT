@@ -26,7 +26,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                                help="Log level for logging")
 argParser.add_argument('--plotFile',           action='store',      default='all')
-argParser.add_argument('--selection',          action='store',      default='dilepOS-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40')
+argParser.add_argument('--selection',          action='store',      default='dilepOS-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40-nJet2p-nBTag1p')
 argParser.add_argument('--small',              action='store_true',                                                                                  help='Run only on a small subset of the data?', )
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                                   help="Normalize yields" )
 argParser.add_argument('--order',              action='store',      default=2,                                                                       help='Polynomial order of weight string (e.g. 2)')

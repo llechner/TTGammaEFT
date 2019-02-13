@@ -93,7 +93,7 @@ from TTGammaEFT.Samples.nanoTuples_Run2017_preFiring_postProcessed import *
 
 Run2017.texName = "data"
 Run2017.name    = "data"
-Run2017.style   = styles.fillStyle( ROOT.kOrange-3 )
+Run2017.style   = styles.errorStyle( ROOT.kBlue )#styles.fillStyle( ROOT.kOrange-3 )
 
 Run2017_noPreFiring = copy.deepcopy(Run2017)
 Run2017_noPreFiring.texName = "data (unprefirable)"

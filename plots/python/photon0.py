@@ -23,27 +23,11 @@ photon0.append( Plot(
 ))
 
 photon0.append( Plot(
-    name      = 'photon0_eta_tight',
-    texX      = '#eta(#gamma_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.Photon_eta[0] if event.nPhoton > 0 else defaultValue,
-    binning   = [ 24, -1.8, 1.8 ],
-))
-
-photon0.append( Plot(
     name      = 'photon0_eta',
     texX      = '#eta(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Photon_eta[0] if event.nPhoton > 0 else defaultValue,
     binning   = [ 24, -4, 4 ],
-))
-
-photon0.append( Plot(
-    name      = 'photon0_absEta_tight',
-    texX      = '|#eta|(#gamma_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Photon_eta[0]) if event.nPhoton > 0 else defaultValue,
-    binning   = [ 9, 0, 1.8 ],
 ))
 
 photon0.append( Plot(

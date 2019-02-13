@@ -15,7 +15,7 @@ from TTGammaEFT.Tools.constants       import defaultValue
 met = []
     
 met.append( Plot(
-    name      = 'MET_pt_loose',
+    name      = 'MET_pt_800',
     texX      = 'E^{miss}_{T} (GeV)',
     texY      = 'Number of Events / 40 GeV',
     attribute = lambda event, sample: event.MET_pt,
@@ -23,7 +23,7 @@ met.append( Plot(
 ))
 
 met.append( Plot(
-    name      = 'MET_pt',
+    name      = 'MET_pt_400',
     texX      = 'E^{miss}_{T} (GeV)',
     texY      = 'Number of Events / 20 GeV',
     attribute = lambda event, sample: event.MET_pt,
@@ -31,7 +31,7 @@ met.append( Plot(
 ))
 
 met.append( Plot(
-    name      = 'MET_pt_tight',
+    name      = 'MET_pt_200',
     texX      = 'E^{miss}_{T} (GeV)',
     texY      = 'Number of Events / 10 GeV',
     attribute = lambda event, sample: event.MET_pt,

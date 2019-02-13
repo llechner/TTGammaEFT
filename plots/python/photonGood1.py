@@ -27,7 +27,7 @@ photonGood1.append( Plot(
     texX      = '#eta(#gamma_{1})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonGood1_eta if event.nPhotonGood > 1 else defaultValue,
-    binning   = [ 24, -1.8, 1.8 ],
+    binning   = [ 24, -1.5, 1.5 ],
 ))
 
 photonGood1.append( Plot(
