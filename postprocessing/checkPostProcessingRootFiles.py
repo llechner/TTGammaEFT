@@ -13,7 +13,8 @@ def get_parser():
     '''
     import argparse
     argParser = argparse.ArgumentParser(description = "Argument parser for nanoPostProcessing")
-    argParser.add_argument('--file', action='store', type=str, default='nanoPostProcessing_Summer16', help="postprocessing sh file to check")
+    argParser.add_argument('--file',    action='store', type=str, default='nanoPostProcessing_Summer16', help="postprocessing sh file to check")
+    argParser.add_argument('--semilep', action='store_true', help="check semiLep samples?")
     return argParser
 
 args = get_parser().parse_args()
@@ -50,7 +51,8 @@ dictList = getDataDictList( file )
 year     = dictList[0]['year']
 isData   = "Run" in args.file
 
-directory = os.path.expandvars( os.path.join ( getattr( user, "data_%sdirectory%i"% ("data" if isData else "", year)), getattr( user, "postprocessing_%sdirectory%i"%("data" if isData else "", year) ) ) )
+directory = os.path.expandvars( os.path.join ( getattr( user, "data_%sdirectory%s%i"% ("data" if isData else "", "SemiLep" if args.semilep else "", year)), getattr( user, "postprocessing_%sdirectory%s%i"%("data" if isData else "", "SemiLep" if args.semilep else "", year) ) ) )
+print directory
 #directory = os.path.expandvars( os.path.join (user.data_directoryPrefiring, user.postprocessing_directoryPrefiring))
 
 for ppEntry in dictList:
@@ -75,7 +77,7 @@ for ppEntry in dictList:
         if os.path.getsize( filepath ) < 100000:
             print "filesize of %s very small: %i bytes" % (file, os.path.getsize( filepath ))
 #            print "No further checks on file %s performed!" %file
-            continue
+#            continue
         chain    = ROOT.TChain('Events')
         chain.AddFile( filepath )
         nEntries = chain.GetEntries()

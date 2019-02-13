@@ -28,17 +28,19 @@ dirs = {}
 dirs['DY_LO']            = ["DYJetsToLL_M50_LO"]#, "DYJetsToLL_M10to50_LO"]
 
 dirs['TTLep_pow']        = ["TTLep_pow"]
-dirs['TTSemiLep_pow']    = ["TTSemiLep_pow"]
-dirs['TTHad_pow'    ]    = ["TTHad_pow"]
-dirs['TT_pow']           = ["TTLep_pow", "TTSemiLep_pow", "TTHad_pow" ]
+#dirs['TTSemiLep_pow']    = ["TTSemiLep_pow"]
+#dirs['TTHad_pow'    ]    = ["TTHad_pow"]
+dirs['TT_pow']           = ["TTLep_pow"]#, "TTSemiLep_pow", "TTHad_pow" ]
 #dirs['TTbar']            = ["TTbar"]
 
 #dirs['TTG']              = ["TTGJets_ext"]
 #dirs['TTGLep']           = ["TTGLep"]
-#dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGSemiT", "TTGHad"]
+dirs['TTG']              = ["TTGLep"]#, "TTGSemiTbar", "TTGSemiT", "TTGHad"]
 
 #dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext", "T_tch_pow", "TBar_tch_pow", "TToLeptons_sch_amcatnlo" ]
-dirs['singleTop']        = ["TToLeptons_sch_amcatnlo" ]
+dirs['singleTop']        = ["TBar_tWch", "T_tWch"]
+
+#dirs['singleTop']        = ["TToLeptons_sch_amcatnlo" ]
 
 #dirs['ZGTo2LG']          = ["ZGTo2LG_ext"]
 #dirs['ZGToLLG']          = ["ZGToLLG"]
@@ -53,37 +55,37 @@ dirs['singleTop']        = ["TToLeptons_sch_amcatnlo" ]
 #dirs['TTH']              = ["TTHnobb_pow"]
 
 
-dirs['TTWZ']             = ["TTWZ"]
-dirs['TTZZ']             = ["TTZZ"]
+#dirs['TTWZ']             = ["TTWZ"]
+#dirs['TTZZ']             = ["TTZZ"]
 #dirs['TTWW']             = ["TTWW"]
 
 #dirs['WWW']              = ["WWW_4F"]
-dirs['WWZ']              = ["WWZ"]
+#dirs['WWZ']              = ["WWZ"]
 #dirs['WZG']              = ["WZG"]
-dirs['WZZ']              = ["WZZ"]
-dirs['ZZZ']              = ["ZZZ"]
+#dirs['WZZ']              = ["WZZ"]
+#dirs['ZZZ']              = ["ZZZ"]
 
 #dirs['VV']               = ["VVTo2L2Nu"]
-dirs['WW']               = ["WW"]
-dirs['ZZ']               = ["ZZ"]
+#dirs['WW']               = ["WW"]
+#dirs['ZZ']               = ["ZZ"]
 #dirs['WW']               = ["WWToLNuQQ_comb", "WWTo2L2Nu", "WWTo1L1Nu2Q"]
 #dirs['WZ']               = ["WZTo1L3Nu", "WZTo1L1Nu2Q", "WZTo2L2Q", "WZTo3LNu"]
 #dirs['ZZ']               = ["ZZTo2L2Nu", "ZZTo2L2Q"]
 #dirs['ZZ']               = ["ZZTo2L2Nu", "ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L"]
 
 #dirs['GluGlu']           = ["GluGluToContinToZZTo2e2mu", "GluGluToContinToZZTo2e2tau", "GluGluToContinToZZTo2mu2tau", "GluGluToContinToZZTo4e", "GluGluToContinToZZTo4mu", "GluGluToContinToZZTo4tau"]
-dirs['GluGlu']           = ["GluGluToContinToZZTo2e2mu", "GluGluToContinToZZTo2e2tau"]
+#dirs['GluGlu']           = ["GluGluToContinToZZTo2e2mu", "GluGluToContinToZZTo2e2tau"]
 
 dirs['other']            = []
 #dirs['other']           += dirs['TZQ']  + dirs['THQ']  + dirs['THW'] #+ dirs['TWZ']
 #dirs['other']           += dirs['TTW']  + dirs['TTZ']  + dirs['TTH']
-dirs['other']           += dirs['TTWZ'] + dirs['TTZZ'] #+ dirs['TTWW']
-dirs['other']           += dirs['WWZ'] + dirs['WZZ']  + dirs['ZZZ']
+#dirs['other']           += dirs['TTWZ'] + dirs['TTZZ'] #+ dirs['TTWW']
+#dirs['other']           += dirs['WWZ'] + dirs['WZZ']  + dirs['ZZZ']
 #dirs['other']           += dirs['WWW']  + dirs['WWZ']  + dirs['WZG'] + dirs['WZZ']  + dirs['ZZZ']
 #dirs['other']           += dirs['VV']   + dirs['WW']   + dirs['WZ']  + dirs['ZZ']
-dirs['other']           += dirs['WW']
-dirs['other']           += dirs['ZZ']
-dirs['other']           += dirs['GluGlu']
+#dirs['other']           += dirs['WW']
+#dirs['other']           += dirs['ZZ']
+#dirs['other']           += dirs['GluGlu']
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory2018, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
@@ -93,9 +95,9 @@ TT_pow_18          = Sample.fromDirectory(name="TT_pow",           treeName="Eve
 #TTbar_18           = Sample.fromDirectory(name="TTbar",            treeName="Events", isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories['TTbar'])
 singleTop_18       = Sample.fromDirectory(name="singleTop",        treeName="Events", isData=False, color=color.T,               texName="single-t",          directory=directories['singleTop'])
 #TTGLep_18          = Sample.fromDirectory(name="TTG",              treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTGLep'])
-#TTG_18             = Sample.fromDirectory(name="TTG",              treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG'])
+TTG_18             = Sample.fromDirectory(name="TTG",              treeName="Events", isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG'])
 #ZG_18              = Sample.fromDirectory(name="ZG",               treeName="Events", isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGTo2LG'] )
 #ZG_18              = Sample.fromDirectory(name="ZG",               treeName="Events", isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGToLLG'] )
-other_18           = Sample.fromDirectory(name="other",            treeName="Events", isData=False, color=color.Other,           texName="other",             directory=directories['other'])
+#other_18           = Sample.fromDirectory(name="other",            treeName="Events", isData=False, color=color.Other,           texName="other",             directory=directories['other'])
 
 signals = []
