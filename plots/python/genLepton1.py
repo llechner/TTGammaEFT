@@ -15,7 +15,7 @@ genLepton1.append( Plot(
     name      = 'genLepton1_pt',
     texX      = 'p_{T}(l_{1}) (GeV)',
     texY      = 'Number of Events / 15 GeV',
-    attribute = lambda event, sample: event.GenLepton_pt[1] if event.nGenLepton > 1 else -999,
+    attribute = lambda event, sample: event.GenLepton_pt[1],
     binning   = [ 20, 0, 300 ],
 ))
 
@@ -23,7 +23,7 @@ genLepton1.append( Plot(
     name      = 'genLepton1_eta',
     texX      = '#eta(l_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.GenLepton_eta[1] if event.nGenLepton > 1 else -999,
+    attribute = lambda event, sample: event.GenLepton_eta[1],
     binning   = [ 30, -3, 3 ],
 ))
 
@@ -31,7 +31,7 @@ genLepton1.append( Plot(
     name      = 'genLepton1_absEta',
     texX      = '|#eta|(l_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.GenLepton_eta[1]) if event.nGenLepton > 1 else -999,
+    attribute = lambda event, sample: abs(event.GenLepton_eta[1]),
     binning   = [ 15, 0, 3 ],
 ))
 
@@ -39,6 +39,6 @@ genLepton1.append( Plot(
     name      = 'genLepton1_phi',
     texX      = '#phi(l_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.GenLepton_phi[1] if event.nGenLepton > 1 else -999,
+    attribute = lambda event, sample: event.GenLepton_phi[1],
     binning   = [ 10, -pi, pi ],
 ))

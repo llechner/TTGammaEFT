@@ -20,7 +20,6 @@ from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 
 from Samples.Tools.metFilters         import getFilterCut
 from TTGammaEFT.Tools.Variables       import NanoVariables
-from TTGammaEFT.Tools.objectSelection import filterBJets
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -190,8 +189,8 @@ def clean_Jets( event, sample ):
 
     event.nJet      = len( allJets )
     event.nJetGood  = len( looseJets )
-    event.nBTag     = len( filterBJets( allJets,   tagger="DeepCSV", year=args.year ) )
-    event.nBTagGood = len( filterBJets( looseJets, tagger="DeepCSV", year=args.year ) )
+    event.nBTag     = len( filter( lambda j: isBJet( j, tagger='DeepCSV', year=args.year ), allJets ) )
+    event.nBTagGood = len( filter( lambda j: isBJet( j, tagger='DeepCSV', year=args.year ), looseJets ) )
 
     for var in jetVariableNames:
         for i, jet in enumerate( allJets[:2] ):
@@ -260,7 +259,7 @@ for sample in mc + signals:
 if args.small:
     for sample in stack.samples:
         sample.normalization=1.
-        sample.reduceFiles( factor=5 )
+        sample.reduceFiles( factor=25 )
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
@@ -281,22 +280,6 @@ else:           from plotLists import plotListData   as plotList
 
 # plotList
 addPlots = []
-
-addPlots.append( Plot(
-    name      = 'mll',
-    texX      = 'M(ll) (GeV)',
-    texY      = 'Number of Events / 4 GeV',
-    attribute = lambda event, sample: event.mll if event.nLeptonGood >= 2 else -999,
-    binning   = [ 50, 0, 200 ],
-))
-
-addPlots.append( Plot(
-    name      = 'mll_Zpeak',
-    texX      = 'M(ll) (GeV)',
-    texY      = 'Number of Events / 4 GeV',
-    attribute = lambda event, sample: event.mll if event.nLeptonGood >= 2 else -999,
-    binning   = [ 50, 70, 110 ],
-))
 
 addPlots.append( Plot(
     name      = 'jetGood0_Z_pTRatio_wide',
@@ -367,7 +350,7 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    if mode != "all": plots += [ getYieldPlot( index ) ]
+    plots += [ getYieldPlot( index ) ]
     plots += addPlots
 
     # Define 2l selections
@@ -376,36 +359,22 @@ for index, mode in enumerate( allModes ):
     if not args.noData:    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True  ), leptonSelection ] )
     for sample in mc + signals: sample.setSelectionString( [ getFilterCut( args.year, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
 
-    if args.year == 2016:
-        TTG_16.addSelectionString( "isTTGamma==1" )
-        TT_pow_16.addSelectionString( "isTTGamma==0" )
-        ZG_16.addSelectionString( "isZWGamma==1" )
-        DY_LO_16.addSelectionString( "isZWGamma==0" )
-    if args.year == 2017:
-        TTG_17.addSelectionString( "isTTGamma==1" )
-        TT_pow_17.addSelectionString( "isTTGamma==0" )
-    if args.year == 2018:
-        TTG_18.addSelectionString( "isTTGamma==1" )
-        TT_pow_18.addSelectionString( "isTTGamma==0" )
-
     # Overlap removal
-#    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
-#        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
-#        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
+    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
+        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
+        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
-#    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
-#        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-#        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
+        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
+        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
-#    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
-#        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
-#        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
+        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
+        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
-#    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
-#        eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
-#        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
-
-    plotting.fill( plots, read_variables=read_variables, sequence=sequence )
+    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
+        eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
+        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
 
     # Get normalization yields from yield histogram
     for plot in plots:

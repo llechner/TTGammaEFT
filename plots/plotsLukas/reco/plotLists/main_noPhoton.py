@@ -18,6 +18,7 @@ from TTGammaEFT.plots.multiplicityGoodNoPhoton import multiplicityGoodNoPhoton
 from TTGammaEFT.plots.met                      import met
 from TTGammaEFT.plots.ht                       import ht
 from TTGammaEFT.plots.beam                     import beam
+from TTGammaEFT.plots.mll                      import mll
 #from TTGammaEFT.plots.metSig                   import metSig
 
 # plotList
@@ -32,6 +33,7 @@ plotListData += multiplicityGoodNoPhoton
 plotListData += met
 plotListData += ht
 plotListData += beam
+plotListData += mll
 #plotListData += metSig
 
 plotListDataMC  = plotListData

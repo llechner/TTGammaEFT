@@ -15,7 +15,7 @@ genMultiplicity.append( Plot(
     name      = 'nGenPhoton',
     texX      = 'N_{#gamma}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nGenPhoton,
+    attribute = TreeVariable.fromString( "nGenPhoton/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -23,7 +23,7 @@ genMultiplicity.append( Plot(
     name      = 'nGenLepton',
     texX      = 'N_{l}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nGenLepton,
+    attribute = TreeVariable.fromString( "nGenLepton/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -31,7 +31,7 @@ genMultiplicity.append( Plot(
     name      = 'nGenMuon',
     texX      = 'N_{#mu}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nGenMuon,
+    attribute = TreeVariable.fromString( "nGenMuon/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -39,7 +39,7 @@ genMultiplicity.append( Plot(
     name      = 'nGenElectron',
     texX      = 'N_{e}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nGenElectron,
+    attribute = TreeVariable.fromString( "nGenElectron/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -47,7 +47,7 @@ genMultiplicity.append( Plot(
     name      = 'nGenJet',
     texX      = 'N_{jet}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nGenJet,
+    attribute = TreeVariable.fromString( "nGenJet/I" ),
     binning   = [ 10, 0, 10 ],
 ))
 
@@ -55,7 +55,7 @@ genMultiplicity.append( Plot(
     name      = 'nGenBJet',
     texX      = 'N_{bJet}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nGenBJet,
+    attribute = TreeVariable.fromString( "nGenBJet/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 

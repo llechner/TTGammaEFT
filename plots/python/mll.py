@@ -9,20 +9,21 @@ from math                             import pi
 from RootTools.core.standard          import *
 
 # plotList
-genMass = []
+mll = []
     
-genMass.append( Plot(
-    name      = 'mll',
-    texX      = 'gen M(ll) (GeV)',
+mll.append( Plot(
+    name      = 'mll_Zpeak',
+    texX      = 'M(ll) (GeV)',
+    texY      = 'Number of Events / 4 GeV',
+    attribute = TreeVariable.fromString( "mll/F" ),
+    binning   = [ 50, 70, 110 ],
+))
+
+mll.append( Plot(
+    name      = 'mllGood',
+    texX      = 'M(ll) (GeV)',
     texY      = 'Number of Events / 4 GeV',
     attribute = TreeVariable.fromString( "mll/F" ),
     binning   = [ 50, 0, 200 ],
 ))
 
-genMass.append( Plot(
-    name      = 'mllPhoton',
-    texX      = 'gen M(ll#gamma) (GeV)',
-    texY      = 'Number of Events / 4 GeV',
-    attribute = TreeVariable.fromString( "mllgamma/F" ),
-    binning   = [ 50, 0, 200 ],
-))

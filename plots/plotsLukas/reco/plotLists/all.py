@@ -19,6 +19,7 @@ from TTGammaEFT.plots.bjetGood0        import bjetGood0
 from TTGammaEFT.plots.multiplicity     import multiplicity
 from TTGammaEFT.plots.multiplicityGood import multiplicityGood
 from TTGammaEFT.plots.massGood         import massGood
+from TTGammaEFT.plots.mll              import mll
 from TTGammaEFT.plots.isolationGood    import isolationGood
 from TTGammaEFT.plots.met              import met
 from TTGammaEFT.plots.ht               import ht
@@ -44,6 +45,7 @@ plotListData += bjetGood0
 plotListData += multiplicity
 plotListData += multiplicityGood
 plotListData += massGood
+plotListData += mll
 plotListData += isolationGood
 plotListData += met
 plotListData += ht

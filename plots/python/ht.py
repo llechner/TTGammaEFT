@@ -15,6 +15,6 @@ ht.append( Plot(
     name      = 'ht',
     texX      = 'H_{T} (GeV)',
     texY      = 'Number of Events / 30 GeV',
-    attribute = lambda event, sample: event.ht,
+    attribute = TreeVariable.fromString( "ht/F" ),
     binning   = [ 20, 0, 600 ],
 ))

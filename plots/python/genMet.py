@@ -12,18 +12,18 @@ from RootTools.core.standard          import *
 genMet = []
     
 genMet.append( Plot(
-    name      = 'GenMET_pt',
+    name      = 'GenMET_pt_wide',
     texX      = 'E^{miss}_{T} (GeV)',
     texY      = 'Number of Events / 20 GeV',
-    attribute = lambda event, sample: event.GenMET_pt,
+    attribute = TreeVariable.fromString( "GenMET_pt/F" ),
     binning   = [ 20, 0, 400 ],
 ))
 
 genMet.append( Plot(
-    name      = 'GenMET_pt_tight',
+    name      = 'GenMET_pt',
     texX      = 'E^{miss}_{T} (GeV)',
     texY      = 'Number of Events / 10 GeV',
-    attribute = lambda event, sample: event.GenMET_pt,
+    attribute = TreeVariable.fromString( "GenMET_pt/F" ),
     binning   = [ 20, 0, 200 ],
 ))
 
@@ -31,7 +31,7 @@ genMet.append( Plot(
     name      = 'GenMET_phi',
     texX      = '#phi(E^{miss}_{T})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.GenMET_phi,
+    attribute = TreeVariable.fromString( "GenMET_phi/F" ),
     binning   = [ 10, -pi, pi ],
 ))
 
