@@ -80,16 +80,19 @@ logger_rt = logger_rt.get_logger(options.logLevel, logFile = None )
 writeToDPM = options.targetDir == '/dpm/'
 
 # Flags 
-isDiLep   = options.skim.lower().startswith('dilep')
-isSemiLep = options.skim.lower().startswith('semilep')
+isDiLepGamma = options.skim.lower().startswith('dilepGamma')
+isDiLep      = options.skim.lower().startswith('dilep')
+isSemiLep    = options.skim.lower().startswith('semilep')
 
 isPrivate = "private" in options.processingEra
 
 skimConds = []
 if isDiLep:
-    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.5)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.5))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.5)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.5))>=1" )
+    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1" )
+if isDiLepGamma:
+    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<1.479)&&Photon_electronVeto&&!Photon_pixelSeed)>=1" )
 elif isSemiLep:
-    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<2.5)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<2.5)>=1)" )
+    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<2.4&&Muon_tightId&&Muon_pfRelIso03_all<0.12)>=1)" )
 else:
     skimConds = ["(1)"]
 
@@ -259,20 +262,10 @@ branchKeepStrings_DATA = []
 if sample.isData:
     lumiScaleFactor   = None
     branchKeepStrings = branchKeepStrings_DATAMC + branchKeepStrings_DATA
+    json = allSamples[0].json
     from FWCore.PythonUtilities.LumiList import LumiList
-
-    # Apply golden JSON
-    if options.year == 2016:
-        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt'
-    elif options.year == 2017:
-        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
-    elif options.year == 2018:
-        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
-    else:
-        raise NotImplementedError
-
-    lumiList = LumiList( os.path.expandvars( sample.json ) )
-    logger.info( "Loaded json %s", sample.json )
+    lumiList = LumiList( os.path.expandvars( json ) )
+    logger.info( "Loaded json %s", json )
 else:
     lumiScaleFactor = xSection * targetLumi / float( sample.normalization ) if xSection is not None else None
     branchKeepStrings = branchKeepStrings_DATAMC + branchKeepStrings_MC
@@ -307,14 +300,18 @@ writeLeptonVarString  = NanoVars.getVariableString(   "Lepton",   postprocessed=
 writePhotonVarString  = NanoVars.getVariableString(   "Photon",   postprocessed=True,  data=sample.isData )
 
 writeJetVarList       = NanoVars.getVariableNameList( "Jet",      postprocessed=True,  data=sample.isData )
+writeBJetVarList      = NanoVars.getVariableNameList( "BJet",     postprocessed=True,  data=sample.isData )
 writeGenVarList       = NanoVars.getVariableNameList( "Gen",      postprocessed=True,  data=sample.isData )
 writeGenJetVarList    = NanoVars.getVariableNameList( "GenJet",   postprocessed=True,  data=sample.isData )
 writeLeptonVarList    = NanoVars.getVariableNameList( "Lepton",   postprocessed=True,  data=sample.isData )
 writePhotonVarList    = NanoVars.getVariableNameList( "Photon",   postprocessed=True,  data=sample.isData )
 
-writeBJetVariables    = NanoVars.getVariables(        "BJet",     postprocessed=True,  data=sample.isData )
-writeLeptonVariables  = NanoVars.getVariables(        "Lepton",   postprocessed=True,  data=sample.isData )
-writePhotonVariables  = NanoVars.getVariables(        "Photon",   postprocessed=True,  data=sample.isData )
+writeGenVariables     = NanoVars.getVariables( "Gen",      postprocessed=True,  data=sample.isData )
+writeGenJetVariables  = NanoVars.getVariables( "GenJet",   postprocessed=True,  data=sample.isData )
+writeJetVariables     = NanoVars.getVariables( "Jet",      postprocessed=True,  data=sample.isData )
+writeBJetVariables    = NanoVars.getVariables( "BJet",     postprocessed=True,  data=sample.isData )
+writeLeptonVariables  = NanoVars.getVariables( "Lepton",   postprocessed=True,  data=sample.isData )
+writePhotonVariables  = NanoVars.getVariables( "Photon",   postprocessed=True,  data=sample.isData )
 
 # Read Variables
 read_variables  = map( TreeVariable.fromString, ['run/I', 'luminosityBlock/I', 'event/l'] )
@@ -368,7 +365,8 @@ new_variables += [ 'nJet/I' ]
 new_variables += [ 'nJetGood/I' ] 
 
 new_variables += [ 'Jet[%s]'      %writeJetVarString ]
-#new_variables += [ 'JetGood[%s]'  %writeJetVarString ]
+new_variables += [ 'JetGood0_'  + var for var in writeJetVariables ]
+new_variables += [ 'JetGood1_'  + var for var in writeJetVariables ]
 
 # BJets
 new_variables += [ 'nBTag/I']
@@ -481,11 +479,24 @@ recoJetSel            = jetSelector( options.year )
 recoJetSel_noPtEtaCut = jetSelector( options.year )
 
 if options.addPreFiringFlag: 
-    Pf = PreFiring()
+    Pf = PreFiring( sample.name )
     unPreFirableEvents = [ (event, run) for event, run, lumi in Pf.getUnPreFirableEvents() ]
 
 # Define a reader
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
+
+def defaultColl( varList ):
+    """ returns a default collection for a probably faster plot script as it does not have to check if collection is contained
+    """
+    return { var.split("/")[0]:0 if var.endswith("/O") else -999 for var in varList }
+
+# Lets try writing default collections for a probably faster plot script, as no if requirements are needed
+defaultGen    = defaultColl( writeGenVariables )
+defaultGenJet = defaultColl( writeGenJetVariables )
+defaultLepton = defaultColl( writeLeptonVariables )
+defaultJet    = defaultColl( writeJetVariables )
+defaultBJet   = defaultColl( writeBJetVariables )
+defaultPhoton = defaultColl( writePhotonVariables )
 
 # Calculate photonEstimated met
 def getMetPhotonEstimated( met_pt, met_phi, photon ):
@@ -505,8 +516,10 @@ def addMissingVariables( coll, vars ):
 
 def addJetFlags( jets, cleaningLeptons, cleaningPhotons ):
     for j in jets:
-        p["isGood"]     = recoJetSel( j ) and deltaR( cleaningLeptons, j ) > 0.4 and deltaR( cleaningPhotons, j ) > 0.1
-        p["isBJet"]     = isBJet( j, tagger=tagger, year=options.year )
+        minDRLep    = min( [ deltaR( l, j ) for l in cleaningLeptons ] + [999] )
+        minDRPhoton = min( [ deltaR( g, j ) for g in cleaningPhotons ] + [999] )
+        j["isGood"] = recoJetSel( j ) and minDRLep > 0.4 and minDRPhoton > 0.1
+        j["isBJet"] = isBJet( j, tagger=tagger, year=options.year )
 
 # Replace unsign. char type with integer (only necessary for output electrons)
 def convertUnits( coll ):
@@ -579,13 +592,13 @@ def filler( event ):
         GenJet      = list( filter( lambda j: genJetSel(j),    gJets                                      ) )
         GenBJet     = list( filter( lambda j: genJetSel(j),    filterGenBJets( gJets )                    ) )
 
-        # Store
-        if len(GenElectron) > 0: fill_vector_collection( event, "GenElectron", writeGenVarList,    GenElectron[:20] )
-        if len(GenMuon) > 0:     fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20] )
-        if len(GenPhoton) > 0:   fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20] )
-        if len(GenBJet) > 0:     fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20] )
-        if len(GenJet) > 0:      fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20] )
-        if len(GenTop) > 0:      fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20] )
+        # Store and add 2 default entries for a probably faster plotscript
+        fill_vector_collection( event, "GenElectron", writeGenVarList,    GenElectron[:20] + [defaultGen, defaultGen] )
+        fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     + [defaultGen, defaultGen] )
+        fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   + [defaultGen, defaultGen] )
+        fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20]     + [defaultGenJet, defaultGenJet] )
+        fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20]      + [defaultGenJet, defaultGenJet] )
+        fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      + [defaultGen, defaultGen] )
         
     elif isData:
         event.weight     = 1.
@@ -661,18 +674,18 @@ def filler( event ):
     event.nElectronTight    = len(tightElectrons)
     event.nMuonTight        = len(tightMuons)
 
-    # Store analysis Leptons
-    l0, l1   = ( selectedLeptons + [None, None] )[:2]
-    lt0, lt1 = ( tightLeptons + [None, None] )[:2]
+    # Store analysis Leptons + 2 default Leptons for a probably faster plotscript
+    l0, l1   = ( selectedLeptons + [defaultLepton, defaultLepton] )[:2]
+    lt0, lt1 = ( tightLeptons    + [defaultLepton, defaultLepton] )[:2]
     # Dileptonic analysis
-    if l0:  fill_vector( event, "LeptonGood0",  writeLeptonVarList, l0 )
-    if l1:  fill_vector( event, "LeptonGood1",  writeLeptonVarList, l1 )
+    fill_vector( event, "LeptonGood0",  writeLeptonVarList, l0 )
+    fill_vector( event, "LeptonGood1",  writeLeptonVarList, l1 )
     # Semi-leptonic analysis
-    if lt0: fill_vector( event, "LeptonTight0", writeLeptonVarList, lt0 )
-    if lt1: fill_vector( event, "LeptonTight1", writeLeptonVarList, lt1 )
+    fill_vector( event, "LeptonTight0", writeLeptonVarList, lt0 )
+    fill_vector( event, "LeptonTight1", writeLeptonVarList, lt1 )
 
     # Store all Leptons
-    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons[:20] )
+    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons[:20] + [defaultLepton, defaultLepton] )
 
     # Photons
     allPhotons = getParticles( r, readPhotonVarList, coll="Photon" )
@@ -710,18 +723,24 @@ def filler( event ):
     event.nJet      = len(allJets)
     event.nJetGood  = len(jets)
 
-    # store all loose jets
-    fill_vector_collection( event, "Jet", writeJetVarList, allJets )
+    # store all loose jets + 2 defaultJets for a probably faster plot script
+    fill_vector_collection( event, "Jet", writeJetVarList, allJets + [defaultJet, defaultJet] )
+
+    # Store analysis jets + 2 default jets for a probably faster plotscript
+    j0, j1   = ( jets + [defaultJet, defaultJet] )[:2]
+    # Dileptonic analysis
+    fill_vector( event, "JetGood0",  writeJetVarList, j0 )
+    fill_vector( event, "JetGood1",  writeJetVarList, j1 )
 
     # bJets
     allBJets = list( filter( lambda x: x["isBJet"], allJets ) )
     bJets    = list( filter( lambda x: x["isBJet"], jets ) )
     nonBJets = list( filter( lambda x: not x["isBJet"], jets ) )
 
-    # Store bJets
-    bj0, bj1 = ( list(bJets) + [None, None] )[:2]
-    if bj0: fill_vector( event, "Bj0", writeBJetVarList, bj0 )
-    if bj1: fill_vector( event, "Bj1", writeBJetVarList, bj1 )
+    # Store bJets + 2 default bjets for a probably faster plot script
+    bj0, bj1 = ( list(bJets) + [defaultBJet, defaultBJet] )[:2]
+    fill_vector( event, "Bj0", writeBJetVarList, bj0 )
+    fill_vector( event, "Bj1", writeBJetVarList, bj1 )
 
     event.nBTag      = len(allBJets)
     event.nBTagGood  = len(bJets)
@@ -751,54 +770,89 @@ def filler( event ):
         # additional observables
         event.MET_pt_photonEstimated, event.MET_phi_photonEstimated = getMetPhotonEstimated( r.MET_pt, r.MET_phi, mediumPhotons[0] )
 
-        if event.ht > 0:     event.METSig_photonEstimated     = event.MET_pt_photonEstimated / sqrt( event.ht )
+        if event.ht > 0:
+            event.METSig_photonEstimated = event.MET_pt_photonEstimated / sqrt( event.ht )
+        else:
+            event.METSig_photonEstimated = -999 
 
-        if jets:        event.photonJetdR                = min( deltaR( p, j ) for j in jets       for p in mediumPhotons )
-        if selectedLeptons:  event.photonLepdR                = min( deltaR( p, l ) for l in selectedLeptons for p in mediumPhotons )
+        if jets:
+            event.photonJetdR = min( deltaR( p, j ) for j in jets for p in mediumPhotons )
+        else:
+             event.photonJetdR = -999
+
+        if selectedLeptons:
+            event.photonLepdR = min( deltaR( p, l ) for l in selectedLeptons for p in mediumPhotons )
+        else:
+             event.photonLepdR = -999
 
         if len(tightLeptons) > 0:
             event.ltight0GammadPhi = deltaPhi( tightLeptons[0]['phi'], mediumPhotons[0]['phi'] )
             event.ltight0GammadR   = deltaR(   tightLeptons[0],        mediumPhotons[0] )
             event.mLtight0Gamma    = ( get4DVec(tightLeptons[0]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.ltight0GammadPhi = -999
+            event.ltight0GammadR   = -999
+            event.mLtight0Gamma    = -999
 
         if len(selectedLeptons) > 0:
             event.l0GammadPhi = deltaPhi( selectedLeptons[0]['phi'], mediumPhotons[0]['phi'] )
             event.l0GammadR   = deltaR(   selectedLeptons[0],        mediumPhotons[0] )
             event.mL0Gamma    = ( get4DVec(selectedLeptons[0]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.l0GammadPhi = -999
+            event.l0GammadR   = -999
+            event.mL0Gamma    = -999
 
         if len(selectedLeptons) > 1:
             event.l1GammadPhi = deltaPhi( selectedLeptons[1]['phi'], mediumPhotons[0]['phi'] )
             event.l1GammadR   = deltaR(   selectedLeptons[1],        mediumPhotons[0] )
             event.mL1Gamma    = ( get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.l1GammadPhi = -999
+            event.l1GammadR   = -999
+            event.mL1Gamma    = -999
 
         if len(jets) > 0:
             event.j0GammadPhi = deltaPhi( jets[0]['phi'], mediumPhotons[0]['phi'] )
             event.j0GammadR   = deltaR(   jets[0],        mediumPhotons[0] )
+        else:
+            event.j0GammadPhi = -999
+            event.j0GammadR   = -999
 
         if len(jets) > 1:
             event.j1GammadPhi = deltaPhi( jets[1]['phi'], mediumPhotons[0]['phi'] )
             event.j1GammadR   = deltaR(   jets[1],        mediumPhotons[0] )
+        else:
+            event.j1GammadPhi = -999
+            event.j1GammadR   = -999
+
+    else:
+        event.MET_pt_photonEstimated  = -999
+        event.MET_phi_photonEstimated = -999
 
     event.nPhoton      = len( allPhotons )
     event.nPhotonGood  = len( mediumPhotons )
 
-    # store all photons
-    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons[:20] )
+    # store all photons + default photons for a probably faster plot script
+    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons[:20] + [defaultPhoton, defaultPhoton] )
 
-    # Store analysis photons
-    p0, p1 = ( mediumPhotons + [None, None] )[:2]
-    if p0: fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
-    if p1: fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
+    # Store analysis photons + default photons for a probably faster plot script
+    p0, p1 = ( mediumPhotons + [defaultPhoton, defaultPhoton] )[:2]
+    fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
+    fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
 
-    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [None] )[0]
-    if p0NoChgNoSieie: fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgNoSieie )
+    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [defaultPhoton] )[0]
+    fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgNoSieie )
 
-    p0NoChg = ( mediumPhotonsNoChgIso + [None] )[0]
-    if p0NoChg: fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChg )
+    p0NoChg = ( mediumPhotonsNoChgIso + [defaultPhoton] )[0]
+    fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChg )
 
     if bj1:
         event.bbdR   = deltaR( bj0, bj1 )
         event.bbdPhi = deltaPhi( bj0['phi'], bj1['phi'] )
+    else:
+        event.bbdR   = -999
+        event.bbdPhi = -999
 
     if len(tightLeptons) > 1:
         event.lldRtight   = deltaR( tightLeptons[0], tightLeptons[1] )
@@ -807,9 +861,17 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgammatight = ( get4DVec(tightLeptons[0]) + get4DVec(tightLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.mllgammatight = -999
+    else:
+        event.lldRtight   = -999
+        event.lldPhitight = -999
+        event.mlltight    = -999
 
     if len(jets) > 0 and len(tightLeptons) > 0:
         event.tightLeptonJetdR = min( deltaR( tightLeptons[0], j ) for j in jets )
+    else:
+        event.tightLeptonJetdR = -999
 
     if len(selectedLeptons) > 1:
         event.lldR   = deltaR( selectedLeptons[0], selectedLeptons[1] )
@@ -818,9 +880,17 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgamma = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.mllgamma = -999
+    else:
+        event.lldR   = -999
+        event.lldPhi = -999
+        event.mll    = -999
 
     if len(jets) > 0 and len(selectedLeptons) > 0:
         event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
+    else:
+        event.leptonJetdR = -999
 
     # Reweighting
     if isMC:
