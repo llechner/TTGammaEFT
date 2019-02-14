@@ -1,6 +1,6 @@
 import ROOT
 import os
-from TTGammaEFT.Tools.helpers import getObjFromFile
+from Analysis.Tools.helpers import getObjFromFile
 
 basedir = "$CMSSW_BASE/src/TTGammaEFT/Tools/data/triggerEff/"
 

@@ -18,19 +18,15 @@ from RootTools.core.standard                     import *
 import TTGammaEFT.Tools.user as user
 
 # Tools for systematics
-from TTGammaEFT.Tools.helpers                    import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi, m3
+from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
+from TTGammaEFT.Tools.helpers                    import m3
 
 from TTGammaEFT.Tools.objectSelection            import *
-
 from TTGammaEFT.Tools.Variables                  import NanoVariables
-from TTGammaEFT.Tools.PreFiring                  import PreFiring
 
-from TTGammaEFT.Tools.overlapRemovalTTG          import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
-
-from TTGammaEFT.Tools.WeightInfo                 import WeightInfo
-from TTGammaEFT.Tools.HyperPoly                  import HyperPoly
-
-from TTGammaEFT.Tools.puProfileCache             import puProfile
+from Analysis.Tools.PreFiring                    import PreFiring
+from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
+from Analysis.Tools.puProfileCache               import puProfile
 
 # central configuration
 targetLumi = 1000 #pb-1 Which lumi to normalize to
@@ -56,7 +52,6 @@ def get_parser():
     argParser.add_argument('--skim',                        action='store',         nargs='?',  type=str,                           default='dilep',                    help="Skim conditions to be applied for post-processing")
     argParser.add_argument('--small',                       action='store_true',                                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used")
     argParser.add_argument('--year',                        action='store',                     type=int,   choices=[2016,2017,2018],  required = True,                    help="Which year?")
-    argParser.add_argument('--addReweights',                action='store_true',                                                                                        help="Add reweights for sample EFT reweighting?")
     argParser.add_argument('--interpolationOrder',          action='store',         nargs='?',  type=int,                           default=2,                          help="Interpolation order for EFT weights.")
     argParser.add_argument('--triggerSelection',            action='store_true',                                                                                        help="Trigger selection?" )
     argParser.add_argument('--addPreFiringFlag',            action='store_true',                                                                                        help="Add flag for events w/o prefiring?" )
@@ -70,7 +65,7 @@ tagger = 'DeepCSV'
 #tagger = 'CSVv2'
 
 # Logging
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 logFile = '/tmp/%s_%s_%s_njob%s.txt'%(options.skim, '_'.join(options.samples), os.environ['USER'], str(0 if options.nJobs==1 else options.job) )
 logger  = logger.get_logger(options.logLevel, logFile = logFile)
 
@@ -83,8 +78,6 @@ writeToDPM = options.targetDir == '/dpm/'
 isDiLepGamma = options.skim.lower().startswith('dilepGamma')
 isDiLep      = options.skim.lower().startswith('dilep')
 isSemiLep    = options.skim.lower().startswith('semilep')
-
-isPrivate = "private" in options.processingEra
 
 skimConds = []
 if isDiLep:
@@ -99,7 +92,7 @@ else:
 #Samples: Load samples
 maxN = None
 if options.small:
-    maxN = 100000
+    maxN = 10000
     options.job = 1
     options.nJobs = 10000000 # set high to just run over 1 input file
 
@@ -145,27 +138,26 @@ xSection = samples[0].xSection if isMC else None
 # Trigger selection
 if isData and options.triggerSelection:
     from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
-    era         = options.samples[0].split( str(options.year) )[1].split("_")[0]
-    Ts          = TriggerSelector( options.year, era, singleLepton = isSemiLep )
+    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
     triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
     logger.info("Sample will have the following trigger skim: %s"%triggerCond)
     skimConds.append( triggerCond )
 
 # Reweighting, Scalefactors, Efficiencies
-from TTGammaEFT.Tools.LeptonSF import LeptonSF as LeptonSF_
+from Analysis.Tools.LeptonSF import LeptonSF as LeptonSF_
 LeptonSF = LeptonSF_( year=options.year )
 
-from TTGammaEFT.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
+from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
 LeptonTrackingSF = LeptonTrackingEfficiency( year=options.year )
 
-from TTGammaEFT.Tools.PhotonSF import PhotonSF as PhotonSF_
+from Analysis.Tools.PhotonSF import PhotonSF as PhotonSF_
 PhotonSF = PhotonSF_( year=options.year )
 
-from TTGammaEFT.Tools.PhotonReconstructionEfficiency import PhotonReconstructionEfficiency
+from Analysis.Tools.PhotonReconstructionEfficiency import PhotonReconstructionEfficiency
 PhotonRecEff = PhotonReconstructionEfficiency( year=options.year )
 
 # Update to other years when available
-from TTGammaEFT.Tools.PhotonElectronVetoEfficiency import PhotonElectronVetoEfficiency
+from Analysis.Tools.PhotonElectronVetoEfficiency import PhotonElectronVetoEfficiency
 PhotonElectronVetoSF = PhotonElectronVetoEfficiency()
 
 from TTGammaEFT.Tools.TriggerEfficiency import TriggerEfficiency
@@ -173,11 +165,11 @@ TriggerEff_withBackup = TriggerEfficiency( with_backup_triggers = True,  year=op
 TriggerEff            = TriggerEfficiency( with_backup_triggers = False, year=options.year )
 
 # Update to other years when available
-from TTGammaEFT.Tools.BTagEfficiency import BTagEfficiency
+from Analysis.Tools.BTagEfficiency import BTagEfficiency
 BTagEff = BTagEfficiency( year=options.year, tagger=tagger ) # default medium WP
 
 if isMC:
-    from TTGammaEFT.Tools.puReweighting import getReweightingFunction
+    from Analysis.Tools.puReweighting import getReweightingFunction
     if options.year == 2016:
         nTrueInt_puRW       = getReweightingFunction(data="PU_2016_35920_XSecCentral",  mc="Summer16")
         nTrueInt_puRWDown   = getReweightingFunction(data="PU_2016_35920_XSecDown",     mc="Summer16")
@@ -334,29 +326,8 @@ if isMC:
                         VectorTreeVariable.fromString('GenJet[%s]'%readGenJetVarString) ]
     read_variables += [ TreeVariable.fromString('genWeight/F') ]
 
-# Load reweight pickle file if supposed to keep weights. 
-reweight_variables = []
-if options.addReweights and isMC:
-
-    # Determine coefficients for storing in vector
-    # Sort Ids wrt to their position in the card file
-
-    weightInfo = WeightInfo( sample.reweight_pkl )
-
-    # weights for the ntuple
-    rw_vector       = TreeVariable.fromString( "rw[w/F,"+",".join(w+'/F' for w in weightInfo.variables)+"]")
-    rw_vector.nMax  = weightInfo.nid
-    reweight_variables.append(rw_vector)
-
-    # coefficients for the weight parametrization
-    param_vector      = TreeVariable.fromString( "p[C/F]" )
-    param_vector.nMax = HyperPoly.get_ndof(weightInfo.nvar, options.interpolationOrder)
-    hyperPoly         = HyperPoly( options.interpolationOrder )
-    reweight_variables.append(param_vector)
-    reweight_variables.append(TreeVariable.fromString( "chi2_ndof/F"))
-
 # Write Variables
-new_variables  = reweight_variables
+new_variables  = []
 new_variables += [ 'weight/F', 'ref_weight/F' ]
 new_variables += [ 'triggerDecision/I', 'isData/I']
 
@@ -486,11 +457,11 @@ if options.addPreFiringFlag:
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
 
 def defaultColl( varList ):
-    """ returns a default collection for a probably faster plot script as it does not have to check if collection is contained
+    """ returns a default collection for a faster plot script as it does not have to check if collection is contained
     """
     return { var.split("/")[0]:0 if var.endswith("/O") else -999 for var in varList }
 
-# Lets try writing default collections for a probably faster plot script, as no if requirements are needed
+# Lets try writing default collections for a faster plot script, as no if requirements are needed
 defaultGen    = defaultColl( writeGenVariables )
 defaultGenJet = defaultColl( writeGenJetVariables )
 defaultLepton = defaultColl( writeLeptonVariables )
@@ -592,7 +563,7 @@ def filler( event ):
         GenJet      = list( filter( lambda j: genJetSel(j),    gJets                                      ) )
         GenBJet     = list( filter( lambda j: genJetSel(j),    filterGenBJets( gJets )                    ) )
 
-        # Store and add 2 default entries for a probably faster plotscript
+        # Store and add 2 default entries for a faster plotscript
         fill_vector_collection( event, "GenElectron", writeGenVarList,    GenElectron[:20] + [defaultGen, defaultGen] )
         fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     + [defaultGen, defaultGen] )
         fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   + [defaultGen, defaultGen] )
@@ -650,7 +621,7 @@ def filler( event ):
     tightLeptons.sort( key = lambda l: -l['pt'] )
 
     # Select one tight and one medium lepton, the tight is included in the medium collection
-    selectedLeptons = mediumLeptons[:2]
+    selectedLeptons     = mediumLeptons[:2]
     selectedTightLepton = tightLeptons[:1]
 
     # Store lepton number
@@ -674,7 +645,7 @@ def filler( event ):
     event.nElectronTight    = len(tightElectrons)
     event.nMuonTight        = len(tightMuons)
 
-    # Store analysis Leptons + 2 default Leptons for a probably faster plotscript
+    # Store analysis Leptons + 2 default Leptons for a faster plotscript
     l0, l1   = ( selectedLeptons + [defaultLepton, defaultLepton] )[:2]
     lt0, lt1 = ( tightLeptons    + [defaultLepton, defaultLepton] )[:2]
     # Dileptonic analysis
@@ -685,7 +656,7 @@ def filler( event ):
     fill_vector( event, "LeptonTight1", writeLeptonVarList, lt1 )
 
     # Store all Leptons
-    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons[:20] + [defaultLepton, defaultLepton] )
+    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons + [defaultLepton, defaultLepton] )
 
     # Photons
     allPhotons = getParticles( r, readPhotonVarList, coll="Photon" )
@@ -715,7 +686,7 @@ def filler( event ):
     # Loose jets w/ pt/eta requirement (analysis jets)
     jets    = list( filter( lambda x: x["isGood"], allJets ) )
 
-    # DeltaR cleaning
+    # DeltaR cleaning (now done in "isGood"
 #    jets = deltaRCleaning( jets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
 #    jets = deltaRCleaning( jets, mediumPhotons, dRCut=0.1 ) # clean all jets against analysis photons
     
@@ -723,10 +694,10 @@ def filler( event ):
     event.nJet      = len(allJets)
     event.nJetGood  = len(jets)
 
-    # store all loose jets + 2 defaultJets for a probably faster plot script
+    # store all loose jets + 2 defaultJets for a faster plot script
     fill_vector_collection( event, "Jet", writeJetVarList, allJets + [defaultJet, defaultJet] )
 
-    # Store analysis jets + 2 default jets for a probably faster plotscript
+    # Store analysis jets + 2 default jets for a faster plotscript
     j0, j1   = ( jets + [defaultJet, defaultJet] )[:2]
     # Dileptonic analysis
     fill_vector( event, "JetGood0",  writeJetVarList, j0 )
@@ -737,7 +708,7 @@ def filler( event ):
     bJets    = list( filter( lambda x: x["isBJet"], jets ) )
     nonBJets = list( filter( lambda x: not x["isBJet"], jets ) )
 
-    # Store bJets + 2 default bjets for a probably faster plot script
+    # Store bJets + 2 default bjets for a faster plot script
     bj0, bj1 = ( list(bJets) + [defaultBJet, defaultBJet] )[:2]
     fill_vector( event, "Bj0", writeBJetVarList, bj0 )
     fill_vector( event, "Bj1", writeBJetVarList, bj1 )
@@ -833,10 +804,10 @@ def filler( event ):
     event.nPhoton      = len( allPhotons )
     event.nPhotonGood  = len( mediumPhotons )
 
-    # store all photons + default photons for a probably faster plot script
-    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons[:20] + [defaultPhoton, defaultPhoton] )
+    # store all photons + default photons for a faster plot script
+    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons + [defaultPhoton, defaultPhoton] )
 
-    # Store analysis photons + default photons for a probably faster plot script
+    # Store analysis photons + default photons for a faster plot script
     p0, p1 = ( mediumPhotons + [defaultPhoton, defaultPhoton] )[:2]
     fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
     fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )

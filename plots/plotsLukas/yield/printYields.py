@@ -6,19 +6,17 @@
 import ROOT, os, imp, sys, copy
 ROOT.gROOT.SetBatch(True)
 import itertools
-from math                             import isnan, ceil, pi
+from math                                import isnan, ceil, pi
 
 # RootTools
-from RootTools.core.standard          import *
+from RootTools.core.standard             import *
 
 # Internal Imports
-from TTGammaEFT.Tools.user            import plot_directory
-from TTGammaEFT.Tools.cutInterpreterOld  import cutInterpreter
-from TTGammaEFT.Tools.TriggerSelectorOld import TriggerSelector
+from TTGammaEFT.Tools.user               import plot_directory
+from TTGammaEFT.Tools.cutInterpreter     import cutInterpreter
+from TTGammaEFT.Tools.TriggerSelector    import TriggerSelector
 
-from Samples.Tools.metFilters         import getFilterCut
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVars, nanoPlotMuonVars, nanoPlotLeptonVars, nanoPlotTauVars, nanoPlotPhotonVars, nanoPlotJetVars, nanoPlotBJetVars
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVarString, nanoPlotMuonVarString, nanoPlotLeptonVarString, nanoPlotTauVarString, nanoPlotPhotonVarString, nanoPlotJetVarString, nanoPlotBJetVarString
+from Analysis.Tools.metFilters           import getFilterCut
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -37,7 +35,7 @@ argParser.add_argument('--normalize',          action='store_true', default=Fals
 args = argParser.parse_args()
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)

@@ -14,11 +14,9 @@ ROOT.gROOT.SetBatch( True )
 
 # TTGammaEFT
 from TTGammaEFT.Tools.user              import plot_directory
-
-from Samples.Tools.metFilters           import getFilterCut
-from TTGammaEFT.Tools.TriggerSelector   import TriggerSelector
-
 from TTGammaEFT.Tools.cutInterpreter    import cutInterpreter
+
+from Analysis.Tools.metFilters          import getFilterCut
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -34,7 +32,7 @@ argParser.add_argument('--normalize',          action='store_true', default=Fals
 args = argParser.parse_args()
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)

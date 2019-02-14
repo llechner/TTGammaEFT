@@ -9,8 +9,14 @@ from RootTools.core.Sample import Sample
 from TTGammaEFT.Samples.helpers import getSample, merge
 
 # Logging
-import logging
-logger = logging.getLogger(__name__)
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 # Data directory
 from TTGammaEFT.Tools.user import data_directory1                   as data_directory

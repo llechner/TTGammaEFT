@@ -2,7 +2,7 @@
 '''
 
 # TTGamma Imports
-from TTXPheno.Tools.CutInterpreter import CutInterpreter
+from Analysis.Tools.CutInterpreter import CutInterpreter
 
 mZ = 91.1876
 

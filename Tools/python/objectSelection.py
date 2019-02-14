@@ -38,7 +38,7 @@ def vidNestedWPBitMapToDict( val ):
 # General Selection Functions
 def deltaRCleaning( cleaningParticles, otherParticles, dRCut = 0.4 ):
 
-    from TTGammaEFT.Tools.helpers  import deltaR
+    from Analysis.Tools.helpers  import deltaR
 
     res = []
     for part in cleaningParticles:
@@ -53,7 +53,7 @@ def deltaRCleaning( cleaningParticles, otherParticles, dRCut = 0.4 ):
     return res
 
 def getParticles( c, collVars, coll ):
-    from TTGammaEFT.Tools.helpers import getVarValue, getObjDict
+    from Analysis.Tools.helpers import getVarValue, getObjDict
     return [ getObjDict( c, coll+'_', collVars, i ) for i in range(int(getVarValue(c, 'n'+coll))) ]
 
 # Reco b-Jet Filter

@@ -11,17 +11,12 @@ from RootTools.core.standard   import *
 ROOT.gROOT.SetBatch( True )
 
 # TTGammaEFT
-from TTGammaEFT.Tools.user              import plot_directory
-
-from TTGammaEFT.Analysis.regions        import recoTTGammaRegions as regions
-
-from Samples.Tools.metFilters           import getFilterCut
-from TTGammaEFT.Tools.TriggerSelector   import TriggerSelector
-
-from TTGammaEFT.Tools.cutInterpreter    import cutInterpreter
-
-from TTGammaEFT.Analysis.Cache          import Cache
 from TTGammaEFT.Tools.user              import cache_directory
+from TTGammaEFT.Tools.TriggerSelector   import TriggerSelector
+from TTGammaEFT.Tools.cutInterpreter    import cutInterpreter
+from TTGammaEFT.Tools.Cache             import Cache
+from TTGammaEFT.Analysis.regions        import recoTTGammaRegions as regions
+from Analysis.Tools.metFilters          import getFilterCut
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -64,7 +59,7 @@ elif args.year == 2018:
         from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_postProcessed import *
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)

@@ -11,15 +11,14 @@ from math                             import isnan, ceil, pi
 # RootTools
 from RootTools.core.standard          import *
 
-from TTGammaEFT.Tools.helpers         import getCollection
-
 # Internal Imports
 from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
-
-from Samples.Tools.metFilters         import getFilterCut
 from TTGammaEFT.Tools.Variables       import NanoVariables
+
+from Analysis.Tools.metFilters        import getFilterCut
+from Analysis.Tools.helpers           import getCollection
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -40,7 +39,7 @@ argParser.add_argument('--normalize',          action='store_true', default=Fals
 args = argParser.parse_args()
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
@@ -263,7 +262,7 @@ if args.small:
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year, None )
+tr = TriggerSelector( args.year )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ), addOverFlowBin='upper' )

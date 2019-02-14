@@ -6,7 +6,6 @@ import shutil
 
 from TTGammaEFT.Tools.user           import combineReleaseLocation, plot_directory, cardfileLocation
 
-
 releaseLocation = combineReleaseLocation + "/HiggsAnalysis/CombinedLimit/"
 
 argParser = argparse.ArgumentParser(description = "Argument parser")
@@ -19,7 +18,7 @@ args = argParser.parse_args()
 
 
 # Logging
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 logger = logger.get_logger(args.logLevel, logFile = None )
 import RootTools.core.logger as logger_rt
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None )

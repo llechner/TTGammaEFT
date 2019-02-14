@@ -9,10 +9,16 @@ import copy
 # TTGammaEFT
 from TTGammaEFT.Tools.user import results_directory
 
-# Logger
-import logging
-logger = logging.getLogger(__name__)
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
 
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 def makeUniquePath():
     ''' Create unique path in tmp directory

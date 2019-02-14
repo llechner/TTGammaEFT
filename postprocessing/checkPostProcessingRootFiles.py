@@ -19,6 +19,17 @@ def get_parser():
 
 args = get_parser().parse_args()
 
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+
+else:
+    import logging
+    logger = logging.getLogger(__name__)
+
 def filterEmpty( strList ):
     return list( filter ( bool, strList ) )
 

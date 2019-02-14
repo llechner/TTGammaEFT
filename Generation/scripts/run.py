@@ -7,10 +7,18 @@ import os
 # TTGammaEFT imports
 from TTGammaEFT.Generation.Configuration import Configuration
 from TTGammaEFT.Generation.Process       import Process
-from TTGammaEFT.Tools.u_float            import u_float
+from Analysis.Tools.u_float              import u_float
 
 # Logging
-import TTGammaEFT.Tools.logger as logger
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 # Find all processes
 process_path     = os.path.expandvars( "$CMSSW_BASE/src/TTGammaEFT/Generation/data/processCards" )

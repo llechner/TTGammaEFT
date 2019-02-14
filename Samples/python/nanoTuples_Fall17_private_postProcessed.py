@@ -6,8 +6,14 @@ import ROOT
 from RootTools.core.Sample import Sample
 
 # Logging
-import logging
-logger = logging.getLogger(__name__)
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 # Colors
 from TTGammaEFT.Samples.color import color

@@ -133,8 +133,8 @@ class NanoVariables:
                              Variable( "cleanmask",     "O", read=True,  write=True,  inData=True,  inPlot=True ),
                              Variable( "jetId",         "I", read=True,  write=True,  inData=True,  inPlot=True ),
 
-                             Variable( "isGood",        "I", read=False, write=True,  inData=True,  inPlot=True ),
-                             Variable( "isBJet",        "I", read=False, write=True,  inData=True,  inPlot=True ),
+                             Variable( "isGood",        "I", read=False, write=True,  inData=True,  inPlot=False ), #set to true after the next pp
+                             Variable( "isBJet",        "I", read=False, write=True,  inData=True,  inPlot=False ), #set to true after the next pp
 
                              Variable( "area",          "F", read=True,  write=True,  inData=True,  inPlot=False ),
                              Variable( "btagCMVA",      "F", read=True,  write=True,  inData=True,  inPlot=False ),

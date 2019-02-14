@@ -15,16 +15,15 @@ from RootTools.core.standard   import *
 ROOT.gROOT.SetBatch( True )
 
 # TTGammaEFT
-from TTGammaEFT.Tools.user              import plot_directory
+from TTGammaEFT.Tools.user              import combineReleaseLocation, cache_directory, cardfileLocation
 
 from TTGammaEFT.Tools.genCutInterpreter import cutInterpreter
 
 # get the reweighting function
-from TTGammaEFT.Tools.WeightInfo        import WeightInfo
+from Analysis.Tools.WeightInfo          import WeightInfo
+from Analysis.Tools.CardFileWriter      import CardFileWriter
 
-from TTGammaEFT.Analysis.Cache          import Cache
-from TTGammaEFT.Tools.cardFileWriter    import cardFileWriter
-from TTGammaEFT.Tools.user              import combineReleaseLocation, cache_directory, cardfileLocation
+from TTGammaEFT.Tools.Cache             import Cache
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -78,7 +77,7 @@ nllCache  = Cache( dbPath, tableName, ["cardname", "year", "WC1_name", "WC1_val"
 if nllCache is None: raise
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(    args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger( args.logLevel, logFile = None)
@@ -227,7 +226,7 @@ def calculation( (var1, var2) ):
         card[cardKey]     = cardname.replace("var1", str(var1)).replace("var2", str(var2)).replace( "_".join(map(str,args.years)), cardKey ).replace( "_".join(args.selections), sel )
         cardpath[cardKey] = os.path.join( cardfileLocation, card[cardKey] + '.txt' )
 
-        c = cardFileWriter()
+        c = CardFileWriter()
         c.reset()
         c.releaseLocation = combineReleaseLocation
 

@@ -7,16 +7,16 @@ import ROOT, os, imp, sys, copy
 ROOT.gROOT.SetBatch(True)
 import itertools
 import pickle
-from math                             import isnan, ceil, pi
+from math                                import isnan, ceil, pi
 
 # RootTools
-from RootTools.core.standard          import *
+from RootTools.core.standard             import *
 
 # Internal Imports
 from TTGammaEFT.Tools.user               import plot_directory
 from TTGammaEFT.Tools.genCutInterpreter  import cutInterpreter
 
-from TTGammaEFT.Tools.WeightInfo         import WeightInfo
+from Analysis.Tools.WeightInfo           import WeightInfo
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -41,7 +41,7 @@ signalSample = TTG_SingleLeptFromT_1L_test_EFT
 subdir       = signalSample.name
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)

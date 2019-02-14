@@ -1,7 +1,7 @@
 # Problems with HLT_DoubleEle33_CaloIdL_GsfTrkIdVL, HLT_TkMu50 and HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL
 
 class TriggerSelector:
-    def __init__( self, year, era, singleLepton=False ):
+    def __init__( self, year, singleLepton=False ):
 
         self.singleLepton = singleLepton
 

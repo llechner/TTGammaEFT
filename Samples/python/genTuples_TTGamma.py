@@ -10,13 +10,15 @@ from TTGammaEFT.Tools.user   import gridpack_directory, cache_directory
 def get_parser():
     import argparse
     argParser = argparse.ArgumentParser(description = "Argument parser for samples file")
-    argParser.add_argument('--overwrite',   action='store_true',    help="Overwrite current entry in db?")
+    argParser.add_argument( '--overwrite',   action='store_true',    help="Overwrite current entry in db?" )
     return argParser
 
 # Logging
 if __name__=="__main__":
-    import TTGammaEFT.Tools.logger as logger
-    logger = logger.get_logger("INFO", logFile = None )
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("DEBUG", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("DEBUG", logFile = None )
     options = get_parser().parse_args()
     ov = options.overwrite
 else:
@@ -24,9 +26,9 @@ else:
     logger = logging.getLogger(__name__)
     ov = False
 
-dbFile = cache_directory+"DB_TTGamma_GEN.sql"
+dbFile = cache_directory + "/samples/DB_TTGamma_GEN.sql"
 
-logger.info("Using db file: %s", dbFile)
+logger.info( "Using db file: %s", dbFile )
 
 # SM point, no weights
 # test samples
