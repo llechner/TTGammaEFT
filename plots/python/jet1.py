@@ -36,14 +36,6 @@ jet1.append( Plot(
 ))
 
 jet1.append( Plot(
-    name      = 'jet1_absEta',
-    texX      = '|#eta|(jet_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Jet_eta[1]),
-    binning   = [ 10, 0, 5 ],
-))
-
-jet1.append( Plot(
     name      = 'jet1_phi',
     texX      = '#phi(jet_{1})',
     texY      = 'Number of Events',
@@ -70,18 +62,3 @@ jet1.append( Plot(
     binning   = [ 60, -5, 5 ],
 ))
 
-jet1.append( Plot(
-    name      = 'jet1_absEta_fine',
-    texX      = '|#eta|(jet_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Jet_eta[1]),
-    binning   = [ 20, 0, 5 ],
-))
-
-jet1.append( Plot(
-    name      = 'jet1_absEta_veryFine',
-    texX      = '|#eta|(jet_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Jet_eta[1]),
-    binning   = [ 30, 0, 5 ],
-))

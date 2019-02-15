@@ -36,14 +36,6 @@ photonGood0.append( Plot(
 ))
 
 photonGood0.append( Plot(
-    name      = 'photonGood0_absEta',
-    texX      = '|#eta|(#gamma_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.PhotonGood0_eta),
-    binning   = [ 9, 0, 1.5 ],
-))
-
-photonGood0.append( Plot(
     name      = 'photonGood0_phi',
     texX      = '#phi(#gamma_{0})',
     texY      = 'Number of Events',

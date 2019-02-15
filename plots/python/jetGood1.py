@@ -36,14 +36,6 @@ jetGood1.append( Plot(
 ))
 
 jetGood1.append( Plot(
-    name      = 'jetGood1_absEta',
-    texX      = '|#eta|(jet_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.JetGood_eta[1]),
-    binning   = [ 10, 0, 3 ],
-))
-
-jetGood1.append( Plot(
     name      = 'jetGood1_phi',
     texX      = '#phi(jet_{1})',
     texY      = 'Number of Events',

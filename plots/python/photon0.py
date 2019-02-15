@@ -28,14 +28,6 @@ photon0.append( Plot(
 ))
 
 photon0.append( Plot(
-    name      = 'photon0_absEta',
-    texX      = '|#eta|(#gamma_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Photon_eta[0]),
-    binning   = [ 9, 0, 4 ],
-))
-
-photon0.append( Plot(
     name      = 'photon0_phi',
     texX      = '#phi(#gamma_{0})',
     texY      = 'Number of Events',

@@ -24,23 +24,7 @@ lepton0.append( Plot(
     texX      = '#eta(l_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Lepton_eta[0],
-    binning   = [ 30, -3, 3 ],
-))
-
-lepton0.append( Plot(
-    name      = 'lepton0_eta',
-    texX      = '#eta(l_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.Lepton_eta[0],
     binning   = [ 30, -4, 4 ],
-))
-
-lepton0.append( Plot(
-    name      = 'lepton0_absEta',
-    texX      = '|#eta|(l_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Lepton_eta[0]),
-    binning   = [ 15, 0, 4 ],
 ))
 
 lepton0.append( Plot(

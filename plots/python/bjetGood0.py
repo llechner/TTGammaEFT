@@ -28,14 +28,6 @@ bjetGood0.append( Plot(
 ))
 
 bjetGood0.append( Plot(
-    name      = 'bjetGood0_absEta',
-    texX      = '|#eta|(b_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.Bj0_eta),
-    binning   = [ 10, 0, 5 ],
-))
-
-bjetGood0.append( Plot(
     name      = 'bjetGood0_phi',
     texX      = '#phi(b_{0})',
     texY      = 'Number of Events',

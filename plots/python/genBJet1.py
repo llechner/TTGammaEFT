@@ -28,14 +28,6 @@ genBJet1.append( Plot(
 ))
 
 genBJet1.append( Plot(
-    name      = 'genBJet1_absEta',
-    texX      = '|#eta|(gen b_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.GenBj1_eta),
-    binning   = [ 10, 0, 5 ],
-))
-
-genBJet1.append( Plot(
     name      = 'genBJet1_phi',
     texX      = '#phi(gen b_{1})',
     texY      = 'Number of Events',

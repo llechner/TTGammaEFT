@@ -479,19 +479,6 @@ if options.addPreFiringFlag:
 # Define a reader
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
 
-def defaultColl( varList ):
-    """ returns a default collection for a faster plot script as it does not have to check if collection is contained
-    """
-    return { var.split("/")[0]:0 if var.endswith("/O") else -999 for var in varList }
-
-# Lets try writing default collections for a faster plot script, as no if requirements are needed
-defaultGen    = defaultColl( writeGenVariables )
-defaultGenJet = defaultColl( writeGenJetVariables )
-defaultLepton = defaultColl( writeLeptonVariables )
-defaultJet    = defaultColl( writeJetVariables )
-defaultBJet   = defaultColl( writeBJetVariables )
-defaultPhoton = defaultColl( writePhotonVariables )
-
 # Calculate photonEstimated met
 def getMetPhotonEstimated( met_pt, met_phi, photon ):
   met = ROOT.TLorentzVector()
@@ -541,6 +528,7 @@ def fill_vector_collection( event, collection_name, collection_varnames, objects
             getattr(event, collection_name+"_"+var)[i_obj] = obj[var]
 
 def fill_vector( event, collection_name, collection_varnames, obj):
+    if not obj: return #fills default values in variable
     for var in collection_varnames:
         setattr(event, collection_name+"_"+var, obj[var] )
 
@@ -586,13 +574,13 @@ def filler( event ):
         GenJet      = list( filter( lambda j: genJetSel(j),    gJets                                      ) )
         GenBJet     = list( filter( lambda j: genJetSel(j),    filterGenBJets( gJets )                    ) )
 
-        # Store and add 2 default entries for a faster plotscript
-        fill_vector_collection( event, "GenElectron", writeGenVarList,    GenElectron[:20] + [defaultGen, defaultGen] )
-        fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     + [defaultGen, defaultGen] )
-        fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   + [defaultGen, defaultGen] )
-        fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20]     + [defaultGenJet, defaultGenJet] )
-        fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20]      + [defaultGenJet, defaultGenJet] )
-        fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      + [defaultGen, defaultGen] )
+        # Store
+        fill_vector_collection( event, "GenElectron", writeGenVarList,    GenElectron[:20] )
+        fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     )
+        fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   )
+        fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20]     )
+        fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20]      )
+        fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      )
         
     elif isData:
         event.weight     = 1.
@@ -643,10 +631,6 @@ def filler( event ):
     tightLeptons   = tightElectrons + tightMuons
     tightLeptons.sort( key = lambda l: -l['pt'] )
 
-    # Select one tight and one medium lepton, the tight is included in the medium collection
-    selectedLeptons     = mediumLeptons[:2]
-    selectedTightLepton = tightLeptons[:1]
-
     # Store lepton number
     event.nLepton           = len(allLeptons)
     event.nElectron         = len(allElectrons)
@@ -668,9 +652,13 @@ def filler( event ):
     event.nElectronTight    = len(tightElectrons)
     event.nMuonTight        = len(tightMuons)
 
+    # Select one tight and one medium lepton, the tight is included in the medium collection
+    selectedLeptons     = mediumLeptons[:2]
+    selectedTightLepton = tightLeptons[:1]
+
     # Store analysis Leptons + 2 default Leptons for a faster plotscript
-    l0, l1   = ( selectedLeptons + [defaultLepton, defaultLepton] )[:2]
-    lt0, lt1 = ( tightLeptons    + [defaultLepton, defaultLepton] )[:2]
+    l0, l1   = ( selectedLeptons + [{},{}] )[:2]
+    lt0, lt1 = ( tightLeptons    + [{},{}] )[:2]
     # Dileptonic analysis
     fill_vector( event, "LeptonGood0",  writeLeptonVarList, l0 )
     fill_vector( event, "LeptonGood1",  writeLeptonVarList, l1 )
@@ -679,7 +667,7 @@ def filler( event ):
     fill_vector( event, "LeptonTight1", writeLeptonVarList, lt1 )
 
     # Store all Leptons
-    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons + [defaultLepton, defaultLepton] )
+    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons )
 
     # Photons
     allPhotons = getParticles( r, readPhotonVarList, coll="Photon" )
@@ -723,11 +711,11 @@ def filler( event ):
     event.nJet      = len(allJets)
     event.nJetGood  = len(jets)
 
-    # store all loose jets + 2 defaultJets for a faster plot script
-    fill_vector_collection( event, "Jet", writeJetVarList, allJets + [defaultJet, defaultJet] )
+    # store all loose jets
+    fill_vector_collection( event, "Jet", writeJetVarList, allJets)
 
     # Store analysis jets + 2 default jets for a faster plotscript
-    j0, j1   = ( jets + [defaultJet, defaultJet] )[:2]
+    j0, j1   = ( jets + [{},{}] )[:2]
     # Dileptonic analysis
     fill_vector( event, "JetGood0",  writeJetVarList, j0 )
     fill_vector( event, "JetGood1",  writeJetVarList, j1 )
@@ -738,7 +726,7 @@ def filler( event ):
     nonBJets = list( filter( lambda x: not x["isBJet"], jets ) )
 
     # Store bJets + 2 default bjets for a faster plot script
-    bj0, bj1 = ( list(bJets) + [defaultBJet, defaultBJet] )[:2]
+    bj0, bj1 = ( list(bJets) + [{},{}] )[:2]
     fill_vector( event, "Bj0", writeBJetVarList, bj0 )
     fill_vector( event, "Bj1", writeBJetVarList, bj1 )
 
@@ -801,17 +789,17 @@ def filler( event ):
     event.nPhotonGood  = len( mediumPhotons )
 
     # store all photons + default photons for a faster plot script
-    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons + [defaultPhoton, defaultPhoton] )
+    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons )
 
     # Store analysis photons + default photons for a faster plot script
-    p0, p1 = ( mediumPhotons + [defaultPhoton, defaultPhoton] )[:2]
+    p0, p1 = ( mediumPhotons + [{},{}] )[:2]
     fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
     fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
 
-    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [defaultPhoton] )[0]
+    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [{}] )[0]
     fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgNoSieie )
 
-    p0NoChg = ( mediumPhotonsNoChgIso + [defaultPhoton] )[0]
+    p0NoChg = ( mediumPhotonsNoChgIso + [{}] )[0]
     fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChg )
 
     if bj1:

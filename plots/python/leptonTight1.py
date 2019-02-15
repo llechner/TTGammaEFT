@@ -28,14 +28,6 @@ leptonTight1.append( Plot(
 ))
 
 leptonTight1.append( Plot(
-    name      = 'leptonTight1_absEta',
-    texX      = '|#eta|(l_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.LeptonTight1_eta),
-    binning   = [ 15, 0, 3 ],
-))
-
-leptonTight1.append( Plot(
     name      = 'leptonTight1_phi',
     texX      = '#phi(l_{1})',
     texY      = 'Number of Events',

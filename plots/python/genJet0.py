@@ -36,14 +36,6 @@ genJet0.append( Plot(
 ))
 
 genJet0.append( Plot(
-    name      = 'genJet0_absEta',
-    texX      = '|#eta|(jet_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.GenJet_eta[0]),
-    binning   = [ 10, 0, 3 ],
-))
-
-genJet0.append( Plot(
     name      = 'genJet0_phi',
     texX      = '#phi(jet_{0})',
     texY      = 'Number of Events',

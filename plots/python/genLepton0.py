@@ -28,14 +28,6 @@ genLepton0.append( Plot(
 ))
 
 genLepton0.append( Plot(
-    name      = 'genLepton0_absEta',
-    texX      = '|#eta|(l_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.GenLepton_eta[0]),
-    binning   = [ 15, 0, 3 ],
-))
-
-genLepton0.append( Plot(
     name      = 'genLepton0_phi',
     texX      = '#phi(l_{0})',
     texY      = 'Number of Events',

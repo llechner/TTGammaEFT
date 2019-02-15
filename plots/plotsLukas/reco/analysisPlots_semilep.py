@@ -16,6 +16,7 @@ from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
+from TTGammaEFT.Tools.objectSelection import isBJet       
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.helpers           import getCollection
@@ -134,24 +135,30 @@ photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, d
 
 # Read variables and sequences
 read_variables  = ["weight/F",
-                   "PV_npvs/I", "PV_npvsGood/I",
-                   "nJetGood/I", "nBTagGood/I",
-                   "nJet/I", "nBTag/I",
-                   "Jet[%s]" %jetVarString,
-                   "JetGood[%s]" %jetVarString,
-                   "nLepton/I", "nElectron/I", "nMuon/I",
-                   "nLeptonGood/I", "nElectronGood/I", "nMuonGood/I",
-                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
-                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
-                   "nPhoton/I",
-                   "nPhotonGood/I",
-                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
-                   "mlltight/F", "mllgammatight/F",
-                   "mLtight0Gamma/F",
-                   "ltight0GammadR/F", "ltight0GammadPhi/F",
-                   "m3/F", "m3wBJet/F",
-                   "photonJetdR/F", "tightLeptonJetdR/F",
+                   "PV_npvsGood/I",
+#                   "PV_npvs/I", "PV_npvsGood/I",
+#                   "nJetGood/I", "nBTagGood/I",
+#                   "nJet/I", "nBTag/I",
+#                   "Jet[%s]" %jetVarString,
+#                   "JetGood[%s]" %jetVarString,
+#                   "nLepton/I", "nElectron/I", "nMuon/I",
+#                   "nLeptonGood/I", "nElectronGood/I", "nMuonGood/I",
+#                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
+#                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+#                   "nPhoton/I",
+#                   "nPhotonGood/I",
+#                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
+#                   "mlltight/F", "mllgammatight/F",
+#                   "mLtight0Gamma/F",
+#                   "ltight0GammadR/F", "ltight0GammadPhi/F",
+#                   "m3/F", "m3wBJet/F",
+#                   "photonJetdR/F", "tightLeptonJetdR/F",
                   ]
+
+#read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
+#read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
+read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
+read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
 
 read_variables += map( lambda var: "PhotonGood0_"             + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )

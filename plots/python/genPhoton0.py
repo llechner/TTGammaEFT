@@ -36,14 +36,6 @@ genPhoton0.append( Plot(
 ))
 
 genPhoton0.append( Plot(
-    name      = 'genPhoton0_absEta',
-    texX      = '|#eta|(#gamma_{0})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.GenPhoton_eta[0]),
-    binning   = [ 9, 0, 1.5 ],
-))
-
-genPhoton0.append( Plot(
     name      = 'genPhoton0_phi',
     texX      = '#phi(#gamma_{0})',
     texY      = 'Number of Events',

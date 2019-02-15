@@ -28,14 +28,6 @@ genTop1.append( Plot(
 ))
 
 genTop1.append( Plot(
-    name      = 'genTop1_absEta',
-    texX      = '|#eta|(gen t_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.GenTop_eta[1]),
-    binning   = [ 10, 0, 5 ],
-))
-
-genTop1.append( Plot(
     name      = 'genTop1_phi',
     texX      = '#phi(gen t_{1})',
     texY      = 'Number of Events',

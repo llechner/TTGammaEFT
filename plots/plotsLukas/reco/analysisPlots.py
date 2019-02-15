@@ -16,6 +16,7 @@ from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
+from TTGammaEFT.Tools.objectSelection import isBJet
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.helpers           import getCollection
@@ -121,52 +122,58 @@ def getYieldPlot( index ):
 
 # get nano variable lists
 NanoVars         = NanoVariables( args.year )
-jetVarString     = NanoVars.getVariableString(   "Jet", postprocessed=True, data=(not args.noData), plot=True )
-jetVariableNames = NanoVars.getVariableNameList( "Jet", postprocessed=True, data=(not args.noData), plot=True )
-bJetVariables    = NanoVars.getVariables(        "BJet", postprocessed=True, data=(not args.noData), plot=True )
+jetVarString     = NanoVars.getVariableString(   "Jet",    postprocessed=True, data=(not args.noData), plot=True )
+jetVariableNames = NanoVars.getVariableNameList( "Jet",    postprocessed=True, data=(not args.noData), plot=True )
+bJetVariables    = NanoVars.getVariables(        "BJet",   postprocessed=True, data=(not args.noData), plot=True )
 leptonVariables  = NanoVars.getVariables(        "Lepton", postprocessed=True, data=(not args.noData), plot=True )
+leptonVarString  = NanoVars.getVariableString(   "Lepton", postprocessed=True, data=(not args.noData), plot=True )
 photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
+photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, data=(not args.noData), plot=True )
 
 # Read variables and sequences
-read_variables  = ["weight/F", "ref_weight/F",
-                   "PV_npvs/I", "PV_npvsGood/I",
-                   "nJetGood/I", "nBTagGood/I",
-                   "nJet/I", "nBTag/I",
-                   "Jet[%s]" %jetVarString,
-                   "JetGood[%s]" %jetVarString,
-                   "nLepton/I","nElectron/I", "nMuon/I",
-                   "nLeptonGood/I","nElectronGood/I", "nMuonGood/I",
-                   "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
-                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
-                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
-                   "nPhoton/I",
-                   "nPhotonGood/I",
-                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
-                   "mll/F", "mllgamma/F",
-                   "mlltight/F", "mllgammatight/F",
-                   "mLtight0Gamma/F",
-                   "ltight0GammadR/F", "ltight0GammadPhi/F",
-                   "m3/F", "m3wBJet/F",
-                   "lldR/F", "lldPhi/F", "bbdR/F", "bbdPhi/F",
-                   "photonJetdR/F", "photonLepdR/F", "leptonJetdR/F", "tightLeptonJetdR/F",
-                   "mL0Gamma/F",  "mL1Gamma/F",
-                   "l0GammadR/F", "l0GammadPhi/F",
-                   "l1GammadR/F", "l1GammadPhi/F",
-                   "j0GammadR/F", "j0GammadPhi/F",
-                   "j1GammadR/F", "j1GammadPhi/F",
+read_variables  = ["weight/F", #"ref_weight/F",
+                   "PV_npvsGood/I",
+#                   "PV_npvs/I", "PV_npvsGood/I",
+#                   "nJetGood/I", "nBTagGood/I",
+#                   "nJet/I", "nBTag/I",
+#                   "nLepton/I","nElectron/I", "nMuon/I",
+#                   "nLeptonGood/I","nElectronGood/I", "nMuonGood/I",
+#                   "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
+#                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
+#                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+#                   "nPhoton/I",
+#                   "nPhotonGood/I",
+#                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
+#                   "mll/F", "mllgamma/F",
+#                   "mlltight/F", "mllgammatight/F",
+#                   "mLtight0Gamma/F",
+#                   "ltight0GammadR/F", "ltight0GammadPhi/F",
+#                   "m3/F", "m3wBJet/F",
+#                   "lldR/F", "lldPhi/F", "bbdR/F", "bbdPhi/F",
+#                   "photonJetdR/F", "photonLepdR/F", "leptonJetdR/F", "tightLeptonJetdR/F",
+#                   "mL0Gamma/F",  "mL1Gamma/F",
+#                   "l0GammadR/F", "l0GammadPhi/F",
+#                   "l1GammadR/F", "l1GammadPhi/F",
+#                   "j0GammadR/F", "j0GammadPhi/F",
+#                   "j1GammadR/F", "j1GammadPhi/F",
                   ]
 
-read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
-read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
-read_variables += map( lambda var: "LeptonGood0_"  + var, leptonVariables )
-read_variables += map( lambda var: "LeptonGood1_"  + var, leptonVariables )
-read_variables += map( lambda var: "LeptonTight0_" + var, leptonVariables )
-read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
-read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
-read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
+#read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
+#read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
+read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
+read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
+
+#read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
+#read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
+#read_variables += map( lambda var: "LeptonGood0_"  + var, leptonVariables )
+#read_variables += map( lambda var: "LeptonGood1_"  + var, leptonVariables )
+#read_variables += map( lambda var: "LeptonTight0_" + var, leptonVariables )
+#read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
+#read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
+#read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
 
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
-                     "PhotonGood0_photonCat/I",
+#                     "PhotonGood0_photonCat/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
                      "reweightLeptonSF/F", "reweightLeptonSFUp/F", "reweightLeptonSFDown/F",
                      "reweightLeptonTrackingSF/F",
@@ -213,19 +220,22 @@ def make_Zpt( event, sample ):
         event.Z_eta = -999
         event.Z_phi = -999
 
+def printJet(event, sample):
+    print event.Jet_neHEF[0]
+    print event.Jet_neHEF[1]
 # Sequence
-sequence = [ \
-            clean_Jets,
-            make_Zpt,
-           ]
+sequence = []#\
+#            clean_Jets,
+#            make_Zpt,
+#           ]
 
 # Sample definition
 if args.year == 2016:
     if args.onlyTTG: mc = [ TTG_16 ]
-    else:            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
+    else:            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]#, other_16 ]
 elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
-    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
+    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17 ]#, other_17 ]
 elif args.year == 2018:
     if args.onlyTTG: mc = [ TTG_18 ]
     else:            mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18 ]#, other_18 ]
@@ -350,8 +360,9 @@ for index, mode in enumerate( allModes ):
     plots  = []
     plots += plotList
     plots += [ getYieldPlot( index ) ]
-    plots += addPlots
+#    plots += addPlots
 
+    print plots
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
 
@@ -374,6 +385,8 @@ for index, mode in enumerate( allModes ):
     if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
         eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
         eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
+
+    plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 
     # Get normalization yields from yield histogram
     for plot in plots:

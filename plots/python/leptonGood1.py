@@ -28,14 +28,6 @@ leptonGood1.append( Plot(
 ))
 
 leptonGood1.append( Plot(
-    name      = 'leptonGood1_absEta',
-    texX      = '|#eta|(l_{1})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: abs(event.LeptonGood1_eta),
-    binning   = [ 15, 0, 3 ],
-))
-
-leptonGood1.append( Plot(
     name      = 'leptonGood1_phi',
     texX      = '#phi(l_{1})',
     texY      = 'Number of Events',
