@@ -7,16 +7,16 @@ import ROOT, os, imp, sys, copy
 ROOT.gROOT.SetBatch(True)
 import itertools
 import pickle
-from math                             import isnan, ceil, pi
+from math                                import isnan, ceil, pi
 
 # RootTools
-from RootTools.core.standard          import *
+from RootTools.core.standard             import *
 
 # Internal Imports
 from TTGammaEFT.Tools.user               import plot_directory
 from TTGammaEFT.Tools.genCutInterpreter  import cutInterpreter
 
-from TTGammaEFT.Tools.WeightInfo         import WeightInfo
+from Analysis.Tools.WeightInfo           import WeightInfo
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -25,28 +25,31 @@ loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTS
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                                help="Log level for logging")
-argParser.add_argument('--plot_directory',     action='store',      default='gen')
 argParser.add_argument('--plotFile',           action='store',      default='all')
-argParser.add_argument('--selection',          action='store',      default='dilepOS-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40')
+argParser.add_argument('--selection',          action='store',      default='dilepOS-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40-nJet2p-nBTag1p')
 argParser.add_argument('--small',              action='store_true',                                                                                  help='Run only on a small subset of the data?', )
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                                   help="Normalize yields" )
 argParser.add_argument('--order',              action='store',      default=2,                                                                       help='Polynomial order of weight string (e.g. 2)')
-argParser.add_argument('--parameters',         action='store',      default=['ctZI', '1', 'ctWI', '1', 'ctZ', '1', 'ctW', '1'], type=str, nargs='+', help = "argument parameters")
+argParser.add_argument('--parameters',         action='store',      default=['ctZI', '4', 'ctWI', '4', 'ctZ', '4', 'ctW', '4'], type=str, nargs='+', help = "argument parameters")
 args = argParser.parse_args()
 
+# Samples
+from TTGammaEFT.Samples.genTuples_TTGamma_postProcessed      import *
+
+#signalSample = TTG_SingleLeptFromT_1L_test_EFT
+signalSample = TTG_DiLept_1L_EFT
+subdir       = signalSample.name
+
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
 if len(args.parameters) < 2: args.parameters = None
 
-if args.small:     args.plot_directory += "_small"
-if args.normalize: args.plot_directory += "_normalize"
-
-# Samples
-from TTGammaEFT.Samples.genTuples_TTGamma_postProcessed      import *
+if args.small:     subdir += "_small"
+if args.normalize: subdir += "_normalize"
 
 # Text on the plots
 colors = [ ROOT.kRed+1, ROOT.kGreen+2, ROOT.kOrange+1, ROOT.kViolet+9, ROOT.kSpring-7, ROOT.kRed+2 ]
@@ -90,7 +93,7 @@ if args.normalize:
 # Plotting
 def drawPlots( plots, mode ):
     for log in [False, True]:
-        plot_directory_ = os.path.join( plot_directory, 'genPlots', args.plot_directory, args.selection, wcString, mode, "log" if log else "lin" )
+        plot_directory_ = os.path.join( plot_directory, 'genPlots', subdir, args.selection, wcString, mode, "log" if log else "lin" )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos): 
@@ -101,7 +104,8 @@ def drawPlots( plots, mode ):
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
-	                       ratio = None,
+                           ratio = {'yRange': (0.3, 1.7), 'histos':[(i,len(params)-1) for i in range(0, len(params))], 'texY':'Ratio'},
+#	                       ratio = None,
 	                       logX = False, logY = log, sorting = True,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},
@@ -169,8 +173,6 @@ read_variables_EFT = [
 # Sequence
 sequence = []
 
-signalSample = TTG_SingleLeptFromT_1L_test_EFT
-
 w         = WeightInfo( signalSample.reweight_pkl )
 w.set_order( int(args.order) )
 variables = w.variables
@@ -229,7 +231,7 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    plots += [ getYieldPlot( index ) ]
+    if mode != 'all': plots += [ getYieldPlot( index ) ]
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )

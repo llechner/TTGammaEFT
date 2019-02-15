@@ -15,10 +15,10 @@ from RootTools.core.standard          import *
 from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
+from TTGammaEFT.Tools.Variables       import NanoVariables
 
-from Samples.Tools.metFilters         import getFilterCut
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVars, nanoPlotMuonVars, nanoPlotLeptonVars, nanoPlotTauVars, nanoPlotPhotonVars, nanoPlotJetVars, nanoPlotBJetVars
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVarString, nanoPlotMuonVarString, nanoPlotLeptonVarString, nanoPlotTauVarString, nanoPlotPhotonVarString, nanoPlotJetVarString, nanoPlotBJetVarString
+from Analysis.Tools.metFilters        import getFilterCut
+from Analysis.Tools.helpers           import getCollection
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -39,13 +39,10 @@ argParser.add_argument('--normalize',          action='store_true', default=Fals
 args = argParser.parse_args()
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
-
-
-print getFilterCut( args.year, isData=True  )
 
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
@@ -56,21 +53,18 @@ if args.normalize:       args.plot_directory += "_normalize"
 # Samples
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed      import *
-#    from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed_ttOnly      import *
     if not args.noData:
         from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_postProcessed import *
 
 elif args.year == 2017:
     from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed        import *
-#    from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed_ttOnly      import *
     if not args.noData:
         from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
 
 elif args.year == 2018:
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
-#    from TTGammaEFT.Samples.nanoTuples_Autumn18_postProcessed       import *
     if not args.noData:
-        from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_postProcessed import *
+        from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_postProcessed import *
 
 # Text on the plots
 def drawObjects( plotData, dataMCScale, lumi_scale ):
@@ -90,7 +84,7 @@ scaling = { 1:0 }
 # Plotting
 def drawPlots( plots, mode, dataMCScale ):
     for log in [False, True]:
-        plot_directory_ = os.path.join( plot_directory, 'analysisPlots%i'%args.year, args.plot_directory, args.selection, mode, "log" if log else "lin" )
+        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, "log" if log else "lin" )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos): 
@@ -125,15 +119,27 @@ def getYieldPlot( index ):
                 binning   = [ 3, 0, 3 ],
                 )
 
+# get nano variable lists
+NanoVars         = NanoVariables( args.year )
+jetVarString     = NanoVars.getVariableString(   "Jet", postprocessed=True, data=(not args.noData), plot=True )
+jetVariableNames = NanoVars.getVariableNameList( "Jet", postprocessed=True, data=(not args.noData), plot=True )
+bJetVariables    = NanoVars.getVariables(        "BJet", postprocessed=True, data=(not args.noData), plot=True )
+leptonVariables  = NanoVars.getVariables(        "Lepton", postprocessed=True, data=(not args.noData), plot=True )
+photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
+
 # Read variables and sequences
 read_variables  = ["weight/F", "ref_weight/F",
                    "PV_npvs/I", "PV_npvsGood/I",
                    "nJetGood/I", "nBTagGood/I",
-                   "JetGood[%s]" %nanoPlotJetVarString,
+                   "nJet/I", "nBTag/I",
+                   "Jet[%s]" %jetVarString,
+                   "JetGood[%s]" %jetVarString,
+                   "nLepton/I","nElectron/I", "nMuon/I",
                    "nLeptonGood/I","nElectronGood/I", "nMuonGood/I",
                    "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
                    "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
                    "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+                   "nPhoton/I",
                    "nPhotonGood/I",
                    "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
                    "mll/F", "mllgamma/F",
@@ -150,19 +156,14 @@ read_variables  = ["weight/F", "ref_weight/F",
                    "j1GammadR/F", "j1GammadPhi/F",
                   ]
 
-if args.year != 2016:
-    nanoPlotPhotonVarString = nanoPlotPhotonVarString.replace("cutBased", "cutBasedBitmap")
-
-read_variables += [ "PhotonGood0_"              + var for var in nanoPlotPhotonVarString.split(",") ]
-#read_variables += [ "PhotonNoChgIso0_"         + var for var in nanoPlotPhotonVarString.split(",") ]
-#read_variables += [ "PhotonNoChgIsoNoSieie0_"  + var for var in nanoPlotPhotonVarString.split(",") ]
-read_variables += [ "PhotonGood1_"  + var for var in nanoPlotPhotonVarString.split(",") ]
-read_variables += [ "LeptonGood0_"  + var for var in nanoPlotLeptonVarString.split(",") ]
-read_variables += [ "LeptonGood1_"  + var for var in nanoPlotLeptonVarString.split(",") ]
-read_variables += [ "LeptonTight0_" + var for var in nanoPlotLeptonVarString.split(",") ]
-read_variables += [ "LeptonTight1_" + var for var in nanoPlotLeptonVarString.split(",") ]
-read_variables += [ "Bj0_" + var for var in nanoPlotBJetVarString.split(",") ]
-read_variables += [ "Bj1_" + var for var in nanoPlotBJetVarString.split(",") ]
+read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
+read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
+read_variables += map( lambda var: "LeptonGood0_"  + var, leptonVariables )
+read_variables += map( lambda var: "LeptonGood1_"  + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTight0_" + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
+read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
+read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
 
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
                      "PhotonGood0_photonCat/I",
@@ -176,8 +177,47 @@ read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
                      "reweightBTag_SF/F", "reweightBTag_SF_b_Down/F", "reweightBTag_SF_b_Up/F", "reweightBTag_SF_l_Down/F", "reweightBTag_SF_l_Up/F",
                     ]
 
+def clean_Jets( event, sample ):
+    allJets    = getCollection( event, 'Jet', jetVariableNames, 'nJet' )
+    allJets.sort( key = lambda j: -j['pt'] )
+    allJets    = list( filter( lambda j: j['cleanmask'] and j['pt']>30, allJets ) )
+
+    looseJets  = getCollection( event, 'JetGood', jetVariableNames, 'nJetGood' )
+    looseJets.sort( key = lambda j: -j['pt'] )
+    looseJets  = list( filter( lambda j: j['cleanmask'], looseJets ) )
+
+    event.nJet      = len( allJets )
+    event.nJetGood  = len( looseJets )
+    event.nBTag     = len( filter( lambda j: isBJet( j, tagger='DeepCSV', year=args.year ), allJets ) )
+    event.nBTagGood = len( filter( lambda j: isBJet( j, tagger='DeepCSV', year=args.year ), looseJets ) )
+
+    for var in jetVariableNames:
+        for i, jet in enumerate( allJets[:2] ):
+            getattr( event, "Jet_" + var )[i] = jet[var]
+        for i, jet in enumerate ( looseJets[:2] ):
+            getattr( event, "JetGood_" + var )[i] = jet[var]
+
+def make_Zpt( event, sample ):
+    if event.nLeptonGood > 1:
+        l0 = ROOT.TLorentzVector()
+        l1 = ROOT.TLorentzVector()
+        l0.SetPtEtaPhiM( event.LeptonGood0_pt, event.LeptonGood0_eta, event.LeptonGood0_phi, 0 )
+        l1.SetPtEtaPhiM( event.LeptonGood1_pt, event.LeptonGood1_eta, event.LeptonGood1_phi, 0 )
+        Z = l0 + l1
+        event.Z_pt  = Z.Pt()
+        event.Z_eta = Z.Eta()
+        event.Z_phi = Z.Phi()
+
+    else:
+        event.Z_pt  = -999
+        event.Z_eta = -999
+        event.Z_phi = -999
+
 # Sequence
-sequence = []
+sequence = [ \
+            clean_Jets,
+            make_Zpt,
+           ]
 
 # Sample definition
 if args.year == 2016:
@@ -187,8 +227,8 @@ elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
     else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
 elif args.year == 2018:
-    if args.onlyTTG: mc = [ ]
-    else:            mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
+    if args.onlyTTG: mc = [ TTG_18 ]
+    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18 ]#, other_18 ]
 #    else:            mc = [ DY_LO_18, TT_pow_18, other_18 ]
 
 if args.noData:
@@ -218,11 +258,11 @@ for sample in mc + signals:
 if args.small:
     for sample in stack.samples:
         sample.normalization=1.
-        sample.reduceFiles( factor=15 )
+        sample.reduceFiles( factor=25 )
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year, None )
+tr = TriggerSelector( args.year )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ), addOverFlowBin='upper' )
@@ -236,6 +276,65 @@ if not os.path.isfile( plotListFile ):
 plotModule = imp.load_source( "plotLists", os.path.expandvars( plotListFile ) )
 if args.noData: from plotLists import plotListDataMC as plotList
 else:           from plotLists import plotListData   as plotList
+
+# plotList
+addPlots = []
+
+addPlots.append( Plot(
+    name      = 'jetGood0_Z_pTRatio_wide',
+    texX      = 'p_{T}(jet_{0})/p_{T}(Z)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.JetGood_pt[0] / event.Z_pt if event.nJetGood > 0 and event.Z_pt != -999 else -999,
+    binning   = [ 20, 0, 20 ],
+))
+
+addPlots.append( Plot(
+    name      = 'jetGood0_Z_pTRatio',
+    texX      = 'p_{T}(jet_{0})/p_{T}(Z)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.JetGood_pt[0] / event.Z_pt if event.nJetGood > 0 and event.Z_pt != -999 else -999,
+    binning   = [ 20, 0, 2 ],
+))
+
+addPlots.append( Plot(
+    name      = 'jet0_Z_pTRatio_wide',
+    texX      = 'p_{T}(jet_{0})/p_{T}(Z)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.Jet_pt[0] / event.Z_pt if event.nJet > 0 and event.Z_pt != -999 else -999,
+    binning   = [ 20, 0, 20 ],
+))
+
+addPlots.append( Plot(
+    name      = 'jet0_Z_pTRatio',
+    texX      = 'p_{T}(jet_{0})/p_{T}(Z)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.Jet_pt[0] / event.Z_pt if event.nJet > 0 and event.Z_pt != -999 else -999,
+    binning   = [ 20, 0, 2 ],
+))
+
+addPlots.append( Plot(
+    name      = 'Z_pt',
+    texX      = 'p_{T}(Z) (GeV)',
+    texY      = 'Number of Events / 20 GeV',
+    attribute = lambda event, sample: event.Z_pt,
+    binning   = [ 20, 0, 400 ],
+))
+
+addPlots.append( Plot(
+    name      = 'Z_phi',
+    texX      = '#phi(Z)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.Z_phi,
+    binning   = [ 10, -pi, pi ],
+))
+
+addPlots.append( Plot(
+    name      = 'Z_eta',
+    texX      = '#eta(Z)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.Z_eta,
+    binning   = [ 20, -3, 3 ],
+))
 
 # Loop over channels
 yields   = {}
@@ -251,6 +350,7 @@ for index, mode in enumerate( allModes ):
     plots  = []
     plots += plotList
     plots += [ getYieldPlot( index ) ]
+    plots += addPlots
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
@@ -258,36 +358,22 @@ for index, mode in enumerate( allModes ):
     if not args.noData:    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True  ), leptonSelection ] )
     for sample in mc + signals: sample.setSelectionString( [ getFilterCut( args.year, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
 
-    if args.year == 2016:
-        TTG_16.addSelectionString( "isTTGamma==1" )
-        TT_pow_16.addSelectionString( "isTTGamma==0" )
-        ZG_16.addSelectionString( "isZWGamma==1" )
-        DY_LO_16.addSelectionString( "isZWGamma==0" )
-    if args.year == 2017:
-        TTG_17.addSelectionString( "isTTGamma==1" )
-        TT_pow_17.addSelectionString( "isTTGamma==0" )
-#    if args.year == 2018:
-#        TTG_18.addSelectionString( "isTTGamma==1" )
-#        TT_pow_18.addSelectionString( "isTTGamma==0" )
-
     # Overlap removal
-#    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
-#        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
-#        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
+    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
+        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
+        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
-#    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
-#        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-#        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
+        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
+        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
-#    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
-#        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
-#        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
+        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
+        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
-#    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
-#        eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
-#        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
-
-    plotting.fill( plots, read_variables=read_variables, sequence=sequence )
+    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
+        eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
+        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
 
     # Get normalization yields from yield histogram
     for plot in plots:
@@ -325,4 +411,5 @@ for mode in [ "SF", "all" ]:
                 j.Add( list( itertools.chain.from_iterable( pl.histos ) )[i] )
 
     drawPlots( allPlots['mumu'], mode, dataMCScale )
+
 

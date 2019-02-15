@@ -13,10 +13,22 @@ def get_parser():
     '''
     import argparse
     argParser = argparse.ArgumentParser(description = "Argument parser for nanoPostProcessing")
-    argParser.add_argument('--file', action='store', type=str, default='nanoPostProcessing_Summer16', help="postprocessing sh file to check")
+    argParser.add_argument('--file',    action='store', type=str, default='nanoPostProcessing_Summer16', help="postprocessing sh file to check")
+    argParser.add_argument('--semilep', action='store_true', help="check semiLep samples?")
     return argParser
 
 args = get_parser().parse_args()
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 def filterEmpty( strList ):
     return list( filter ( bool, strList ) )
@@ -50,7 +62,8 @@ dictList = getDataDictList( file )
 year     = dictList[0]['year']
 isData   = "Run" in args.file
 
-directory = os.path.expandvars( os.path.join ( getattr( user, "data_%sdirectory%i"% ("data" if isData else "", year)), getattr( user, "postprocessing_%sdirectory%i"%("data" if isData else "", year) ) ) )
+directory = os.path.expandvars( os.path.join ( getattr( user, "data_%sdirectory%s%i"% ("data" if isData else "", "SemiLep" if args.semilep else "", year)), getattr( user, "postprocessing_%sdirectory%s%i"%("data" if isData else "", "SemiLep" if args.semilep else "", year) ) ) )
+print directory
 #directory = os.path.expandvars( os.path.join (user.data_directoryPrefiring, user.postprocessing_directoryPrefiring))
 
 for ppEntry in dictList:

@@ -8,9 +8,6 @@ from math                             import pi
 # RootTools
 from RootTools.core.standard          import *
 
-# TTGammaEFT
-from TTGammaEFT.Tools.constants       import defaultValue
-
 # plotList
 isolationGood = []
 
@@ -19,7 +16,7 @@ isolationGood.append( Plot(
     name      = 'dRL0PhotonGood0',
     texX      = '#DeltaR(#gamma_{0},l_{0})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.l0GammadR if event.nPhotonGood >= 1 and event.nLeptonGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "l0GammadR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -27,7 +24,7 @@ isolationGood.append( Plot(
     name      = 'dPhiL0PhotonGood0',
     texX      = '#Delta#phi(#gamma_{0},l_{0})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.l0GammadPhi if event.nPhotonGood >= 1 and event.nLeptonGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "l0GammadPhi/F" ),
     binning   = [ 40, 0, pi ],
 ))
 
@@ -35,7 +32,7 @@ isolationGood.append( Plot(
     name      = 'dRL1PhotonGood0',
     texX      = '#DeltaR(#gamma_{0},l_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.l1GammadR if event.nPhotonGood >= 1 and event.nLeptonGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "l1GammadR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -43,7 +40,7 @@ isolationGood.append( Plot(
     name      = 'dPhiL1PhotonGood0',
     texX      = '#Delta#phi(#gamma_{0},l_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.l1GammadPhi if event.nPhotonGood >= 1 and event.nLeptonGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "l1GammadPhi/F" ),
     binning   = [ 40, 0, pi ],
 ))
 
@@ -52,7 +49,7 @@ isolationGood.append( Plot(
     name      = 'dRJ0PhotonGood0',
     texX      = '#DeltaR(#gamma_{0},j_{0})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.j0GammadR if event.nPhotonGood >= 1 and event.nJetGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "j0GammadR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -60,7 +57,7 @@ isolationGood.append( Plot(
     name      = 'dPhiJ0PhotonGood0',
     texX      = '#Delta#phi(#gamma_{0},j_{0})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.j0GammadPhi if event.nPhotonGood >= 1 and event.nJetGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "j0GammadPhi/F" ),
     binning   = [ 40, 0, pi ],
 ))
 
@@ -68,7 +65,7 @@ isolationGood.append( Plot(
     name      = 'dRJ1PhotonGood0',
     texX      = '#DeltaR(#gamma_{0},j_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.j1GammadR if event.nPhotonGood >= 1 and event.nJetGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "j1GammadR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -76,7 +73,7 @@ isolationGood.append( Plot(
     name      = 'dPhiJ1PhotonGood0',
     texX      = '#Delta#phi(#gamma_{0},j_{1})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.j1GammadPhi if event.nPhotonGood >= 1 and event.nJetGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "j1GammadPhi/F" ),
     binning   = [ 40, 0, pi ],
 ))
 
@@ -85,7 +82,7 @@ isolationGood.append( Plot(
     name      = 'mindRJetPhoton',
     texX      = 'min(#DeltaR(#gamma, jet))',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.photonJetdR if event.nJetGood >= 1 and event.nPhotonGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "photonJetdR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -93,7 +90,7 @@ isolationGood.append( Plot(
     name      = 'mindRJetLepton',
     texX      = 'min(#DeltaR(lep, jet))',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.leptonJetdR if event.nJetGood >= 1 and event.nLeptonGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "leptonJetdR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -101,7 +98,7 @@ isolationGood.append( Plot(
     name      = 'mindRLepPhoton',
     texX      = 'min(#DeltaR(#gamma, l))',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.photonLepdR if event.nLeptonGood >= 1 and event.nPhotonGood >= 1 else defaultValue,
+    attribute = TreeVariable.fromString( "photonLepdR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -110,7 +107,7 @@ isolationGood.append( Plot(
     name      = 'dRll',
     texX      = '#DeltaR(ll)',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.lldR if event.nLeptonGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "lldR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -118,7 +115,7 @@ isolationGood.append( Plot(
     name      = 'dPhill',
     texX      = '#Delta#phi(ll)',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.lldPhi if event.nLeptonGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "lldPhi/F" ),
     binning   = [ 40, 0, pi ],
 ))
 
@@ -127,7 +124,7 @@ isolationGood.append( Plot(
     name      = 'dRbb',
     texX      = '#DeltaR(bb)',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.bbdR if event.nBTagGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "bbdR/F" ),
     binning   = [ 40, 0, 4 ],
 ))
 
@@ -135,6 +132,6 @@ isolationGood.append( Plot(
     name      = 'dPhibb',
     texX      = '#Delta#phi(bb)',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.bbdPhi if event.nBTagGood >= 2 else defaultValue,
+    attribute = TreeVariable.fromString( "bbdPhi/F" ),
     binning   = [ 40, 0, pi ],
 ))

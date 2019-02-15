@@ -8,9 +8,6 @@ from math                             import pi
 # RootTools
 from RootTools.core.standard          import *
 
-# TTGammaEFT
-from TTGammaEFT.Tools.constants       import defaultValue
-
 # plotList
 beam = []
     
@@ -19,7 +16,7 @@ beam.append(Plot(
     texX = 'N_{PV} (total)',
     texY = 'Number of Events',
     attribute = TreeVariable.fromString( "PV_npvs/I" ),
-    binning=[50,0,50],
+    binning=[100,0,100],
 ))
 
 beam.append(Plot(
@@ -27,6 +24,6 @@ beam.append(Plot(
     texX = 'N_{PV} (good)',
     texY = 'Number of Events',
     attribute = TreeVariable.fromString( "PV_npvsGood/I" ),
-    binning=[50,0,50],
+    binning=[100,0,100],
 ))
 

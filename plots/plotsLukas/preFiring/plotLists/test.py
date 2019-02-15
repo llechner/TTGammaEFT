@@ -3,9 +3,8 @@
 '''
 
 # Standard Imports
-import sys
 from math                             import pi
-import copy
+
 # RootTools
 from RootTools.core.standard          import *
 

@@ -7,13 +7,20 @@ import copy
 import imp 
 
 # TTGammaEFT
-from TTGammaEFT.Tools.ResultsDB import ResultsDB
-from TTGammaEFT.Tools.user import results_directory, tmp_directory
-from TTGammaEFT.Tools.u_float import u_float
+from TTGammaEFT.Tools.user    import results_directory, tmp_directory
+from Analysis.Tools.u_float   import u_float
+from Analysis.Tools.ResultsDB import ResultsDB
 
-# Logger
-import logging
-logger = logging.getLogger(__name__)
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 class Process:
     def __init__( self, process, nEvents, config, xsec_cache = 'xsec_DBv2.db', reweight=False, run_card=None ):

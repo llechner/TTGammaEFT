@@ -18,27 +18,15 @@ from RootTools.core.standard                     import *
 import TTGammaEFT.Tools.user as user
 
 # Tools for systematics
-from TTGammaEFT.Tools.helpers                    import checkRootFile, bestDRMatchInCollection
-from TTGammaEFT.Tools.observables                import deltaR, deltaPhi, m3
+from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
+from TTGammaEFT.Tools.helpers                    import m3
 
-from TTGammaEFT.Tools.objectSelection            import particlePtEtaSelection, deltaRCleaning, photonMediumIDSelector
-from TTGammaEFT.Tools.objectSelection            import getLeptons, getGoodLeptons, getSortedParticles, getUnsortedParticles, getGoodParticles
-from TTGammaEFT.Tools.objectSelection            import filterNonBJets, filterBJets, filterGenElectrons, filterGenMuons, filterGenPhotons, filterGenTops, filterGenBJets 
-from TTGammaEFT.Tools.objectSelection            import jetSelector, muonSelector, eleSelector, photonSelector, genJetSelector, genLeptonSelector, genPhotonSelector
+from TTGammaEFT.Tools.objectSelection            import *
+from TTGammaEFT.Tools.Variables                  import NanoVariables
 
-from TTGammaEFT.Tools.objectSelection            import nanoElectronVars, nanoMuonVars, nanoLeptonVars, nanoPhotonVars, nanoJetVars, nanoBJetVars, nanoGenVars, nanoGenJetVars
-from TTGammaEFT.Tools.objectSelection            import nanoElectronVarString, nanoMuonVarString, nanoLeptonVarString, nanoPhotonVarString, nanoJetVarString, nanoGenVarString, nanoBJetVarString, nanoGenJetVarString
-from TTGammaEFT.Tools.objectSelection            import nanoDataElectronVars, nanoDataMuonVars, nanoDataLeptonVars, nanoDataPhotonVars, nanoDataJetVars, nanoDataBJetVars
-from TTGammaEFT.Tools.objectSelection            import nanoDataElectronVarString, nanoDataMuonVarString, nanoDataLeptonVarString, nanoDataPhotonVarString, nanoDataJetVarString, nanoDataBJetVarString
-
-from TTGammaEFT.Tools.constants                  import defaultValue
-
-from TTGammaEFT.Tools.overlapRemovalTTG          import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
-
-from TTGammaEFT.Tools.WeightInfo                 import WeightInfo
-from TTGammaEFT.Tools.HyperPoly                  import HyperPoly
-
-from TTGammaEFT.Tools.puProfileCache             import puProfile
+from Analysis.Tools.PreFiring                    import PreFiring
+from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
+from Analysis.Tools.puProfileCache               import puProfile
 
 # central configuration
 targetLumi = 1000 #pb-1 Which lumi to normalize to
@@ -64,7 +52,6 @@ def get_parser():
     argParser.add_argument('--skim',                        action='store',         nargs='?',  type=str,                           default='dilep',                    help="Skim conditions to be applied for post-processing")
     argParser.add_argument('--small',                       action='store_true',                                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used")
     argParser.add_argument('--year',                        action='store',                     type=int,   choices=[2016,2017,2018],  required = True,                    help="Which year?")
-    argParser.add_argument('--addReweights',                action='store_true',                                                                                        help="Add reweights for sample EFT reweighting?")
     argParser.add_argument('--interpolationOrder',          action='store',         nargs='?',  type=int,                           default=2,                          help="Interpolation order for EFT weights.")
     argParser.add_argument('--triggerSelection',            action='store_true',                                                                                        help="Trigger selection?" )
     argParser.add_argument('--addPreFiringFlag',            action='store_true',                                                                                        help="Add flag for events w/o prefiring?" )
@@ -79,7 +66,7 @@ tagger = 'DeepCSV'
 #tagger = 'CSVv2'
 
 # Logging
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 logFile = '/tmp/%s_%s_%s_njob%s.txt'%(options.skim, '_'.join(options.samples), os.environ['USER'], str(0 if options.nJobs==1 else options.job) )
 logger  = logger.get_logger(options.logLevel, logFile = logFile)
 
@@ -92,18 +79,17 @@ logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
 writeToDPM = options.targetDir == '/dpm/'
 
 # Flags 
-isDiLep   = options.skim.lower().startswith('dilep')
-isSemiLep = options.skim.lower().startswith('semilep')
+isDiLepGamma = options.skim.lower().startswith('dilepGamma')
+isDiLep      = options.skim.lower().startswith('dilep')
+isSemiLep    = options.skim.lower().startswith('semilep')
 
-isPrivate = "private" in options.processingEra
-
-#isInclusive = options.skim.lower().count('inclusive')
-# Skim condition
 skimConds = []
 if isDiLep:
-    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.5)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.5))>=2" )
+    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1" )
+if isDiLepGamma:
+    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<1.479)&&Photon_electronVeto&&!Photon_pixelSeed)>=1" )
 elif isSemiLep:
-    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<2.5)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<2.5)>=1)" )
+    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<2.4&&Muon_tightId&&Muon_pfRelIso03_all<0.12)>=1)" )
 else:
     skimConds = ["(1)"]
 
@@ -124,7 +110,7 @@ elif options.year == 2017:
     from Samples.nanoAOD.Run2017_14Dec2018          import *
 elif options.year == 2018:
     from Samples.nanoAOD.Autumn18_private_legacy_v1 import *
-    from Samples.nanoAOD.Run2018_14Sep2018          import *
+    from Samples.nanoAOD.Run2018_14Dec2018          import *
 
 # Load all samples to be post processed
 samples = map( eval, options.samples ) 
@@ -160,27 +146,26 @@ xSection = samples[0].xSection if isMC else None
 # Trigger selection
 if isData and options.triggerSelection:
     from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
-    era         = options.samples[0].split( str(options.year) )[1].split("_")[0]
-    Ts          = TriggerSelector( options.year, era, singleLepton = isSemiLep )
+    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
     triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
     logger.info("Sample will have the following trigger skim: %s"%triggerCond)
     skimConds.append( triggerCond )
 
 # Reweighting, Scalefactors, Efficiencies
-from TTGammaEFT.Tools.LeptonSF import LeptonSF as LeptonSF_
+from Analysis.Tools.LeptonSF import LeptonSF as LeptonSF_
 LeptonSF = LeptonSF_( year=options.year )
 
-from TTGammaEFT.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
+from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
 LeptonTrackingSF = LeptonTrackingEfficiency( year=options.year )
 
-from TTGammaEFT.Tools.PhotonSF import PhotonSF as PhotonSF_
+from Analysis.Tools.PhotonSF import PhotonSF as PhotonSF_
 PhotonSF = PhotonSF_( year=options.year )
 
-from TTGammaEFT.Tools.PhotonReconstructionEfficiency import PhotonReconstructionEfficiency
+from Analysis.Tools.PhotonReconstructionEfficiency import PhotonReconstructionEfficiency
 PhotonRecEff = PhotonReconstructionEfficiency( year=options.year )
 
 # Update to other years when available
-from TTGammaEFT.Tools.PhotonElectronVetoEfficiency import PhotonElectronVetoEfficiency
+from Analysis.Tools.PhotonElectronVetoEfficiency import PhotonElectronVetoEfficiency
 PhotonElectronVetoSF = PhotonElectronVetoEfficiency()
 
 from TTGammaEFT.Tools.TriggerEfficiency import TriggerEfficiency
@@ -188,11 +173,11 @@ TriggerEff_withBackup = TriggerEfficiency( with_backup_triggers = True,  year=op
 TriggerEff            = TriggerEfficiency( with_backup_triggers = False, year=options.year )
 
 # Update to other years when available
-from TTGammaEFT.Tools.BTagEfficiency import BTagEfficiency
+from Analysis.Tools.BTagEfficiency import BTagEfficiency
 BTagEff = BTagEfficiency( year=options.year, tagger=tagger ) # default medium WP
 
 if isMC:
-    from TTGammaEFT.Tools.puReweighting import getReweightingFunction
+    from Analysis.Tools.puReweighting import getReweightingFunction
     if options.year == 2016:
         nTrueInt_puRW       = getReweightingFunction(data="PU_2016_35920_XSecCentral",  mc="Summer16")
         nTrueInt_puRWDown   = getReweightingFunction(data="PU_2016_35920_XSecDown",     mc="Summer16")
@@ -258,11 +243,6 @@ branchKeepStrings_DATAMC = [\
     "PV_npvs", "PV_npvsGood",
     "MET_*",
     "Flag_*", "HLT_*",
-#    "nJet", "Jet_*",
-#    "nElectron", "Electron_*",
-#    "nMuon", "Muon_*",
-#    "nPhoton", "Photon_*",
-    #"nTau", "Tau_*",
 ]
 
 #branches to be kept for MC samples only
@@ -282,108 +262,97 @@ branchKeepStrings_DATA = []
 if sample.isData:
     lumiScaleFactor   = None
     branchKeepStrings = branchKeepStrings_DATAMC + branchKeepStrings_DATA
+    json = allSamples[0].json
     from FWCore.PythonUtilities.LumiList import LumiList
-
-    # Apply golden JSON
-    if options.year == 2016:
-        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt'
-    elif options.year == 2017:
-        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
-    elif options.year == 2018:
-        sample.json = '$CMSSW_BASE/src/TTGammaEFT/Tools/data/json/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
-    else:
-        raise NotImplementedError
-
-    lumiList = LumiList( os.path.expandvars( sample.json ) )
-    logger.info( "Loaded json %s", sample.json )
+    lumiList = LumiList( os.path.expandvars( json ) )
+    logger.info( "Loaded json %s", json )
 else:
     lumiScaleFactor = xSection * targetLumi / float( sample.normalization ) if xSection is not None else None
     branchKeepStrings = branchKeepStrings_DATAMC + branchKeepStrings_MC
 
-if sample.isData:
-    nanoElectronVarString = nanoDataElectronVarString
-    nanoMuonVarString     = nanoDataMuonVarString
-    nanoLeptonVarString   = nanoDataLeptonVarString
-    nanoJetVarString      = nanoDataJetVarString
-    nanoBJetVarString     = nanoDataBJetVarString
-    nanoPhotonVarString   = nanoDataPhotonVarString
 
-    nanoElectronVars = nanoDataElectronVars
-    nanoMuonVars     = nanoDataMuonVars
-    nanoLeptonVars   = nanoDataLeptonVars
-    nanoJetVars      = nanoDataJetVars
-    nanoBJetVars     = nanoDataBJetVars
-    nanoPhotonVars   = nanoDataPhotonVars
+# get nano variable lists
+NanoVars = NanoVariables( options.year )
+#VarString ... "var1/type,var2/type"
+#Variables ... ["var1/type","var2/type"]
+#VarList   ... ["var1", "var2"]
 
-# change in the var naming for different years
-if options.year != 2016:
-    nanoPhotonVarString = nanoPhotonVarString.replace('cutBased','cutBasedBitmap')
-    nanoPhotonVars      = [ item if item != 'cutBased' else 'cutBasedBitmap' for item in nanoPhotonVars ]
+readGenVarString      = NanoVars.getVariableString(   "Gen",      postprocessed=False, data=sample.isData )
+readGenJetVarString   = NanoVars.getVariableString(   "GenJet",   postprocessed=False, data=sample.isData )
+readJetVarString      = NanoVars.getVariableString(   "Jet",      postprocessed=False, data=sample.isData )
+readElectronVarString = NanoVars.getVariableString(   "Electron", postprocessed=False, data=sample.isData )
+readMuonVarString     = NanoVars.getVariableString(   "Muon",     postprocessed=False, data=sample.isData )
+readPhotonVarString   = NanoVars.getVariableString(   "Photon",   postprocessed=False, data=sample.isData )
+
+readGenVarList        = NanoVars.getVariableNameList( "Gen",      postprocessed=False, data=sample.isData )
+readGenJetVarList     = NanoVars.getVariableNameList( "GenJet",   postprocessed=False, data=sample.isData )
+readJetVarList        = NanoVars.getVariableNameList( "Jet",      postprocessed=False, data=sample.isData )
+readElectronVarList   = NanoVars.getVariableNameList( "Electron", postprocessed=False, data=sample.isData )
+readMuonVarList       = NanoVars.getVariableNameList( "Muon",     postprocessed=False, data=sample.isData )
+readPhotonVarList     = NanoVars.getVariableNameList( "Photon",   postprocessed=False, data=sample.isData )
+
+readLeptonVariables   = NanoVars.getVariables(        "Lepton",   postprocessed=False, data=sample.isData )
+
+writeGenVarString     = NanoVars.getVariableString(   "Gen",      postprocessed=True,  data=sample.isData )
+writeGenJetVarString  = NanoVars.getVariableString(   "GenJet",   postprocessed=True,  data=sample.isData )
+writeJetVarString     = NanoVars.getVariableString(   "Jet",      postprocessed=True,  data=sample.isData )
+writeLeptonVarString  = NanoVars.getVariableString(   "Lepton",   postprocessed=True,  data=sample.isData )
+writePhotonVarString  = NanoVars.getVariableString(   "Photon",   postprocessed=True,  data=sample.isData )
+
+writeJetVarList       = NanoVars.getVariableNameList( "Jet",      postprocessed=True,  data=sample.isData )
+writeBJetVarList      = NanoVars.getVariableNameList( "BJet",     postprocessed=True,  data=sample.isData )
+writeGenVarList       = NanoVars.getVariableNameList( "Gen",      postprocessed=True,  data=sample.isData )
+writeGenJetVarList    = NanoVars.getVariableNameList( "GenJet",   postprocessed=True,  data=sample.isData )
+writeLeptonVarList    = NanoVars.getVariableNameList( "Lepton",   postprocessed=True,  data=sample.isData )
+writePhotonVarList    = NanoVars.getVariableNameList( "Photon",   postprocessed=True,  data=sample.isData )
+
+writeGenVariables     = NanoVars.getVariables( "Gen",      postprocessed=True,  data=sample.isData )
+writeGenJetVariables  = NanoVars.getVariables( "GenJet",   postprocessed=True,  data=sample.isData )
+writeJetVariables     = NanoVars.getVariables( "Jet",      postprocessed=True,  data=sample.isData )
+writeBJetVariables    = NanoVars.getVariables( "BJet",     postprocessed=True,  data=sample.isData )
+writeLeptonVariables  = NanoVars.getVariables( "Lepton",   postprocessed=True,  data=sample.isData )
+writePhotonVariables  = NanoVars.getVariables( "Photon",   postprocessed=True,  data=sample.isData )
 
 # Read Variables
 read_variables  = map( TreeVariable.fromString, ['run/I', 'luminosityBlock/I', 'event/l'] )
 read_variables += map( TreeVariable.fromString, ['MET_pt/F', 'MET_phi/F'] )
+
 read_variables += [ TreeVariable.fromString('nElectron/I'),
-                    VectorTreeVariable.fromString('Electron[%s]'%nanoElectronVarString) ]
+                    VectorTreeVariable.fromString('Electron[%s]'%readElectronVarString) ]
 read_variables += [ TreeVariable.fromString('nMuon/I'),
-                    VectorTreeVariable.fromString('Muon[%s]'%nanoMuonVarString) ]
+                    VectorTreeVariable.fromString('Muon[%s]'%readMuonVarString) ]
 read_variables += [ TreeVariable.fromString('nPhoton/I'),
-                    VectorTreeVariable.fromString('Photon[%s]'%nanoPhotonVarString) ]
+                    VectorTreeVariable.fromString('Photon[%s]'%readPhotonVarString) ]
 read_variables += [ TreeVariable.fromString('nJet/I'),
-                    VectorTreeVariable.fromString('Jet[%s]'%nanoJetVarString) ]
+                    VectorTreeVariable.fromString('Jet[%s]'%readJetVarString) ]
 if isMC:
     read_variables += [ TreeVariable.fromString('genWeight/F') ]
     read_variables += [ TreeVariable.fromString('Pileup_nTrueInt/F') ]
     read_variables += [ TreeVariable.fromString('nGenPart/I'),
-                        VectorTreeVariable.fromString('GenPart[%s]'%nanoGenVarString) ]
+                        VectorTreeVariable.fromString('GenPart[%s]'%readGenVarString) ]
     read_variables += [ TreeVariable.fromString('nGenJet/I'),
-                        VectorTreeVariable.fromString('GenJet[%s]'%nanoGenJetVarString) ]
+                        VectorTreeVariable.fromString('GenJet[%s]'%readGenJetVarString) ]
     read_variables += [ TreeVariable.fromString('genWeight/F') ]
 
-    nanoPhotonVarString += ',photonCat/I'
-
-# Load reweight pickle file if supposed to keep weights. 
-reweight_variables = []
-if options.addReweights and isMC:
-
-    # Determine coefficients for storing in vector
-    # Sort Ids wrt to their position in the card file
-
-    weightInfo = WeightInfo( sample.reweight_pkl )
-
-    # weights for the ntuple
-    rw_vector       = TreeVariable.fromString( "rw[w/F,"+",".join(w+'/F' for w in weightInfo.variables)+"]")
-    rw_vector.nMax  = weightInfo.nid
-    reweight_variables.append(rw_vector)
-
-    # coefficients for the weight parametrization
-    param_vector      = TreeVariable.fromString( "p[C/F]" )
-    param_vector.nMax = HyperPoly.get_ndof(weightInfo.nvar, options.interpolationOrder)
-    hyperPoly         = HyperPoly( options.interpolationOrder )
-    reweight_variables.append(param_vector)
-    reweight_variables.append(TreeVariable.fromString( "chi2_ndof/F"))
-
 # Write Variables
-new_variables  = reweight_variables
+new_variables  = []
 new_variables += [ 'weight/F', 'ref_weight/F' ]
 new_variables += [ 'triggerDecision/I', 'isData/I']
 
 # Jets
 new_variables += [ 'nJet/I' ]
-new_variables += [ 'nJetClean/I' ]
 new_variables += [ 'nJetGood/I' ] 
 
-new_variables += [ 'Jet[%s]'      %nanoJetVarString ]
-new_variables += [ 'JetClean[%s]' %nanoJetVarString ]
-new_variables += [ 'JetGood[%s]'  %nanoJetVarString ]
+new_variables += [ 'Jet[%s]'      %writeJetVarString ]
+new_variables += [ 'JetGood0_'  + var for var in writeJetVariables ]
+new_variables += [ 'JetGood1_'  + var for var in writeJetVariables ]
 
 # BJets
 new_variables += [ 'nBTag/I']
-new_variables += [ 'nBTagClean/I']
 new_variables += [ 'nBTagGood/I']
 
-new_variables += [ 'Bj0_' + var for var in nanoBJetVarString.split(',') ]
-new_variables += [ 'Bj1_' + var for var in nanoBJetVarString.split(',') ]
+new_variables += [ 'Bj0_' + var for var in writeBJetVariables ]
+new_variables += [ 'Bj1_' + var for var in writeBJetVariables ]
 
 # Leptons
 new_variables += [ 'nLepton/I' ] 
@@ -392,28 +361,28 @@ new_variables += [ 'nLeptonGood/I' ]
 new_variables += [ 'nLeptonGoodLead/I' ] 
 new_variables += [ 'nLeptonTight/I']
 
-new_variables += [ 'nElectron/I', 'nMuon/I']
-new_variables += [ 'nElectronVeto/I', 'nMuonVeto/I']
-new_variables += [ 'nElectronGood/I', 'nMuonGood/I']
+new_variables += [ 'nElectron/I',         'nMuon/I']
+new_variables += [ 'nElectronVeto/I',     'nMuonVeto/I']
+new_variables += [ 'nElectronGood/I',     'nMuonGood/I']
 new_variables += [ 'nElectronGoodLead/I', 'nMuonGoodLead/I']
-new_variables += [ 'nElectronTight/I', 'nMuonTight/I']
+new_variables += [ 'nElectronTight/I',     'nMuonTight/I']
 
-new_variables += [ 'Lepton[%s]'     %nanoLeptonVarString.replace('/b','/I') ]
+new_variables += [ 'Lepton[%s]'     %writeLeptonVarString ]
 
-new_variables += [ 'LeptonGood0_'  + var for var in nanoLeptonVarString.replace('/b','/I').split(',') ]
-new_variables += [ 'LeptonGood1_'  + var for var in nanoLeptonVarString.replace('/b','/I').split(',') ]
-new_variables += [ 'LeptonTight0_' + var for var in nanoLeptonVarString.replace('/b','/I').split(',') ]
-new_variables += [ 'LeptonTight1_' + var for var in nanoLeptonVarString.replace('/b','/I').split(',') ]
+new_variables += [ 'LeptonGood0_'  + var for var in writeLeptonVariables ]
+new_variables += [ 'LeptonGood1_'  + var for var in writeLeptonVariables ]
+new_variables += [ 'LeptonTight0_' + var for var in writeLeptonVariables ]
+new_variables += [ 'LeptonTight1_' + var for var in writeLeptonVariables ]
 
 # Photons
 new_variables += [ 'nPhoton/I' ] 
 new_variables += [ 'nPhotonGood/I' ] 
-new_variables += [ 'Photon[%s]'     %nanoPhotonVarString.replace('/b','/I') ]
+new_variables += [ 'Photon[%s]'     %writePhotonVarString ]
 
-new_variables += [ 'PhotonGood0_'            + var for var in nanoPhotonVarString.replace('/b','/I').split(',') ]
-new_variables += [ 'PhotonGood1_'            + var for var in nanoPhotonVarString.replace('/b','/I').split(',') ]
-new_variables += [ 'PhotonNoChgIso0_'        + var for var in nanoPhotonVarString.replace('/b','/I').split(',') ]
-new_variables += [ 'PhotonNoChgIsoNoSieie0_' + var for var in nanoPhotonVarString.replace('/b','/I').split(',') ]
+new_variables += [ 'PhotonGood0_'            + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonGood1_'            + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoChgIso0_'        + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoChgIsoNoSieie0_' + var for var in writePhotonVariables ]
 
 # Others
 new_variables += [ 'ht/F', 'METSig/F' ]
@@ -434,12 +403,12 @@ new_variables += [ 'j1GammadR/F',  'j1GammadPhi/F' ]
 if options.addPreFiringFlag: new_variables += [ 'unPreFirableEvent/I' ]
 
 if isMC:
-    new_variables += [ 'GenElectron[%s]' %nanoGenVarString ]
-    new_variables += [ 'GenMuon[%s]'     %nanoGenVarString ]
-    new_variables += [ 'GenPhoton[%s]'   %nanoGenVarString ]
-    new_variables += [ 'GenJet[%s]'      %nanoGenJetVarString ]
-    new_variables += [ 'GenBJet[%s]'     %nanoGenJetVarString ]
-    new_variables += [ 'GenTop[%s]'      %nanoGenVarString ]
+    new_variables += [ 'GenElectron[%s]' %writeGenVarString ]
+    new_variables += [ 'GenMuon[%s]'     %writeGenVarString ]
+    new_variables += [ 'GenPhoton[%s]'   %writeGenVarString ]
+    new_variables += [ 'GenJet[%s]'      %writeGenJetVarString ]
+    new_variables += [ 'GenBJet[%s]'     %writeGenJetVarString ]
+    new_variables += [ 'GenTop[%s]'      %writeGenVarString ]
     new_variables += [ 'isTTGamma/I', 'isZWGamma/I', 'isSingleTopTch/I' ]
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
@@ -477,19 +446,51 @@ if options.topReco:
 if isData:
     new_variables += ['jsonPassed/I']
 
+# Overlap removal Selection
+genPhotonSel_TTG_OR = genPhotonSelector( 'overlapTTGamma' )
+genPhotonSel_ZG_OR  = genPhotonSelector( 'overlapZWGamma' )
+genPhotonSel_T_OR   = genPhotonSelector( 'overlapSingleTopTch' )
+# Gen Selection
+genLeptonSel = genLeptonSelector()
+genPhotonSel = genPhotonSelector()
+genJetSel    = genJetSelector()
+# Electron Selection
+recoElectronSel_veto        = eleSelector( "veto" )
+recoElectronSel_medium      = eleSelector( "medium" )
+recoElectronSel_medium_lead = eleSelector( "medium", leading=True )
+recoElectronSel_tight       = eleSelector( "tight" )
+# Muon Selection
+recoMuonSel_veto        = muonSelector( "veto" )
+recoMuonSel_medium      = muonSelector( "medium" )
+recoMuonSel_medium_lead = muonSelector( "medium", leading=True )
+recoMuonSel_tight       = muonSelector( "tight" )
+# Photon Selection
+recoPhotonSel_medium                     = photonSelector( 'medium', year=options.year )
+recoPhotonSel_medium_noRelIsoChg         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03_chg"] )
+recoPhotonSel_medium_noRelIsoChg_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03_chg"] )
+# Jet Selection
+recoJetSel            = jetSelector( options.year )
+recoJetSel_noPtEtaCut = jetSelector( options.year )
 
-# Read Prefiring File
-unPreFirableEvents = []
-allUnPreFirableEvents = []
 if options.addPreFiringFlag: 
-    preFiringFile = '$CMSSW_BASE/src/TTGammaEFT/postprocessing/L1Prefiring/UnprefirableEventList_SingleMuon_Run2017BtoF.root'
-    f = ROOT.TFile.Open( preFiringFile )
-    for event in f.tree:
-        allUnPreFirableEvents.append( ( int(event.event), int(event.run), int(event.lumi) ) )
-        unPreFirableEvents.append(    ( int(event.event), int(event.run) ) )
+    Pf = PreFiring( sample.name )
+    unPreFirableEvents = [ (event, run) for event, run, lumi in Pf.getUnPreFirableEvents() ]
 
 # Define a reader
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
+
+def defaultColl( varList ):
+    """ returns a default collection for a faster plot script as it does not have to check if collection is contained
+    """
+    return { var.split("/")[0]:0 if var.endswith("/O") else -999 for var in varList }
+
+# Lets try writing default collections for a faster plot script, as no if requirements are needed
+defaultGen    = defaultColl( writeGenVariables )
+defaultGenJet = defaultColl( writeGenJetVariables )
+defaultLepton = defaultColl( writeLeptonVariables )
+defaultJet    = defaultColl( writeJetVariables )
+defaultBJet   = defaultColl( writeBJetVariables )
+defaultPhoton = defaultColl( writePhotonVariables )
 
 # Calculate photonEstimated met
 def getMetPhotonEstimated( met_pt, met_phi, photon ):
@@ -505,7 +506,14 @@ def addMissingVariables( coll, vars ):
         for var_ in vars:
             var = var_.split("/")[0]
             if not var in p:
-                p[var] = 0 if var_.endswith("/O") else defaultValue
+                p[var] = 0 if var_.endswith("/O") else -999
+
+def addJetFlags( jets, cleaningLeptons, cleaningPhotons ):
+    for j in jets:
+        minDRLep    = min( [ deltaR( l, j ) for l in cleaningLeptons ] + [999] )
+        minDRPhoton = min( [ deltaR( g, j ) for g in cleaningPhotons ] + [999] )
+        j["isGood"] = recoJetSel( j ) and minDRLep > 0.4 and minDRPhoton > 0.1
+        j["isBJet"] = isBJet( j, tagger=tagger, year=options.year )
 
 # Replace unsign. char type with integer (only necessary for output electrons)
 def convertUnits( coll ):
@@ -548,12 +556,14 @@ def filler( event ):
     if isMC:
 
         # weight
-        event.weight = lumiScaleFactor*r.genWeight if lumiScaleFactor is not None else defaultValue
+        event.weight = lumiScaleFactor*r.genWeight if lumiScaleFactor is not None else -999
 
         # GEN Particles
-        gPart = getUnsortedParticles( r, collVars=nanoGenVars, coll="GenPart" )
+        gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
+        gPart.sort( key = lambda p: -p['pt'] )
         # GEN Jets
-        gJets = getSortedParticles( r, collVars=nanoGenJetVars, coll="GenJet" )
+        gJets = getParticles( r, collVars=readGenJetVarList, coll="GenJet" )
+        gJets.sort( key = lambda p: -p['pt'] )
 
         # Overlap removal flags for ttgamma/ttbar and Zgamma/DY
         GenPhoton                  = filterGenPhotons( gPart, status='last' )
@@ -563,63 +573,27 @@ def filler( event ):
         GenIsoPhotonNoMesonSingleT = filter( lambda g: not hasMesonMother( getParentIds( g, gPart ) ), GenIsoPhotonSingleT )
         GenIsoPhotonNoMesonSingleT = filter( lambda g: not photonFromTopDecay( getParentIds( g, gPart ) ), GenIsoPhotonNoMesonSingleT )
 
-        event.isTTGamma      = len( getGoodParticles( genPhotonSelector( 'overlapTTGamma' ),      GenIsoPhotonNoMeson        ) ) > 0 
-        event.isZWGamma      = len( getGoodParticles( genPhotonSelector( 'overlapZWGamma' ),      GenIsoPhotonNoMeson        ) ) > 0 
-        event.isSingleTopTch = len( getGoodParticles( genPhotonSelector( 'overlapSingleTopTch' ), GenIsoPhotonNoMesonSingleT ) ) > 0 
+        event.isTTGamma      = len( filter( lambda g: genPhotonSel_TTG_OR(g), GenIsoPhotonNoMeson        ) ) > 0 
+        event.isZWGamma      = len( filter( lambda g: genPhotonSel_ZG_OR(g),  GenIsoPhotonNoMeson        ) ) > 0 
+        event.isSingleTopTch = len( filter( lambda g: genPhotonSel_T_OR(g),   GenIsoPhotonNoMesonSingleT ) ) > 0 
      
         # Split gen particles
-        GenElectron = getGoodParticles( genLeptonSelector(), filterGenElectrons( gPart, status='last' ) )
-        GenMuon     = getGoodParticles( genLeptonSelector(), filterGenMuons( gPart, status='last' )     )
-        GenPhoton   = getGoodParticles( genPhotonSelector(), GenPhoton                                  )
-        GenTop      = getGoodParticles( genJetSelector(),    filterGenTops( gPart )                     )
-        GenJet      = getGoodParticles( genJetSelector(),    gJets                                      )  
-        GenBJet     = getGoodParticles( genJetSelector(),    filterGenBJets( gJets )                    )
+        # still needs improvement with filterGen function
+        GenElectron = list( filter( lambda l: genLeptonSel(l), filterGenElectrons( gPart, status='last' ) ) )
+        GenMuon     = list( filter( lambda l: genLeptonSel(l), filterGenMuons( gPart, status='last' )     ) )
+        GenPhoton   = list( filter( lambda g: genPhotonSel(g), GenPhoton                                  ) )
+        GenTop      = list( filter( lambda t: genJetSel(t),    filterGenTops( gPart )                     ) )
+        GenJet      = list( filter( lambda j: genJetSel(j),    gJets                                      ) )
+        GenBJet     = list( filter( lambda j: genJetSel(j),    filterGenBJets( gJets )                    ) )
 
-        # Store
-        if len(GenElectron) > 0: fill_vector_collection( event, "GenElectron", nanoGenVars,    GenElectron )
-        if len(GenMuon) > 0:     fill_vector_collection( event, "GenMuon",     nanoGenVars,    GenMuon )
-        if len(GenPhoton) > 0:   fill_vector_collection( event, "GenPhoton",   nanoGenVars,    GenPhoton )
-        if len(GenBJet) > 0:     fill_vector_collection( event, "GenBJet",     nanoGenJetVars, GenBJet )
-        if len(GenJet) > 0:      fill_vector_collection( event, "GenJet",      nanoGenJetVars, GenJet )
-        if len(GenTop) > 0:      fill_vector_collection( event, "GenTop",      nanoGenVars,    GenTop )
-
-        # EFT event weights
-        if options.addReweights:
-            event.nrw    = weightInfo.nid
-            lhe_weights  = reader.products['lhe'].weights()
-            weights      = []
-            param_points = []
-            for weight in lhe_weights:
-                # Store nominal weight (First position!) 
-                if weight.id == 'rwgt_1': event.rw_nominal = weight.wgt
-                if not weight.id in weightInfo.id: continue
-                pos = weightInfo.data[weight.id]
-                event.rw_w[pos] = weight.wgt
-                weights.append( weight.wgt )
-                interpreted_weight = interpret_weight(weight.id)
-                for var in weightInfo.variables:
-                    getattr( event, "rw_"+var )[pos] = interpreted_weight[var]
-                # weight data for interpolation
-                if not hyperPoly.initialized:
-                    param_points.append( tuple(interpreted_weight[var] for var in weightInfo.variables) )
-
-            # get list of values of ref point in specific order
-            ref_point_coordinates = [ weightInfo.ref_point_coordinates[var] for var in weightInfo.variables ]
-
-            # Initialize with Reference Point
-            if not hyperPoly.initialized: hyperPoly.initialize( param_points, ref_point_coordinates )
-            coeff = hyperPoly.get_parametrization( weights )
-
-            # = HyperPoly(weight_data, args.interpolationOrder)
-            event.np = hyperPoly.ndof
-            event.chi2_ndof = hyperPoly.chi2_ndof( coeff, weights )
-            #logger.debug( "chi2_ndof %f coeff %r", event.chi2_ndof, coeff )
-            if event.chi2_ndof>10**-6: logger.warning( "chi2_ndof is large: %f", event.chi2_ndof )
-            for n in xrange( hyperPoly.ndof ):
-                event.p_C[n] = coeff[n]
-
-            event.ref_weight = event.weight / event.p_C[0]
-
+        # Store and add 2 default entries for a faster plotscript
+        fill_vector_collection( event, "GenElectron", writeGenVarList,    GenElectron[:20] + [defaultGen, defaultGen] )
+        fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     + [defaultGen, defaultGen] )
+        fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   + [defaultGen, defaultGen] )
+        fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20]     + [defaultGenJet, defaultGenJet] )
+        fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20]      + [defaultGenJet, defaultGenJet] )
+        fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      + [defaultGen, defaultGen] )
+        
     elif isData:
         event.weight     = 1.
         event.ref_weight = 1.
@@ -634,11 +608,14 @@ def filler( event ):
         raise NotImplementedError( "isMC %r isData %r " % (isMC, isData) )
 
     # Leptons
-    allElectrons = getSortedParticles( r, nanoElectronVars, coll="Electron" )
-    allMuons     = getSortedParticles( r, nanoMuonVars,     coll="Muon" )
+    allElectrons = getParticles( r, readElectronVarList, coll="Electron" )
+    allMuons     = getParticles( r, readMuonVarList,     coll="Muon" )
 
-    addMissingVariables( allElectrons, nanoLeptonVarString.split(",") )
-    addMissingVariables( allMuons,     nanoLeptonVarString.split(",") )
+    allElectrons.sort( key = lambda l: -l['pt'] )
+    allMuons.sort( key = lambda l: -l['pt'] )
+
+    addMissingVariables( allElectrons, readLeptonVariables )
+    addMissingVariables( allMuons,     readLeptonVariables )
     convertUnits( allElectrons )
     convertUnits( allMuons )
 
@@ -646,34 +623,28 @@ def filler( event ):
     allLeptons.sort( key = lambda l: -l['pt'] )
 
     # Filter leptons
-    vetoElectrons = getGoodParticles( eleSelector(  'veto' ), allElectrons )
-    vetoMuons     = getGoodParticles( muonSelector( 'veto' ), allMuons )
+    vetoElectrons = list( filter( lambda l: recoElectronSel_veto(l), allElectrons ) )
+    vetoMuons     = list( filter( lambda l: recoMuonSel_veto(l),     allMuons ) )
     vetoLeptons   = vetoElectrons + vetoMuons
     vetoLeptons.sort( key = lambda l: -l['pt'] )
 
-    mediumElectrons = getGoodParticles( eleSelector(  'medium' ), allElectrons )
-    mediumMuons     = getGoodParticles( muonSelector( 'medium' ), allMuons )
+    mediumElectrons = list( filter( lambda l: recoElectronSel_medium(l), allElectrons ) )
+    mediumMuons     = list( filter( lambda l: recoMuonSel_medium(l),     allMuons ) )
     mediumLeptons   = mediumElectrons + mediumMuons
     mediumLeptons.sort( key = lambda l: -l['pt'] )
 
-    mediumLeadingElectrons = getGoodParticles( eleSelector(  'medium', leading=True ), mediumElectrons )
-    mediumLeadingMuons     = getGoodParticles( muonSelector( 'medium', leading=True ), mediumMuons )
+    mediumLeadingElectrons = list( filter( lambda l: recoElectronSel_medium_lead(l), mediumElectrons ) )
+    mediumLeadingMuons     = list( filter( lambda l: recoMuonSel_medium_lead(l),     mediumMuons ) )
     mediumLeadingLeptons   = mediumLeadingElectrons + mediumLeadingMuons
     mediumLeadingLeptons.sort( key = lambda l: -l['pt'] )
 
-    tightElectrons = getGoodParticles( eleSelector(  'tight' ), allElectrons )
-    tightMuons     = getGoodParticles( muonSelector( 'tight' ), allMuons )
+    tightElectrons = list( filter( lambda l: recoElectronSel_tight(l), allElectrons ) )
+    tightMuons     = list( filter( lambda l: recoMuonSel_tight(l),     allMuons ) )
     tightLeptons   = tightElectrons + tightMuons
     tightLeptons.sort( key = lambda l: -l['pt'] )
 
-    # Leptons for allJets deltaR cleaning
-    cleanElectrons = getGoodParticles( eleSelector(  'veto', noPtEtaCut=True ), allElectrons )
-    cleanMuons     = getGoodParticles( muonSelector( 'veto', noPtEtaCut=True ), allMuons )
-    cleanLeptons   = cleanElectrons + cleanMuons
-    cleanLeptons.sort( key = lambda l: -l['pt'] )
-
     # Select one tight and one medium lepton, the tight is included in the medium collection
-    selectedLeptons = mediumLeptons[:2]
+    selectedLeptons     = mediumLeptons[:2]
     selectedTightLepton = tightLeptons[:1]
 
     # Store lepton number
@@ -697,30 +668,29 @@ def filler( event ):
     event.nElectronTight    = len(tightElectrons)
     event.nMuonTight        = len(tightMuons)
 
-    # Store analysis Leptons
-    l0, l1   = ( selectedLeptons + [None, None] )[:2]
-    lt0, lt1 = ( tightLeptons + [None, None] )[:2]
+    # Store analysis Leptons + 2 default Leptons for a faster plotscript
+    l0, l1   = ( selectedLeptons + [defaultLepton, defaultLepton] )[:2]
+    lt0, lt1 = ( tightLeptons    + [defaultLepton, defaultLepton] )[:2]
     # Dileptonic analysis
-    if l0:  fill_vector( event, "LeptonGood0",  nanoLeptonVars, l0 )
-    if l1:  fill_vector( event, "LeptonGood1",  nanoLeptonVars, l1 )
+    fill_vector( event, "LeptonGood0",  writeLeptonVarList, l0 )
+    fill_vector( event, "LeptonGood1",  writeLeptonVarList, l1 )
     # Semi-leptonic analysis
-    if lt0: fill_vector( event, "LeptonTight0", nanoLeptonVars, lt0 )
-    if lt1: fill_vector( event, "LeptonTight1", nanoLeptonVars, lt1 )
+    fill_vector( event, "LeptonTight0", writeLeptonVarList, lt0 )
+    fill_vector( event, "LeptonTight1", writeLeptonVarList, lt1 )
 
     # Store all Leptons
-    fill_vector_collection( event, "Lepton",     nanoLeptonVars, allLeptons )
+    fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons + [defaultLepton, defaultLepton] )
 
     # Photons
-    allPhotons = getSortedParticles( r, nanoPhotonVars, coll="Photon" )
+    allPhotons = getParticles( r, readPhotonVarList, coll="Photon" )
+    allPhotons.sort( key = lambda g: -g['pt'] )
     convertUnits( allPhotons )
 
-    cleanPhotons                 = getGoodParticles( photonSelector( 'loose',  year=options.year, noPtEtaCut=True ),                         allPhotons )
-    mediumPhotons                = getGoodParticles( photonSelector( 'medium', year=options.year ),                                          allPhotons )
-    mediumPhotonsNoChgIso        = getGoodParticles( photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03_chg"] ),          allPhotons )
-    mediumPhotonsNoChgIsoNoSieie = getGoodParticles( photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03_chg"] ), allPhotons )
+    mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                     allPhotons ) )
+    mediumPhotonsNoChgIso        = list( filter( lambda g: recoPhotonSel_medium_noRelIsoChg(g),         allPhotons ) )
+    mediumPhotonsNoChgIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noRelIsoChg_noSieie(g), allPhotons ) )
 
     # DeltaR cleaning
-    cleanPhotons                 = deltaRCleaning( cleanPhotons,                 cleanLeptons,                                        dRCut=0.1 )
     mediumPhotons                = deltaRCleaning( mediumPhotons,                selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
     mediumPhotonsNoChgIso        = deltaRCleaning( mediumPhotonsNoChgIso,        selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
     mediumPhotonsNoChgIsoNoSieie = deltaRCleaning( mediumPhotonsNoChgIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
@@ -728,56 +698,53 @@ def filler( event ):
     # Photons are stored later in this script
 
     # Jets
-    allJets = getSortedParticles( r, collVars=nanoJetVars, coll="Jet" )
+    allJets = getParticles( r, collVars=readJetVarList, coll="Jet" )
 
     if isMC:
         for j in allJets: BTagEff.addBTagEffToJet( j )
 
     # Loose jets w/o pt/eta requirement
-    allJets   = getGoodParticles( jetSelector( options.year, noPtEtaCut=True  ), allJets )
+    allJets = list( filter( lambda j: recoJetSel_noPtEtaCut(j), allJets ) )
+    addJetFlags( allJets, selectedLeptons if isDiLep else selectedTightLepton, mediumPhotons )
     # Loose jets w/ pt/eta requirement (analysis jets)
-    looseJets = getGoodParticles( jetSelector( options.year, noPtEtaCut=False ), allJets )
+    jets    = list( filter( lambda x: x["isGood"], allJets ) )
 
-    # DeltaR cleaning
-    cleanJets = deltaRCleaning( allJets,   cleanLeptons,  dRCut=0.4 ) # clean all jets against a very loose lepton selection
-    cleanJets = deltaRCleaning( cleanJets, cleanPhotons,  dRCut=0.1 ) # clean all jets against a very loose photon selection
-    looseJets = deltaRCleaning( looseJets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
-    looseJets = deltaRCleaning( looseJets, mediumPhotons, dRCut=0.1 ) # clean all jets against analysis photons
+    # DeltaR cleaning (now done in "isGood"
+#    jets = deltaRCleaning( jets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
+#    jets = deltaRCleaning( jets, mediumPhotons, dRCut=0.1 ) # clean all jets against analysis photons
     
     # Store jets
     event.nJet      = len(allJets)
-    event.nJetClean = len(cleanJets)
-    event.nJetGood  = len(looseJets)
+    event.nJetGood  = len(jets)
 
-    # store all loose jets
-    fill_vector_collection( event, "Jet",      nanoJetVars, allJets )
-    # store all loose jets, cleaned against vetoLeptons and loose photons
-    fill_vector_collection( event, "JetClean", nanoJetVars, cleanJets )
-    # store analysis jets
-    fill_vector_collection( event, "JetGood",  nanoJetVars, looseJets )
+    # store all loose jets + 2 defaultJets for a faster plot script
+    fill_vector_collection( event, "Jet", writeJetVarList, allJets + [defaultJet, defaultJet] )
+
+    # Store analysis jets + 2 default jets for a faster plotscript
+    j0, j1   = ( jets + [defaultJet, defaultJet] )[:2]
+    # Dileptonic analysis
+    fill_vector( event, "JetGood0",  writeJetVarList, j0 )
+    fill_vector( event, "JetGood1",  writeJetVarList, j1 )
 
     # bJets
-    allBJets   = filterBJets( allJets,   tagger=tagger, year=options.year )
-    cleanBJets = filterBJets( cleanJets, tagger=tagger, year=options.year )
+    allBJets = list( filter( lambda x: x["isBJet"], allJets ) )
+    bJets    = list( filter( lambda x: x["isBJet"], jets ) )
+    nonBJets = list( filter( lambda x: not x["isBJet"], jets ) )
 
-    looseBJets    = filterBJets(    looseJets, tagger=tagger, year=options.year )
-    looseNonBJets = filterNonBJets( looseJets, tagger=tagger, year=options.year )
-
-    # Store bJets
-    bj0, bj1 = ( list(looseBJets) + [None, None] )[:2]
-    if bj0: fill_vector( event, "Bj0", nanoBJetVars, bj0 )
-    if bj1: fill_vector( event, "Bj1", nanoBJetVars, bj1 )
+    # Store bJets + 2 default bjets for a faster plot script
+    bj0, bj1 = ( list(bJets) + [defaultBJet, defaultBJet] )[:2]
+    fill_vector( event, "Bj0", writeBJetVarList, bj0 )
+    fill_vector( event, "Bj1", writeBJetVarList, bj1 )
 
     event.nBTag      = len(allBJets)
-    event.nBTagClean = len(cleanBJets)
-    event.nBTagGood  = len(looseBJets)
+    event.nBTagGood  = len(bJets)
 
     # Additional observables
-    event.m3          = m3( looseJets )[0]
-    event.m3wBJet     = m3( looseJets, nBJets=1, tagger=tagger, year=options.year )[0]
+    event.m3          = m3( jets )[0]
+    event.m3wBJet     = m3( jets, nBJets=1, tagger=tagger, year=options.year )[0]
 
-    event.ht          = sum( [ j['pt'] for j in looseJets ] )
-    event.METSig      = r.MET_pt / sqrt( event.ht ) if event.ht > 0 else defaultValue
+    event.ht          = sum( [ j['pt'] for j in jets ] )
+    event.METSig      = r.MET_pt / sqrt( event.ht ) if event.ht > 0 else -999
 
     if isMC:
         # match photon with gen-particle and get its photon category -> reco Photon categorization
@@ -797,54 +764,89 @@ def filler( event ):
         # additional observables
         event.MET_pt_photonEstimated, event.MET_phi_photonEstimated = getMetPhotonEstimated( r.MET_pt, r.MET_phi, mediumPhotons[0] )
 
-        if event.ht > 0:     event.METSig_photonEstimated     = event.MET_pt_photonEstimated / sqrt( event.ht )
+        if event.ht > 0:
+            event.METSig_photonEstimated = event.MET_pt_photonEstimated / sqrt( event.ht )
+        else:
+            event.METSig_photonEstimated = -999 
 
-        if looseJets:        event.photonJetdR                = min( deltaR( p, j ) for j in looseJets       for p in mediumPhotons )
-        if selectedLeptons:  event.photonLepdR                = min( deltaR( p, l ) for l in selectedLeptons for p in mediumPhotons )
+        if jets:
+            event.photonJetdR = min( deltaR( p, j ) for j in jets for p in mediumPhotons )
+        else:
+             event.photonJetdR = -999
+
+        if selectedLeptons:
+            event.photonLepdR = min( deltaR( p, l ) for l in selectedLeptons for p in mediumPhotons )
+        else:
+             event.photonLepdR = -999
 
         if len(tightLeptons) > 0:
             event.ltight0GammadPhi = deltaPhi( tightLeptons[0]['phi'], mediumPhotons[0]['phi'] )
             event.ltight0GammadR   = deltaR(   tightLeptons[0],        mediumPhotons[0] )
             event.mLtight0Gamma    = ( get4DVec(tightLeptons[0]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.ltight0GammadPhi = -999
+            event.ltight0GammadR   = -999
+            event.mLtight0Gamma    = -999
 
         if len(selectedLeptons) > 0:
             event.l0GammadPhi = deltaPhi( selectedLeptons[0]['phi'], mediumPhotons[0]['phi'] )
             event.l0GammadR   = deltaR(   selectedLeptons[0],        mediumPhotons[0] )
             event.mL0Gamma    = ( get4DVec(selectedLeptons[0]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.l0GammadPhi = -999
+            event.l0GammadR   = -999
+            event.mL0Gamma    = -999
 
         if len(selectedLeptons) > 1:
             event.l1GammadPhi = deltaPhi( selectedLeptons[1]['phi'], mediumPhotons[0]['phi'] )
             event.l1GammadR   = deltaR(   selectedLeptons[1],        mediumPhotons[0] )
             event.mL1Gamma    = ( get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.l1GammadPhi = -999
+            event.l1GammadR   = -999
+            event.mL1Gamma    = -999
 
-        if len(looseJets) > 0:
-            event.j0GammadPhi = deltaPhi( looseJets[0]['phi'], mediumPhotons[0]['phi'] )
-            event.j0GammadR   = deltaR(   looseJets[0],        mediumPhotons[0] )
+        if len(jets) > 0:
+            event.j0GammadPhi = deltaPhi( jets[0]['phi'], mediumPhotons[0]['phi'] )
+            event.j0GammadR   = deltaR(   jets[0],        mediumPhotons[0] )
+        else:
+            event.j0GammadPhi = -999
+            event.j0GammadR   = -999
 
-        if len(looseJets) > 1:
-            event.j1GammadPhi = deltaPhi( looseJets[1]['phi'], mediumPhotons[0]['phi'] )
-            event.j1GammadR   = deltaR(   looseJets[1],        mediumPhotons[0] )
+        if len(jets) > 1:
+            event.j1GammadPhi = deltaPhi( jets[1]['phi'], mediumPhotons[0]['phi'] )
+            event.j1GammadR   = deltaR(   jets[1],        mediumPhotons[0] )
+        else:
+            event.j1GammadPhi = -999
+            event.j1GammadR   = -999
+
+    else:
+        event.MET_pt_photonEstimated  = -999
+        event.MET_phi_photonEstimated = -999
 
     event.nPhoton      = len( allPhotons )
     event.nPhotonGood  = len( mediumPhotons )
 
-    # store all photons
-    fill_vector_collection( event, "Photon",      nanoPhotonVars, allPhotons )
+    # store all photons + default photons for a faster plot script
+    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons + [defaultPhoton, defaultPhoton] )
 
-    # Store analysis photons
-    p0, p1 = ( mediumPhotons + [None, None] )[:2]
-    if p0: fill_vector( event, "PhotonGood0",  nanoPhotonVars + ['photonCat'] if isMC else nanoPhotonVars, p0 )
-    if p1: fill_vector( event, "PhotonGood1",  nanoPhotonVars + ['photonCat'] if isMC else nanoPhotonVars, p1 )
+    # Store analysis photons + default photons for a faster plot script
+    p0, p1 = ( mediumPhotons + [defaultPhoton, defaultPhoton] )[:2]
+    fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
+    fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
 
-    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [None] )[0]
-    if p0NoChgNoSieie: fill_vector( event, "PhotonNoChgIsoNoSieie0",  nanoPhotonVars + ['photonCat'] if isMC else nanoPhotonVars, p0NoChgNoSieie )
+    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [defaultPhoton] )[0]
+    fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgNoSieie )
 
-    p0NoChg = ( mediumPhotonsNoChgIso + [None] )[0]
-    if p0NoChg: fill_vector( event, "PhotonNoChgIso0",  nanoPhotonVars + ['photonCat'] if isMC else nanoPhotonVars, p0NoChg )
+    p0NoChg = ( mediumPhotonsNoChgIso + [defaultPhoton] )[0]
+    fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChg )
 
     if bj1:
         event.bbdR   = deltaR( bj0, bj1 )
         event.bbdPhi = deltaPhi( bj0['phi'], bj1['phi'] )
+    else:
+        event.bbdR   = -999
+        event.bbdPhi = -999
 
     if len(tightLeptons) > 1:
         event.lldRtight   = deltaR( tightLeptons[0], tightLeptons[1] )
@@ -853,9 +855,17 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgammatight = ( get4DVec(tightLeptons[0]) + get4DVec(tightLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.mllgammatight = -999
+    else:
+        event.lldRtight   = -999
+        event.lldPhitight = -999
+        event.mlltight    = -999
 
-    if len(looseJets) > 0 and len(tightLeptons) > 0:
-        event.tightLeptonJetdR = min( deltaR( tightLeptons[0], j ) for j in looseJets )
+    if len(jets) > 0 and len(tightLeptons) > 0:
+        event.tightLeptonJetdR = min( deltaR( tightLeptons[0], j ) for j in jets )
+    else:
+        event.tightLeptonJetdR = -999
 
     if len(selectedLeptons) > 1:
         event.lldR   = deltaR( selectedLeptons[0], selectedLeptons[1] )
@@ -864,9 +874,17 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgamma = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        else:
+            event.mllgamma = -999
+    else:
+        event.lldR   = -999
+        event.lldPhi = -999
+        event.mll    = -999
 
-    if len(looseJets) > 0 and len(selectedLeptons) > 0:
-        event.leptonJetdR = min( deltaR( l, j ) for j in looseJets for l in selectedLeptons )
+    if len(jets) > 0 and len(selectedLeptons) > 0:
+        event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
+    else:
+        event.leptonJetdR = -999
 
     # Topreco
     if options.topReco:
@@ -918,7 +936,7 @@ def filler( event ):
 
         # B-Tagging efficiency method 1a
         for var in BTagEff.btagWeightNames:
-            if var!='MC': setattr( event, 'reweightBTag_'+var, BTagEff.getBTagSF_1a( var, looseBJets, looseNonBJets ) )
+            if var!='MC': setattr( event, 'reweightBTag_'+var, BTagEff.getBTagSF_1a( var, bJets, nonBJets ) )
 
         if len(selectedLeptons) > 1:
             # Trigger reweighting

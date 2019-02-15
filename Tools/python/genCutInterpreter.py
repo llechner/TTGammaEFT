@@ -2,8 +2,9 @@
 '''
 
 # TTGamma Imports
-from TTGammaEFT.Tools.constants    import mZ
-from TTXPheno.Tools.CutInterpreter import CutInterpreter
+from Analysis.Tools.CutInterpreter import CutInterpreter
+
+mZ = 91.1876
 
 special_cuts = {
     "OS":                "(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0",

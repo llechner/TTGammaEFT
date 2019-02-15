@@ -6,23 +6,23 @@ import ROOT
 from RootTools.core.Sample import Sample
 
 # Logging
-import logging
-logger = logging.getLogger(__name__)
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 # Colors
 from TTGammaEFT.Samples.color import color
 
 # Data directory
-#try:    data_directory = sys.modules['__main__'].data_directory
-#except: from TTGammaEFT.Tools.user import data_directory2016 as data_directory
-from TTGammaEFT.Tools.user import data_directory2016 as data_directory
+from TTGammaEFT.Tools.user import data_directory2                as data_directory
+from TTGammaEFT.Tools.user import postprocessing_directoryMC2016 as postprocessing_directory
 
-# Take post processing directory if defined in main module
-#try:    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
-#except: from TTGammaEFT.Tools.user import postprocessing_directory2016
-from TTGammaEFT.Tools.user import postprocessing_directory2016
-
-logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory2016 ) )
+logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory ) )
 
 # Directories
 dirs = {}
@@ -30,12 +30,12 @@ dirs = {}
 dirs['DY_LO']            = ["DYJetsToLL_M10to50_LO", "DYJetsToLL_M50_LO_ext1_comb" ]
 
 dirs['TTLep_pow']        = ["TTLep_pow"]
-dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow"]
+dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow", "TTSingleLep_pow" ] #wrong xsec in the samples file, thus have to take semilep twice till its fixed
 dirs['TTbar']            = ["TTbar"]
 
 dirs['TTG']              = ["TTGJets_comb"]
 dirs['TTGLep']           = ["TTGLep"]
-dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGHad"] #TTGSemiT
+dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGHad", "TTGSemiTbar"] #TTGSemiT
 
 dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext", "T_tch_pow", "TBar_tch_pow" ]#, "TToLeptons_sch_amcatnlo" ]
 
@@ -83,7 +83,7 @@ dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
-directories = { key : [ os.path.join( data_directory, postprocessing_directory2016, dir) for dir in dirs[key] ] for key in dirs.keys() }
+directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
 DY_LO_16           = Sample.fromDirectory(name="DY_LO",            treeName="Events", isData=False, color=color.DY,              texName="DY (LO)",           directory=directories['DY_LO'])

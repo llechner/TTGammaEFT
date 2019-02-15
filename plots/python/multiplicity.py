@@ -8,9 +8,6 @@ from math                             import pi
 # RootTools
 from RootTools.core.standard          import *
 
-# TTGammaEFT
-from TTGammaEFT.Tools.constants       import defaultValue
-
 # plotList
 multiplicity = []
     
@@ -18,7 +15,7 @@ multiplicity.append( Plot(
     name      = 'nPhoton',
     texX      = 'N_{#gamma}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nPhoton,
+    attribute = TreeVariable.fromString( "nPhoton/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -26,7 +23,7 @@ multiplicity.append( Plot(
     name      = 'nLepton',
     texX      = 'N_{l}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nLepton,
+    attribute = TreeVariable.fromString( "nLepton/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -34,7 +31,7 @@ multiplicity.append( Plot(
     name      = 'nElectron',
     texX      = 'N_{e}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nElectron,
+    attribute = TreeVariable.fromString( "nElectron/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -42,7 +39,7 @@ multiplicity.append( Plot(
     name      = 'nMuon',
     texX      = 'N_{#mu}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nMuon,
+    attribute = TreeVariable.fromString( "nMuon/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -50,14 +47,14 @@ multiplicity.append( Plot(
     name      = 'nJet',
     texX      = 'N_{jet}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nJet,
-    binning   = [ 10, 0, 10 ],
+    attribute = TreeVariable.fromString( "nJet/I" ),
+    binning   = [ 15, 0, 15 ],
 ))
 
 multiplicity.append( Plot(
     name      = 'nBJet',
     texX      = 'N_{bJet}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.nBTag,
+    attribute = TreeVariable.fromString( "nBTag/I" ),
     binning   = [ 4, 0, 4 ],
 ))

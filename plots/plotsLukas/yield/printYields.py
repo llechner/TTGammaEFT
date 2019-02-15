@@ -6,19 +6,17 @@
 import ROOT, os, imp, sys, copy
 ROOT.gROOT.SetBatch(True)
 import itertools
-from math                             import isnan, ceil, pi
+from math                                import isnan, ceil, pi
 
 # RootTools
-from RootTools.core.standard          import *
+from RootTools.core.standard             import *
 
 # Internal Imports
-from TTGammaEFT.Tools.user            import plot_directory
-from TTGammaEFT.Tools.cutInterpreterOld  import cutInterpreter
-from TTGammaEFT.Tools.TriggerSelectorOld import TriggerSelector
+from TTGammaEFT.Tools.user               import plot_directory
+from TTGammaEFT.Tools.cutInterpreter     import cutInterpreter
+from TTGammaEFT.Tools.TriggerSelector    import TriggerSelector
 
-from Samples.Tools.metFilters         import getFilterCut
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVars, nanoPlotMuonVars, nanoPlotLeptonVars, nanoPlotTauVars, nanoPlotPhotonVars, nanoPlotJetVars, nanoPlotBJetVars
-from TTGammaEFT.Tools.objectSelection import nanoPlotElectronVarString, nanoPlotMuonVarString, nanoPlotLeptonVarString, nanoPlotTauVarString, nanoPlotPhotonVarString, nanoPlotJetVarString, nanoPlotBJetVarString
+from Analysis.Tools.metFilters           import getFilterCut
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -37,7 +35,7 @@ argParser.add_argument('--normalize',          action='store_true', default=Fals
 args = argParser.parse_args()
 
 # Logger
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
@@ -86,19 +84,19 @@ sequence = []
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TT_pow_16, TTGLep_16, DY_LO_16, singleTop_16, ZGTo2LG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_16 ]
+    else:            mc = [ TT_pow_16, TTG_16, DY_LO_16, singleTop_16, ZGTo2LG_16, other_16 ]
 elif args.year == 2017:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TTGLep_16, DY_LO_16, TT_pow_16, singleTop_16, ZGTo2LG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_17 ]
+    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
 elif args.year == 2018:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TTGLep_16, DY_LO_16, TT_pow_16, singleTop_16, ZGTo2LG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_18 ]
+    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18 ]#, singleTop_18, ZGTo2LG_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.9
-    elif args.year == 2017: lumi_scale = 35.92
-    elif args.year == 2018: lumi_scale = 35.92
+    elif args.year == 2017: lumi_scale = 
+    elif args.year == 2018: lumi_scale = 
     stack      = Stack( mc )
 else:
     if args.year == 2016:   data_sample = Run2016

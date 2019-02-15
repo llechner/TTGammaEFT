@@ -20,17 +20,13 @@ from RootTools.core.standard                     import *
 import TTGammaEFT.Tools.user as user
 
 # Tools for systematics
-from TTGammaEFT.Tools.observables                import deltaR, deltaR2
+from Analysis.Tools.helpers                      import deltaR, deltaR2
 
-from TTGammaEFT.Tools.genObjectSelection         import isGoodGenJet, isGoodGenLepton, isGoodGenPhoton
-from TTGammaEFT.Tools.genObjectSelection         import genJetId
+from TTGammaEFT.Tools.genObjectSelection         import isGoodGenJet, isGoodGenLepton, isGoodGenPhoton, genJetId
 
-from TTGammaEFT.Tools.constants                  import defaultValue
-
-from TTGammaEFT.Tools.WeightInfo                 import WeightInfo
-from TTGammaEFT.Tools.HyperPoly                  import HyperPoly
-
-from TTGammaEFT.Tools.GenSearch                  import GenSearch
+from Analysis.Tools.WeightInfo                   import WeightInfo
+from Analysis.Tools.HyperPoly                    import HyperPoly
+from Analysis.Tools.GenSearch                    import GenSearch
 
 logChoices      = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET', 'SYNC']
 
@@ -58,7 +54,7 @@ def get_parser():
 options = get_parser().parse_args()
 
 # Logging
-import TTGammaEFT.Tools.logger as logger
+import Analysis.Tools.logger as logger
 logFile = '/tmp/%s_%s_njob%s.txt'%('_'.join(options.samples), os.environ['USER'], str(0 if options.nJobs==1 else options.job) )
 logger  = logger.get_logger(options.logLevel, logFile = logFile)
 

@@ -15,39 +15,39 @@ if os.environ['USER'] in ['llechner']:
     tmp_directory                       = "/afs/hephy.at/data/llechner01/Top_tmp/"
     results_directory                   = "/afs/hephy.at/data/llechner01/TTGammaEFT/results/"
 
-    skim_directory                      = "/afs/hephy.at/data/llechner01/TTGammaEFT/skims/"
-    skim_output_directory               = "/afs/hephy.at/data/llechner01/TTGammaEFT/skims/"
+#    skim_directory                      = "/afs/hephy.at/data/llechner01/TTGammaEFT/skims/"
+#    skim_output_directory               = "/afs/hephy.at/data/llechner01/TTGammaEFT/skims/"
 
     plot_directory                      = "/afs/hephy.at/user/l/llechner/www/TTGammaEFT/"
-    data_directory                      = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-
-    data_directoryGEN                   = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-
-    data_directory2016                  = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-    data_directory2017                  = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-    data_directory2018                  = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-
-    data_datadirectory2016              = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-    data_datadirectory2017              = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-    data_datadirectory2018              = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-
-    data_directoryPrefiring             = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
+    data_directory1                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
+    data_directory2                     = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
 
     postprocessing_directoryGEN         = "TTGammaEFT_PP_GEN_TTG_v2/gen/"
 
-    postprocessing_directory2016        = "TTGammaEFT_PP_2016_TTG_private_v4/dilep/"
-    postprocessing_directory2017        = "TTGammaEFT_PP_2017_TTG_private_v5/dilep/"
-    postprocessing_directory2018        = "TTGammaEFT_PP_2018_TTG_private_v3/dilep/"
+    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v4/dilep/"
+    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v5/dilep/"
+    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v4/dilep/"
 
-    postprocessing_datadirectory2016    = "TTGammaEFT_PP_2016_TTG_Data_v4/dilep/"
-    postprocessing_datadirectory2017    = "TTGammaEFT_PP_2017_TTG_Data_v4/dilep/"
-    postprocessing_datadirectory2018    = "TTGammaEFT_PP_2018_TTG_Data_v3/dilep/"
+    postprocessing_directoryRun2016     = "TTGammaEFT_PP_2016_TTG_Data_v4/dilep/"
+    postprocessing_directoryRun2017     = "TTGammaEFT_PP_2017_TTG_Data_v4/dilep/"
+    postprocessing_directoryRun2018     = "TTGammaEFT_PP_2018_TTG_Data_v3/dilep/"
+
+    postprocessing_directoryMC2016_semilep  = "TTGammaEFT_PP_2016_TTG_private_v4/semilep/"
+    postprocessing_directoryMC2017_semilep  = "TTGammaEFT_PP_2017_TTG_private_v4/semilep/"
+    postprocessing_directoryMC2018_semilep  = "TTGammaEFT_PP_2018_TTG_private_v4/semilep/"
+
+    postprocessing_directoryRun2016_semilep = "TTGammaEFT_PP_2016_TTG_Data_v4/semilep/"
+    postprocessing_directoryRun2017_semilep = "TTGammaEFT_PP_2017_TTG_Data_v4/semilep/"
+    postprocessing_directoryRun2018_semilep = "TTGammaEFT_PP_2018_TTG_Data_v3/semilep/"
 
     postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v1/dilep/"
 
-    postprocessing_output_directory     = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
+    postprocessing_output_directory     = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
 
     gridpack_directory                  = "/afs/hephy.at/data/llechner01/TTGammaEFT/gridpacks/"
 
     analysis_results                    = results_directory
     cache_directory                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/cache/"
+    combineReleaseLocation              = '/afs/hephy.at/user/l/llechner/public/CMSSW_8_1_0/src'
+    cardfileLocation                    = '/afs/hephy.at/data/llechner01/TTGammaEFT/results/cardfiles/'
+

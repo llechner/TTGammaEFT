@@ -1,58 +1,6 @@
 # Standard Imports
 import textwrap
 
-nanoElectronVarString = "deltaEtaSC/F,dr03EcalRecHitSumEt/F,dr03HcalDepth1TowerSumEt/F,dr03TkSumPt/F,dxy/F,dxyErr/F,dz/F,dzErr/F,eInvMinusPInv/F,energyErr/F,eta/F,hoe/F,ip3d/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,r9/F,sieie/F,sip3d/F,mvaTTH/F,charge/I,cutBased/I,jetIdx/I,pdgId/I,photonIdx/I,tightCharge/I,vidNestedWPBitmap/I,convVeto/O,cutBased_HEEP/O,isPFcand/O,lostHits/b,genPartIdx/I,genPartFlav/b,cleanmask/O"
-nanoMuonVarString     = "dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,mass/F,dxy/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/I,isPFcand/O,mediumId/O,softId/O,tightId/O,genPartIdx/I,genPartFlav/b,cleanmask/O,isGlobal/O,isTracker/O,pfIsoId/b"
-nanoLeptonVarString   = ','.join( set( nanoElectronVarString.split(',') + nanoMuonVarString.split(',') ) )
-nanoTauVarString      = "chargedIso/F,dxy/F,dz/F,eta/F,footprintCorr/F,leadTkDeltaEta/F,leadTkDeltaPhi/F,leadTkPtOverTauPt/F,mass/F,neutralIso/F,phi/F,photonsOutsideSignalCone/F,pt/F,puCorr/F,rawAntiEle/F,rawIso/F,rawMVAnewDM/F,rawMVAoldDM/F,rawMVAoldDMdR03/F,charge/I,decayMode/I,jetIdx/I,rawAntiEleCat/F,idAntiEle/I,idAntiMu/I,idDecayMode/I,idDecayModeNewDMs/I,idMVAnewDM/I,idMVAoldDM/I,idMVAoldDMdR03/I,genPartIdx/I,genPartFlav/b,cleanmask/O"
-nanoPhotonVarString   = "eta/F,energyErr/F,hoe/F,mass/F,mvaID/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,r9/F,sieie/F,charge/I,cutBased/I,electronIdx/I,jetIdx/I,pdgId/I,vidNestedWPBitmap/I,electronVeto/O,mvaID_WP80/O,mvaID_WP90/O,pixelSeed/O,genPartIdx/I,genPartFlav/b,cleanmask/O"
-nanoJetVarString      = "area/F,btagCMVA/F,btagCSVV2/F,btagDeepB/F,btagDeepC/F,chEmEF/F,chHEF/F,eta/F,mass/F,neEmEF/F,neHEF/F,phi/F,pt/F,qgl/F,rawFactor/F,electronIdx1/I,electronIdx2/I,jetId/I,muonIdx1/I,muonIdx2/I,nConstituents/I,nElectrons/I,nMuons/I,puId/I,genJetIdx/I,hadronFlavour/I,partonFlavour/I,cleanmask/O"
-nanoBJetVarString     = 'pt/F,eta/F,phi/F'
-nanoGenVarString      = "eta/F,mass/F,pt/F,phi/F,pdgId/I,genPartIdxMother/I,status/I,statusFlags/I"
-nanoGenJetVarString   = "eta/F,mass/F,pt/F,phi/F,partonFlavour/I,hadronFlavour/I"
-
-nanoElectronVars = [item.split('/')[0] for item in nanoElectronVarString.split(',')]
-nanoMuonVars     = [item.split('/')[0] for item in nanoMuonVarString.split(',')]
-nanoLeptonVars   = [item.split('/')[0] for item in nanoLeptonVarString.split(',')]
-nanoTauVars      = [item.split('/')[0] for item in nanoTauVarString.split(',')] 
-nanoPhotonVars   = [item.split('/')[0] for item in nanoPhotonVarString.split(',')]
-nanoJetVars      = [item.split('/')[0] for item in nanoJetVarString.split(',')]
-nanoBJetVars     = [item.split('/')[0] for item in nanoBJetVarString.split(',')]
-nanoGenVars      = [item.split('/')[0] for item in nanoGenVarString.split(',')]
-nanoGenJetVars   = [item.split('/')[0] for item in nanoGenJetVarString.split(',')]
-
-nanoDataElectronVarString = "deltaEtaSC/F,dr03EcalRecHitSumEt/F,dr03HcalDepth1TowerSumEt/F,dr03TkSumPt/F,dxy/F,dxyErr/F,dz/F,dzErr/F,eInvMinusPInv/F,energyErr/F,eta/F,hoe/F,ip3d/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,r9/F,sieie/F,sip3d/F,mvaTTH/F,charge/I,cutBased/I,jetIdx/I,pdgId/I,photonIdx/I,tightCharge/I,vidNestedWPBitmap/I,convVeto/O,cutBased_HEEP/O,isPFcand/O,lostHits/b,cleanmask/O"
-nanoDataMuonVarString     = "dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,mass/F,dxy/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/I,isPFcand/O,mediumId/O,softId/O,tightId/O,cleanmask/O,isGlobal/O,isTracker/O,pfIsoId/b"
-nanoDataLeptonVarString   = ','.join( set( nanoDataElectronVarString.split(',') + nanoDataMuonVarString.split(',') ) )
-nanoDataTauVarString      = "chargedIso/F,dxy/F,dz/F,eta/F,footprintCorr/F,leadTkDeltaEta/F,leadTkDeltaPhi/F,leadTkPtOverTauPt/F,mass/F,neutralIso/F,phi/F,photonsOutsideSignalCone/F,pt/F,puCorr/F,rawAntiEle/F,rawIso/F,rawMVAnewDM/F,rawMVAoldDM/F,rawMVAoldDMdR03/F,charge/I,decayMode/I,jetIdx/I,rawAntiEleCat/F,idAntiEle/I,idAntiMu/I,idDecayMode/I,idDecayModeNewDMs/I,idMVAnewDM/I,idMVAoldDM/I,idMVAoldDMdR03/I,cleanmask/O"
-nanoDataPhotonVarString   = "eta/F,energyErr/F,hoe/F,mass/F,mvaID/I,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,r9/F,sieie/F,charge/I,cutBased/I,electronIdx/I,jetIdx/I,pdgId/I,vidNestedWPBitmap/I,electronVeto/O,mvaID_WP80/O,mvaID_WP90/O,pixelSeed/O,cleanmask/O"
-nanoDataJetVarString      = "area/F,btagCMVA/F,btagCSVV2/F,btagDeepB/F,btagDeepC/F,chEmEF/F,chHEF/F,eta/F,mass/F,neEmEF/F,neHEF/F,phi/F,pt/F,qgl/F,rawFactor/F,electronIdx1/I,electronIdx2/I,jetId/I,muonIdx1/I,muonIdx2/I,nConstituents/I,nElectrons/I,nMuons/I,puId/I,cleanmask/O"
-nanoDataBJetVarString     = 'pt/F,eta/F,phi/F'
-
-nanoDataElectronVars = [item.split('/')[0] for item in nanoDataElectronVarString.split(',')]
-nanoDataMuonVars     = [item.split('/')[0] for item in nanoDataMuonVarString.split(',')]
-nanoDataLeptonVars   = [item.split('/')[0] for item in nanoDataLeptonVarString.split(',')]
-nanoDataTauVars      = [item.split('/')[0] for item in nanoDataTauVarString.split(',')] 
-nanoDataPhotonVars   = [item.split('/')[0] for item in nanoDataPhotonVarString.split(',')]
-nanoDataJetVars      = [item.split('/')[0] for item in nanoDataJetVarString.split(',')]
-nanoDataBJetVars     = [item.split('/')[0] for item in nanoDataBJetVarString.split(',')]
-
-nanoPlotElectronVarString = "eta/F,hoe/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,sieie/F,sip3d/F,cutBased/I,pdgId/I,convVeto/O,lostHits/I,eInvMinusPInv/F"
-nanoPlotMuonVarString     = "eta/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,sip3d/F,pdgId/I,mediumId/O,eInvMinusPInv/F"
-nanoPlotLeptonVarString   = ','.join( set( nanoPlotElectronVarString.split(',') + nanoPlotMuonVarString.split(',') ) )
-nanoPlotTauVarString      = "eta/F,phi/F,pt/F"
-nanoPlotPhotonVarString   = "eta/F,hoe/F,pfRelIso03_all/F,pfRelIso03_chg/F,phi/F,pt/F,sieie/F,cutBased/I,pdgId/I,electronVeto/O,pixelSeed/O"
-nanoPlotJetVarString      = "btagCSVV2/F,btagDeepB/F,chEmEF/F,chHEF/F,eta/F,neEmEF/F,neHEF/F,phi/F,pt/F,nConstituents/I,jetId/I"
-nanoPlotBJetVarString     = 'pt/F,eta/F,phi/F'
-
-nanoPlotElectronVars = [item.split('/')[0] for item in nanoPlotElectronVarString.split(',')]
-nanoPlotMuonVars     = [item.split('/')[0] for item in nanoPlotMuonVarString.split(',')]
-nanoPlotLeptonVars   = [item.split('/')[0] for item in nanoPlotLeptonVarString.split(',')]
-nanoPlotTauVars      = [item.split('/')[0] for item in nanoPlotTauVarString.split(',')] 
-nanoPlotPhotonVars   = [item.split('/')[0] for item in nanoPlotPhotonVarString.split(',')]
-nanoPlotJetVars      = [item.split('/')[0] for item in nanoPlotJetVarString.split(',')]
-nanoPlotBJetVars     = [item.split('/')[0] for item in nanoPlotBJetVarString.split(',')]
-
 photonIdCutBasedBitmap = {                     'loose':1, 'medium':2, 'tight':4 }  # NanoAOD Version ID bitmap, 2^(0:loose, 1:medium, 2:tight)
 photonIdCutBased       = { 'fail':0,           'loose':1, 'medium':2, 'tight':3 }  # NanoAOD Version
 electronIdCutBased     = { 'fail':0, 'veto':1, 'loose':2, 'medium':3, 'tight':4 }  # NanoAOD Version
@@ -73,7 +21,9 @@ def jetIdBitMapToDict( val ):
     # Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto : 0 at: 0x5f1a030
     # in 80x no tightLepVeto exists, only 2 bits, bit3 is set to 0
     # create dictionary
-    idList = map( lambda x: int(x), "{0:03b}".format( val ) )
+    # however some entries of jets don't have a jedId entry, no clue why (very limited number of events e.g. in DY M50 Fall2017)
+    try: idList = map( lambda x: int(x), "{0:03b}".format( val ) )
+    except: idList = [ 0, 0, 0 ]
     return dict( zip( jetIdNamingList, idList ) )
 
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
@@ -86,14 +36,9 @@ def vidNestedWPBitMapToDict( val ):
     return dict( zip( vidNestedWPBitMapNamingList, idList ) )
 
 # General Selection Functions
-def particlePtEtaSelection( collection, ptCut=10, absEtaCut=2.4 ):
-    parts = list( filter( lambda p: p['pt'] > ptCut and abs(p['eta']) < absEtaCut, collection ) )
-    parts.sort( key = lambda l: -l['pt'] )
-    return parts
-
 def deltaRCleaning( cleaningParticles, otherParticles, dRCut = 0.4 ):
 
-    from TTGammaEFT.Tools.observables   import deltaR
+    from Analysis.Tools.helpers  import deltaR
 
     res = []
     for part in cleaningParticles:
@@ -107,35 +52,9 @@ def deltaRCleaning( cleaningParticles, otherParticles, dRCut = 0.4 ):
     res.sort( key = lambda p: -p['pt'] )
     return res
 
-def getUnsortedParticles( c, collVars, coll ):
-    from TTGammaEFT.Tools.helpers import getVarValue, getObjDict
+def getParticles( c, collVars, coll ):
+    from Analysis.Tools.helpers import getVarValue, getObjDict
     return [ getObjDict( c, coll+'_', collVars, i ) for i in range(int(getVarValue(c, 'n'+coll))) ]
-
-def getSortedParticles( c, collVars, coll ):
-    part = getUnsortedParticles( c, collVars, coll )
-    part.sort( key = lambda l: -l['pt'] )
-    return part
-
-def getGoodParticles( selector, coll ):
-    part = list( filter( lambda l: selector(l), coll ) )
-    part.sort( key = lambda l: -l['pt'] )
-    return part
-    
-def isGoodParticle( p, ptCut=10, absEtaCut=2.4 ):
-    return p['pt'] > ptCut and abs(p['eta']) < absEtaCut
-
-# Reco Leptons
-def getLeptons(c, eleCollVars=nanoElectronVars, eleColl="Electron", muonCollVars=nanoMuonVars, muonColl="Muon"):
-    leptons  = getUnsortedParticles( c, eleCollVars,  eleColl  )
-    leptons += getUnsortedParticles( c, muonCollVars, muonColl )
-    leptons.sort( key = lambda l:-l['pt'] )
-    return leptons
-
-def getGoodLeptons(c, eleSelector, muonSelector, eleCollVars=nanoElectronVars, eleColl="Electron", muonCollVars=nanoMuonVars, muonColl="Muon"):
-    leptons  = getGoodParticles( eleSelector,  getUnsortedParticles( c, eleCollVars,  eleColl  ) )
-    leptons += getGoodParticles( muonSelector, getUnsortedParticles( c, muonCollVars, muonColl ) )
-    leptons.sort( key = lambda l:-l['pt'] )
-    return leptons
 
 # Reco b-Jet Filter
 def isBJet( j, tagger='DeepCSV', year=2016 ):
@@ -163,16 +82,6 @@ def isBJet( j, tagger='DeepCSV', year=2016 ):
             return j['btagDeepB'] > 0.4184
         else:
             raise (NotImplementedError, "Don't know what cut to use for year %s"%year)
-
-def filterBJets( jets, tagger='DeepCSV', year=2016 ):
-    bJets = list( filter( lambda j: isBJet(j, tagger=tagger, year=year), jets ) )
-    bJets.sort( key=lambda j: -j['pt'] )
-    return bJets
-
-def filterNonBJets( jets, tagger='DeepCSV', year=2016 ):
-    nonBJets = list( filter( lambda j: not isBJet(j, tagger=tagger, year=year), jets ) )
-    nonBJets.sort( key=lambda j: -j['pt'] )
-    return nonBJets
 
 def vertexSelector( l ):
 #    if abs(l['pdgId']) == 11: absEta = abs(l["eta"] + l["deltaEtaSC"])   # eta supercluster
@@ -264,6 +173,7 @@ def jetSelector( year, noPtEtaCut=False ):
         # According to AN-2017/197
         # jetID cuts, pT and eta cuts
         def func(j):
+            if not j["cleanmask"]:                           return False
             if not noPtEtaCut:
                 if j["pt"]       <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
@@ -274,6 +184,7 @@ def jetSelector( year, noPtEtaCut=False ):
     elif year == 2017 or year == 2018:
         # jetID cuts, pT and eta cuts
         def func(j):
+            if not j["cleanmask"]:                           return False
             if not noPtEtaCut:
                 if j["pt"]       <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
@@ -479,7 +390,6 @@ def filterGenElectrons( genParts, status=None ):
     elif status == 'last':  stat = [1]
     else:                   stat = [1,23]
     electrons = list( filter( lambda l: abs(l['pdgId']) == 11 and l['status'] in stat, genParts ) )
-    electrons.sort( key = lambda l:-l['pt'] )
     return electrons
 
 def filterGenMuons( genParts, status=None ):
@@ -487,7 +397,6 @@ def filterGenMuons( genParts, status=None ):
     elif status == 'last':  stat = [1]
     else:                   stat = [1,23]
     muons = list( filter( lambda l: abs(l['pdgId']) == 13 and l['status'] in stat, genParts ) )
-    muons.sort( key = lambda l:-l['pt'] )
     return muons
 
 def filterGenPhotons( genParts, status=None ):
@@ -495,17 +404,14 @@ def filterGenPhotons( genParts, status=None ):
     elif status == 'last':  stat = [1]
     else:                   stat = [1,23]
     photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] in stat, genParts ) )
-    photons.sort( key = lambda l:-l['pt'] )
     return photons
 
 def filterGenTops( genParts ):
     tops = list( filter( lambda l: abs(l['pdgId']) == 6 and l['status'] == 62, genParts ) )
-    tops.sort( key = lambda l:-l['pt'] )
     return tops
 
 def filterGenBJets( genJets ):
     bjets = list( filter( lambda j: abs(j['hadronFlavour']) == 5, genJets ) )
-    bjets.sort( key = lambda j:-j['pt'] )
     return bjets
 
 # Pythia status flags:
