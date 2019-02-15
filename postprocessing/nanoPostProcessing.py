@@ -556,7 +556,7 @@ def filler( event ):
     if isMC:
 
         # weight
-        event.weight = lumiScaleFactor*r.genWeight if lumiScaleFactor is not None else -999
+        event.weight = lumiScaleFactor*r.genWeight if lumiScaleFactor is not None else 0
 
         # GEN Particles
         gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
@@ -686,6 +686,12 @@ def filler( event ):
     allPhotons.sort( key = lambda g: -g['pt'] )
     convertUnits( allPhotons )
 
+    if isMC:
+        # match photon with gen-particle and get its photon category -> reco Photon categorization
+        for g in allPhotons:
+            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
+            g['photonCat'] = getPhotonCategory( genMatch, gPart )
+
     mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                     allPhotons ) )
     mediumPhotonsNoChgIso        = list( filter( lambda g: recoPhotonSel_medium_noRelIsoChg(g),         allPhotons ) )
     mediumPhotonsNoChgIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noRelIsoChg_noSieie(g), allPhotons ) )
@@ -744,85 +750,52 @@ def filler( event ):
     event.m3wBJet     = m3( jets, nBJets=1, tagger=tagger, year=options.year )[0]
 
     event.ht          = sum( [ j['pt'] for j in jets ] )
-    event.METSig      = r.MET_pt / sqrt( event.ht ) if event.ht > 0 else -999
-
-    if isMC:
-        # match photon with gen-particle and get its photon category -> reco Photon categorization
-        for g in mediumPhotonsNoChgIsoNoSieie[:1] + mediumPhotonsNoChgIso[:1]:
-            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
-            g['photonCat'] = getPhotonCategory( genMatch, gPart )
+    if event.ht > 0:
+        event.METSig = r.MET_pt / sqrt( event.ht )
 
     # variables w/ photons
     if len(mediumPhotons) > 0:
 
-        if isMC:
-            # match photon with gen-particle and get its photon category -> reco Photon categorization
-            for g in mediumPhotons:
-                genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
-                g['photonCat'] = getPhotonCategory( genMatch, gPart )
+#        if isMC:
+#            # match photon with gen-particle and get its photon category -> reco Photon categorization
+#            for g in mediumPhotons:
+#                genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
+#                g['photonCat'] = getPhotonCategory( genMatch, gPart )
 
         # additional observables
         event.MET_pt_photonEstimated, event.MET_phi_photonEstimated = getMetPhotonEstimated( r.MET_pt, r.MET_phi, mediumPhotons[0] )
 
         if event.ht > 0:
             event.METSig_photonEstimated = event.MET_pt_photonEstimated / sqrt( event.ht )
-        else:
-            event.METSig_photonEstimated = -999 
 
         if jets:
             event.photonJetdR = min( deltaR( p, j ) for j in jets for p in mediumPhotons )
-        else:
-             event.photonJetdR = -999
 
         if selectedLeptons:
             event.photonLepdR = min( deltaR( p, l ) for l in selectedLeptons for p in mediumPhotons )
-        else:
-             event.photonLepdR = -999
 
         if len(tightLeptons) > 0:
             event.ltight0GammadPhi = deltaPhi( tightLeptons[0]['phi'], mediumPhotons[0]['phi'] )
             event.ltight0GammadR   = deltaR(   tightLeptons[0],        mediumPhotons[0] )
             event.mLtight0Gamma    = ( get4DVec(tightLeptons[0]) + get4DVec(mediumPhotons[0]) ).M()
-        else:
-            event.ltight0GammadPhi = -999
-            event.ltight0GammadR   = -999
-            event.mLtight0Gamma    = -999
 
         if len(selectedLeptons) > 0:
             event.l0GammadPhi = deltaPhi( selectedLeptons[0]['phi'], mediumPhotons[0]['phi'] )
             event.l0GammadR   = deltaR(   selectedLeptons[0],        mediumPhotons[0] )
             event.mL0Gamma    = ( get4DVec(selectedLeptons[0]) + get4DVec(mediumPhotons[0]) ).M()
-        else:
-            event.l0GammadPhi = -999
-            event.l0GammadR   = -999
-            event.mL0Gamma    = -999
 
         if len(selectedLeptons) > 1:
             event.l1GammadPhi = deltaPhi( selectedLeptons[1]['phi'], mediumPhotons[0]['phi'] )
             event.l1GammadR   = deltaR(   selectedLeptons[1],        mediumPhotons[0] )
             event.mL1Gamma    = ( get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
-        else:
-            event.l1GammadPhi = -999
-            event.l1GammadR   = -999
-            event.mL1Gamma    = -999
 
         if len(jets) > 0:
             event.j0GammadPhi = deltaPhi( jets[0]['phi'], mediumPhotons[0]['phi'] )
             event.j0GammadR   = deltaR(   jets[0],        mediumPhotons[0] )
-        else:
-            event.j0GammadPhi = -999
-            event.j0GammadR   = -999
 
         if len(jets) > 1:
             event.j1GammadPhi = deltaPhi( jets[1]['phi'], mediumPhotons[0]['phi'] )
             event.j1GammadR   = deltaR(   jets[1],        mediumPhotons[0] )
-        else:
-            event.j1GammadPhi = -999
-            event.j1GammadR   = -999
-
-    else:
-        event.MET_pt_photonEstimated  = -999
-        event.MET_phi_photonEstimated = -999
 
     event.nPhoton      = len( allPhotons )
     event.nPhotonGood  = len( mediumPhotons )
@@ -844,9 +817,6 @@ def filler( event ):
     if bj1:
         event.bbdR   = deltaR( bj0, bj1 )
         event.bbdPhi = deltaPhi( bj0['phi'], bj1['phi'] )
-    else:
-        event.bbdR   = -999
-        event.bbdPhi = -999
 
     if len(tightLeptons) > 1:
         event.lldRtight   = deltaR( tightLeptons[0], tightLeptons[1] )
@@ -855,17 +825,9 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgammatight = ( get4DVec(tightLeptons[0]) + get4DVec(tightLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
-        else:
-            event.mllgammatight = -999
-    else:
-        event.lldRtight   = -999
-        event.lldPhitight = -999
-        event.mlltight    = -999
 
     if len(jets) > 0 and len(tightLeptons) > 0:
         event.tightLeptonJetdR = min( deltaR( tightLeptons[0], j ) for j in jets )
-    else:
-        event.tightLeptonJetdR = -999
 
     if len(selectedLeptons) > 1:
         event.lldR   = deltaR( selectedLeptons[0], selectedLeptons[1] )
@@ -874,24 +836,16 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgamma = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
-        else:
-            event.mllgamma = -999
-    else:
-        event.lldR   = -999
-        event.lldPhi = -999
-        event.mll    = -999
 
     if len(jets) > 0 and len(selectedLeptons) > 0:
         event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
-    else:
-        event.leptonJetdR = -999
 
     # Topreco
     if options.topReco:
         #topReco = TopReco( ROOT.Era.run2_13tev_2016_25ns, 2, 1, 0, 'btagDeepB', 0.6321 )
-        solution = topReco.evaluate( selectedLeptons, looseJets, met = {'pt':r.MET_pt, 'phi':r.MET_phi})
+        solution = topReco.evaluate( selectedLeptons, jets, met = {'pt':r.MET_pt, 'phi':r.MET_phi})
         if solution:
-            print "t/tbar:", selectedLeptons[0]['pt'], r.MET_pt,r.MET_phi, solution.top.Pt(), solution.topBar.Pt()
+            print "t/tbar:", selectedLeptons[0]['pt'], r.MET_pt, r.MET_phi, solution.top.Pt(), solution.topBar.Pt()
 
             event.topReco_nBTag   = solution.ntags
             event.topReco_weight  = solution.weight
