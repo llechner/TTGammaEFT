@@ -52,15 +52,15 @@ class TriggerSelector:
             raise NotImplementedError( "Trigger selection %r not implemented" %year )
 
         # define which triggers should be used for which dataset
-        self.DoubleMuon     = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.mm] ) if self.mm else None
-        self.DoubleEG       = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.ee] ) if self.ee else None
+        self.DoubleMuon     = "(%s)"%"||".join( ["Alt$(%s,1<0)"%trigger for trigger in self.mm] ) if self.mm else None
+        self.DoubleEG       = "(%s)"%"||".join( ["Alt$(%s,1<0)"%trigger for trigger in self.ee] ) if self.ee else None
         eGamma = []
-        if self.e:  eGamma += ["Alt$(%s,0)"%trigger for trigger in self.e]
-        if self.ee: eGamma += ["Alt$(%s,0)"%trigger for trigger in self.ee]
+        if self.e:  eGamma += ["Alt$(%s,1<0)"%trigger for trigger in self.e]
+        if self.ee: eGamma += ["Alt$(%s,1<0)"%trigger for trigger in self.ee]
         self.EGamma         = "(%s)"%"||".join( eGamma  ) if eGamma  else None
-        self.MuonEG         = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.em] ) if self.em else None
-        self.SingleMuon     = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.m]  ) if self.m  else None
-        self.SingleElectron = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.e]  ) if self.e  else None
+        self.MuonEG         = "(%s)"%"||".join( ["Alt$(%s,1<0)"%trigger for trigger in self.em] ) if self.em else None
+        self.SingleMuon     = "(%s)"%"||".join( ["Alt$(%s,1<0)"%trigger for trigger in self.m]  ) if self.m  else None
+        self.SingleElectron = "(%s)"%"||".join( ["Alt$(%s,1<0)"%trigger for trigger in self.e]  ) if self.e  else None
 
         # define an arbitrary hierarchy
         if year == 2018:
