@@ -211,7 +211,6 @@ if options.fileBasedSplitting:
     if sample is None:  
         logger.info( "No such sample. nJobs %i, job %i numer of files %i", options.nJobs, options.job, len_orig )
         sys.exit(0)
-    sample.name = "_".join(sample.name.split("_")[:-1]) #workaround for Matheusz renaming in sample.split, have to change the sample dir naming soon
     logger.info( "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
     logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
 

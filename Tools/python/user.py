@@ -42,7 +42,7 @@ if os.environ['USER'] in ['llechner']:
 
     postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v1/dilep/"
 
-    postprocessing_output_directory     = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
+    postprocessing_output_directory     = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
 
     gridpack_directory                  = "/afs/hephy.at/data/llechner01/TTGammaEFT/gridpacks/"
 
