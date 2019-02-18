@@ -1,4 +1,11 @@
 #!/bin/bash
+
+#
+# Example of usage:
+# submitCondor.py --execFile submit_on_lxplus.sh --queue nextweek nanoPostProcessing_Summer16_private.sh
+# submitCondor.py --execFile THISFILE (setup for condor environment) --queue NAMEofCONDORQUEUE fileWithCommands.sh
+#
+
 export USER=$(whoami)
 initial="$(echo $USER | head -c 1)"
 export SCRAM_ARCH=slc6_amd64_gcc630
