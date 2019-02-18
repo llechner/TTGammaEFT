@@ -204,6 +204,14 @@ if isMC:
         nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2018_58830_XSecVDown",    mc="Autumn18")
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
 
+# output directory (store temporarily when running on dpm)
+if writeToDPM:
+    # Allow parallel processing of N threads on one worker
+    directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()), options.processingEra )
+    from TTGammaEFT.Tools.user import dpm_directory as user_dpm_directory
+else:
+    directory  = os.path.join( options.targetDir, options.processingEra ) 
+
 postfix = '_small' if options.small else ''
 output_directory = os.path.join( directory, options.skim+postfix, sample.name )
 
@@ -216,14 +224,6 @@ if options.fileBasedSplitting:
         sys.exit(0)
     logger.info( "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
     logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
-
-# output directory (store temporarily when running on dpm)
-if writeToDPM:
-    # Allow parallel processing of N threads on one worker
-    directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()), options.processingEra )
-    from TTGammaEFT.Tools.user import dpm_directory as user_dpm_directory
-else:
-    directory  = os.path.join( options.targetDir, options.processingEra ) 
 
 if os.path.exists( output_directory ) and options.overwrite:
     if options.nJobs > 1:
