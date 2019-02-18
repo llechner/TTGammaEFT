@@ -1,8 +1,8 @@
-python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 #SPLIT20
-python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample DYJetsToLL_M10to50_LO #SPLIT20
+python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 #SPLIT40
+python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample DYJetsToLL_M10to50_LO #SPLIT40
 
-python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample TTLep_pow #SPLIT20
-python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample TTSemiLep_pow #SPLIT20
+python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample TTLep_pow #SPLIT40
+python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample TTSemiLep_pow #SPLIT40
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample TToLeptons_sch_amcatnlo #SPLIT10
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v6 --fileBasedSplitting --sample T_tch_pow #SPLIT10
