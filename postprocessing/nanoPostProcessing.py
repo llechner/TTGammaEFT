@@ -46,6 +46,7 @@ def get_parser():
     argParser.add_argument('--nJobs',                       action='store',         nargs='?',  type=int,                           default=1,                          help="Maximum number of simultaneous jobs.")
     argParser.add_argument('--job',                         action='store',                     type=int,                           default=0,                          help="Run only job i")
     argParser.add_argument('--minNJobs',                    action='store',         nargs='?',  type=int,                           default=1,                          help="Minimum number of simultaneous jobs.")
+    argParser.add_argument('--runOnLxPlus',                 action='store_true',                                                                                        help="Change the global redirector of samples to run on lxplus")
     argParser.add_argument('--fileBasedSplitting',          action='store_true',                                                                                        help="Split njobs according to files")
     argParser.add_argument('--targetDir',                   action='store',         nargs='?',  type=str,                           default=user.postprocessing_output_directory, help="Name of the directory the post-processed files will be saved")
     argParser.add_argument('--processingEra',               action='store',         nargs='?',  type=str,                           default='TTGammaEFT_PP_v1',         help="Name of the processing era")
@@ -101,7 +102,10 @@ if options.small:
     options.job = 0
     options.nJobs = 1 # set high to just run over 1 input file
 
-# Currently use MC private production CMSSW 10_2_9 and Data central production 2016/2017: CMSSW 10_2_9, 2018:CMSSW 10_2_5
+if options.runOnLxPlus:
+    # Set the redirector in the samples repository to the global redirector
+    from Samples.Tools.config import redirector_global as redirector
+
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import *
     from Samples.nanoAOD.Run2016_14Dec2018          import *
