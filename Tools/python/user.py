@@ -21,6 +21,7 @@ if os.environ['USER'] in ['llechner']:
     plot_directory                      = "/afs/hephy.at/user/l/llechner/www/TTGammaEFT/"
     data_directory1                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
     data_directory2                     = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
+    data_directory3                     = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
 
     postprocessing_directoryGEN         = "TTGammaEFT_PP_GEN_TTG_v2/gen/"
 

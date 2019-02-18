@@ -204,6 +204,9 @@ if isMC:
         nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2018_58830_XSecVDown",    mc="Autumn18")
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
 
+postfix = '_small' if options.small else ''
+output_directory = os.path.join( directory, options.skim+postfix, sample.name )
+
 # Single file post processing
 if options.fileBasedSplitting:
     len_orig = len(sample.files)
@@ -221,9 +224,6 @@ if writeToDPM:
     from TTGammaEFT.Tools.user import dpm_directory as user_dpm_directory
 else:
     directory  = os.path.join( options.targetDir, options.processingEra ) 
-
-postfix = '_small' if options.small else ''
-output_directory = os.path.join( directory, options.skim+postfix, sample.name )
 
 if os.path.exists( output_directory ) and options.overwrite:
     if options.nJobs > 1:
@@ -945,8 +945,7 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     logger.info( "Processing range %i/%i from %i to %i which are %i events.",  ievtRange, len(eventRanges), eventRange[0], eventRange[1], eventRange[1]-eventRange[0] )
 
     # Check whether file exists
-    fileNumber = options.job if options.job is not None else 0
-    outfilename = filename+'_'+str(fileNumber)+ext
+    outfilename = filename+ext
     if os.path.isfile(outfilename):
         logger.info( "Output file %s found.", outfilename)
         if not checkRootFile(outfilename, checkForObjects=["Events"]):
@@ -965,7 +964,6 @@ for ievtRange, eventRange in enumerate( eventRanges ):
         logger.info("Running 'small'. Not more than 10000 events") 
         numEvents  = eventRange[1] - eventRange[0]
         eventRange = ( eventRange[0], eventRange[0] +  min( [ numEvents, maxNEvents ] ) )
-        print eventRange[0], numEvents, maxNEvents
 
     # Set the reader to the event range
     reader.setEventRange( eventRange )
