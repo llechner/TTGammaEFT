@@ -211,8 +211,9 @@ else:
     from TTGammaEFT.Tools.user import postprocessing_output_directory as user_directory
     directory  = os.path.join( user_directory, options.processingEra ) 
 
-postfix = '_small' if options.small else ''
-output_directory = os.path.join( directory, options.skim+postfix, sample.name )
+postfix   = '_small' if options.small else ''
+sampleDir = sample.name #sample name changes after split
+output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
 
 # Single file post processing
 if options.fileBasedSplitting:
@@ -476,7 +477,7 @@ recoJetSel            = jetSelector( options.year )
 recoJetSel_noPtEtaCut = jetSelector( options.year )
 
 if options.addPreFiringFlag: 
-    Pf = PreFiring( sample.name )
+    Pf = PreFiring( sampleDir )
     unPreFirableEvents = [ (event, run) for event, run, lumi in Pf.getUnPreFirableEvents() ]
 
 # Define a reader
@@ -1015,7 +1016,7 @@ if options.writeToDPM:
         logger.debug( 'Found directory: %s',  dirname )
         for fname in files:
             source  = os.path.abspath( os.path.join( dirname, fname ) )
-            cmd     = [ 'xrdcp', source, 'root://hephyse.oeaw.ac.at/%s' % os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sample.name, fname ) ]
+            cmd     = [ 'xrdcp', source, 'root://hephyse.oeaw.ac.at/%s' % os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname ) ]
             logger.info( "Issue copy command: %s", " ".join( cmd ) )
             subprocess.call( cmd )
 
