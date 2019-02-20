@@ -124,11 +124,11 @@ if len(samples)==0:
     sys.exit(-1)
 
 isData = False not in [s.isData for s in samples]
-isMC   = True not in [s.isData for s in samples]
+isMC   = True  not in [s.isData for s in samples]
 
 # Check that all samples which are concatenated have the same x-section.
-assert isData or len(set([s.xSection for s in samples]))==1, "Not all samples have the same xSection: %s !"%(",".join([s.name for s in samples]))
-assert isMC or len(samples)==1, "Don't concatenate data samples"
+assert isData or len(set([s.xSection for s in samples]))==1, "Not all samples have the same xSection: %s !"%( ", ".join( [s.name for s in samples] ) )
+assert isMC   or len(samples)==1,                            "Don't concatenate data samples"
 
 #Samples: combine if more than one
 if len(samples)>1:
@@ -206,9 +206,10 @@ if isMC:
 
 # output directory (store temporarily when running on dpm)
 if writeToDPM:
+    # overwrite function not implemented yet!
+    from TTGammaEFT.Tools.user import dpm_directory as user_dpm_directory
     # Allow parallel processing of N threads on one worker
     directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()), options.processingEra )
-    from TTGammaEFT.Tools.user import dpm_directory as user_dpm_directory
 else:
     directory  = os.path.join( options.targetDir, options.processingEra ) 
 
@@ -253,9 +254,9 @@ branchKeepStrings_DATAMC = [\
 branchKeepStrings_MC = [\
     "Generator_*",
     "genWeight",
-    "Pileup_nTrueInt",
-    "GenPart_*", "nGenPart",
-    "GenJet_*", "nGenJet",
+#    "Pileup_nTrueInt",
+#    "GenPart_*", "nGenPart",
+#    "GenJet_*", "nGenJet",
     "Pileup_*",
     "LHE_*"
 ]
@@ -1022,5 +1023,7 @@ if writeToDPM:
             subprocess.call( cmd )
 
     # Clean up.
-    subprocess.call( [ 'rm', '-rf', directory ] ) # Let's risk it.
+    if not options.runOnLxPlus:
+        # not needed on condor, container will be removed automatically
+        subprocess.call( [ 'rm', '-rf', directory ] ) # Let's risk it.
 

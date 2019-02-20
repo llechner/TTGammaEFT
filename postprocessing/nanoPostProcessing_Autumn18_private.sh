@@ -21,7 +21,7 @@ python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEr
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v6 --fileBasedSplitting --sample TTWToQQ #SPLIT9
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v6 --fileBasedSplitting --sample TTW_LO #SPLIT10
 
-python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v6 --fileBasedSplitting --sample TTZToLLNuNu #SPIT7
+python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v6 --fileBasedSplitting --sample TTZToLLNuNu #SPLIT7
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v6 --fileBasedSplitting --sample TTZToLLNuNu_m1to10 #SPLIT10
 python nanoPostProcessing.py --overwrite --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v6 --fileBasedSplitting --sample TTZ_LO #SPLIT10
 

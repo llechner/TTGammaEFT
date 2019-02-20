@@ -25,13 +25,13 @@ if os.environ['USER'] in ['llechner']:
 
     postprocessing_directoryGEN         = "TTGammaEFT_PP_GEN_TTG_v2/gen/"
 
-    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v4/dilep/"
-    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v5/dilep/"
-    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v4/dilep/"
+    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v6/dilep/"
+    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v6/dilep/"
+    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v6/dilep/"
 
-    postprocessing_directoryRun2016     = "TTGammaEFT_PP_2016_TTG_Data_v4/dilep/"
-    postprocessing_directoryRun2017     = "TTGammaEFT_PP_2017_TTG_Data_v4/dilep/"
-    postprocessing_directoryRun2018     = "TTGammaEFT_PP_2018_TTG_Data_v3/dilep/"
+    postprocessing_directoryRun2016     = "TTGammaEFT_PP_2016_TTG_Data_v6/dilep/"
+    postprocessing_directoryRun2017     = "TTGammaEFT_PP_2017_TTG_Data_v6/dilep/"
+    postprocessing_directoryRun2018     = "TTGammaEFT_PP_2018_TTG_Data_v6/dilep/"
 
     postprocessing_directoryMC2016_semilep  = "TTGammaEFT_PP_2016_TTG_private_v4/semilep/"
     postprocessing_directoryMC2017_semilep  = "TTGammaEFT_PP_2017_TTG_private_v4/semilep/"
@@ -51,4 +51,6 @@ if os.environ['USER'] in ['llechner']:
     cache_directory                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/cache/"
     combineReleaseLocation              = '/afs/hephy.at/user/l/llechner/public/CMSSW_8_1_0/src'
     cardfileLocation                    = '/afs/hephy.at/data/llechner01/TTGammaEFT/results/cardfiles/'
+
+    dpm_directory                       = '/dpm/oeaw.ac.at/home/cms/store/user/llechner/'
 

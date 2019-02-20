@@ -55,4 +55,4 @@ echo "Executing:"
 echo ${@:2} --runOnLxPlus
 echo "---------------------"
 
-${@:2} --runOnLxPlus
+${@:2} --runOnLxPlus --targetDir /dpm/
