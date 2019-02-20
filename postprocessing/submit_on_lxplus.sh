@@ -52,7 +52,7 @@ ls -l
 echo "---------------------"
 
 echo "Executing:"
-echo ${@:2} --runOnLxPlus
+echo ${@:2} --runOnLxPlus --writeToDPM
 echo "---------------------"
 
-${@:2} --runOnLxPlus --targetDir /dpm/
+${@:2} --runOnLxPlus --writeToDPM

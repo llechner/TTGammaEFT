@@ -14,9 +14,6 @@ from operator                                    import mul
 # RootTools
 from RootTools.core.standard                     import *
 
-# User specific
-import TTGammaEFT.Tools.user as user
-
 # Tools for systematics
 from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
 from TTGammaEFT.Tools.helpers                    import m3
@@ -46,9 +43,10 @@ def get_parser():
     argParser.add_argument('--nJobs',                       action='store',         nargs='?',  type=int,                           default=1,                          help="Maximum number of simultaneous jobs.")
     argParser.add_argument('--job',                         action='store',                     type=int,                           default=0,                          help="Run only job i")
     argParser.add_argument('--minNJobs',                    action='store',         nargs='?',  type=int,                           default=1,                          help="Minimum number of simultaneous jobs.")
+    argParser.add_argument('--writeToDPM',                  action='store_true',                                                                                        help="Write output to DPM?")
     argParser.add_argument('--runOnLxPlus',                 action='store_true',                                                                                        help="Change the global redirector of samples to run on lxplus")
     argParser.add_argument('--fileBasedSplitting',          action='store_true',                                                                                        help="Split njobs according to files")
-    argParser.add_argument('--targetDir',                   action='store',         nargs='?',  type=str,                           default=user.postprocessing_output_directory, help="Name of the directory the post-processed files will be saved")
+#    argParser.add_argument('--targetDir',                   action='store',         nargs='?',  type=str,                           default=user.postprocessing_output_directory, help="Name of the directory the post-processed files will be saved")
     argParser.add_argument('--processingEra',               action='store',         nargs='?',  type=str,                           default='TTGammaEFT_PP_v1',         help="Name of the processing era")
     argParser.add_argument('--skim',                        action='store',         nargs='?',  type=str,                           default='dilep',                    help="Skim conditions to be applied for post-processing")
     argParser.add_argument('--small',                       action='store_true',                                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used")
@@ -76,8 +74,6 @@ logger_rt = logger_rt.get_logger(options.logLevel, logFile = None )
 
 import Samples.Tools.logger as logger_samples
 logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
-
-writeToDPM = options.targetDir == '/dpm/'
 
 # Flags 
 isDiLepGamma = options.skim.lower().startswith('dilepGamma')
@@ -205,13 +201,15 @@ if isMC:
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
 
 # output directory (store temporarily when running on dpm)
-if writeToDPM:
+if options.writeToDPM:
     # overwrite function not implemented yet!
-    from TTGammaEFT.Tools.user import dpm_directory as user_dpm_directory
+    from TTGammaEFT.Tools.user import dpm_directory as user_directory
     # Allow parallel processing of N threads on one worker
-    directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()), options.processingEra )
+    directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) )
 else:
-    directory  = os.path.join( options.targetDir, options.processingEra ) 
+    # User specific
+    from TTGammaEFT.Tools.user import postprocessing_output_directory as user_directory
+    directory  = os.path.join( user_directory, options.processingEra ) 
 
 postfix = '_small' if options.small else ''
 output_directory = os.path.join( directory, options.skim+postfix, sample.name )
@@ -1012,13 +1010,12 @@ else:
     os.remove( logFile )
     logger.info( "Removed temporary log file" )
 
-if writeToDPM:
+if options.writeToDPM:
     for dirname, subdirs, files in os.walk( directory ):
         logger.debug( 'Found directory: %s',  dirname )
         for fname in files:
             source  = os.path.abspath( os.path.join( dirname, fname ) )
-            postfix = '_small' if options.small else ''
-            cmd     = [ 'xrdcp', source, 'root://hephyse.oeaw.ac.at/%s' % os.path.join( user_dpm_directory, 'postprocessed',  options.processingEra + postfix, options.skim, sample.name, fname ) ]
+            cmd     = [ 'xrdcp', source, 'root://hephyse.oeaw.ac.at/%s' % os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sample.name, fname ) ]
             logger.info( "Issue copy command: %s", " ".join( cmd ) )
             subprocess.call( cmd )
 
