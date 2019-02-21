@@ -1,12 +1,13 @@
 # Standard
 import os
 import ROOT
+import subprocess
 
 # RootTools
 from RootTools.core.standard                     import *
 
 # User specific
-import TTGammaEFT.Tools.user as user
+from TTGammaEFT.Tools.user import dpm_directory
 
 def get_parser():
     ''' Argument parser for post-processing module.
@@ -29,6 +30,9 @@ if __name__=="__main__":
 else:
     import logging
     logger = logging.getLogger(__name__)
+
+if args.file.endswith(".sh"):
+    args.file = args.file.rstrip(".sh")
 
 def filterEmpty( strList ):
     return list( filter ( bool, strList ) )
@@ -54,52 +58,34 @@ def getDataDictList( filepath ):
 
     return dictList
 
-print "Now running on pp file %s" %args.file
+# Load File
+logger.info( "Now running on pp file %s" %args.file )
+file          = os.path.expandvars( "$CMSSW_BASE/src/TTGammaEFT/postprocessing/%s.sh" % args.file )
+dictList      = getDataDictList( file )
+skim          = dictList[0]['skim']
+year          = dictList[0]['year']
+processingEra = dictList[0]['dir']
+isData        = "Run" in args.file
 
-file = os.path.expandvars( "$CMSSW_BASE/src/TTGammaEFT/postprocessing/%s.sh" % args.file )
-
-dictList = getDataDictList( file )
-year     = dictList[0]['year']
-isData   = "Run" in args.file
-
-directory = os.path.expandvars( os.path.join ( getattr( user, "data_%sdirectory%s%i"% ("data" if isData else "", "SemiLep" if args.semilep else "", year)), getattr( user, "postprocessing_%sdirectory%s%i"%("data" if isData else "", "SemiLep" if args.semilep else "", year) ) ) )
-print directory
-#directory = os.path.expandvars( os.path.join (user.data_directoryPrefiring, user.postprocessing_directoryPrefiring))
 
 for ppEntry in dictList:
-    print "checking sample %s" %ppEntry['sample']
-    path      = os.path.join( directory, ppEntry['sample'] )
-    if not os.path.isdir( path ):
-        print "Sample not processed: %s" %ppEntry["sample"]
+    sample = ppEntry['sample']
+    logger.info("Checking sample %s" %sample)
+
+    # Check whether file exists on DPM, no check if root file is ok implemented for now
+    dirPath = os.path.join( dpm_directory, 'postprocessed', processingEra, skim, sample  )
+    try:
+        p = subprocess.Popen( ["dpns-ls -l %s" %dirPath], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+    except:
+        logger.info("Sample %s not processed" %sample)
         continue
-    rootFiles = [ item for item in os.listdir( path ) if item.endswith(".root") ]
+
+    rootFiles = [ line[:-1].split()[-1].rstrip(".root") for line in p.stdout.readlines() if line[:-1].split()[-1].endswith(".root") ]
+
     if len(rootFiles) != ppEntry['nFiles']:
-        print "len root files", len(rootFiles), "len processed", ppEntry['nFiles']
-        missingFiles = [ int(item.split("_")[-1].split(".root")[0]) for item in rootFiles ]
-        missingFiles = list( set( range(ppEntry['nFiles']) ) - set( missingFiles ) )
+        logger.info("Not all files of sample %s processed" %sample)
+        missingFiles = [ int( item.split("_")[-1] ) for item in rootFiles ]
+        missingFiles = list( set( range( ppEntry['nFiles'] ) ) - set( missingFiles ) )
         missingFiles.sort()
         missingFiles = map( str, missingFiles )
-        print "Not all files of sample %s processed! Indices of missing files: %s"%(ppEntry["sample"], ', '.join(missingFiles))
-#        print "No further checks on sample %s performed!" %ppEntry['sample']
-#        continue
-    for file in rootFiles:
-        filepath = os.path.join( path, file )
-
-        if os.path.getsize( filepath ) < 100000:
-            print "filesize of %s very small: %i bytes" % (file, os.path.getsize( filepath ))
-#            print "No further checks on file %s performed!" %file
-#            continue
-        chain    = ROOT.TChain('Events')
-        chain.AddFile( filepath )
-        nEntries = chain.GetEntries()
-        allBranches = [item.GetName() for item in list(chain.GetListOfBranches()) if item.GetName().startswith('nMuon')]
-        if not allBranches:
-            print file
-            print allBranches
-        allBranches = [item.GetName() for item in list(chain.GetListOfBranches()) if item.GetName().startswith('nElectronTight')]
-        if not allBranches:
-            print file
-            print allBranches
-        del chain
-        if nEntries < 100:
-            print "Number of events in file %s lower than 100! Found %i events! Corrupt ROOT file?" %(file, nEntries)
+        logger.info("Missing filenumbers of sample %s: %s" %(sample, ', '.join(missingFiles) ))
