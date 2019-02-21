@@ -10,9 +10,6 @@ python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processing
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample T_tWch_ext #SPLIT30
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TBar_tWch_ext #SPLIT30
 
-#python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTHbb #SPLIT10
-#python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTHnobb_pow #SPLIT10
-
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample THQ #SPLIT10
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample THW #SPLIT10
 
@@ -27,7 +24,6 @@ python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processing
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTZToQQ #SPLIT5
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTZToLLNuNu #SPLIT30
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTZToLLNuNu_m1to10 #SPLIT2
-#python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTZ_LO TTZ_LO_ext1 #SPLIT20
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTGJets #SPLIT40
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample TTGHad #SPLIT20
@@ -40,7 +36,6 @@ python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processing
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample WWTo1L1Nu2Q #SPLIT10
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample ZZTo2L2Nu #SPLIT30
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample ZZTo2L2Q #SPLIT40
-#python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample ZZTo4L #SPLIT20
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample WZTo1L3Nu #SPLIT30
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample WZTo1L1Nu2Q #SPLIT10
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v8 --fileBasedSplitting --sample WZTo2L2Q #SPLIT40

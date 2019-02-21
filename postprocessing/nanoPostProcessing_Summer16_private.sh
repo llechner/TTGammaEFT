@@ -9,9 +9,6 @@ python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --pr
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample T_tWch_ext #SPLIT12
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TBar_tWch_ext #SPLIT11
 
-#python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTHbb #SPLIT2
-#python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTHnobb_pow #SPLIT2
-
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample THQ #SPLIT2
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample THW #SPLIT2
 
@@ -24,7 +21,6 @@ python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --pr
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTWToQQ #SPLIT3
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTZToQQ #SPLIT2
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTZToLLNuNu_ext2 TTZToLLNuNu_ext3 #SPLIT4
-#python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTZ_LO #SPLIT15
 
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTGJets TTGJets_ext #SPLIT30
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample TTGHad #SPLIT15
@@ -35,7 +31,7 @@ python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --pr
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample ZZTo2L2Nu #SPLIT1
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample ZZTo2L2Q #SPLIT2
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample ZZTo2Q2Nu #SPLIT20
-#python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample ZZTo4L #SPLIT20
+
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample WZTo1L3Nu #SPLIT2
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample WZTo1L1Nu2Q #SPLIT30
 python nanoPostProcessing.py --overwrite --topReco --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v8 --fileBasedSplitting --sample WZTo2L2Q #SPLIT30
