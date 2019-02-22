@@ -46,7 +46,6 @@ def get_parser():
     argParser.add_argument('--writeToDPM',                  action='store_true',                                                                                        help="Write output to DPM?")
     argParser.add_argument('--runOnLxPlus',                 action='store_true',                                                                                        help="Change the global redirector of samples to run on lxplus")
     argParser.add_argument('--fileBasedSplitting',          action='store_true',                                                                                        help="Split njobs according to files")
-#    argParser.add_argument('--targetDir',                   action='store',         nargs='?',  type=str,                           default=user.postprocessing_output_directory, help="Name of the directory the post-processed files will be saved")
     argParser.add_argument('--processingEra',               action='store',         nargs='?',  type=str,                           default='TTGammaEFT_PP_v1',         help="Name of the processing era")
     argParser.add_argument('--skim',                        action='store',         nargs='?',  type=str,                           default='dilep',                    help="Skim conditions to be applied for post-processing")
     argParser.add_argument('--small',                       action='store_true',                                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used")
@@ -550,25 +549,31 @@ def filler( event ):
         # weight
         event.weight = lumiScaleFactor*r.genWeight if lumiScaleFactor is not None else 0
 
-        # GEN Particles
+        # GEN Particles: DO NOT SORT HERE (OVERLAP REMOVAL CHECKS INDEX OF LIST)
         gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
-        gPart.sort( key = lambda p: -p['pt'] )
         # GEN Jets
         gJets = getParticles( r, collVars=readGenJetVarList, coll="GenJet" )
         gJets.sort( key = lambda p: -p['pt'] )
 
         # Overlap removal flags for ttgamma/ttbar and Zgamma/DY
         GenPhoton                  = filterGenPhotons( gPart, status='last' )
+
+        # OR ttgamma/tt, DY/ZG, WG/WJets
         GenIsoPhoton               = filter( lambda g: isIsolatedPhoton( g, gPart, coneSize=0.2,  ptCut=5, excludedPdgIds=[12,-12,14,-14,16,-16] ), GenPhoton    )
-        GenIsoPhotonSingleT        = filter( lambda g: isIsolatedPhoton( g, gPart, coneSize=0.05, ptCut=5, excludedPdgIds=[12,-12,14,-14,16,-16] ), GenPhoton    )
         GenIsoPhotonNoMeson        = filter( lambda g: not hasMesonMother( getParentIds( g, gPart ) ), GenIsoPhoton )
+
+        # OR singleT/tG
+        GenIsoPhotonSingleT        = filter( lambda g: isIsolatedPhoton( g, gPart, coneSize=0.05, ptCut=5, excludedPdgIds=[12,-12,14,-14,16,-16] ), GenPhoton    )
         GenIsoPhotonNoMesonSingleT = filter( lambda g: not hasMesonMother( getParentIds( g, gPart ) ), GenIsoPhotonSingleT )
         GenIsoPhotonNoMesonSingleT = filter( lambda g: not photonFromTopDecay( getParentIds( g, gPart ) ), GenIsoPhotonNoMesonSingleT )
 
         event.isTTGamma      = len( filter( lambda g: genPhotonSel_TTG_OR(g), GenIsoPhotonNoMeson        ) ) > 0 
         event.isZWGamma      = len( filter( lambda g: genPhotonSel_ZG_OR(g),  GenIsoPhotonNoMeson        ) ) > 0 
         event.isSingleTopTch = len( filter( lambda g: genPhotonSel_T_OR(g),   GenIsoPhotonNoMesonSingleT ) ) > 0 
-     
+
+        # SORT HERE, NOT BEFORE (BECAUSE OF OVERLAP REMOVAL)     
+        gPart.sort( key = lambda p: -p['pt'] )
+
         # Split gen particles
         # still needs improvement with filterGen function
         GenElectron = list( filter( lambda l: genLeptonSel(l), filterGenElectrons( gPart, status='last' ) ) )
@@ -837,8 +842,6 @@ def filler( event ):
         #topReco = TopReco( ROOT.Era.run2_13tev_2016_25ns, 2, 1, 0, 'btagDeepB', 0.6321 )
         solution = topReco.evaluate( selectedLeptons, jets, met = {'pt':r.MET_pt, 'phi':r.MET_phi})
         if solution:
-            print "t/tbar:", selectedLeptons[0]['pt'], r.MET_pt, r.MET_phi, solution.top.Pt(), solution.topBar.Pt()
-
             event.topReco_nBTag   = solution.ntags
             event.topReco_weight  = solution.weight
             event.topReco_recMtop = solution.recMtop
