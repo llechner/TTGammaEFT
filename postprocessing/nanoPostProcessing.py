@@ -17,6 +17,7 @@ from RootTools.core.standard                     import *
 # Tools for systematics
 from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
 from TTGammaEFT.Tools.helpers                    import m3
+from TTGammaEFT.Tools.user                       import cache_directory
 
 from TTGammaEFT.Tools.objectSelection            import *
 from TTGammaEFT.Tools.Variables                  import NanoVariables
@@ -129,15 +130,14 @@ assert isMC   or len(samples)==1,                            "Don't concatenate 
 if len(samples)>1:
     sample_name =  samples[0].name+"_comb"
     logger.info( "Combining samples %s to %s.", ",".join(s.name for s in samples), sample_name )
-    sample = Sample.combine(sample_name, samples, maxN = maxNFiles)
-    # Clean up
-    for s in samples:
-        sample.clear()
+    sample      = Sample.combine(sample_name, samples, maxN=maxNFiles)
+    sampleForPU = Sample.combine(sample_name, samples, maxN=-1)
 elif len(samples)==1:
-    sample = samples[0]
+    sample      = samples[0]
+    sampleForPU = samples[0]
 
 if options.small:
-    sample.reduceFiles( to = 1 )
+    sample.reduceFiles( to=1 )
 
 # Cross section for postprocessed sample
 xSection = samples[0].xSection if isMC else None
@@ -185,7 +185,7 @@ if isMC:
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2016_35920_XSecVUp",      mc="Summer16")
     elif options.year == 2017:
         # messed up MC PU profiles
-        puProfiles          = puProfile( source_sample = samples[0] )
+        puProfiles          = puProfile( source_sample=sampleForPU )#, cacheDir=os.path.join( cache_directory, "puProfiles" ) )
         mcHist              = puProfiles.cachedTemplate( selection="( 1 )", weight='genWeight', overwrite=False ) # use genWeight for amc@NLO samples. No problems encountered so far
         nTrueInt_puRW       = getReweightingFunction(data="PU_2017_41860_XSecCentral",  mc=mcHist)
         nTrueInt_puRWDown   = getReweightingFunction(data="PU_2017_41860_XSecDown",     mc=mcHist)
@@ -549,8 +549,9 @@ def filler( event ):
         # weight
         event.weight = lumiScaleFactor*r.genWeight if lumiScaleFactor is not None else 0
 
-        # GEN Particles: DO NOT SORT HERE (OVERLAP REMOVAL CHECKS INDEX OF LIST)
+        # GEN Particles
         gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
+        gPart.sort( key = lambda p: -p['pt'] )
         # GEN Jets
         gJets = getParticles( r, collVars=readGenJetVarList, coll="GenJet" )
         gJets.sort( key = lambda p: -p['pt'] )
@@ -570,9 +571,6 @@ def filler( event ):
         event.isTTGamma      = len( filter( lambda g: genPhotonSel_TTG_OR(g), GenIsoPhotonNoMeson        ) ) > 0 
         event.isZWGamma      = len( filter( lambda g: genPhotonSel_ZG_OR(g),  GenIsoPhotonNoMeson        ) ) > 0 
         event.isSingleTopTch = len( filter( lambda g: genPhotonSel_T_OR(g),   GenIsoPhotonNoMesonSingleT ) ) > 0 
-
-        # SORT HERE, NOT BEFORE (BECAUSE OF OVERLAP REMOVAL)     
-        gPart.sort( key = lambda p: -p['pt'] )
 
         # Split gen particles
         # still needs improvement with filterGen function
