@@ -185,7 +185,7 @@ if isMC:
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2016_35920_XSecVUp",      mc="Summer16")
     elif options.year == 2017:
         # messed up MC PU profiles
-        puProfiles          = puProfile( source_sample=sampleForPU )#, cacheDir=os.path.join( cache_directory, "puProfiles" ) )
+        puProfiles          = puProfile( source_sample=sampleForPU )
         mcHist              = puProfiles.cachedTemplate( selection="( 1 )", weight='genWeight', overwrite=False ) # use genWeight for amc@NLO samples. No problems encountered so far
         nTrueInt_puRW       = getReweightingFunction(data="PU_2017_41860_XSecCentral",  mc=mcHist)
         nTrueInt_puRWDown   = getReweightingFunction(data="PU_2017_41860_XSecDown",     mc=mcHist)
