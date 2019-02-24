@@ -14,8 +14,10 @@ def get_parser():
     '''
     import argparse
     argParser = argparse.ArgumentParser(description = "Argument parser for nanoPostProcessing")
-    argParser.add_argument('--file',    action='store', type=str, default='nanoPostProcessing_Summer16', help="postprocessing sh file to check")
-    argParser.add_argument('--semilep', action='store_true', help="check semiLep samples?")
+    argParser.add_argument('--file',       action='store', type=str, default='nanoPostProcessing_Summer16', help="postprocessing sh file to check")
+    argParser.add_argument('--semilep',    action='store_true', help="check semiLep samples?")
+    argParser.add_argument('--createExec', action='store_true', help="create .sh file with missing files?")
+    argParser.add_argument('--overwrite',  action='store_true', help="overwrite existing missingFiles.sh file?")
     return argParser
 
 args = get_parser().parse_args()
@@ -47,14 +49,15 @@ def getDataDictList( filepath ):
 
     dictList = []
     for line in ppLines:
-        skim   = filterEmpty( line.split("--skim ")[1].split(" ") )[0]
-        year   = filterEmpty( line.split("--year ")[1].split(" ") )[0]
-        dir    = filterEmpty( line.split("--processingEra ")[1].split(" ") )[0]
-        sample = filterEmpty( line.split("--sample ")[1].split(" ") )[0]
+        skim    = filterEmpty( line.split("--skim ")[1].split(" ") )[0]
+        year    = filterEmpty( line.split("--year ")[1].split(" ") )[0]
+        dir     = filterEmpty( line.split("--processingEra ")[1].split(" ") )[0]
+        sample  = filterEmpty( line.split("--sample ")[1].split(" ") )[0]
+        command = line
         if not filterEmpty( line.split("--sample ")[1].split(" ") )[1].startswith("--") and not filterEmpty( line.split("--sample ")[1].split(" ") )[1].startswith("#SPLIT"):
             sample += "_comb"
         nFiles = filterEmpty( line.split("#SPLIT")[1].split(" ") )[0].split("\n")[0]
-        dictList.append( { "skim":skim, "year":int(year), "dir":dir, "sample":sample, "nFiles":int(nFiles)} )
+        dictList.append( { "skim":skim, "year":int(year), "dir":dir, "sample":sample, "nFiles":int(nFiles), "command":command} )
 
     return dictList
 
@@ -62,30 +65,37 @@ def getDataDictList( filepath ):
 logger.info( "Now running on pp file %s" %args.file )
 file          = os.path.expandvars( "$CMSSW_BASE/src/TTGammaEFT/postprocessing/%s.sh" % args.file )
 dictList      = getDataDictList( file )
-skim          = dictList[0]['skim']
-year          = dictList[0]['year']
-processingEra = dictList[0]['dir']
 isData        = "Run" in args.file
-
-
+execCommand   = []
 for ppEntry in dictList:
     sample = ppEntry['sample']
-    logger.info("Checking sample %s" %sample)
+    logger.debug("Checking sample %s" %sample)
 
     # Check whether file exists on DPM, no check if root file is ok implemented for now
-    dirPath = os.path.join( dpm_directory, 'postprocessed', processingEra, skim, sample  )
-    try:
-        p = subprocess.Popen( ["dpns-ls -l %s" %dirPath], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-    except:
-        logger.info("Sample %s not processed" %sample)
-        continue
+    dirPath = os.path.join( dpm_directory, 'postprocessed', ppEntry["dir"], ppEntry["skim"], sample  )
+    p = subprocess.Popen( ["dpns-ls -l %s" %dirPath], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
     rootFiles = [ line[:-1].split()[-1].rstrip(".root") for line in p.stdout.readlines() if line[:-1].split()[-1].endswith(".root") ]
+    if not rootFiles:
+        logger.info("Sample %s not processed" %sample)
+        if args.createExec:
+            execCommand += [ ppEntry["command"] ]
+        continue
 
     if len(rootFiles) != ppEntry['nFiles']:
-        logger.info("Not all files of sample %s processed" %sample)
+        logger.debug("Not all files of sample %s processed" %sample)
         missingFiles = [ int( item.split("_")[-1] ) for item in rootFiles ]
         missingFiles = list( set( range( ppEntry['nFiles'] ) ) - set( missingFiles ) )
         missingFiles.sort()
         missingFiles = map( str, missingFiles )
         logger.info("Missing filenumbers of sample %s: %s" %(sample, ', '.join(missingFiles) ))
+        if args.createExec:
+            for miss in missingFiles:
+                execCommand += [ ppEntry["command"].split("#SPLIT")[0] + "--nJobs %s --job %s"%(ppEntry["nFiles"], miss) ]
+
+if args.createExec:
+    with open( "missingFiles.sh", 'w' if args.overwrite else "a" ) as f:
+        for line in execCommand:
+            f.write(line.split("\n")[0] + "\n")
+        f.write("\n")
+
