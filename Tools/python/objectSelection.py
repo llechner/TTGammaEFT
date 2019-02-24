@@ -92,6 +92,7 @@ def vertexSelector( l ):
     return True
 
 def photonMediumIDSelector( p, year, removedCuts=[], printVar=False ):
+    # ATTENTION, there is a problem with the selected cuts
     # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2
 
     if year not in [ 2016, 2017, 2018 ]:
@@ -311,8 +312,8 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
             if not noPtEtaCut:
                 if g["pt"]       <= 20:                                             return False
                 if abs(g["eta"]) >= 1.479:                                          return False # Barrel only
-#            if g[idVar]          <  photonId[selection]:                            return False # seems to be a problem with hoe cut
-            if not photonMediumIDSelector( g, year=year, removedCuts=removedCuts ): return False
+            if g[idVar]          <  photonId[selection]:                            return False # seems to be a problem with hoe cut
+#            if not photonMediumIDSelector( g, year=year, removedCuts=removedCuts ): return False
             if g["pixelSeed"]:                                                      return False
             if not g["electronVeto"]:                                               return False
             return True
