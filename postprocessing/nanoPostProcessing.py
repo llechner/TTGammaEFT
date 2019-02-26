@@ -14,6 +14,9 @@ from operator                                    import mul
 # RootTools
 from RootTools.core.standard                     import *
 
+# DeepCheck RootFiles
+from Analysis.Tools.helpers                      import checkRootFile, deepCheckRootFile
+
 # Tools for systematics
 from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
 from TTGammaEFT.Tools.helpers                    import m3
@@ -147,6 +150,8 @@ if isData and options.triggerSelection:
     from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
     Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
     triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
+    print "trigger condition"
+    print triggerCond
     logger.info("Sample will have the following trigger skim: %s"%triggerCond)
     skimConds.append( triggerCond )
 
@@ -199,23 +204,23 @@ if isMC:
         nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2018_58830_XSecVDown",    mc="Autumn18")
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
 
+postfix   = '_small' if options.small else ''
+sampleDir = sample.name #sample name changes after split
+
 # output directory (store temporarily when running on dpm)
 if options.writeToDPM:
     # overwrite function not implemented yet!
     from TTGammaEFT.Tools.user import dpm_directory as user_directory
     # Allow parallel processing of N threads on one worker
-    directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) )
+    output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) )
 else:
     # User specific
     from TTGammaEFT.Tools.user import postprocessing_output_directory as user_directory
     directory  = os.path.join( user_directory, options.processingEra ) 
-
-postfix   = '_small' if options.small else ''
-sampleDir = sample.name #sample name changes after split
-output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
+    output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
 
 # Single file post processing
-if options.fileBasedSplitting:
+if options.fileBasedSplitting or options.nJobs > 1:
     len_orig = len(sample.files)
     sample = sample.split( n=options.nJobs, nSub=options.job)
     if sample is None:  
@@ -664,8 +669,8 @@ def filler( event ):
     selectedTightLepton = tightLeptons[:1]
 
     # Store analysis Leptons + 2 default Leptons for a faster plotscript
-    l0, l1   = ( selectedLeptons + [{},{}] )[:2]
-    lt0, lt1 = ( tightLeptons    + [{},{}] )[:2]
+    l0, l1   = ( selectedLeptons + [None,None] )[:2]
+    lt0, lt1 = ( tightLeptons    + [None,None] )[:2]
     # Dileptonic analysis
     fill_vector( event, "LeptonGood0",  writeLeptonVarList, l0 )
     fill_vector( event, "LeptonGood1",  writeLeptonVarList, l1 )
@@ -722,7 +727,7 @@ def filler( event ):
     fill_vector_collection( event, "Jet", writeJetVarList, allJets)
 
     # Store analysis jets + 2 default jets for a faster plotscript
-    j0, j1   = ( jets + [{},{}] )[:2]
+    j0, j1   = ( jets + [None,None] )[:2]
     # Dileptonic analysis
     fill_vector( event, "JetGood0",  writeJetVarList, j0 )
     fill_vector( event, "JetGood1",  writeJetVarList, j1 )
@@ -733,7 +738,7 @@ def filler( event ):
     nonBJets = list( filter( lambda x: not x["isBJet"], jets ) )
 
     # Store bJets + 2 default bjets for a faster plot script
-    bj0, bj1 = ( list(bJets) + [{},{}] )[:2]
+    bj0, bj1 = ( list(bJets) + [None,None] )[:2]
     fill_vector( event, "Bj0", writeBJetVarList, bj0 )
     fill_vector( event, "Bj1", writeBJetVarList, bj1 )
 
@@ -799,14 +804,14 @@ def filler( event ):
     fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons )
 
     # Store analysis photons + default photons for a faster plot script
-    p0, p1 = ( mediumPhotons + [{},{}] )[:2]
+    p0, p1 = ( mediumPhotons + [None,None] )[:2]
     fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
     fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
 
-    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [{}] )[0]
+    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [None] )[0]
     fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgNoSieie )
 
-    p0NoChg = ( mediumPhotonsNoChgIso + [{}] )[0]
+    p0NoChg = ( mediumPhotonsNoChgIso + [None] )[0]
     fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChg )
 
     if bj1:
@@ -929,7 +934,8 @@ jobs = [ (i, range) for i, range in enumerate( eventRanges ) ]
 
 #assert False, ""
 
-filename, ext = os.path.splitext( os.path.join( output_directory, sample.name + '.root' ) )
+outputPath = os.path.join( output_directory, sample.name + '.root' )
+filename, ext = os.path.splitext( outputPath )
 
 if options.fileBasedSplitting and len(eventRanges)>1:
     raise RuntimeError("Using fileBasedSplitting but have more than one event range!")
@@ -1013,16 +1019,52 @@ else:
     logger.info( "Removed temporary log file" )
 
 if options.writeToDPM:
-    for dirname, subdirs, files in os.walk( directory ):
+    for dirname, subdirs, files in os.walk( output_directory ):
         logger.debug( 'Found directory: %s',  dirname )
+
         for fname in files:
+#            if not fname.endswith(".root"): continue
+
             source  = os.path.abspath( os.path.join( dirname, fname ) )
-            cmd     = [ 'xrdcp', source, 'root://hephyse.oeaw.ac.at/%s' % os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname ) ]
+            target  = 'root://hephyse.oeaw.ac.at/%s'% os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname )
+
+            if fname.endswith(".root"):
+                if checkRootFile( source, checkForObjects=["Events"] ) and deepCheckRootFile( source ):
+                    logger.info( "Source: File check ok!" )
+                else:
+                    raise Exception("Corrupt rootfile at source! File not copied: %s"%source )
+
+            cmd = [ 'xrdcp', '-f',  source, target ]
             logger.info( "Issue copy command: %s", " ".join( cmd ) )
             subprocess.call( cmd )
+
+            if not fname.endswith(".root"): continue
+
+            if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+                logger.info( "Target: File check ok!" )
+            else:
+                logger.info( "Corrupt rootfile at target! Trying again: %s"%source )
+                logger.info( "2nd try: Issue copy command: %s", " ".join( cmd ) )
+                subprocess.call( cmd )
+
+                if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+                    logger.info( "2nd try successfull!" )
+                else:
+                    logger.info( "2nd try: No success, removing file: %s"%target )
+                    cmd = [ '/usr/bin/rfrm', "/dpm"+target.split("dpm")[1] ]
+                    subprocess.call( cmd )
+                    raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
 
     # Clean up.
     if not options.runOnLxPlus:
         # not needed on condor, container will be removed automatically
-        subprocess.call( [ 'rm', '-rf', directory ] ) # Let's risk it.
+        subprocess.call( [ 'rm', '-rf', output_directory ] ) # Let's risk it.
 
+
+else:
+    if checkRootFile( outputPath, checkForObjects=["Events"] ) and deepCheckRootFile( outputPath ):
+        logger.info( "Target: File check ok!" )
+    else:
+        logger.info( "Corrupt rootfile! Removing file: %s"%outputPath )
+        os.remove( outputPath )
+        raise Exception("Corrupt rootfile! File not copied: %s"%source )
