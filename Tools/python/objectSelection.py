@@ -174,7 +174,7 @@ def jetSelector( year, noPtEtaCut=False ):
         # According to AN-2017/197
         # jetID cuts, pT and eta cuts
         def func(j):
-            if not j["cleanmask"]:                           return False
+#            if not j["cleanmask"]:                           return False # too much cleaning
             if not noPtEtaCut:
                 if j["pt"]       <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
@@ -185,7 +185,7 @@ def jetSelector( year, noPtEtaCut=False ):
     elif year == 2017 or year == 2018:
         # jetID cuts, pT and eta cuts
         def func(j):
-            if not j["cleanmask"]:                           return False
+#            if not j["cleanmask"]:                           return False
             if not noPtEtaCut:
                 if j["pt"]       <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False

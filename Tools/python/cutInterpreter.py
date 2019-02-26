@@ -39,9 +39,10 @@ special_cuts = {
     "SF":                "(nElectronGood==2||nMuonGood==2)",
     "mu":                "nMuonTight==1",
     "e":                 "nElectronTight==1",
+    "trigger":           "(1)",
   }
 
-continous_variables = [ ("metSig", "metSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","Jet_eta[0]") ]
+continous_variables = [ ("metSig", "metSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
 discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepVeto","nLeptonVeto"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
 
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)

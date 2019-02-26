@@ -25,22 +25,23 @@ if os.environ['USER'] in ['llechner']:
 
     postprocessing_directoryGEN         = "TTGammaEFT_PP_GEN_TTG_v2/gen/"
 
-    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v6/dilep/"
-    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v6/dilep/"
-    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v6/dilep/"
+    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v9/dilep/"
+    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v9/dilep/"
+    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v9/dilep/"
 
-    postprocessing_directoryRun2016     = "TTGammaEFT_PP_2016_TTG_Data_v6/dilep/"
-    postprocessing_directoryRun2017     = "TTGammaEFT_PP_2017_TTG_Data_v6/dilep/"
-    postprocessing_directoryRun2018     = "TTGammaEFT_PP_2018_TTG_Data_v6/dilep/"
+    postprocessing_directoryRun2016     = "TTGammaEFT_PP_2016_TTG_Data_v9/dilep/"
+    postprocessing_directoryRun2017     = "TTGammaEFT_PP_2017_TTG_Data_v9/dilep/"
+    postprocessing_directoryRun2018     = "TTGammaEFT_PP_2018_TTG_Data_v9/dilep/"
 
-    postprocessing_directoryMC2016_semilep  = "TTGammaEFT_PP_2016_TTG_private_v4/semilep/"
-    postprocessing_directoryMC2017_semilep  = "TTGammaEFT_PP_2017_TTG_private_v4/semilep/"
-    postprocessing_directoryMC2018_semilep  = "TTGammaEFT_PP_2018_TTG_private_v4/semilep/"
+    postprocessing_directoryMC2016_semilep  = "TTGammaEFT_PP_2016_TTG_private_v9/semilep/"
+    postprocessing_directoryMC2017_semilep  = "TTGammaEFT_PP_2017_TTG_private_v9/semilep/"
+    postprocessing_directoryMC2018_semilep  = "TTGammaEFT_PP_2018_TTG_private_v9/semilep/"
 
-    postprocessing_directoryRun2016_semilep = "TTGammaEFT_PP_2016_TTG_Data_v4/semilep/"
-    postprocessing_directoryRun2017_semilep = "TTGammaEFT_PP_2017_TTG_Data_v4/semilep/"
-    postprocessing_directoryRun2018_semilep = "TTGammaEFT_PP_2018_TTG_Data_v3/semilep/"
+    postprocessing_directoryRun2016_semilep = "TTGammaEFT_PP_2016_TTG_Data_v9/semilep/"
+    postprocessing_directoryRun2017_semilep = "TTGammaEFT_PP_2017_TTG_Data_v9/semilep/"
+    postprocessing_directoryRun2018_semilep = "TTGammaEFT_PP_2018_TTG_Data_v9/semilep/"
 
+#    postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v2/dilep/"
     postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v1/dilep/"
 
     postprocessing_output_directory     = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
