@@ -26,10 +26,10 @@ cd CMSSW_9_4_10/src/
 eval `scramv1 runtime -sh`
 # github repos
 git cms-init
-git clone https://github.com/HephyAnalysisSW/TTGammaEFT.git
-git clone https://github.com/HephyAnalysisSW/Samples.git
-git clone https://github.com/HephyAnalysisSW/Analysis.git
-git clone https://github.com/HephyAnalysisSW/RootTools.git
+git clone -b "ppv11" --single-branch --depth 1 https://github.com/HephyAnalysisSW/TTGammaEFT.git
+git clone -b "ppv11" --single-branch --depth 1 https://github.com/HephyAnalysisSW/Samples.git
+git clone -b "ppv11" --single-branch --depth 1 https://github.com/HephyAnalysisSW/Analysis.git
+git clone -b "ppv11" --single-branch --depth 1 https://github.com/HephyAnalysisSW/RootTools.git
 
 scram b
 eval `scramv1 runtime -sh`
