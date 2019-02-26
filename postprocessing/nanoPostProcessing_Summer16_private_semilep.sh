@@ -1,4 +1,4 @@
-python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 #SPLIT40
+python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 #SPLIT40
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample DYJetsToLL_M10to50_LO #SPLIT9
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample TTLep_pow #SPLIT37
@@ -28,7 +28,7 @@ python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processing
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample TTGLep #SPLIT15
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample WWTo1L1Nu2Q #SPLIT10
-python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --sample ZZTo2L2Nu #SPLIT10
+python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample ZZTo2L2Nu #SPLIT30
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample ZZTo2L2Q #SPLIT2
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample ZZTo2Q2Nu #SPLIT20
 python nanoPostProcessing.py --overwrite --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v9 --fileBasedSplitting --sample WZTo1L3Nu #SPLIT2

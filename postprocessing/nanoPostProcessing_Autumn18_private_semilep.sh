@@ -8,7 +8,7 @@ python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processing
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v9 --fileBasedSplitting --sample TTLep_pow #SPLIT22
 python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v9 --fileBasedSplitting --sample TTSemiLep_pow #SPLIT8
-python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v9 --sample TTHad_pow #SPLIT20
+python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v9 --fileBasedSplitting --sample TTHad_pow #SPLIT60
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v9 --fileBasedSplitting --sample TToLeptons_sch_amcatnlo #SPLIT40
 python nanoPostProcessing.py --overwrite --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v9 --fileBasedSplitting --sample T_tWch #SPLIT40

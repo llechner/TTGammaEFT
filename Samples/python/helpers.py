@@ -17,6 +17,11 @@ def getSample( pd, runName, lumi, dirs ):
     sample.lumi = lumi
     return sample
 
+def getDPMSample( pd, runName, lumi, dirs ):
+    sample  = Sample.fromDPMDirectory( name=( pd + '_' + runName ), treeName="Events", texName=( pd + ' (' + runName + ')' ), directory=dirs[ pd + '_' + runName ] )
+    sample.lumi = lumi
+    return sample
+
 def merge( pd, totalRunName, listOfRuns, dirs ):
     dirs[ pd + '_' + totalRunName ] = []
     for run in listOfRuns:

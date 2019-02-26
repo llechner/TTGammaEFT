@@ -6,7 +6,7 @@ import ROOT
 from RootTools.core.Sample import Sample 
 
 # TTGammaEFT Imports
-from TTGammaEFT.Samples.helpers import getSample, merge
+from TTGammaEFT.Samples.helpers import getDPMSample, getSample, merge
 
 # Logging
 if __name__=="__main__":
@@ -19,7 +19,9 @@ else:
     logger = logging.getLogger(__name__)
 
 # Data directory
-from TTGammaEFT.Tools.user import data_directory1                   as data_directory
+from TTGammaEFT.Tools.user import data_directory1 as data_directory
+#from TTGammaEFT.Tools.user import dpm_directory as data_directory
+#data_directory += "postprocessed/"
 from TTGammaEFT.Tools.user import postprocessing_directoryPrefiring as postprocessing_directory
 
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
@@ -43,6 +45,7 @@ for key in dirs:
 allSamples_Data25ns  = []
 for pd in allSamples:
     vars()[ pd + '_Run2017' ] = getSample( pd, 'Run2017', lumi*1000, dirs )
+#    vars()[ pd + '_Run2017' ] = getDPMSample( pd, 'Run2017', lumi*1000, dirs )
     allSamples_Data25ns += [ vars()[ pd + '_Run2017' ] ]
 
 Run2017      = Sample.combine( "Run2017", allSamples_Data25ns, texName = "Data" )
@@ -51,3 +54,39 @@ Run2017.lumi = lumi*1000
 for s in allSamples_Data25ns:
     s.color   = ROOT.kBlack
     s.isData  = True
+
+
+if __name__ == "__main__":
+
+    def get_parser():
+        ''' Argument parser for post-processing module.
+        '''
+        import argparse
+        argParser = argparse.ArgumentParser(description = "Argument parser for nanoPostProcessing")
+        argParser.add_argument('--check',      action='store_true', help="check root files?")
+        argParser.add_argument('--deepcheck',  action='store_true', help="check events of root files?")
+        argParser.add_argument('--remove',     action='store_true', help="remove corrupt root files?")
+        argParser.add_argument('--log',        action='store_true', help="print each filename?")
+        return argParser
+
+    args = get_parser().parse_args()
+
+    if not (args.check or args.deepcheck): sys.exit(0)
+
+    # check Root Files
+    from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+
+    for file in Run2017.files:
+        if args.log: logger.info( "Checking filepath: %s"%file )
+        corrupt = False
+        if args.check:
+            corrupt = not checkRootFile(file, checkForObjects=["Events"])
+        if args.deepcheck and not corrupt:
+            corrupt = not deepCheckRootFile(file)
+        if corrupt:
+            if file.startswith("root://hephyse.oeaw.ac.at/"):
+                file = file.split("root://hephyse.oeaw.ac.at/")[1]
+            logger.info( "File corrupt: %s"%file )
+            if args.remove:
+                logger.info( "Removing file: %s"%file )
+                os.system( "/usr/bin/rfrm -f %s"%file )

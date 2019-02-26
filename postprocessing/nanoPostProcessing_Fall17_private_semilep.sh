@@ -15,7 +15,7 @@ python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processing
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v9 --fileBasedSplitting --sample TGJets #SPLIT30
 
-python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v9 --sample tZq_ll #SPLIT10
+python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v9 --fileBasedSplitting --sample tZq_ll #SPLIT30
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v9 --fileBasedSplitting --sample tZq_nunu #SPLIT10
 
 python nanoPostProcessing.py --overwrite --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v9 --fileBasedSplitting --sample TTW_LO TTW_LO_ext1 #SPLIT30
