@@ -25,7 +25,6 @@ from TTGammaEFT.Tools.user                       import cache_directory
 from TTGammaEFT.Tools.objectSelection            import *
 from TTGammaEFT.Tools.Variables                  import NanoVariables
 
-from Analysis.Tools.PreFiring                    import PreFiring
 from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
 from Analysis.Tools.puProfileCache               import puProfile
 
@@ -150,8 +149,6 @@ if isData and options.triggerSelection:
     from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
     Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
     triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
-    print "trigger condition"
-    print triggerCond
     logger.info("Sample will have the following trigger skim: %s"%triggerCond)
     skimConds.append( triggerCond )
 
@@ -257,9 +254,9 @@ branchKeepStrings_DATAMC = [\
 branchKeepStrings_MC = [\
     "Generator_*",
     "genWeight",
-#    "Pileup_nTrueInt",
-#    "GenPart_*", "nGenPart",
-#    "GenJet_*", "nGenJet",
+    "Pileup_nTrueInt",
+    "GenPart_*", "nGenPart",
+    "GenJet_*", "nGenJet",
     "Pileup_*",
     "LHE_*"
 ]
@@ -481,8 +478,10 @@ recoJetSel            = jetSelector( options.year )
 recoJetSel_noPtEtaCut = jetSelector( options.year )
 
 if options.addPreFiringFlag: 
-    Pf = PreFiring( sampleDir )
-    unPreFirableEvents = [ (event, run) for event, run, lumi in Pf.getUnPreFirableEvents() ]
+    from Analysis.Tools.PreFiring import PreFiring
+    PreFire = PreFiring( sampleDir )
+    unPreFirableEvents = [ (event, run) for event, run, lumi in PreFire.getUnPreFirableEvents() ]
+    del PreFire
 
 # Define a reader
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
@@ -1019,14 +1018,16 @@ else:
     logger.info( "Removed temporary log file" )
 
 if options.writeToDPM:
+
+    redir   = 'root://hephyse.oeaw.ac.at/'
+
     for dirname, subdirs, files in os.walk( output_directory ):
         logger.debug( 'Found directory: %s',  dirname )
 
         for fname in files:
             if not fname.endswith(".root"): continue
-
             source  = os.path.abspath( os.path.join( dirname, fname ) )
-            target  = 'root://hephyse.oeaw.ac.at/%s'% os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname )
+            target  = redir + os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname )
 
             if fname.endswith(".root"):
                 if checkRootFile( source, checkForObjects=["Events"] ) and deepCheckRootFile( source ):
@@ -1043,15 +1044,16 @@ if options.writeToDPM:
             if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
                 logger.info( "Target: File check ok!" )
             else:
-                logger.info( "Corrupt rootfile at target! Trying again: %s"%source )
+                logger.info( "Corrupt rootfile at target! Trying again: %s"%target )
                 logger.info( "2nd try: Issue copy command: %s", " ".join( cmd ) )
                 subprocess.call( cmd )
 
                 if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
                     logger.info( "2nd try successfull!" )
                 else:
+                    cmd = [ "xrdfs", redir, "rm", "/cms" + target.split("/cms")[1] ]
                     logger.info( "2nd try: No success, removing file: %s"%target )
-                    cmd = [ 'rfrm', target ]
+                    logger.info( "Issue rm command: %s", " ".join( cmd ) )
                     subprocess.call( cmd )
                     raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
 
@@ -1068,3 +1070,33 @@ else:
         logger.info( "Corrupt rootfile! Removing file: %s"%outputPath )
         os.remove( outputPath )
         raise Exception("Corrupt rootfile! File not copied: %s"%source )
+
+
+# Why do I always have to clean up behind others??
+# Somehow ROOT is not able to get its sh** together and remove its histograms
+# This throws errors using condor (double free corruption)
+# One TEventList cannot be removed. This comes from all the draw commands in TreeReader and Sample
+
+# PU reweighting
+if "nTrueInt_puRW"      in locals(): del nTrueInt_puRW
+if "nTrueInt_puRWDown"  in locals(): del nTrueInt_puRWDown
+if "nTrueInt_puRWUp"    in locals(): del nTrueInt_puRWUp
+if "nTrueInt_puRWVDown" in locals(): del nTrueInt_puRWVDown
+if "nTrueInt_puRWVUp"   in locals(): del nTrueInt_puRWVUp
+
+# Photon SF
+if "PhotonSF"             in locals(): del PhotonSF
+if "PhotonRecEff"         in locals(): del PhotonRecEff
+if "PhotonElectronVetoSF" in locals(): del PhotonElectronVetoSF
+
+# Lepton SF
+if "LeptonSF"         in locals(): del LeptonSF
+if "LeptonTrackingSF" in locals(): del LeptonTrackingSF
+
+# Trigger SF
+if "TriggerEff_withBackup" in locals(): del TriggerEff_withBackup
+if "TriggerEff"            in locals(): del TriggerEff
+
+# B-Tagging SF
+if "BTagEff" in locals(): del BTagEff
+
