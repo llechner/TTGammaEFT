@@ -1023,7 +1023,7 @@ if options.writeToDPM:
         logger.debug( 'Found directory: %s',  dirname )
 
         for fname in files:
-#            if not fname.endswith(".root"): continue
+            if not fname.endswith(".root"): continue
 
             source  = os.path.abspath( os.path.join( dirname, fname ) )
             target  = 'root://hephyse.oeaw.ac.at/%s'% os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname )
@@ -1051,7 +1051,7 @@ if options.writeToDPM:
                     logger.info( "2nd try successfull!" )
                 else:
                     logger.info( "2nd try: No success, removing file: %s"%target )
-                    cmd = [ '/usr/bin/rfrm', "/dpm"+target.split("dpm")[1] ]
+                    cmd = [ 'rfrm', target ]
                     subprocess.call( cmd )
                     raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
 
