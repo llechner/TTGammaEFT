@@ -201,6 +201,10 @@ if not options.overwrite and options.writeToDPM:
         if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
+        else:
+            logger.info( "File corrupt. Reprocessing." )
+    else:
+        logger.info( "Sample not processed yet. Processing." )
 
 elif not options.overwrite and not options.writeToDPM:
     if os.path.isfile(outputFile):
@@ -208,6 +212,11 @@ elif not options.overwrite and not options.writeToDPM:
         if checkRootFile( outputFile, checkForObjects=["Events"] ) and deepCheckRootFile( outputFile ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
+        else:
+            logger.info( "File corrupt. Reprocessing." )
+
+    else:
+        logger.info( "Sample not processed yet. Processing." )
 
 else:
     logger.info( "Overwriting.")
