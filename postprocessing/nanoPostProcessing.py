@@ -154,10 +154,6 @@ else:
     directory  = os.path.join( user_directory, options.processingEra ) 
     output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
 
-# Directories
-outputFilePath    = os.path.join( output_directory, sample.name + '.root' )
-filename, ext = os.path.splitext( outputFilePath )
-
 # Single file post processing
 if options.fileBasedSplitting or options.nJobs > 1:
     len_orig = len(sample.files)
@@ -168,6 +164,10 @@ if options.fileBasedSplitting or options.nJobs > 1:
     logger.info(  "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
     logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
 
+# Directories
+outputFilePath    = os.path.join( output_directory, sample.name + '.root' )
+filename, ext = os.path.splitext( outputFilePath )
+
 if os.path.exists( output_directory ) and options.overwrite:
     if options.nJobs > 1:
         logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
@@ -175,7 +175,7 @@ if os.path.exists( output_directory ) and options.overwrite:
         logger.info( "Output directory %s exists. Deleting.", output_directory )
         shutil.rmtree( output_directory, ignore_errors=True )
 
-elif not os.path.exists( output_directory ):
+if not os.path.exists( output_directory ):
     try:
         os.makedirs( output_directory )
         logger.info( "Created output directory %s.", output_directory )
