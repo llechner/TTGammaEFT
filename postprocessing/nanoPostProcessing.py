@@ -119,7 +119,7 @@ samples = map( eval, options.samples )
     
 if len(samples)==0:
     logger.info( "No samples found. Was looking for %s. Exiting" % options.samples )
-    sys.exit(-1)
+    sys.exit(0)
 
 isData = False not in [s.isData for s in samples]
 isMC   = True  not in [s.isData for s in samples]
@@ -138,8 +138,79 @@ elif len(samples)==1:
     sample      = samples[0]
     sampleForPU = samples[0]
 
-if options.small:
-    sample.reduceFiles( to=1 )
+postfix       = '_small' if options.small else ''
+sampleDir     = sample.name #sample name changes after split
+
+# output directory (store temporarily when running on dpm)
+if options.writeToDPM:
+    from TTGammaEFT.Tools.user import dpm_directory as user_directory
+    from Samples.Tools.config  import redirector    as redirector_hephy
+    # Allow parallel processing of N threads on one worker
+    output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) )
+    targetPath       = redirector_hephy + os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir )
+else:
+    # User specific
+    from TTGammaEFT.Tools.user import postprocessing_output_directory as user_directory
+    directory  = os.path.join( user_directory, options.processingEra ) 
+    output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
+
+# Directories
+outputFile    = os.path.join( output_directory, sample.name + '.root' )
+filename, ext = os.path.splitext( outputFile )
+
+# Single file post processing
+if options.fileBasedSplitting or options.nJobs > 1:
+    len_orig = len(sample.files)
+    sample = sample.split( n=options.nJobs, nSub=options.job)
+    if sample is None:  
+        logger.info( "No such sample. nJobs %i, job %i numer of files %i", options.nJobs, options.job, len_orig )
+        sys.exit(0)
+    logger.info(  "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
+    logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
+
+elif os.path.exists( output_directory ) and options.overwrite:
+    if options.nJobs > 1:
+        logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
+    else:
+        logger.info( "Output directory %s exists. Deleting.", output_directory )
+        shutil.rmtree( output_directory, ignore_errors=True )
+
+elif not os.path.exists( output_directory ):
+    try:
+        os.makedirs( output_directory )
+        logger.info( "Created output directory %s.", output_directory )
+    except:
+        logger.info( "Directory %s already exists.", output_directory )
+        pass
+
+# checking overwrite or file exists
+if not options.overwrite and options.writeToDPM:
+    try:
+        # ls the directory on DPM
+        checkFile = "/cms" + targetPath.split("/cms")[1] + "/"
+        cmd = [ "xrdfs", redirector_hephy, "ls", checkFile ]
+        fileList = subprocess.check_output( cmd ).split("\n")[:-1]
+        fileList = [ line.split(checkFile)[1].split(".root")[0] for line in fileList ]
+    except:
+        # Not even the directory exists on dpm
+        fileList = []
+
+    if sample.name in fileList:
+        # Sample found on dpm, check if it is ok
+        target  = os.path.join( targetPath, sample.name+".root" )
+        if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+            logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
+            sys.exit(0)
+
+elif not options.overwrite and not options.writeToDPM:
+    if os.path.isfile(outputFile):
+        logger.info( "Output file %s found.", outputFile)
+        if checkRootFile( outputFile, checkForObjects=["Events"] ) and deepCheckRootFile( outputFile ):
+            logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
+            sys.exit(0)
+
+else:
+    logger.info( "Overwriting.")
 
 # Cross section for postprocessed sample
 xSection = samples[0].xSection if isMC else None
@@ -200,47 +271,6 @@ if isMC:
         nTrueInt_puRWUp     = getReweightingFunction(data="PU_2018_58830_XSecUp",       mc="Autumn18")
         nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2018_58830_XSecVDown",    mc="Autumn18")
         nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
-
-postfix   = '_small' if options.small else ''
-sampleDir = sample.name #sample name changes after split
-
-# output directory (store temporarily when running on dpm)
-if options.writeToDPM:
-    # overwrite function not implemented yet!
-    from TTGammaEFT.Tools.user import dpm_directory as user_directory
-    # Allow parallel processing of N threads on one worker
-    output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) )
-else:
-    # User specific
-    from TTGammaEFT.Tools.user import postprocessing_output_directory as user_directory
-    directory  = os.path.join( user_directory, options.processingEra ) 
-    output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
-
-# Single file post processing
-if options.fileBasedSplitting or options.nJobs > 1:
-    len_orig = len(sample.files)
-    sample = sample.split( n=options.nJobs, nSub=options.job)
-    if sample is None:  
-        logger.info( "No such sample. nJobs %i, job %i numer of files %i", options.nJobs, options.job, len_orig )
-        sys.exit(0)
-    logger.info( "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
-    logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
-
-if os.path.exists( output_directory ) and options.overwrite:
-    if options.nJobs > 1:
-        logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
-    else:
-        logger.info( "Output directory %s exists. Deleting.", output_directory )
-        shutil.rmtree( output_directory, ignore_errors=True )
-
-if not os.path.exists( output_directory ):
-    try:
-        os.makedirs( output_directory )
-        logger.info( "Created output directory %s.", output_directory )
-    except:
-        logger.info( "Directory %s already exists.", output_directory )
-        pass
-
 
 #branches to be kept for data and MC
 branchKeepStrings_DATAMC = [\
@@ -933,9 +963,6 @@ jobs = [ (i, range) for i, range in enumerate( eventRanges ) ]
 
 #assert False, ""
 
-outputPath = os.path.join( output_directory, sample.name + '.root' )
-filename, ext = os.path.splitext( outputPath )
-
 if options.fileBasedSplitting and len(eventRanges)>1:
     raise RuntimeError("Using fileBasedSplitting but have more than one event range!")
 
@@ -943,6 +970,7 @@ clonedEvents = 0
 convertedEvents = 0
 outputLumiList = {}
 
+# there are a lot of eventRanges, however only one of those is processed
 for ievtRange, eventRange in enumerate( eventRanges ):
 
     if not options.fileBasedSplitting and options.nJobs>1:
@@ -950,24 +978,12 @@ for ievtRange, eventRange in enumerate( eventRanges ):
 
     logger.info( "Processing range %i/%i from %i to %i which are %i events.",  ievtRange, len(eventRanges), eventRange[0], eventRange[1], eventRange[1]-eventRange[0] )
 
-    # Check whether file exists
-    outfilename = filename+ext
-    if os.path.isfile(outfilename):
-        logger.info( "Output file %s found.", outfilename)
-        if not checkRootFile(outfilename, checkForObjects=["Events"]):
-            logger.info( "File %s is broken. Overwriting.", outfilename)
-        elif not options.overwrite:
-            logger.info( "Skipping.")
-            continue
-        else:
-            logger.info( "Overwriting.")
-
     tmp_directory = ROOT.gDirectory
-    outputfile = ROOT.TFile.Open(outfilename, 'recreate')
+    outputfile = ROOT.TFile.Open(outputFile, 'recreate')
     tmp_directory.cd()
 
     if options.small: 
-        logger.info("Running 'small'. Not more than 10000 events") 
+        logger.info("Running 'small'. Not more than %i events"%maxNEvents) 
         numEvents  = eventRange[1] - eventRange[0]
         eventRange = ( eventRange[0], eventRange[0] +  min( [ numEvents, maxNEvents ] ) )
 
@@ -995,7 +1011,7 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     convertedEvents += maker.tree.GetEntries()
     maker.tree.Write()
     outputfile.Close()
-    logger.info( "Written %s", outfilename)
+    logger.info( "Written %s", outputFile)
 
     # Destroy the TTree
     maker.clear()
@@ -1017,17 +1033,18 @@ else:
     os.remove( logFile )
     logger.info( "Removed temporary log file" )
 
+# Copying output to DPM or AFS and check the files
 if options.writeToDPM:
-
-    redir   = 'root://hephyse.oeaw.ac.at/'
 
     for dirname, subdirs, files in os.walk( output_directory ):
         logger.debug( 'Found directory: %s',  dirname )
 
         for fname in files:
-            if not fname.endswith(".root"): continue
+
+            if not fname.endswith(".root"): continue # remove that for copying log files
+
             source  = os.path.abspath( os.path.join( dirname, fname ) )
-            target  = redir + os.path.join( user_directory, 'postprocessed',  options.processingEra, options.skim + postfix, sampleDir, fname )
+            target  = os.path.join( targetPath, fname )
 
             if fname.endswith(".root"):
                 if checkRootFile( source, checkForObjects=["Events"] ) and deepCheckRootFile( source ):
@@ -1039,64 +1056,40 @@ if options.writeToDPM:
             logger.info( "Issue copy command: %s", " ".join( cmd ) )
             subprocess.call( cmd )
 
-            if not fname.endswith(".root"): continue
-
-            if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
-                logger.info( "Target: File check ok!" )
-            else:
-                logger.info( "Corrupt rootfile at target! Trying again: %s"%target )
-                logger.info( "2nd try: Issue copy command: %s", " ".join( cmd ) )
-                subprocess.call( cmd )
-
+            if fname.endswith(".root"):
                 if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
-                    logger.info( "2nd try successfull!" )
+                    logger.info( "Target: File check ok!" )
                 else:
-                    cmd = [ "xrdfs", redir, "rm", "/cms" + target.split("/cms")[1] ]
-                    logger.info( "2nd try: No success, removing file: %s"%target )
-                    logger.info( "Issue rm command: %s", " ".join( cmd ) )
+                    logger.info( "Corrupt rootfile at target! Trying again: %s"%target )
+                    logger.info( "2nd try: Issue copy command: %s", " ".join( cmd ) )
                     subprocess.call( cmd )
-                    raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
+
+                    # Many files are corrupt after copying, a 2nd try fixes that
+                    if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+                        logger.info( "2nd try successfull!" )
+                    else:
+                        # if not successful, the corrupt root file needs to be deleted from DPM
+                        logger.info( "2nd try: No success, removing file: %s"%target )
+                        logger.info( "Issue rm command: %s", " ".join( cmd ) )
+                        cmd = [ "xrdfs", redirector_hephy, "rm", "/cms" + target.split("/cms")[1] ]
+                        subprocess.call( cmd )
+                        raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
 
     # Clean up.
     if not options.runOnLxPlus:
         # not needed on condor, container will be removed automatically
         subprocess.call( [ 'rm', '-rf', output_directory ] ) # Let's risk it.
 
-
 else:
-    if checkRootFile( outputPath, checkForObjects=["Events"] ) and deepCheckRootFile( outputPath ):
+    if checkRootFile( outputFile, checkForObjects=["Events"] ) and deepCheckRootFile( outputFile ):
         logger.info( "Target: File check ok!" )
     else:
-        logger.info( "Corrupt rootfile! Removing file: %s"%outputPath )
-        os.remove( outputPath )
+        logger.info( "Corrupt rootfile! Removing file: %s"%outputFile )
+        os.remove( outputFile )
         raise Exception("Corrupt rootfile! File not copied: %s"%source )
 
-
-# Why do I always have to clean up behind others??
-# Somehow ROOT is not able to get its sh** together and remove its histograms
-# This throws errors using condor (double free corruption)
-# One TEventList cannot be removed. This comes from all the draw commands in TreeReader and Sample
-
-# PU reweighting
-if "nTrueInt_puRW"      in locals(): del nTrueInt_puRW
-if "nTrueInt_puRWDown"  in locals(): del nTrueInt_puRWDown
-if "nTrueInt_puRWUp"    in locals(): del nTrueInt_puRWUp
-if "nTrueInt_puRWVDown" in locals(): del nTrueInt_puRWVDown
-if "nTrueInt_puRWVUp"   in locals(): del nTrueInt_puRWVUp
-
-# Photon SF
-if "PhotonSF"             in locals(): del PhotonSF
-if "PhotonRecEff"         in locals(): del PhotonRecEff
-if "PhotonElectronVetoSF" in locals(): del PhotonElectronVetoSF
-
-# Lepton SF
-if "LeptonSF"         in locals(): del LeptonSF
-if "LeptonTrackingSF" in locals(): del LeptonTrackingSF
-
-# Trigger SF
-if "TriggerEff_withBackup" in locals(): del TriggerEff_withBackup
-if "TriggerEff"            in locals(): del TriggerEff
-
-# B-Tagging SF
-if "BTagEff" in locals(): del BTagEff
-
+# There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
+# Thus the job is resubmitted on condor even if the output is ok
+# Current idea is that the problem is with xrootd having a non-closed root file
+# Let's see if this works...
+sample.clear()
