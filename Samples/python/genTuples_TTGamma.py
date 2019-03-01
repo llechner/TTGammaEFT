@@ -74,12 +74,52 @@ TTGamma_DiLept_EFT_1Line.reweight_pkl                     = os.path.join( gridpa
 TTGamma_DiLept_EFT_1Line.xSection                         = 0.3948
 TTGamma_DiLept_EFT_1Line.nEvents                          = 1000000
 
+#################################
+### New Generation of Samples ###
+#################################
+
+# Comparing SM 1Line to central samples
+# central samples are produced with central gridpack + processed with modified 71X gen cfg
+# 1Line samples are produced with central gridpack production repo 93X + usual 93X cfg
+
+# Private 1Line Production
+ttGamma_SingleLeptFromT_SM_1Line                 = FWLiteSample.fromDAS("ttGamma_SingleLeptFromT_SM_1Line", "/ttGamma_SingleLeptFromT_1line_5f_ckm_LO_v2/llechner-ttGamma_SingleLeptFromT_1line_5f_ckm_LO_v2-3da16231862a69c7a8ab2bd0d654d28a/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SingleLeptFromT_SM_1Line.xSection        = 0.7092
+ttGamma_SingleLeptFromT_SM_1Line.nEvents         = 100000
+
+ttGamma_SingleLeptFromTbar_SM_1Line              = FWLiteSample.fromDAS("ttGamma_SingleLeptFromTbar_SM_1Line", "/ttGamma_SingleLeptFromTbar_1line_5f_ckm_LO_v2/llechner-ttGamma_SingleLeptFromTbar_1line_5f_ckm_LO_v2-d188e1ef76b4c681de518734d4a7e505/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SingleLeptFromTbar_SM_1Line.xSection     = 0.7068
+ttGamma_SingleLeptFromTbar_SM_1Line.nEvents      = 100000
+
+# Central Samples
+ttGamma_SingleLeptFromT_SM_central               = FWLiteSample.fromDAS("ttGamma_SingleLeptFromT_SM_central", "/ttGamma_SingleLeptFromT_5f_ckm_LO_central_v3/llechner-ttGamma_SingleLeptFromT_5f_ckm_LO_central_v3-f6bd36bbeee1fb1571f3e5f5514cd426/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SingleLeptFromT_SM_central.xSection      = 0.7772
+ttGamma_SingleLeptFromT_SM_central.nEvents       = 100000
+
+ttGamma_SingleLeptFromTbar_SM_central            = FWLiteSample.fromDAS("ttGamma_SingleLeptFromTbar_SM_central", "/ttGamma_SingleLeptFromTbar_5f_ckm_LO_central_v3/llechner-ttGamma_SingleLeptFromTbar_5f_ckm_LO_central_v3-dda6ab68465cb0862bad77d9f61ac2c5/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SingleLeptFromTbar_SM_central.xSectio    = 0.7749
+ttGamma_SingleLeptFromTbar_SM_central.nEvents    = 100000
+
+#ttGamma_Dilept_SM_central                        = FWLiteSample.fromDAS("ttGamma_Dilept_SM_central", "", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+#ttGamma_Dilept_SM_central.xSection               = 0.6353
+#ttGamma_Dilept_SM_central.nEvents                = 100000
+
+ttGamma_Hadronic_SM_central                      = FWLiteSample.fromDAS("ttGamma_Hadronic_SM_central", "/ttGamma_Hadronic_5f_ckm_LO_central_v3/llechner-ttGamma_Hadronic_5f_ckm_LO_central_v3-a0b185cb632020d2d97d17a4c2a505b7/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Hadronic_SM_central.xSection             = 0.7998
+ttGamma_Hadronic_SM_central.nEvents              = 100000
+
 SM = [
     TTGamma_SingleLeptFromT_SM_1Line_test,
     TTGamma_SingleLeptFromT_SM_3LineBuggy_test,
     TTGamma_SingleLeptFromT_SM_3LinePatched_test,
     TTGamma_SingleLeptFromT_SM_1Line,
     TTGamma_SingleLeptFromT_SM_3LinePatched,
+    ttGamma_SingleLeptFromT_SM_1Line,
+    ttGamma_SingleLeptFromTbar_SM_1Line,
+    ttGamma_SingleLeptFromT_SM_central,
+    ttGamma_SingleLeptFromTbar_SM_central,
+#    ttGamma_Dilept_SM_central,
+    ttGamma_Hadronic_SM_central,
 ]
 
 EFT = [
@@ -94,3 +134,8 @@ for s in allSamples:
 #    print os.path.isfile(s.reweight_pkl)
 #    print s.reweight_pkl
     s.isData = False
+#    print s.name
+
+
+
+

@@ -87,7 +87,7 @@ else:
 xSection   = sample.xSection
 nEvents    = sample.nEvents
 lumiweight = xSection * 1000. / nEvents
-pklFile    = sample.reweight_pkl
+if options.addReweights: pklFile    = sample.reweight_pkl
 
 directory  = os.path.join( options.targetDir, options.processingEra ) 
 postfix = '_small' if options.small else ''
@@ -165,6 +165,17 @@ new_variables  = []#reweight_variables
 new_variables += [ "run/I", "luminosity/I", "evt/l" ]
 new_variables += [ "weight/F" ]
 new_variables += [ "mll/F", "mllgamma/F" ]
+new_variables += [ "minDRjj/F" ]
+new_variables += [ "minDRbb/F" ]
+new_variables += [ "minDRll/F" ]
+new_variables += [ "minDRaa/F" ]
+new_variables += [ "minDRbj/F" ]
+new_variables += [ "minDRaj/F" ]
+new_variables += [ "minDRjl/F" ]
+new_variables += [ "minDRab/F" ]
+new_variables += [ "minDRbl/F" ]
+new_variables += [ "minDRal/F" ]
+
 new_variables += [ "nGenBJet/I" ]
 new_variables += [ "nGenMuon/I" ]
 new_variables += [ "nGenElectron/I" ]
@@ -389,6 +400,16 @@ def filler( event ):
         if len(GenPhotons) > 0:
             event.mllgamma = ( get4DVec(GenPromptLeptons[0]) + get4DVec(GenPromptLeptons[1]) + get4DVec(GenPhotons[0]) ).M()
 
+    event.minDRjj = min( [ deltaR(j1, j2) for i, j1 in enumerate(trueNonBjets[:-1])     for j2 in trueNonBjets[i+1:]     ] + [999] )
+    event.minDRbb = min( [ deltaR(b1, b2) for i, b1 in enumerate(trueBjets[:-1])        for b2 in trueBjets[i+1:]        ] + [999] )
+    event.minDRll = min( [ deltaR(l1, l2) for i, l1 in enumerate(GenPromptLeptons[:-1]) for l2 in GenPromptLeptons[i+1:] ] + [999] )
+    event.minDRaa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhotons[:-1])       for g2 in GenPhotons[i+1:]       ] + [999] )
+    event.minDRbj = min( [ deltaR( b, j ) for b     in trueBjets                        for j  in trueNonBjets           ] + [999] )
+    event.minDRaj = min( [ deltaR( a, j ) for a     in GenPhotons                       for j  in trueNonBjets           ] + [999] )
+    event.minDRjl = min( [ deltaR( l, j ) for l     in GenPromptLeptons                 for j  in trueNonBjets           ] + [999] )
+    event.minDRab = min( [ deltaR( a, b ) for a     in GenPhotons                       for b  in trueBjets              ] + [999] )
+    event.minDRbl = min( [ deltaR( l, b ) for l     in GenPromptLeptons                 for b  in trueBjets              ] + [999] )
+    event.minDRal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhotons             ] + [999] )
 
 tmp_dir     = ROOT.gDirectory
 output_filename =  os.path.join(output_directory, sample.name + '.root')
