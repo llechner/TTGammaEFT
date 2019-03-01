@@ -31,7 +31,7 @@ dirs['DY_LO']            = ["DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO"]
 dirs['TTLep_pow']        = ["TTLep_pow"]
 #dirs['TTSemiLep_pow']    = ["TTSemiLep_pow"]
 #dirs['TTHad_pow'    ]    = ["TTHad_pow"]
-dirs['TT_pow']           = ["TTLep_pow", "TTSemiLep_pow" ]#, "TTHad_pow" ]
+dirs['TT_pow']           = ["TTLep_pow", "TTSemiLep_pow"]#, "TTHad_pow" ]
 #dirs['TTbar']            = ["TTbar"]
 
 #dirs['TTG']              = ["TTGJets_ext"]
@@ -112,10 +112,10 @@ if __name__ == "__main__":
         '''
         import argparse
         argParser = argparse.ArgumentParser(description = "Argument parser for nanoPostProcessing")
-        argParser.add_argument('--check',      action='store_true', help="check root files?")
-        argParser.add_argument('--deepcheck',  action='store_true', help="check events of root files?")
-        argParser.add_argument('--remove',     action='store_true', help="remove corrupt root files?")
-        argParser.add_argument('--log',        action='store_true', help="print each filename?")
+        argParser.add_argument('--check',               action='store_true', help="check root files?")
+        argParser.add_argument('--deepcheck',           action='store_true', help="check events of root files?")
+        argParser.add_argument('--remove',              action='store_true', help="remove corrupt root files?")
+        argParser.add_argument('--log',                 action='store_true', help="print each filename?")
         return argParser
 
     args = get_parser().parse_args()
@@ -124,14 +124,14 @@ if __name__ == "__main__":
 
     # check Root Files
     from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+    from multiprocessing        import Pool
 
-    for dirList in directories.values():
-        for path in dirList:
+    def checkFile( path ):
             try:
                 sample = Sample.fromDPMDirectory(name="sample", treeName="Events", directory=path)
             except:
                 logger.info( "Sample not processed: %s"%path )
-                continue
+                return
             for file in sample.files:
                 if args.log: logger.info( "Checking filepath: %s"%file )
                 corrupt = False
@@ -148,3 +148,9 @@ if __name__ == "__main__":
                         os.system( "/usr/bin/rfrm -f %s"%file )
 
             del sample
+
+
+    pathes = [ path for dirList in directories.values() for path in dirList ]
+    pool = Pool( processes=16 )
+    _ = pool.map( checkFile, pathes )
+    pool.close()

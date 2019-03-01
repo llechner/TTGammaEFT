@@ -73,14 +73,13 @@ dirs['ZZ']               = ["ZZTo2L2Nu", "ZZTo2L2Q"]#, "ZZTo4L"]
 dirs['GluGlu']           = ["GluGluToContinToZZTo2e2mu", "GluGluToContinToZZTo2e2tau", "GluGluToContinToZZTo2mu2tau", "GluGluToContinToZZTo4e", "GluGluToContinToZZTo4mu"]
 
 dirs['other']            = []
-dirs['other']           += dirs['THQ']  + dirs['THW'] #+ dirs['TWZ']
 ##dirs['other']           += dirs['TZQ']  + dirs['THQ']  + dirs['THW'] #+ dirs['TWZ']
 dirs['other']           += dirs['THQ']  + dirs['THW'] #+ dirs['TWZ']
 dirs['other']           += dirs['TTW']  + dirs['TTZ']#  + dirs['TTH']
 dirs['other']           += dirs['TTWZ'] + dirs['TTZZ'] + dirs['TTWW']# + dirs['TTTT']
 dirs['other']           += dirs['WWW']  + dirs['WWZ']  + dirs['WZZ']  + dirs['ZZZ']
-dirs['other']           += dirs['VV']
-#dirs['other']           += dirs['WW']   + dirs['WZ']   + dirs['ZZ']
+#dirs['other']           += dirs['VV']
+dirs['other']           += dirs['WW']   + dirs['WZ']   + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
@@ -120,14 +119,14 @@ if __name__ == "__main__":
 
     # check Root Files
     from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+    from multiprocessing        import Pool
 
-    for dirList in directories.values():
-        for path in dirList:
+    def checkFile( path ):
             try:
                 sample = Sample.fromDPMDirectory(name="sample", treeName="Events", directory=path)
             except:
                 logger.info( "Sample not processed: %s"%path )
-                continue
+                return
             for file in sample.files:
                 if args.log: logger.info( "Checking filepath: %s"%file )
                 corrupt = False
@@ -145,3 +144,8 @@ if __name__ == "__main__":
 
             del sample
 
+
+    pathes = [ path for dirList in directories.values() for path in dirList ]
+    pool = Pool( processes=16 )
+    _ = pool.map( checkFile, pathes )
+    pool.close()

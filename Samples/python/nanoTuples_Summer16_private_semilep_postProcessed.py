@@ -28,7 +28,7 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 # Directories
 dirs = {}
 
-dirs['DY_LO']            = ["DYJetsToLL_M10to50_LO"]#, "DYJetsToLL_M50_LO_ext1_comb" ]
+dirs['DY_LO']            = ["DYJetsToLL_M10to50_LO", "DYJetsToLL_M50_LO_ext1_comb" ]
 
 dirs['TTLep_pow']        = ["TTLep_pow"]
 dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow" ] 
@@ -78,7 +78,7 @@ dirs['other']           += dirs['TTW']  + dirs['TTZ']#  + dirs['TTH']
 #dirs['other']           += dirs['TTWZ'] + dirs['TTZZ'] + dirs['TTWW']
 dirs['other']           += dirs['TTTT']
 dirs['other']           += dirs['WWW']  + dirs['WWZ']  + dirs['WZZ']  + dirs['ZZZ'] #+ dirs['WZG']
-dirs['other']           += dirs['VV']
+#dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
@@ -119,14 +119,14 @@ if __name__ == "__main__":
 
     # check Root Files
     from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+    from multiprocessing        import Pool
 
-    for dirList in directories.values():
-        for path in dirList:
+    def checkFile( path ):
             try:
                 sample = Sample.fromDPMDirectory(name="sample", treeName="Events", directory=path)
             except:
                 logger.info( "Sample not processed: %s"%path )
-                continue
+                return
             for file in sample.files:
                 if args.log: logger.info( "Checking filepath: %s"%file )
                 corrupt = False
@@ -143,3 +143,9 @@ if __name__ == "__main__":
                         os.system( "/usr/bin/rfrm -f %s"%file )
 
             del sample
+
+
+    pathes = [ path for dirList in directories.values() for path in dirList ]
+    pool = Pool( processes=16 )
+    _ = pool.map( checkFile, pathes )
+    pool.close()
