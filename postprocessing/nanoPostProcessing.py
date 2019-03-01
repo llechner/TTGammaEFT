@@ -154,10 +154,6 @@ else:
     directory  = os.path.join( user_directory, options.processingEra ) 
     output_directory = os.path.join( directory, options.skim+postfix, sampleDir )
 
-# Directories
-outputFile    = os.path.join( output_directory, sample.name + '.root' )
-filename, ext = os.path.splitext( outputFile )
-
 # Single file post processing
 if options.fileBasedSplitting or options.nJobs > 1:
     len_orig = len(sample.files)
@@ -168,14 +164,18 @@ if options.fileBasedSplitting or options.nJobs > 1:
     logger.info(  "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
     logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
 
-elif os.path.exists( output_directory ) and options.overwrite:
+# Directories
+outputFilePath    = os.path.join( output_directory, sample.name + '.root' )
+filename, ext = os.path.splitext( outputFilePath )
+
+if os.path.exists( output_directory ) and options.overwrite:
     if options.nJobs > 1:
         logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
     else:
         logger.info( "Output directory %s exists. Deleting.", output_directory )
         shutil.rmtree( output_directory, ignore_errors=True )
 
-elif not os.path.exists( output_directory ):
+if not os.path.exists( output_directory ):
     try:
         os.makedirs( output_directory )
         logger.info( "Created output directory %s.", output_directory )
@@ -201,13 +201,22 @@ if not options.overwrite and options.writeToDPM:
         if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
+        else:
+            logger.info( "File corrupt. Reprocessing." )
+    else:
+        logger.info( "Sample not processed yet. Processing." )
 
 elif not options.overwrite and not options.writeToDPM:
-    if os.path.isfile(outputFile):
-        logger.info( "Output file %s found.", outputFile)
-        if checkRootFile( outputFile, checkForObjects=["Events"] ) and deepCheckRootFile( outputFile ):
+    if os.path.isfile(outputFilePath):
+        logger.info( "Output file %s found.", outputFilePath)
+        if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
+        else:
+            logger.info( "File corrupt. Reprocessing." )
+
+    else:
+        logger.info( "Sample not processed yet. Processing." )
 
 else:
     logger.info( "Overwriting.")
@@ -979,7 +988,7 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     logger.info( "Processing range %i/%i from %i to %i which are %i events.",  ievtRange, len(eventRanges), eventRange[0], eventRange[1], eventRange[1]-eventRange[0] )
 
     tmp_directory = ROOT.gDirectory
-    outputfile = ROOT.TFile.Open(outputFile, 'recreate')
+    outputfile = ROOT.TFile.Open(outputFilePath, 'recreate')
     tmp_directory.cd()
 
     if options.small: 
@@ -1011,7 +1020,7 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     convertedEvents += maker.tree.GetEntries()
     maker.tree.Write()
     outputfile.Close()
-    logger.info( "Written %s", outputFile)
+    logger.info( "Written %s", outputFilePath)
 
     # Destroy the TTree
     maker.clear()
@@ -1081,11 +1090,11 @@ if options.writeToDPM:
         subprocess.call( [ 'rm', '-rf', output_directory ] ) # Let's risk it.
 
 else:
-    if checkRootFile( outputFile, checkForObjects=["Events"] ) and deepCheckRootFile( outputFile ):
+    if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ):
         logger.info( "Target: File check ok!" )
     else:
-        logger.info( "Corrupt rootfile! Removing file: %s"%outputFile )
-        os.remove( outputFile )
+        logger.info( "Corrupt rootfile! Removing file: %s"%outputFilePath )
+        os.remove( outputFilePath )
         raise Exception("Corrupt rootfile! File not copied: %s"%source )
 
 # There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
