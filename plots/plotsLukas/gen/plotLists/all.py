@@ -20,6 +20,7 @@ from TTGammaEFT.plots.genTop0         import genTop0
 from TTGammaEFT.plots.genTop1         import genTop1
 from TTGammaEFT.plots.genMultiplicity import genMultiplicity
 from TTGammaEFT.plots.genMass         import genMass
+from TTGammaEFT.plots.genIso          import genIso
 
 # plotList
 plotListData  = []
@@ -35,6 +36,7 @@ plotListData += genTop0
 plotListData += genTop1
 plotListData += genMultiplicity
 plotListData += genMass
+plotListData += genIso
 
 plotListDataMC = plotListData
 
