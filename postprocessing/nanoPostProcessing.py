@@ -208,7 +208,9 @@ if not options.overwrite and options.writeToDPM:
             if options.checkOnly: sys.exit(0)
             logger.info( "Reprocessing." )
     else:
-        logger.info( "Sample not processed yet. Processing." )
+        logger.info( "Sample not processed yet." )
+        if options.checkOnly: sys.exit(0)
+        logger.info( "Processing." )
 
 elif not options.overwrite and not options.writeToDPM:
     if os.path.isfile(outputFilePath):
@@ -222,7 +224,9 @@ elif not options.overwrite and not options.writeToDPM:
             if options.checkOnly: sys.exit(0)
             logger.info( "Reprocessing." )
     else:
-        logger.info( "Sample not processed yet. Processing." )
+        logger.info( "Sample not processed yet." )
+        if options.checkOnly: sys.exit(0)
+        logger.info( "Processing." )
 
 else:
     logger.info( "Overwriting.")
