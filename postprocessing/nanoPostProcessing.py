@@ -57,7 +57,7 @@ def get_parser():
     argParser.add_argument('--triggerSelection',            action='store_true',                                                                                        help="Trigger selection?" )
     argParser.add_argument('--addPreFiringFlag',            action='store_true',                                                                                        help="Add flag for events w/o prefiring?" )
     argParser.add_argument('--topReco',                     action='store_true',                                                                                        help="Run Top Reco?")
-
+    argParser.add_argument('--checkOnly',                   action='store_true',                                                                                        help="Check files at target and remove corrupt ones without reprocessing? Not possible with overwrite!")
     return argParser
 
 options = get_parser().parse_args()
@@ -202,7 +202,11 @@ if not options.overwrite and options.writeToDPM:
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
         else:
-            logger.info( "File corrupt. Reprocessing." )
+            logger.info( "File corrupt. Removing file from target." )
+            cmd = [ "xrdfs", redirector_hephy, "rm", "/cms" + target.split("/cms")[1] ]
+            subprocess.call( cmd )
+            if options.checkOnly: sys.exit(0)
+            logger.info( "Reprocessing." )
     else:
         logger.info( "Sample not processed yet. Processing." )
 
@@ -213,8 +217,10 @@ elif not options.overwrite and not options.writeToDPM:
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
         else:
-            logger.info( "File corrupt. Reprocessing." )
-
+            logger.info( "File corrupt. Removing file from target." )
+            os.remove( outputFilePath )
+            if options.checkOnly: sys.exit(0)
+            logger.info( "Reprocessing." )
     else:
         logger.info( "Sample not processed yet. Processing." )
 
