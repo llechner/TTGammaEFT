@@ -133,36 +133,38 @@ bJetVariables    = NanoVars.getVariables(        "BJet", postprocessed=True, dat
 leptonVariables  = NanoVars.getVariables(        "Lepton", postprocessed=True, data=(not args.noData), plot=True )
 photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
 
+print leptonVariables
+
 # Read variables and sequences
 read_variables  = ["weight/F",
                    "PV_npvsGood/I",
-#                   "PV_npvs/I", "PV_npvsGood/I",
-#                   "nJetGood/I", "nBTagGood/I",
-#                   "nJet/I", "nBTag/I",
-#                   "Jet[%s]" %jetVarString,
-#                   "JetGood[%s]" %jetVarString,
-#                   "nLepton/I", "nElectron/I", "nMuon/I",
-#                   "nLeptonGood/I", "nElectronGood/I", "nMuonGood/I",
-#                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
-#                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
-#                   "nPhoton/I",
-#                   "nPhotonGood/I",
-#                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
-#                   "mlltight/F", "mllgammatight/F",
-#                   "mLtight0Gamma/F",
-#                   "ltight0GammadR/F", "ltight0GammadPhi/F",
-#                   "m3/F", "m3wBJet/F",
-#                   "photonJetdR/F", "tightLeptonJetdR/F",
+                   "PV_npvs/I", "PV_npvsGood/I",
+                   "nJetGood/I", "nBTagGood/I",
+                   "nJet/I", "nBTag/I",
+                   "Jet[%s]" %jetVarString,
+                   "nLepton/I", "nElectron/I", "nMuon/I",
+                   "nLeptonGood/I", "nElectronGood/I", "nMuonGood/I",
+                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
+                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+                   "nPhoton/I",
+                   "nPhotonGood/I",
+                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
+                   "mlltight/F", "mllgammatight/F",
+                   "mLtight0Gamma/F",
+                   "ltight0GammadR/F", "ltight0GammadPhi/F",
+                   "m3/F", "m3wBJet/F",
+                   "photonJetdR/F", "tightLeptonJetdR/F",
                   ]
 
 #read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
-read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
-read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
+#read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
+#read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
 
 read_variables += map( lambda var: "PhotonGood0_"             + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIsoNoSieie0_"  + var, photonVariables )
+
 read_variables += map( lambda var: "LeptonGood0_"             + var, leptonVariables )
 read_variables += map( lambda var: "LeptonGood1_"             + var, leptonVariables )
 read_variables += map( lambda var: "LeptonTight0_"            + var, leptonVariables )
@@ -201,18 +203,18 @@ def clean_Jets( event, sample ):
         for i, jet in enumerate ( looseJets[:2] ):
             getattr( event, "JetGood_" + var )[i] = jet[var]
 # Sequence
-sequence = [ clean_Jets ]
+sequence = [ ]#clean_Jets ]
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG: mc = [ TTGLep_16 ]
-    else:            mc = [ TT_pow_16, TTG_16, DY_LO_16, singleTop_16, ZG_16, other_16 ]
+    if args.onlyTTG: mc = [ TTG_16 ]
+    else:            mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, ZG_16, other_16 ]
 elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
-    else:            mc = [ TTG_17, DY_LO_17, TG_17, WJets_17, WG_17, TT_pow_17, singleTop_17, other_17 ]
+    else:            mc = [ TTG_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, other_17 ]
 elif args.year == 2018:
     if args.onlyTTG: mc = [ TTG_18 ]
-    else:            mc = [ TTG_18, TT_pow_18, singleTop_18]#, other_18 ]
+    else:            mc = [ TTG_18, TT_pow_18, DY_LO_18, singleTop_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -295,12 +297,12 @@ for index, mode in enumerate( allModes ):
 
     if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
         print "overlap removal Wgamma"
-        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
+        eval('WG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
         eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
     if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
         print "overlap removal singleTop"
-        eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
+        eval('TG_'        + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==1" )
         eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )

@@ -12,6 +12,8 @@ from TTGammaEFT.plots.leptonGood0      import leptonGood0
 from TTGammaEFT.plots.leptonGood1      import leptonGood1
 from TTGammaEFT.plots.jet0             import jet0
 from TTGammaEFT.plots.jet1             import jet1
+from TTGammaEFT.plots.jetGood0         import jetGood0
+from TTGammaEFT.plots.jetGood1         import jetGood1
 from TTGammaEFT.plots.multiplicity     import multiplicity
 from TTGammaEFT.plots.multiplicityGood import multiplicityGood
 from TTGammaEFT.plots.met              import met
@@ -25,6 +27,8 @@ plotListData += leptonGood0
 plotListData += leptonGood1
 plotListData += jet0
 plotListData += jet1
+#plotListData += jetGood0
+#plotListData += jetGood1
 plotListData += multiplicity
 plotListData += multiplicityGood
 plotListData += met

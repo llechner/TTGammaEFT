@@ -75,7 +75,7 @@ def drawPlots( plots, mode ):
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
-	                       ratio = {'yRange':(0.1,1.9)},
+                           ratio = {'histos':[(0,1)], 'texY': 'data / unpref.', 'yRange':(0.5,1.5)} if not args.noData else None,
 	                       logX = False, logY = log, sorting = True,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},

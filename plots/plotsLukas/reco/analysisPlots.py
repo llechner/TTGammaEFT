@@ -130,50 +130,53 @@ leptonVarString  = NanoVars.getVariableString(   "Lepton", postprocessed=True, d
 photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
 photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, data=(not args.noData), plot=True )
 
+print leptonVariables
 # Read variables and sequences
 read_variables  = ["weight/F", #"ref_weight/F",
                    "PV_npvsGood/I",
-#                   "PV_npvs/I", "PV_npvsGood/I",
-#                   "nJetGood/I", "nBTagGood/I",
-#                   "nJet/I", "nBTag/I",
-#                   "nLepton/I","nElectron/I", "nMuon/I",
-#                   "nLeptonGood/I","nElectronGood/I", "nMuonGood/I",
-#                   "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
-#                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
-#                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
-#                   "nPhoton/I",
-#                   "nPhotonGood/I",
-#                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
-#                   "mll/F", "mllgamma/F",
-#                   "mlltight/F", "mllgammatight/F",
-#                   "mLtight0Gamma/F",
-#                   "ltight0GammadR/F", "ltight0GammadPhi/F",
-#                   "m3/F", "m3wBJet/F",
-#                   "lldR/F", "lldPhi/F", "bbdR/F", "bbdPhi/F",
-#                   "photonJetdR/F", "photonLepdR/F", "leptonJetdR/F", "tightLeptonJetdR/F",
-#                   "mL0Gamma/F",  "mL1Gamma/F",
-#                   "l0GammadR/F", "l0GammadPhi/F",
-#                   "l1GammadR/F", "l1GammadPhi/F",
-#                   "j0GammadR/F", "j0GammadPhi/F",
-#                   "j1GammadR/F", "j1GammadPhi/F",
+                   "Jet[%s]" %jetVarString,
+                   "PV_npvs/I", "PV_npvsGood/I",
+                   "nJetGood/I", "nBTagGood/I",
+                   "nJet/I", "nBTag/I",
+                   "nLepton/I","nElectron/I", "nMuon/I",
+                   "nLeptonGood/I","nElectronGood/I", "nMuonGood/I",
+                   "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
+                   "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
+                   "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+                   "nPhoton/I",
+                   "nPhotonGood/I",
+                   "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
+                   "mll/F", "mllgamma/F",
+                   "mlltight/F", "mllgammatight/F",
+                   "mLtight0Gamma/F",
+                   "ltight0GammadR/F", "ltight0GammadPhi/F",
+                   "m3/F", "m3wBJet/F",
+                   "lldR/F", "lldPhi/F", "bbdR/F", "bbdPhi/F",
+                   "photonJetdR/F", "photonLepdR/F", "leptonJetdR/F", "tightLeptonJetdR/F",
+                   "mL0Gamma/F",  "mL1Gamma/F",
+                   "l0GammadR/F", "l0GammadPhi/F",
+                   "l1GammadR/F", "l1GammadPhi/F",
+                   "j0GammadR/F", "j0GammadPhi/F",
+                   "j1GammadR/F", "j1GammadPhi/F",
                   ]
 
 #read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
-read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
-read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
+#read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
+#read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
 
-#read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
-#read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
-#read_variables += map( lambda var: "LeptonGood0_"  + var, leptonVariables )
-#read_variables += map( lambda var: "LeptonGood1_"  + var, leptonVariables )
-#read_variables += map( lambda var: "LeptonTight0_" + var, leptonVariables )
-#read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
-#read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
-#read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
+read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
+read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
+read_variables += map( lambda var: "LeptonGood0_"  + var, leptonVariables )
+read_variables += map( lambda var: "LeptonGood1_"  + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTight0_" + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
+read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
+read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
+
+print read_variables
 
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
-#                     "PhotonGood0_photonCat/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
                      "reweightLeptonSF/F", "reweightLeptonSFUp/F", "reweightLeptonSFDown/F",
                      "reweightLeptonTrackingSF/F",
@@ -232,13 +235,13 @@ sequence = []#\
 # Sample definition
 if args.year == 2016:
     if args.onlyTTG: mc = [ TTG_16 ]
-    else:            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]#, other_16 ]
+    else:            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
 elif args.year == 2017:
     if args.onlyTTG: mc = [ TTG_17 ]
-    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17 ]#, other_17 ]
+    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
 elif args.year == 2018:
     if args.onlyTTG: mc = [ TTG_18 ]
-    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18 ]#, other_18 ]
+    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
 #    else:            mc = [ DY_LO_18, TT_pow_18, other_18 ]
 
 if args.noData:
@@ -268,14 +271,14 @@ for sample in mc + signals:
 if args.small:
     for sample in stack.samples:
         sample.normalization=1.
-        sample.reduceFiles( factor=25 )
+        sample.reduceFiles( factor=5 )
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
 tr = TriggerSelector( args.year )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
-Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ), addOverFlowBin='upper' )
+Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ) )#, addOverFlowBin='upper' )
 
 # Import plots list (AFTER setDefaults!!)
 plotListFile = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), 'plotLists', args.plotFile + '.py' )
@@ -362,7 +365,6 @@ for index, mode in enumerate( allModes ):
     plots += [ getYieldPlot( index ) ]
 #    plots += addPlots
 
-    print plots
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
 
@@ -379,11 +381,11 @@ for index, mode in enumerate( allModes ):
         eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
     if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
-        eval('WG_' + str(args.year)[-2:]).addSelectionString(    "isZWGamma==1" )
+        eval('WG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
         eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
     if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
-        eval('TG_' + str(args.year)[-2:]).addSelectionString(        "isSingleTopTch==1" )
+        eval('TG_'        + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==1" )
         eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
