@@ -27,12 +27,9 @@ argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                                help="Log level for logging")
 argParser.add_argument('--plot_directory',     action='store',      default='gen')
 argParser.add_argument('--plotFile',           action='store',      default='all')
-#argParser.add_argument('--selection',          action='store',      default='dilep-pTG20-nPhoton1p')
 argParser.add_argument('--selection',          action='store',      default='dilepOS-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40')
 argParser.add_argument('--small',              action='store_true',                                                                                  help='Run only on a small subset of the data?', )
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                                   help="Normalize yields" )
-#argParser.add_argument('--order',              action='store',      default=2,                                                                       help='Polynomial order of weight string (e.g. 2)')
-#argParser.add_argument('--parameters',         action='store',      default=['ctZI', '3', 'ctWI', '3', 'ctZ', '3', 'ctW', '3'], type=str, nargs='+', help = "argument parameters")
 args = argParser.parse_args()
 
 # Logger
@@ -41,38 +38,11 @@ import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
-#if len(args.parameters) < 2: args.parameters = None
-
 if args.small:     args.plot_directory += "_small"
 if args.normalize: args.plot_directory += "_normalize"
 
 # Samples
 from TTGammaEFT.Samples.genTuples_TTGamma_postProcessed      import *
-
-# Text on the plots
-#colors = [ ROOT.kRed+1, ROOT.kGreen+2, ROOT.kOrange+1, ROOT.kViolet+9, ROOT.kSpring-7, ROOT.kRed+2 ]
-
-#params = []
-#if args.parameters:
-#    coeffs = args.parameters[::2]
-#    str_vals = args.parameters[1::2]
-#    vals = list( map( float, str_vals ) )
-#    for i_param, (coeff, val, str_val) in enumerate(zip(coeffs, vals, str_vals)):
-#        params.append( {
-#            'legendText': ' = '.join([coeff,str_val]).replace("c", "C_{").replace(" =", "} =").replace("I", "}^{[Im]"),
-#            'WC' : { coeff:val },
-#            'color' : colors[i_param],
-#            })
-
-#params.append( {'legendText':'SM', 'WC':{}, 'color':ROOT.kBlack} )
-
-#if args.parameters: wcString = "_".join(args.parameters).replace('.','p').replace('-','m')
-#else: wcString = "SM"
-
-#def checkReferencePoint( sample ):
-#    ''' check if sample is simulated with a reference point
-#    '''
-#    return pickle.load(file(sample.reweight_pkl))['ref_point'] != {}
 
 def drawObjects( lumi_scale ):
     tex = ROOT.TLatex()
@@ -121,16 +91,6 @@ def getYieldPlot( index ):
                 binning   = [ 3, 0, 3 ],
                 )
 
-#def get_reweight( param , sample_ ):#
-
-#    def reweightRef( event, sample ):
-#        return w.get_weight_func( **param['WC'] )( event, sample ) * event.ref_weight
-
-#    def reweightNoRef( event, sample ):
-#        return event.weight
-
-#    return reweightRef if checkReferencePoint( sample_ ) else reweightNoRef
-
 genJetVarString      = "pt/F,eta/F,phi/F,isMuon/I,isElectron/I,isPhoton/I,matchBParton/I"
 genJetVars           = [ item.split("/")[0] for item in genJetVarString.split(",") ]
 
@@ -158,6 +118,16 @@ read_variables  = ["weight/F",
                    "nGenTop/I",
                    "GenTop[%s]"      %genTopVarString,
                    "mll/F", "mllgamma/F",
+                   "minDRjj/F",
+                   "minDRbb/F",
+                   "minDRll/F",
+                   "minDRaa/F",
+                   "minDRbj/F",
+                   "minDRaj/F",
+                   "minDRjl/F",
+                   "minDRab/F",
+                   "minDRbl/F",
+                   "minDRal/F",
                   ]
 
 read_variables += [ "GenBj0_" + var for var in genJetVarString.split(",") ]
@@ -171,33 +141,12 @@ read_variables_EFT = [
 # Sequence
 sequence = []
 
-#signalSample = TTG_SingleLeptFromT_1L_test_EFT
-
-#w         = WeightInfo( signalSample.reweight_pkl )
-#w.set_order( int(args.order) )
-#variables = w.variables
-
 lumi_scale = 136.6
 
 comparisonSamples = [ [TTG_SingleLeptFromT_3LPatched_SM], [TTG_SingleLeptFromT_1L_SM] ]
 #comparisonSamples = [ [TTG_SingleLeptFromT_3LBuggy_SM], [TTG_SingleLeptFromT_3LPatched_SM], [TTG_SingleLeptFromT_1L_SM] ]
 signals = []
 
-# Sample definition
-#for i, param in enumerate( params ):
-#    sample                = copy.deepcopy( signalSample )
-#    sample.params         = param
-#    if param["legendText"] == "SM":
-#        sample.style = styles.lineStyle( param["color"], width=3  )
-#    else:
-#        sample.style = styles.lineStyle( param["color"], width=2, dashed=True  )
-#    sample.texName        = param["legendText"]
-#    sample.weight         = get_reweight( param, sample )
-#    sample.read_variables = read_variables_EFT
-#    sample.scale          = lumi_scale
-#    signals.append( sample )
-
-#stackList  = [ [s] for s in signals ]
 stack      = Stack( *comparisonSamples )
 
 for sample in stack.samples:
@@ -214,7 +163,7 @@ if args.small:
 weight_ = lambda event, sample: 1
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
-Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ), addOverFlowBin='upper' )
+Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ) )#, addOverFlowBin='upper' )
 
 # Import plots list (AFTER setDefaults!!)
 plotListFile = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), 'plotLists', args.plotFile + '.py' )

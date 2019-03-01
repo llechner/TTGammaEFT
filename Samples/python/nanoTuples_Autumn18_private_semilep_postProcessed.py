@@ -124,14 +124,14 @@ if __name__ == "__main__":
 
     # check Root Files
     from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+    from multiprocessing        import Pool
 
-    for dirList in directories.values():
-        for path in dirList:
+    def checkFile( path ):
             try:
                 sample = Sample.fromDPMDirectory(name="sample", treeName="Events", directory=path)
             except:
                 logger.info( "Sample not processed: %s"%path )
-                continue
+                return
             for file in sample.files:
                 if args.log: logger.info( "Checking filepath: %s"%file )
                 corrupt = False
@@ -148,3 +148,9 @@ if __name__ == "__main__":
                         os.system( "/usr/bin/rfrm -f %s"%file )
 
             del sample
+
+
+    pathes = [ path for dirList in directories.values() for path in dirList ]
+    pool = Pool( processes=16 )
+    _ = pool.map( checkFile, pathes )
+    pool.close()

@@ -28,17 +28,17 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 # Directories
 dirs = {}
 
-dirs['DY_LO']            = ["DYJetsToLL_M10to50_LO"]#, "DYJetsToLL_M50_LO_ext1_comb" ]
+dirs['DY_LO']            = ["DYJetsToLL_M10to50_LO", "DYJetsToLL_M50_LO_ext1_comb" ]
 
 dirs['TTLep_pow']        = ["TTLep_pow"]
-dirs['TT_pow']           = ["TTLep_pow"]#, "TTSingleLep_pow" ] 
+dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow" ] 
 #dirs['TTbar']            = ["TTbar"]
 
 dirs['TTGJets']          = ["TTGJets_comb"]
 dirs['TTGLep']           = ["TTGLep"]
-dirs['TTG']              = ["TTGLep"]#, "TTGSemiTbar", "TTGHad", "TTGSemiTbar"] #TTGSemiT
+dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGHad", "TTGSemiTbar"] #TTGSemiT
 
-dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext", "T_tch_pow", "TBar_tch_pow" ]#, "TToLeptons_sch_amcatnlo" ]
+dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext"]#, "T_tch_pow", "TBar_tch_pow" ]#, "TToLeptons_sch_amcatnlo" ]
 
 dirs['ZGTo2LG']          = ["ZGTo2LG_ext"]
 #dirs['ZGToLLG']          = ["ZGToLLG"]
@@ -79,7 +79,7 @@ dirs['other']           += dirs['TTW']  + dirs['TTZ']#  + dirs['TTH']
 dirs['other']           += dirs['TTTT']
 dirs['other']           += dirs['WWW']  + dirs['WWZ']  + dirs['WZZ']  + dirs['ZZZ'] #+ dirs['WZG']
 dirs['other']           += dirs['VV']
-dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
+#dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
@@ -119,14 +119,14 @@ if __name__ == "__main__":
 
     # check Root Files
     from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+    from multiprocessing        import Pool
 
-    for dirList in directories.values():
-        for path in dirList:
+    def checkFile( path ):
             try:
                 sample = Sample.fromDPMDirectory(name="sample", treeName="Events", directory=path)
             except:
                 logger.info( "Sample not processed: %s"%path )
-                continue
+                return
             for file in sample.files:
                 if args.log: logger.info( "Checking filepath: %s"%file )
                 corrupt = False
@@ -143,3 +143,9 @@ if __name__ == "__main__":
                         os.system( "/usr/bin/rfrm -f %s"%file )
 
             del sample
+
+
+    pathes = [ path for dirList in directories.values() for path in dirList ]
+    pool = Pool( processes=16 )
+    _ = pool.map( checkFile, pathes )
+    pool.close()

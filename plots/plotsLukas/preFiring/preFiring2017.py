@@ -15,7 +15,8 @@ from RootTools.core.standard          import *
 from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.Variables       import NanoVariables
-from TTGammaEFT.Tools.objectSelection import filterBJets
+from TTGammaEFT.Tools.objectSelection import isBJet
+from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.helpers           import getCollection
@@ -35,6 +36,7 @@ argParser.add_argument('--noData',             action='store_true', default=Fals
 argParser.add_argument('--signal',             action='store',      default=None,   nargs='?', choices=[None],                         help="Add signal to plot")
 argParser.add_argument('--onlyTTG',            action='store_true', default=False,                                                     help="Plot only ttG")
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                     help="Normalize yields" )
+argParser.add_argument('--triggerSelection',   action='store_true', default=False,                                                     help="apply trigger selection?" )
 args = argParser.parse_args()
 
 # Logger
@@ -91,7 +93,7 @@ def drawPlots( plots, mode ):
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
-	                       ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
+	                       ratio = {'histos':[(0,1)], 'texY': 'data / unpref.', 'yRange':(0.5,1.5)} if not args.noData else None,
 	                       logX = False, logY = log, sorting = True,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},
@@ -161,7 +163,6 @@ def clean_Jets( event, sample ):
     allJets    = getCollection( event, 'Jet', jetVariableNames, 'nJet' )
     allJets.sort( key = lambda j: -j['pt'] )
     allJets    = list( filter( lambda j: j['cleanmask'] and j['pt']>30, allJets ) )
-#    allJets    = list( filter( lambda j: j['cleanmask'], allJets ) )
 
     looseJets  = getCollection( event, 'JetGood', jetVariableNames, 'nJetGood' )
     looseJets.sort( key = lambda j: -j['pt'] )
@@ -169,8 +170,8 @@ def clean_Jets( event, sample ):
 
     event.nJet      = len( allJets )
     event.nJetGood  = len( looseJets )
-    event.nBTag     = len( filterBJets( allJets,   tagger="DeepCSV", year=2017 ) )
-    event.nBTagGood = len( filterBJets( looseJets, tagger="DeepCSV", year=2017 ) )
+    event.nBTag     = len( filter( lambda j: isBJet( j, tagger='DeepCSV', year=2017 ), allJets ) )
+    event.nBTagGood = len( filter( lambda j: isBJet( j, tagger='DeepCSV', year=2017 ), looseJets ) )
 
     for var in jetVariableNames:
         for i, jet in enumerate( allJets[:2] ):
@@ -201,6 +202,8 @@ if args.small:
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
+tr          = TriggerSelector( 2017, singleLepton=True )
+triggerCond = tr.getSelection( "SingleMuon" )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ), addOverFlowBin='upper' )
@@ -235,6 +238,10 @@ for index, mode in enumerate( allModes ):
 
     Run2017_noPreFiring.setSelectionString( [ getFilterCut( 2017, isData=True ),  leptonSelection, "unPreFirableEvent==1"] )
     Run2017.setSelectionString( [ getFilterCut( 2017, isData=True ), leptonSelection ] )
+
+    if args.triggerSelection:
+        Run2017_noPreFiring.addSelectionString( triggerCond )
+        Run2017.addSelectionString( triggerCond )
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 
