@@ -56,4 +56,4 @@ echo "Executing:"
 echo ${@:2} --runOnLxPlus --writeToDPM
 echo "---------------------"
 
-${@:2} --runOnLxPlus --writeToDPM
+${@:2} --runOnLxPlus

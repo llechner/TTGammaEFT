@@ -15,7 +15,7 @@ from operator                                    import mul
 from RootTools.core.standard                     import *
 
 # DeepCheck RootFiles
-from Analysis.Tools.helpers                      import checkRootFile, deepCheckRootFile
+from Analysis.Tools.helpers                      import checkRootFile, deepCheckRootFile, deepCheckWeight
 
 # Tools for systematics
 from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
@@ -198,7 +198,7 @@ if not options.overwrite and options.writeToDPM:
     if sample.name in fileList:
         # Sample found on dpm, check if it is ok
         target  = os.path.join( targetPath, sample.name+".root" )
-        if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+        if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ) and deepCheckWeight( target ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
         else:
@@ -215,7 +215,7 @@ if not options.overwrite and options.writeToDPM:
 elif not options.overwrite and not options.writeToDPM:
     if os.path.isfile(outputFilePath):
         logger.info( "Output file %s found.", outputFilePath)
-        if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ):
+        if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ) and deepCheckWeight( outputFilePath ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
         else:
@@ -849,7 +849,7 @@ def filler( event ):
     event.nPhotonGood  = len( mediumPhotons )
 
     # store all photons + default photons for a faster plot script
-    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons )
+    fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons[:20] )
 
     # Store analysis photons + default photons for a faster plot script
     p0, p1 = ( mediumPhotons + [None,None] )[:2]
@@ -1066,7 +1066,7 @@ if options.writeToDPM:
             target  = os.path.join( targetPath, fname )
 
             if fname.endswith(".root"):
-                if checkRootFile( source, checkForObjects=["Events"] ) and deepCheckRootFile( source ):
+                if checkRootFile( source, checkForObjects=["Events"] ) and deepCheckRootFile( source ) and deepCheckWeight( source ):
                     logger.info( "Source: File check ok!" )
                 else:
                     raise Exception("Corrupt rootfile at source! File not copied: %s"%source )
@@ -1076,7 +1076,7 @@ if options.writeToDPM:
             subprocess.call( cmd )
 
             if fname.endswith(".root"):
-                if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+                if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ) and deepCheckWeight( target ):
                     logger.info( "Target: File check ok!" )
                 else:
                     logger.info( "Corrupt rootfile at target! Trying again: %s"%target )
@@ -1084,7 +1084,7 @@ if options.writeToDPM:
                     subprocess.call( cmd )
 
                     # Many files are corrupt after copying, a 2nd try fixes that
-                    if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ):
+                    if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ) and deepCheckWeight( target ):
                         logger.info( "2nd try successfull!" )
                     else:
                         # if not successful, the corrupt root file needs to be deleted from DPM
@@ -1100,7 +1100,7 @@ if options.writeToDPM:
         subprocess.call( [ 'rm', '-rf', output_directory ] ) # Let's risk it.
 
 else:
-    if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ):
+    if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ) and deepCheckWeight( outputFilePath ):
         logger.info( "Target: File check ok!" )
     else:
         logger.info( "Corrupt rootfile! Removing file: %s"%outputFilePath )
