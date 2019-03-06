@@ -401,9 +401,9 @@ def filterGenMuons( genParts, status=None ):
     return muons
 
 def filterGenPhotons( genParts, status=None ):
-    if   status == 'first': stat = [23]
-    elif status == 'last':  stat = [1]
-    else:                   stat = [1,23]
+    if   status == 'first': stat = [23, 44, 51, 52]
+    elif status == 'last':  stat = [1, 44, 51, 52]
+    else:                   stat = [1, 23, 44, 51, 52]
     photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] in stat, genParts ) )
     return photons
 
