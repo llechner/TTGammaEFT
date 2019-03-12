@@ -57,7 +57,7 @@ class TriggerSelector:
         eGamma = []
         if self.e:  eGamma += ["Alt$(%s,0)"%trigger for trigger in self.e]
         if self.ee: eGamma += ["Alt$(%s,0)"%trigger for trigger in self.ee]
-        self.EGamma         = "(%s)"%"||".join( eGamma  ) if eGamma  else None
+        self.EGamma         = "(%s)"%"||".join( eGamma ) if eGamma  else None
         self.MuonEG         = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.em] ) if self.em else None
         self.SingleMuon     = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.m]  ) if self.m  else None
         self.SingleElectron = "(%s)"%"||".join( ["Alt$(%s,0)"%trigger for trigger in self.e]  ) if self.e  else None
