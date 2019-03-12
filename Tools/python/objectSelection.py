@@ -15,6 +15,8 @@ jetIdNamingList        = [ "tightLepVeto", "tight", "loose" ]
 vidNestedWPBitMapNamingList = [ 'MinPtCut', 'GsfEleSCEtaMultiRangeCut', 'GsfEleDEtaInSeedCut', 'GsfEleDPhiInCut', 'GsfEleFull5x5SigmaIEtaIEtaCut', 'GsfEleHadronicOverEMEnergyScaledCut', 'GsfEleEInverseMinusPInverseCut', 'GsfEleRelPFIsoScaledCut', 'GsfEleConversionVetoCut', 'GsfEleMissingHitsCut' ]
 vidNestedWPBitMap           = { 'fail':0, 'veto':1, 'loose':2, 'medium':3, 'tight':4 }  # Bitwise (Electron vidNestedWPBitMap ID flags (3 bits per cut), '000'=0 is fail, '001'=1 is veto, '010'=2 is loose, '011'=3 is medium, '100'=4 is tight)
 
+vidNestedWPBitMapNamingListPhoton = [ 'MinPtCut', 'PhoSCEtaMultiRangeCut', 'PhoSingleTowerHadOverEmCut', 'PhoFull5x5SigmaIEtaIEtaCut', 'PhoAnyPFIsoWithEACut', 'PhoAnyPFIsoWithEAAndQuadScalingCut', 'PhoAnyPFIsoWithEACut2' ]
+
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
 def jetIdBitMapToDict( val ):
     # convert int of vidNestedWPBitMap ( e.g. val = 6 ) to bitmap ( e.g. "110"), then to list ( e.g. [ 1, 1, 0 ] )
@@ -26,13 +28,18 @@ def jetIdBitMapToDict( val ):
     except: idList = [ 0, 0, 0 ]
     return dict( zip( jetIdNamingList, idList ) )
 
+def photonIdBitMapToDict( val ):
+    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:02b}".format( val ) , 2) ]
+    idList = [0] * (7-len(idList)) + idList
+    return dict( zip( vidNestedWPBitMapNamingListPhoton, idList ) )
+
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
 def vidNestedWPBitMapToDict( val ):
     # convert int of vidNestedWPBitMap ( e.g. val = 611099940 ) to bitmap ( e.g. "100100011011001010010100100100")
     # split vidBitmap string (containing 3 bits per cut) in parts of 3 bits ( e.g. ["100","100","011","011","001","010","010","100","100","100"] )
     # convert 3 bits to int ( e.g. [4, 4, 3, 3, 1, 2, 2, 4, 4, 4])
     # create dictionary
-    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:b}".format( val ) , 3) ] #use 2 for nanoAOD version 80x
+    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:03b}".format( val ) , 3) ] #use 2 for nanoAOD version 80x
     return dict( zip( vidNestedWPBitMapNamingList, idList ) )
 
 # General Selection Functions
@@ -91,6 +98,27 @@ def vertexSelector( l ):
     if abs(l["dz"])  >= 0.1 + 0.1*EC:  return False
     return True
 
+def removekey(d, key):
+    r = dict(d)
+    del r[key]
+    return r
+
+def photonVIDSelector( p, idVal, removedCuts=[] ):
+    vidDict = photonIdBitMapToDict( p["vidNestedWPBitmap"] )
+    if not removedCuts:
+        return all( [ cut >= idVal for cut in vidDict.values() ] )
+
+    if ("sieie"          in removedCuts):
+        vidDict = removekey( vidDict, "PhoFull5x5SigmaIEtaIEtaCut" )
+    if ("hoe"            in removedCuts):
+        vidDict = removekey( vidDict, "PhoSingleTowerHadOverEmCut" )
+    if ("pfRelIso03" in removedCuts):
+        vidDict = removekey( vidDict, "PhoAnyPFIsoWithEACut" )
+        vidDict = removekey( vidDict, "PhoAnyPFIsoWithEACut2" )
+        vidDict = removekey( vidDict, "PhoAnyPFIsoWithEAAndQuadScalingCut" )
+        
+    return all( [ cut >= idVal for cut in vidDict.values() ] )
+
 def photonMediumIDSelector( p, year, removedCuts=[], printVar=False ):
     # ATTENTION, there is a problem with the selected cuts
     # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2
@@ -133,17 +161,17 @@ def photonMediumIDSelector( p, year, removedCuts=[], printVar=False ):
     if ("sieie"          not in removedCuts) and (p["sieie"]            >= sieie_cut):#              return False
                 if printVar: print "sieie"
                 return False
-    if ("pfRelIso03_chg" not in removedCuts) and (p["pfRelIso03_chg"]   >= pfRelIso03_chg_cut):#     return False
+    if ("pfRelIso03_chg" not in removedCuts) and (p["pfRelIso03_chg"]*p["pt"]   >= pfRelIso03_chg_cut):#     return False
                 if printVar: print "pfRelIso03_chg"
                 return False
-    if ("pfRelIso03_all" not in removedCuts) and (p["pfRelIso03_all"]   >= pfRelIso03_all_cut):#     return False
-                if printVar: print "pfRelIso03_all"
-                return False
-    if ("pfRelIso03_n"   not in removedCuts) and (pfRelIso03_neutral    >= pfRelIso03_neutral_cut):# return False
+    if ("pfRelIso03_n"   not in removedCuts) and (pfRelIso03_neutral*p["pt"]    >= pfRelIso03_neutral_cut):# return False
                 if printVar: print "pfRelIso03_n"
                 return False
     if ("hoe"            not in removedCuts) and (p["hoe"]              >= hoe_cut):
                 if printVar: print "hoe"
+                return False
+    if ("pfRelIso03_all" not in removedCuts) and (p["pfRelIso03_all"]*p["pt"]   >= pfRelIso03_all_cut):#     return False
+                if printVar: print "pfRelIso03_all"
                 return False
     return True
 
@@ -310,12 +338,12 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
     if selection == "medium":
         def func(g):
             if not noPtEtaCut:
-                if g["pt"]       <= 20:                                             return False
-                if abs(g["eta"]) >= 1.479:                                          return False # Barrel only
-            if g[idVar]          <  photonId[selection]:                            return False # seems to be a problem with hoe cut
-#            if not photonMediumIDSelector( g, year=year, removedCuts=removedCuts ): return False
-            if g["pixelSeed"]:                                                      return False
-            if not g["electronVeto"]:                                               return False
+                if g["pt"]       <= 20:                                                  return False
+                if abs(g["eta"]) >= 1.479:                                               return False # Barrel only
+            if g["pixelSeed"]:                                                           return False
+            if not g["electronVeto"]:                                                    return False
+#            if g[idVar]          <  photonId[selection]:                                 return False
+            if not photonVIDSelector( g, photonId[selection], removedCuts=removedCuts ): return False
             return True
         return func
 
@@ -324,9 +352,10 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
             if not noPtEtaCut:
                 if g["pt"]       <= 20:                                             return False
                 if abs(g["eta"]) >= 1.479:                                          return False # Barrel only
-            if g[idVar]          <  photonId[selection]:                            return False
             if g["pixelSeed"]:                                                      return False
             if not g["electronVeto"]:                                               return False
+#            if g[idVar]          <  photonId[selection]:                            return False
+            if not photonVIDSelector( g, photonId[selection], removedCuts=removedCuts ): return False
             return True
         return func
 
@@ -401,10 +430,7 @@ def filterGenMuons( genParts, status=None ):
     return muons
 
 def filterGenPhotons( genParts, status=None ):
-    if   status == 'first': stat = [23, 44, 51, 52]
-    elif status == 'last':  stat = [1, 44, 51, 52]
-    else:                   stat = [1, 23, 44, 51, 52]
-    photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] in stat, genParts ) )
+    photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] > 0, genParts ) )
     return photons
 
 def filterGenTops( genParts ):
@@ -416,6 +442,12 @@ def filterGenBJets( genJets ):
     return bjets
 
 # Pythia status flags:
+#  1: outgoing particle (e.g. photon from decay products of top)
+# 23: e.g. intermediate photon (mother of photon with status 1)
+# 44: ISR photons (outgoing, but initially produced and then nothing changed (MG photons?)
+# 52: photons from e.g. top, probably also initially produced (MG photons?)
+# 51: photons from e.g. top, probably also initially produced (MG photons?)
+
 # 62: outgoing subprocess particle with primordial kT included, last gencopy before it decays
 # 23: outgoing
 # 71: copied partons to collect into contiguous colour singlet (jets)

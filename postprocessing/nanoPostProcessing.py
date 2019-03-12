@@ -27,6 +27,7 @@ from TTGammaEFT.Tools.Variables                  import NanoVariables
 
 from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
 from Analysis.Tools.puProfileCache               import puProfile
+from Analysis.Tools.L1PrefireWeight              import L1PrefireWeight
 
 # central configuration
 targetLumi = 1000 #pb-1 Which lumi to normalize to
@@ -96,7 +97,7 @@ else:
 maxNFiles = None
 if options.small:
     maxNFiles = 1
-    maxNEvents = 10
+    maxNEvents = 10000
     options.job = 0
     options.nJobs = 1 # set high to just run over 1 input file
 
@@ -243,8 +244,9 @@ if isData and options.triggerSelection:
     skimConds.append( triggerCond )
 
 # Reweighting, Scalefactors, Efficiencies
-from Analysis.Tools.LeptonSF import LeptonSF as LeptonSF_
-LeptonSF = LeptonSF_( year=options.year )
+from Analysis.Tools.LeptonSF import LeptonSF
+LeptonSFMedium = LeptonSF( year=options.year, ID="medium" )
+LeptonSFTight = LeptonSF( year=options.year, ID="tight" )
 
 from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
 LeptonTrackingSF = LeptonTrackingEfficiency( year=options.year )
@@ -266,6 +268,9 @@ TriggerEff            = TriggerEfficiency( with_backup_triggers = False, year=op
 # Update to other years when available
 from Analysis.Tools.BTagEfficiency import BTagEfficiency
 BTagEff = BTagEfficiency( year=options.year, tagger=tagger ) # default medium WP
+
+# PrefiringWeight
+L1PW = L1PrefireWeight( options.year )
 
 if isMC:
     from Analysis.Tools.puReweighting import getReweightingFunction
@@ -467,8 +472,10 @@ if isMC:
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
 
-    new_variables += [ 'reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F' ]
-    new_variables += [ 'reweightLeptonTrackingSF/F' ]
+    new_variables += [ 'reweightLeptonMediumSF/F', 'reweightLeptonMediumSFUp/F', 'reweightLeptonMediumSFDown/F' ]
+    new_variables += [ 'reweightLeptonTrackingMediumSF/F' ]
+    new_variables += [ 'reweightLeptonTightSF/F', 'reweightLeptonTightSFUp/F', 'reweightLeptonTightSFDown/F' ]
+    new_variables += [ 'reweightLeptonTrackingTightSF/F' ]
 
     new_variables += [ 'reweightDilepTrigger/F', 'reweightDilepTriggerUp/F', 'reweightDilepTriggerDown/F' ]
     new_variables += [ 'reweightDilepTriggerBackup/F', 'reweightDilepTriggerBackupUp/F', 'reweightDilepTriggerBackupDown/F' ]
@@ -476,6 +483,8 @@ if isMC:
     new_variables += [ 'reweightPhotonSF/F', 'reweightPhotonSFUp/F', 'reweightPhotonSFDown/F' ]
     new_variables += [ 'reweightPhotonElectronVetoSF/F' ]
     new_variables += [ 'reweightPhotonReconstructionSF/F' ]
+
+    new_variables += [ 'reweightL1Prefire/F', 'reweightL1PrefireUp/F', 'reweightL1PrefireDown/F' ]
 
     # Btag weights Method 1a
     for var in BTagEff.btagWeightNames:
@@ -520,8 +529,8 @@ recoMuonSel_medium_lead = muonSelector( "medium", leading=True )
 recoMuonSel_tight       = muonSelector( "tight" )
 # Photon Selection
 recoPhotonSel_medium                     = photonSelector( 'medium', year=options.year )
-recoPhotonSel_medium_noRelIsoChg         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03_chg"] )
-recoPhotonSel_medium_noRelIsoChg_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03_chg"] )
+recoPhotonSel_medium_noRelIsoChg         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03"] )
+recoPhotonSel_medium_noRelIsoChg_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03"] )
 # Jet Selection
 recoJetSel            = jetSelector( options.year )
 recoJetSel_noPtEtaCut = jetSelector( options.year )
@@ -758,21 +767,21 @@ def filler( event ):
         for j in allJets: BTagEff.addBTagEffToJet( j )
 
     # Loose jets w/o pt/eta requirement
-    allJets = list( filter( lambda j: recoJetSel_noPtEtaCut(j), allJets ) )
-    addJetFlags( allJets, selectedLeptons if isDiLep else selectedTightLepton, mediumPhotons )
+    allGoodJets = list( filter( lambda j: recoJetSel_noPtEtaCut(j), allJets ) )
+    addJetFlags( allGoodJets, selectedLeptons if isDiLep else selectedTightLepton, mediumPhotons )
     # Loose jets w/ pt/eta requirement (analysis jets)
-    jets    = list( filter( lambda x: x["isGood"], allJets ) )
+    jets    = list( filter( lambda x: x["isGood"], allGoodJets ) )
 
     # DeltaR cleaning (now done in "isGood"
 #    jets = deltaRCleaning( jets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
 #    jets = deltaRCleaning( jets, mediumPhotons, dRCut=0.1 ) # clean all jets against analysis photons
     
     # Store jets
-    event.nJet      = len(allJets)
+    event.nJet      = len(allGoodJets)
     event.nJetGood  = len(jets)
 
     # store all loose jets
-    fill_vector_collection( event, "Jet", writeJetVarList, allJets)
+    fill_vector_collection( event, "Jet", writeJetVarList, allGoodJets)
 
     # Store analysis jets + 2 default jets for a faster plotscript
     j0, j1   = ( jets + [None,None] )[:2]
@@ -781,7 +790,7 @@ def filler( event ):
     fill_vector( event, "JetGood1",  writeJetVarList, j1 )
 
     # bJets
-    allBJets = list( filter( lambda x: x["isBJet"], allJets ) )
+    allBJets = list( filter( lambda x: x["isBJet"], allGoodJets ) )
     bJets    = list( filter( lambda x: x["isBJet"], jets ) )
     nonBJets = list( filter( lambda x: not x["isBJet"], jets ) )
 
@@ -888,6 +897,11 @@ def filler( event ):
     if len(jets) > 0 and len(selectedLeptons) > 0:
         event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
 
+#    if event.nLeptonGood==2 and event.nLeptonVeto==2 and event.nPhotonGood > 0 and event.PhotonGood0_pt >= 20 and abs(event.mll - 91) > 15 and abs(event.mllgamma-91) > 15 and event.mll > 40:
+#        print event.isTTGamma
+#        if "TTG" in sample.name and event.isTTGamma: print event.isTTGamma
+#        elif "TTLep" in sample.name and not event.isTTGamma: print event.isTTGamma
+
     # Topreco
     if options.topReco:
         #topReco = TopReco( ROOT.Era.run2_13tev_2016_25ns, 2, 1, 0, 'btagDeepB', 0.6321 )
@@ -920,11 +934,16 @@ def filler( event ):
         event.reweightPUVUp   = nTrueInt_puRWVUp   ( r.Pileup_nTrueInt )
 
         # Lepton reweighting
-        event.reweightLeptonSF     = reduce( mul, [ LeptonSF.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])             ) for l in selectedLeptons ], 1 )
-        event.reweightLeptonSFUp   = reduce( mul, [ LeptonSF.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']), sigma = +1 ) for l in selectedLeptons ], 1 )
-        event.reweightLeptonSFDown = reduce( mul, [ LeptonSF.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']), sigma = -1 ) for l in selectedLeptons ], 1 )
+        event.reweightLeptonSFMedium     = reduce( mul, [ LeptonSFMedium.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])             ) for l in selectedLeptons ], 1 )
+        event.reweightLeptonSFMediumUp   = reduce( mul, [ LeptonSFMedium.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']), sigma = +1 ) for l in selectedLeptons ], 1 )
+        event.reweightLeptonSFMediumDown = reduce( mul, [ LeptonSFMedium.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']), sigma = -1 ) for l in selectedLeptons ], 1 )
 
-        event.reweightLeptonTrackingSF = reduce( mul, [ LeptonTrackingSF.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']) ) for l in selectedLeptons ], 1 )
+        event.reweightLeptonSFTight     = reduce( mul, [ LeptonSFTight.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])             ) for l in selectedTightLepton ], 1 )
+        event.reweightLeptonSFTightUp   = reduce( mul, [ LeptonSFTight.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']), sigma = +1 ) for l in selectedTightLepton ], 1 )
+        event.reweightLeptonSFTightDown = reduce( mul, [ LeptonSFTight.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']), sigma = -1 ) for l in selectedTightLepton ], 1 )
+
+        event.reweightLeptonTrackingMediumSF = reduce( mul, [ LeptonTrackingSF.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']) ) for l in selectedLeptons ], 1 )
+        event.reweightLeptonTrackingTightSF = reduce( mul, [ LeptonTrackingSF.getSF( pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta']+l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta']) ) for l in selectedTightLepton ], 1 )
 
         # Photon reweighting
         event.reweightPhotonSF     = reduce( mul, [ PhotonSF.getSF( pt=p['pt'], eta=p['eta']             ) for p in mediumPhotons ], 1 )
@@ -958,6 +977,14 @@ def filler( event ):
             event.reweightDilepTriggerBackup     = 0
             event.reweightDilepTriggerBackupUp   = 0
             event.reweightDilepTriggerBackupDown = 0
+
+        # PreFiring
+        if options.year == 2018:
+            event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown = 1., 1., 1.
+        else:
+            event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown = L1PW.getWeight( allPhotons, allJets )
+
+        print event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown
 
 # Create a maker. Maker class will be compiled. This instance will be used as a parent in the loop
 treeMaker_parent = TreeMaker(

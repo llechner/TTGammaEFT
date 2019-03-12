@@ -42,6 +42,7 @@ class NanoVariables:
                                   Variable( "convVeto",                 "O", read=True,  write=True,  inData=True,  inPlot=True ),
                                   Variable( "cutBased",                 "I", read=True,  write=True,  inData=True,  inPlot=True ),
                                   Variable( "pdgId",                    "I", read=True,  write=True,  inData=True,  inPlot=True ),
+                                  Variable( "vidNestedWPBitmap",        "I", read=True,  write=True,  inData=True,  inPlot=True ),
 
                                   Variable( "lostHits",                 "b", read=True,  write=False, inData=True,  inPlot=False ),
                                   Variable( "lostHits",                 "I", read=False, write=True,  inData=True,  inPlot=True ),
@@ -65,7 +66,6 @@ class NanoVariables:
                                   Variable( "jetIdx",                   "I", read=True,  write=False, inData=True,  inPlot=False ),
                                   Variable( "photonIdx",                "I", read=True,  write=False, inData=True,  inPlot=False ),
                                   Variable( "tightCharge",              "I", read=True,  write=False, inData=True,  inPlot=False ),
-                                  Variable( "vidNestedWPBitmap",        "I", read=True,  write=True,  inData=True,  inPlot=False ),
                                   Variable( "cutBased_HEEP",            "O", read=True,  write=True,  inData=True,  inPlot=False ),
                                   Variable( "isPFcand",                 "O", read=True,  write=True,  inData=True,  inPlot=False ),
                                   Variable( "cleanmask",                "O", read=True,  write=True,  inData=True,  inPlot=False ),
@@ -175,6 +175,7 @@ class NanoVariables:
                                 Variable( "electronVeto",      "O", read=True,  write=True,  inData=True,  inPlot=True ),
                                 Variable( "pixelSeed",         "O", read=True,  write=True,  inData=True,  inPlot=True ),
                                 Variable( "pdgId",             "I", read=True,  write=True,  inData=True,  inPlot=True ),
+                                Variable( "vidNestedWPBitmap", "I", read=True,  write=True,  inData=True,  inPlot=True ),
 
                                 Variable( "energyErr",         "F", read=True,  write=False, inData=True,  inPlot=False ),
                                 Variable( "mass",              "F", read=True,  write=True,  inData=True,  inPlot=False ),
@@ -183,7 +184,6 @@ class NanoVariables:
                                 Variable( "charge",            "I", read=True,  write=True,  inData=True,  inPlot=False ),
                                 Variable( "electronIdx",       "I", read=True,  write=False, inData=True,  inPlot=False ),
                                 Variable( "jetIdx",            "I", read=True,  write=False, inData=True,  inPlot=False ),
-                                Variable( "vidNestedWPBitmap", "I", read=True,  write=True,  inData=True,  inPlot=False ),
                                 Variable( "mvaID_WP80",        "O", read=True,  write=False, inData=True,  inPlot=False ),
                                 Variable( "mvaID_WP90",        "O", read=True,  write=False, inData=True,  inPlot=False ),
                                 Variable( "cleanmask",         "O", read=True,  write=True,  inData=True,  inPlot=False ),
