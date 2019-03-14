@@ -59,6 +59,12 @@ def get_parser():
     argParser.add_argument('--addPreFiringFlag',            action='store_true',                                                                                        help="Add flag for events w/o prefiring?" )
     argParser.add_argument('--topReco',                     action='store_true',                                                                                        help="Run Top Reco?")
     argParser.add_argument('--checkOnly',                   action='store_true',                                                                                        help="Check files at target and remove corrupt ones without reprocessing? Not possible with overwrite!")
+    argParser.add_argument('--flagTTGamma',                 action='store_true',                                                                                        help="Check overlap removal for ttgamma")
+    argParser.add_argument('--flagTTBar',                   action='store_true',                                                                                        help="Check overlap removal for ttbar")
+    argParser.add_argument('--flagZWGamma',                 action='store_true',                                                                                        help="Check overlap removal for Zgamma/Wgamma")
+    argParser.add_argument('--flagDYWJets',                 action='store_true',                                                                                        help="Check overlap removal for DY/WJets")
+    argParser.add_argument('--flagTGamma',                  action='store_true',                                                                                        help="Check overlap removal for TGamma")
+    argParser.add_argument('--flagSingleTopTch',            action='store_true',                                                                                        help="Check overlap removal for singleTop t-channel")
     return argParser
 
 options = get_parser().parse_args()
@@ -66,6 +72,9 @@ options = get_parser().parse_args()
 # B-Tagger
 tagger = 'DeepCSV'
 #tagger = 'CSVv2'
+
+if len( filter( lambda x: x, [options.flagTTGamma, options.flagTTBar, options.flagZWGamma, options.flagDYWJets, options.flagTGamma, options.flagSingleTopTch] ) ) > 1:
+    raise Exception("Overlap removal flag can only be True for ONE flag!" )
 
 # Logging
 import Analysis.Tools.logger as logger
@@ -438,10 +447,11 @@ new_variables += [ 'nPhoton/I' ]
 new_variables += [ 'nPhotonGood/I' ] 
 new_variables += [ 'Photon[%s]'     %writePhotonVarString ]
 
-new_variables += [ 'PhotonGood0_'            + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonGood1_'            + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonNoChgIso0_'        + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonNoChgIsoNoSieie0_' + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonGood0_'         + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonGood1_'         + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoIso0_'        + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoSieie0_'      + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoIsoNoSieie0_' + var for var in writePhotonVariables ]
 
 # Others
 new_variables += [ 'ht/F', 'METSig/F' ]
@@ -468,7 +478,7 @@ if isMC:
     new_variables += [ 'GenJet[%s]'      %writeGenJetVarString ]
     new_variables += [ 'GenBJet[%s]'     %writeGenJetVarString ]
     new_variables += [ 'GenTop[%s]'      %writeGenVarString ]
-    new_variables += [ 'isTTGamma/I', 'isZWGamma/I', 'isSingleTopTch/I' ]
+    new_variables += [ 'isTTGamma/I', 'isZWGamma/I', 'isTGamma/I', 'overlapRemoval/I' ]
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
 
@@ -528,9 +538,10 @@ recoMuonSel_medium      = muonSelector( "medium" )
 recoMuonSel_medium_lead = muonSelector( "medium", leading=True )
 recoMuonSel_tight       = muonSelector( "tight" )
 # Photon Selection
-recoPhotonSel_medium                     = photonSelector( 'medium', year=options.year )
-recoPhotonSel_medium_noRelIsoChg         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03"] )
-recoPhotonSel_medium_noRelIsoChg_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03"] )
+recoPhotonSel_medium               = photonSelector( 'medium', year=options.year )
+recoPhotonSel_medium_noIso         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03"] )
+recoPhotonSel_medium_noSieie       = photonSelector( 'medium', year=options.year, removedCuts=["sieie"] )
+recoPhotonSel_medium_noIso_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03"] )
 # Jet Selection
 recoJetSel            = jetSelector( options.year )
 recoJetSel_noPtEtaCut = jetSelector( options.year )
@@ -630,10 +641,27 @@ def filler( event ):
         GenIsoPhotonNoMesonSingleT = filter( lambda g: not hasMesonMother( getParentIds( g, gPart ) ), GenIsoPhotonSingleT )
         GenIsoPhotonNoMesonSingleT = filter( lambda g: not photonFromTopDecay( getParentIds( g, gPart ) ), GenIsoPhotonNoMesonSingleT )
 
-        event.isTTGamma      = len( filter( lambda g: genPhotonSel_TTG_OR(g), GenIsoPhotonNoMeson        ) ) > 0 
-        event.isZWGamma      = len( filter( lambda g: genPhotonSel_ZG_OR(g),  GenIsoPhotonNoMeson        ) ) > 0 
-        event.isSingleTopTch = len( filter( lambda g: genPhotonSel_T_OR(g),   GenIsoPhotonNoMesonSingleT ) ) > 0 
+        event.isTTGamma = len( filter( lambda g: genPhotonSel_TTG_OR(g), GenIsoPhotonNoMeson        ) ) > 0
+        event.isZWGamma = len( filter( lambda g: genPhotonSel_ZG_OR(g),  GenIsoPhotonNoMeson        ) ) > 0
+        event.isTGamma  = len( filter( lambda g: genPhotonSel_T_OR(g),   GenIsoPhotonNoMesonSingleT ) ) > 0 
 
+        # new OR flag: Apply overlap removal directly in pp to better handle the plots
+        if options.flagTTGamma:
+            event.overlapRemoval = event.isTTGamma     #good TTgamma event
+        elif options.flagTTBar:
+            event.overlapRemoval = not event.isTTGamma #good TTbar event
+        elif options.flagZWGamma:
+            event.overlapRemoval = event.isZWGamma     #good Zgamma, Wgamma event
+        elif options.flagDYWJets:
+            event.overlapRemoval = not event.isZWGamma #good DY, WJets event
+        elif options.flagTGamma:
+            event.overlapRemoval = event.isTGamma      #good TGamma event
+        elif options.flagSingleTopTch:
+            event.overlapRemoval = not event.isTGamma  #good singleTop t-channel event
+        else:
+            event.overlapRemoval = 1 # all other events
+
+        print event.overlapRemoval
         # Split gen particles
         # still needs improvement with filterGen function
         GenElectron = list( filter( lambda l: genLeptonSel(l), filterGenElectrons( gPart, status='last' ) ) )
@@ -652,6 +680,7 @@ def filler( event ):
         fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      )
         
     elif isData:
+        event.overlapRemoval = 1 # all other events
         event.weight     = 1.
         event.ref_weight = 1.
         # lumi lists and vetos
@@ -748,15 +777,19 @@ def filler( event ):
         for g in allPhotons:
             genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
             g['photonCat'] = getPhotonCategory( genMatch, gPart )
+    else:
+        g['photonCat'] = -1
 
-    mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                     allPhotons ) )
-    mediumPhotonsNoChgIso        = list( filter( lambda g: recoPhotonSel_medium_noRelIsoChg(g),         allPhotons ) )
-    mediumPhotonsNoChgIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noRelIsoChg_noSieie(g), allPhotons ) )
+    mediumPhotons             = list( filter( lambda g: recoPhotonSel_medium(g),               allPhotons ) )
+    mediumPhotonsNoIso        = list( filter( lambda g: recoPhotonSel_medium_noIso(g),         allPhotons ) )
+    mediumPhotonsNoSieie      = list( filter( lambda g: recoPhotonSel_medium_noSieie(g),       allPhotons ) )
+    mediumPhotonsNoIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noIso_noSieie(g), allPhotons ) )
 
     # DeltaR cleaning
-    mediumPhotons                = deltaRCleaning( mediumPhotons,                selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
-    mediumPhotonsNoChgIso        = deltaRCleaning( mediumPhotonsNoChgIso,        selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
-    mediumPhotonsNoChgIsoNoSieie = deltaRCleaning( mediumPhotonsNoChgIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotons             = deltaRCleaning( mediumPhotons,             selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotonsNoIso        = deltaRCleaning( mediumPhotonsNoIso,        selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotonsNoSieie      = deltaRCleaning( mediumPhotonsNoIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotonsNoIsoNoSieie = deltaRCleaning( mediumPhotonsNoIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
 
     # Photons are stored later in this script
 
@@ -865,11 +898,14 @@ def filler( event ):
     fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
     fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
 
-    p0NoChgNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [None] )[0]
-    fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgNoSieie )
+    p0NoIsoNoSieie = ( mediumPhotonsNoIsoNoSieie + [None] )[0]
+    fill_vector( event, "PhotonNoIsoNoSieie0",  writePhotonVarList, p0NoIsoNoSieie )
 
-    p0NoChg = ( mediumPhotonsNoChgIso + [None] )[0]
-    fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChg )
+    p0NoSieie = ( mediumPhotonsNoSieie + [None] )[0]
+    fill_vector( event, "PhotonNoSieie0",  writePhotonVarList, p0NoSieie )
+
+    p0NoIso = ( mediumPhotonsNoIso + [None] )[0]
+    fill_vector( event, "PhotonNoIso0", writePhotonVarList, p0NoIso )
 
     if bj1:
         event.bbdR   = deltaR( bj0, bj1 )
@@ -898,9 +934,7 @@ def filler( event ):
         event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
 
 #    if event.nLeptonGood==2 and event.nLeptonVeto==2 and event.nPhotonGood > 0 and event.PhotonGood0_pt >= 20 and abs(event.mll - 91) > 15 and abs(event.mllgamma-91) > 15 and event.mll > 40:
-#        print event.isTTGamma
-#        if "TTG" in sample.name and event.isTTGamma: print event.isTTGamma
-#        elif "TTLep" in sample.name and not event.isTTGamma: print event.isTTGamma
+#        print event.overlapRemoval
 
     # Topreco
     if options.topReco:
@@ -983,8 +1017,6 @@ def filler( event ):
             event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown = 1., 1., 1.
         else:
             event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown = L1PW.getWeight( allPhotons, allJets )
-
-        print event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown
 
 # Create a maker. Maker class will be compiled. This instance will be used as a parent in the loop
 treeMaker_parent = TreeMaker(

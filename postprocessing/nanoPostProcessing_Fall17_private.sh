@@ -1,8 +1,14 @@
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 #SPLIT60
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample DYJetsToLL_M10to50_LO #SPLIT60
 
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTLep_pow #SPLIT77
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTSemiLep_pow #SPLIT69
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTBar --sample TTLep_pow #SPLIT77
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTBar --sample TTSemiLep_pow #SPLIT69
+
+#python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGJets #SPLIT40
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGHad #SPLIT20
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGSemiTbar #SPLIT20
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGSemiT #SPLIT20
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGLep #SPLIT20
 
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TToLeptons_sch_amcatnlo #SPLIT60
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample T_tch_pow #SPLIT60
@@ -26,12 +32,6 @@ python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingE
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTZToQQ #SPLIT5
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTZToLLNuNu #SPLIT30
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTZToLLNuNu_m1to10 #SPLIT2
-
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTGJets #SPLIT40
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTGHad #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTGSemiTbar #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTGSemiT #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample TTGLep #SPLIT20
 
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample WWTo2L2Nu #SPLIT10
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v12 --fileBasedSplitting --sample WWToLNuQQ #SPLIT20

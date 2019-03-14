@@ -1,8 +1,19 @@
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 #SPLIT60
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample DYJetsToLL_M10to50_LO #SPLIT60
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 #SPLIT60
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M10to50_LO #SPLIT60
 
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTLep_pow #SPLIT60
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTSingleLep_pow #SPLIT30
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagZWGamma --sample ZGTo2LG_ext #SPLIT30
+#python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagZWGamma --sample ZGToLLG #SPLIT30
+
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTBar --sample TTLep_pow #SPLIT60
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTBar --sample TTSingleLep_pow #SPLIT30
+
+#python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGJets TTGJets_ext #SPLIT30
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGHad #SPLIT15
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGSemiTbar #SPLIT15
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGSemiT #SPLIT15
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --flagTTGamma --sample TTGLep #SPLIT15
+
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TGJets #SPLIT10
 
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample T_tch_pow #SPLIT35
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TBar_tch_pow #SPLIT35
@@ -24,12 +35,6 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --p
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTZToQQ #SPLIT2
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTZToLLNuNu_ext2 TTZToLLNuNu_ext3 #SPLIT4
 
-#python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTGJets TTGJets_ext #SPLIT30
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTGHad #SPLIT15
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTGSemiTbar #SPLIT15
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTGSemiT #SPLIT15
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTGLep #SPLIT15
-
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WWTo1L1Nu2Q #SPLIT10
 
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample ZZTo2L2Nu #SPLIT30
@@ -44,10 +49,8 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --p
 
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample VVTo2L2Nu VVTo2L2Nu_ext #SPLIT15
 
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample ZGTo2LG_ext #SPLIT30
-#python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample ZGToLLG #SPLIT30
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WGToLNuG #SPLIT10
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TGJets #SPLIT10
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WJetsToLNu WJetsToLNu_ext #SPLIT40
 
 #python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WWDoubleTo2L #SPLIT2
 #python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WW WW_ext #SPLIT10
@@ -58,8 +61,6 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --p
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WWZ #SPLIT1
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WZZ #SPLIT1
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample ZZZ #SPLIT1
-
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample WJetsToLNu WJetsToLNu_ext #SPLIT40
 
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v12 --fileBasedSplitting --sample TTTT #SPLIT1
 
