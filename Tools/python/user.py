@@ -11,6 +11,8 @@ if os.environ['USER'] in ['schoef', 'rschoefbeck', 'schoefbeck']:
     postprocessing_output_directory = "/afs/hephy.at/data/rschoefbeck02/cmgTuples/"
     analysis_results                = results_directory
 
+    cache_directory                     = "/afs/hephy.at/data/rschoefbeck01/TTGammaEFT/cache/"
+
 if os.environ['USER'] in ['llechner']:
     tmp_directory                       = "/afs/hephy.at/data/llechner01/Top_tmp/"
     results_directory                   = "/afs/hephy.at/data/llechner01/TTGammaEFT/results/"
