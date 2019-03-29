@@ -59,11 +59,11 @@ directories = { key : [ os.path.join( data_directory, postprocessing_directory, 
 #TTG_SingleLeptFromT_3LPatched_test_SM              = Sample.fromDirectory(name="TTG_SingleLeptFromT_3LinePatched", treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (3L patched)", directory=directories['TTG_SingleLeptFromT_3LPatched_test_SM'])
 #TTG_SingleLeptFromT_3LPatched_test_SM.reweight_pkl = os.path.join( gridpack_directory, "SM/TTGamma_SingleLeptFromT_3LinePatched_test/", "TTGamma_SingleLeptFromT_3LinePatched_test_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
-TTG_SingleLeptFromT_1L_SM                          = Sample.fromDirectory(name="TTG_SingleLeptFromT_1Line",        treeName="Events", isData=False, color=color.TTG1L,        texName="tt#gamma (1L)",         directory=directories['TTG_SingleLeptFromT_1L_SM'])
-TTG_SingleLeptFromT_1L_SM.reweight_pkl             = os.path.join( gridpack_directory, "SM/TTGamma_SingleLeptFromT_1Line/", "TTGamma_SingleLeptFromT_1Line_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
+#TTG_SingleLeptFromT_1L_SM                          = Sample.fromDirectory(name="TTG_SingleLeptFromT_1Line",        treeName="Events", isData=False, color=color.TTG1L,        texName="tt#gamma (1L)",         directory=directories['TTG_SingleLeptFromT_1L_SM'])
+#TTG_SingleLeptFromT_1L_SM.reweight_pkl             = os.path.join( gridpack_directory, "SM/TTGamma_SingleLeptFromT_1Line/", "TTGamma_SingleLeptFromT_1Line_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
-TTG_SingleLeptFromT_3LPatched_SM                   = Sample.fromDirectory(name="TTG_SingleLeptFromT_3LinePatched", treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (3L patched)", directory=directories['TTG_SingleLeptFromT_3LinePatched_SM'])
-TTG_SingleLeptFromT_3LPatched_SM.reweight_pkl      = os.path.join( gridpack_directory, "SM/TTGamma_SingleLeptFromT_3LinePatched/", "TTGamma_SingleLeptFromT_3LinePatched_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
+#TTG_SingleLeptFromT_3LPatched_SM                   = Sample.fromDirectory(name="TTG_SingleLeptFromT_3LinePatched", treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (3L patched)", directory=directories['TTG_SingleLeptFromT_3LinePatched_SM'])
+#TTG_SingleLeptFromT_3LPatched_SM.reweight_pkl      = os.path.join( gridpack_directory, "SM/TTGamma_SingleLeptFromT_3LinePatched/", "TTGamma_SingleLeptFromT_3LinePatched_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
 #TTG_SingleLeptFromT_1L_test_EFT                    = Sample.fromDirectory(name="TTG_SingleLeptFromT_1Line_EFT",    treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTG_SingleLeptFromT_1L_test_EFT'])
 #TTG_SingleLeptFromT_1L_test_EFT.reweight_pkl       = os.path.join( gridpack_directory, "EFT/TTGamma_SingleLeptFromT_1Line_EFT_test/", "TTGamma_SingleLeptFromT_1Line_EFT_test_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
@@ -71,18 +71,18 @@ TTG_SingleLeptFromT_3LPatched_SM.reweight_pkl      = os.path.join( gridpack_dire
 #TTG_DiLept_1L_small_EFT                            = Sample.fromDirectory(name="TTG_DiLept_1L_small_EFT",          treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTGamma_DiLept_EFT_1Line_small'])
 #TTG_DiLept_1L_small_EFT.reweight_pkl               = os.path.join( gridpack_directory, "EFT/TTGamma_DiLept_1Line_EFT/", "TTGamma_DiLept_1Line_EFT_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
-#TTG_DiLept_1L_EFT                                  = Sample.fromDirectory(name="TTG_DiLept_1L_EFT",          treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTGamma_DiLept_EFT_1Line'])
-#TTG_DiLept_1L_EFT.reweight_pkl                     = os.path.join( gridpack_directory, "EFT/TTGamma_DiLept_1Line_EFT/", "TTGamma_DiLept_1Line_EFT_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
+TTG_DiLept_1L_EFT                                  = Sample.fromDirectory(name="TTG_DiLept_1L_EFT",          treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTGamma_DiLept_EFT_1Line'])
+TTG_DiLept_1L_EFT.reweight_pkl                     = os.path.join( gridpack_directory, "EFT/TTGamma_DiLept_1Line_EFT/", "TTGamma_DiLept_1Line_EFT_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
 signals = []
 
 # Private 1Line Production
-#ttGamma_SingleLeptFromT_SM_1Line                 = Sample.fromDirectory(name="ttGamma_SingleLeptFromT_SM_1Line",      treeName="Events", isData=False, color=color.TTG1L,          texName="tt#gamma", directory=directories['ttGamma_SingleLeptFromT_SM_1Line'])
-#ttGamma_SingleLeptFromTbar_SM_1Line              = Sample.fromDirectory(name="ttGamma_SingleLeptFromTbar_SM_1Line",   treeName="Events", isData=False, color=color.TTG1L,          texName="tt#gamma", directory=directories['ttGamma_SingleLeptFromTbar_SM_1Line'])
+#ttGamma_SingleLeptFromT_SM_1Line                 = Sample.fromDirectory(name="ttGamma_SingleLeptFromT_SM_1Line",      treeName="Events", isData=False, color=color.TTG1L,          texName="tt#gamma (1Line)", directory=directories['ttGamma_SingleLeptFromT_SM_1Line'])
+#ttGamma_SingleLeptFromTbar_SM_1Line              = Sample.fromDirectory(name="ttGamma_SingleLeptFromTbar_SM_1Line",   treeName="Events", isData=False, color=color.TTG1L,          texName="tt#gamma (1Line)", directory=directories['ttGamma_SingleLeptFromTbar_SM_1Line'])
 
 # Central Samples
-#ttGamma_SingleLeptFromT_SM_central               = Sample.fromDirectory(name="ttGamma_SingleLeptFromT_SM_central",    treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma", directory=directories['ttGamma_SingleLeptFromT_SM_central'])
-#ttGamma_SingleLeptFromTbar_SM_central            = Sample.fromDirectory(name="ttGamma_SingleLeptFromTbar_SM_central", treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma", directory=directories['ttGamma_SingleLeptFromTbar_SM_central'])
-#ttGamma_Dilept_SM_central                        = Sample.fromDirectory(name="ttGamma_Dilept_SM_central",             treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma", directory=directories['ttGamma_Dilept_SM_central'])
-#ttGamma_Hadronic_SM_central                      = Sample.fromDirectory(name="ttGamma_Hadronic_SM_central",           treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma", directory=directories['ttGamma_Hadronic_SM_central'])
+#ttGamma_SingleLeptFromT_SM_central               = Sample.fromDirectory(name="ttGamma_SingleLeptFromT_SM_central",    treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_SingleLeptFromT_SM_central'])
+#ttGamma_SingleLeptFromTbar_SM_central            = Sample.fromDirectory(name="ttGamma_SingleLeptFromTbar_SM_central", treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_SingleLeptFromTbar_SM_central'])
+#ttGamma_Dilept_SM_central                        = Sample.fromDirectory(name="ttGamma_Dilept_SM_central",             treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_Dilept_SM_central'])
+#ttGamma_Hadronic_SM_central                      = Sample.fromDirectory(name="ttGamma_Hadronic_SM_central",           treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_Hadronic_SM_central'])
 

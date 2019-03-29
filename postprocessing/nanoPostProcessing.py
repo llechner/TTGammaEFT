@@ -445,13 +445,14 @@ new_variables += [ 'LeptonTight1_' + var for var in writeLeptonVariables ]
 # Photons
 new_variables += [ 'nPhoton/I' ] 
 new_variables += [ 'nPhotonGood/I' ] 
+new_variables += [ 'nPhotonMVA/I' ] 
 new_variables += [ 'Photon[%s]'     %writePhotonVarString ]
 
-new_variables += [ 'PhotonGood0_'         + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonGood1_'         + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonNoIso0_'        + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonNoSieie0_'      + var for var in writePhotonVariables ]
-new_variables += [ 'PhotonNoIsoNoSieie0_' + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonGood0_'            + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonMVA0_'            + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonGood1_'            + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoChgIso0_'        + var for var in writePhotonVariables ]
+new_variables += [ 'PhotonNoChgIsoNoSieie0_' + var for var in writePhotonVariables ]
 
 # Others
 new_variables += [ 'ht/F', 'METSig/F' ]
@@ -538,10 +539,10 @@ recoMuonSel_medium      = muonSelector( "medium" )
 recoMuonSel_medium_lead = muonSelector( "medium", leading=True )
 recoMuonSel_tight       = muonSelector( "tight" )
 # Photon Selection
-recoPhotonSel_medium               = photonSelector( 'medium', year=options.year )
-recoPhotonSel_medium_noIso         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03"] )
-recoPhotonSel_medium_noSieie       = photonSelector( 'medium', year=options.year, removedCuts=["sieie"] )
-recoPhotonSel_medium_noIso_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03"] )
+recoPhotonSel_medium                  = photonSelector( 'medium', year=options.year )
+recoPhotonSel_mva                     = photonSelector( 'mva', year=options.year )
+recoPhotonSel_medium_noChgIso         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03_chg"] )
+recoPhotonSel_medium_noChgIso_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03_chg"] )
 # Jet Selection
 recoJetSel            = jetSelector( options.year )
 recoJetSel_noPtEtaCut = jetSelector( options.year )
@@ -661,7 +662,6 @@ def filler( event ):
         else:
             event.overlapRemoval = 1 # all other events
 
-        print event.overlapRemoval
         # Split gen particles
         # still needs improvement with filterGen function
         GenElectron = list( filter( lambda l: genLeptonSel(l), filterGenElectrons( gPart, status='last' ) ) )
@@ -780,16 +780,17 @@ def filler( event ):
     else:
         g['photonCat'] = -1
 
-    mediumPhotons             = list( filter( lambda g: recoPhotonSel_medium(g),               allPhotons ) )
-    mediumPhotonsNoIso        = list( filter( lambda g: recoPhotonSel_medium_noIso(g),         allPhotons ) )
-    mediumPhotonsNoSieie      = list( filter( lambda g: recoPhotonSel_medium_noSieie(g),       allPhotons ) )
-    mediumPhotonsNoIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noIso_noSieie(g), allPhotons ) )
+    mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                  allPhotons ) )
+    mvaPhotons                   = list( filter( lambda g: recoPhotonSel_mva(g),                     allPhotons ) )
+    mediumPhotonsNoChgIso        = list( filter( lambda g: recoPhotonSel_medium_noChgIso(g),         allPhotons ) )
+    mediumPhotonsNoChgIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noChgIso_noSieie(g), allPhotons ) )
+
 
     # DeltaR cleaning
-    mediumPhotons             = deltaRCleaning( mediumPhotons,             selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
-    mediumPhotonsNoIso        = deltaRCleaning( mediumPhotonsNoIso,        selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
-    mediumPhotonsNoSieie      = deltaRCleaning( mediumPhotonsNoIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
-    mediumPhotonsNoIsoNoSieie = deltaRCleaning( mediumPhotonsNoIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotons                = deltaRCleaning( mediumPhotons,                selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mvaPhotons                   = deltaRCleaning( mvaPhotons,                   selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotonsNoChgIso        = deltaRCleaning( mediumPhotonsNoChgIso,        selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotonsNoChgIsoNoSieie = deltaRCleaning( mediumPhotonsNoChgIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
 
     # Photons are stored later in this script
 
@@ -889,6 +890,7 @@ def filler( event ):
 
     event.nPhoton      = len( allPhotons )
     event.nPhotonGood  = len( mediumPhotons )
+    event.nPhotonMVA   = len( mvaPhotons )
 
     # store all photons + default photons for a faster plot script
     fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons[:20] )
@@ -898,14 +900,14 @@ def filler( event ):
     fill_vector( event, "PhotonGood0",  writePhotonVarList, p0 )
     fill_vector( event, "PhotonGood1",  writePhotonVarList, p1 )
 
-    p0NoIsoNoSieie = ( mediumPhotonsNoIsoNoSieie + [None] )[0]
-    fill_vector( event, "PhotonNoIsoNoSieie0",  writePhotonVarList, p0NoIsoNoSieie )
+    p0mva = ( mvaPhotons + [None] )[0]
+    fill_vector( event, "PhotonMVA0",  writePhotonVarList, p0mva )
 
-    p0NoSieie = ( mediumPhotonsNoSieie + [None] )[0]
-    fill_vector( event, "PhotonNoSieie0",  writePhotonVarList, p0NoSieie )
+    p0NoChgIsoNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [None] )[0]
+    fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgIsoNoSieie )
 
-    p0NoIso = ( mediumPhotonsNoIso + [None] )[0]
-    fill_vector( event, "PhotonNoIso0", writePhotonVarList, p0NoIso )
+    p0NoChgIso = ( mediumPhotonsNoChgIso + [None] )[0]
+    fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChgIso )
 
     if bj1:
         event.bbdR   = deltaR( bj0, bj1 )

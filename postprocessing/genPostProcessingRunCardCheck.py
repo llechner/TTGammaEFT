@@ -47,7 +47,6 @@ def get_parser():
     argParser.add_argument('--processingEra',               action='store',         nargs='?',  type=str,                           default='TTGammaEFT_PP_v1',         help="Name of the processing era")
     argParser.add_argument('--small',                       action='store_true',                                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used")
     argParser.add_argument('--addReweights',                action='store_true',                                                                                        help="Add reweights for sample EFT reweighting?")
-    argParser.add_argument('--noCleaning',                  action='store_true',                                                                                        help="No object deltaR cleaning?")
     argParser.add_argument('--interpolationOrder',          action='store',         nargs='?',  type=int,                           default=2,                          help="Interpolation order for EFT weights.")
 
     return argParser
@@ -156,7 +155,7 @@ genLeptonVars           = [ item.split("/")[0] for item in genLeptonVarStringWri
 genLeptonVarsRead       = [ item.split("/")[0] for item in genLeptonVarStringRead.split(",") ]
 
 genPhotonVarStringRead  = "pt/F,phi/F,eta/F,mass/F"
-genPhotonVarStringWrite = "motherPdgId/I,relIso04_all/F,photonLepdR/F,photonJetdR/F"
+genPhotonVarStringWrite = "motherPdgId/I,relIso04_all/F,photonLepdR/F,photonJetdR/F,status/I"
 genPhotonVarStringWrite = genPhotonVarStringRead + "," + genPhotonVarStringWrite
 genPhotonVars           = [ item.split("/")[0] for item in genPhotonVarStringWrite.split(",") ]
 genPhotonVarsRead       = [ item.split("/")[0] for item in genPhotonVarStringRead.split(",") ]
@@ -183,6 +182,8 @@ new_variables += [ "nGenElectron/I" ]
 new_variables += [ "GenMET_pt/F", "GenMET_phi/F" ]
 new_variables += [ "GenLepton[%s]"   %genLeptonVarStringWrite ]
 new_variables += [ "GenPhoton[%s]"   %genPhotonVarStringWrite ]
+new_variables += [ "GenPhotonPT[%s]"   %genPhotonVarStringWrite ]
+new_variables += [ "GenPhotonAll[%s]"   %genPhotonVarStringWrite ]
 new_variables += [ "GenJet[%s]"      %genJetVarStringWrite ]
 new_variables += [ "GenTop[%s]"      %genTopVarStringWrite ]
 
@@ -324,7 +325,7 @@ def filler( event ):
             GenPromptLeptons.append( genLep )
 
     # Filter gen leptons
-    GenPromptLeptons =  list( filter( lambda l:isGoodGenLepton( l ), GenPromptLeptons ) )
+#    GenPromptLeptons =  list( filter( lambda l:isGoodGenLepton( l ), GenPromptLeptons ) )
     GenPromptLeptons.sort( key = lambda p:-p['pt'] )
 
     GenPromptElectrons =  list( filter( lambda l: abs(l['pdgId'])==11, GenPromptLeptons ) )
@@ -333,19 +334,28 @@ def filler( event ):
     event.nGenMuon     = len( GenPromptMuons )
 
     # Gen photons: particle-level isolated gen photons
-    GenPhotonsAll = [ ( search.ascend(l), l ) for l in filter( lambda p: abs( p.pdgId() ) == 22 and p.pt() > 13 and search.isLast(p) and p.status() in [1, 44, 51, 52], genPart ) ]
+#    GenPhotonsAll = [ ( search.ascend(l), l ) for l in filter( lambda p: abs( p.pdgId() ) == 22 and p.pt() > 0 and search.isLast(p) and p.status() == 1, genPart ) ]
+#    for p in filter( lambda g: g.pdgId() == 22 and g.status() in [ 23 ], genPart ):
+#        if abs(search.ascend(p).mother(0).pdgId()) in [5, 11, 13]:
+#            print "photon", "status:", p.status(), "pdg", p.pdgId()
+#            print "mother", "status:", search.ascend(p).mother(0).status(), "pdg", search.ascend(p).mother(0).pdgId()
+#            print "gmother", "status:", search.ascend(search.ascend(p).mother(0)).mother(0).status(), "pdg", search.ascend(search.ascend(p).mother(0)).mother(0).pdgId()
+#            print
+
+    GenPhotonsAll = [ ( search.ascend(l), l ) for l in filter( lambda p: abs( p.pdgId() ) == 22 and p.pt() > 0, genPart ) ]
     GenPhotonsAll.sort( key = lambda p: -p[1].pt() )
     GenPhotons    = []
 
-    for first, last in GenPhotonsAll[:10]:
+    for first, last in GenPhotonsAll[:50]:
         mother_pdgId = first.mother(0).pdgId() if first.numberOfMothers() > 0 else 0
         GenPhoton    = { var:getattr(last, var)() for var in genPhotonVarsRead }
 
         # kinematic photon selection
-        if not isGoodGenPhoton( GenPhoton ): continue
+#        if not isGoodGenPhoton( GenPhoton ): continue
 
         GenPhoton['motherPdgId'] = mother_pdgId
         GenPhoton['status']      = last.status()
+        print last.status()
 
         close_particles = filter( lambda p: p!=last and deltaR2( {'phi':last.phi(), 'eta':last.eta()}, {'phi':p.phi(), 'eta':p.eta()} ) < 0.16 , search.final_state_particles_no_neutrinos )
         GenPhoton['relIso04_all'] = sum( [ p.pt() for p in close_particles ], 0 ) / last.pt()
@@ -354,22 +364,12 @@ def filler( event ):
 #            GenPhotons.append( GenPhoton )
         GenPhotons.append( GenPhoton )
 
-    if not options.noCleaning: 
-        # deltaR cleaning to photons as in run card
-        GenPhotons = list( filter( lambda p: min( [999] + [ deltaR2( p, l ) for l in GenPromptLeptons ] ) > 0.09, GenPhotons ) )
-
     # Jets
     GenJetsAll = list( filter( genJetId, reader.products['genJets'] ) )
-    GenJetsAll.sort( key = lambda p: -p['pt'] )
-    GenJets    = map( lambda t: {var: getattr(t, var)() for var in genJetVarsRead}, filter( lambda j: j.pt() > 30, GenJetsAll ) )
+    GenJets    = map( lambda t: {var: getattr(t, var)() for var in genJetVarsRead}, GenJetsAll )
+    GenJets.sort( key = lambda p: -p['pt'] )
     # Filter genJets
-    GenJets    = list( filter( lambda j: isGoodGenJet(j), GenJets ) )
-
-    if not options.noCleaning: 
-        # deltaR cleaning to photons as in run card
-        GenJets    = list( filter( lambda j: min( [999] + [ deltaR2( j, p ) for p in GenPhotons ] ) > 0.09, GenJets ) )
-        # Delta R cleaning jets to leptons as in run card
-        GenJets    = list( filter( lambda j: min( [999] + [ deltaR2( j, l ) for l in GenPromptLeptons ] ) > 0.16, GenJets ) )
+#    GenJets    = list( filter( lambda j: isGoodGenJet(j), GenJets ) )
 
     # find b's from tops:
     bPartons = [ b for b in filter( lambda p: abs(p.pdgId()) == 5 and p.numberOfMothers() == 1 and abs(p.mother(0).pdgId()) == 6,  genPart ) ]
@@ -386,13 +386,20 @@ def filler( event ):
     GenBj0, GenBj1 = ( trueBjets + trueNonBjets + [None, None] )[:2]
     if GenBj0: fill_vector( event, "GenBj0", genJetVars, GenBj0 ) 
     if GenBj1: fill_vector( event, "GenBj1", genJetVars, GenBj1 ) 
+    
 
     # store minimum DR to jets
     for GenPhoton in GenPhotons:
         GenPhoton['photonJetdR'] =  min( [999] + [ deltaR( GenPhoton, j ) for j in GenJets ] )
         GenPhoton['photonLepdR'] =  min( [999] + [ deltaR( GenPhoton, j ) for j in GenLeptons ] )
 
-    fill_vector_collection( event, "GenPhoton", genPhotonVars, GenPhotons ) 
+    GenPhotonsStati = filter( lambda p: p["status"] in [1,23], GenPhotons)
+    GenPhotonsPT = filter( lambda p: p["pt"]>13 and p["status"] in [1,23], GenPhotons)
+
+    fill_vector_collection( event, "GenPhotonAll", genPhotonVars, GenPhotons ) 
+    fill_vector_collection( event, "GenPhotonPT", genPhotonVars, GenPhotonsPT ) 
+    fill_vector_collection( event, "GenPhoton", genPhotonVars, GenPhotonsStati ) 
+
     fill_vector_collection( event, "GenLepton", genLeptonVars, GenPromptLeptons )
     fill_vector_collection( event, "GenJet",    genJetVars,    GenJets )
     event.nGenBJet = len( trueBjets )
@@ -407,13 +414,13 @@ def filler( event ):
     event.minDRjj = min( [ deltaR(j1, j2) for i, j1 in enumerate(trueNonBjets[:-1])     for j2 in trueNonBjets[i+1:]     ] + [999] )
     event.minDRbb = min( [ deltaR(b1, b2) for i, b1 in enumerate(trueBjets[:-1])        for b2 in trueBjets[i+1:]        ] + [999] )
     event.minDRll = min( [ deltaR(l1, l2) for i, l1 in enumerate(GenPromptLeptons[:-1]) for l2 in GenPromptLeptons[i+1:] ] + [999] )
-    event.minDRaa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhotons[:-1])       for g2 in GenPhotons[i+1:]       ] + [999] )
+    event.minDRaa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhotonsPT[:-1])       for g2 in GenPhotonsPT[i+1:]       ] + [999] )
     event.minDRbj = min( [ deltaR( b, j ) for b     in trueBjets                        for j  in trueNonBjets           ] + [999] )
-    event.minDRaj = min( [ deltaR( a, j ) for a     in GenPhotons                       for j  in trueNonBjets           ] + [999] )
+    event.minDRaj = min( [ deltaR( a, j ) for a     in GenPhotonsPT                       for j  in trueNonBjets           ] + [999] )
     event.minDRjl = min( [ deltaR( l, j ) for l     in GenPromptLeptons                 for j  in trueNonBjets           ] + [999] )
-    event.minDRab = min( [ deltaR( a, b ) for a     in GenPhotons                       for b  in trueBjets              ] + [999] )
+    event.minDRab = min( [ deltaR( a, b ) for a     in GenPhotonsPT                       for b  in trueBjets              ] + [999] )
     event.minDRbl = min( [ deltaR( l, b ) for l     in GenPromptLeptons                 for b  in trueBjets              ] + [999] )
-    event.minDRal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhotons             ] + [999] )
+    event.minDRal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhotonsPT             ] + [999] )
 
 tmp_dir     = ROOT.gDirectory
 output_filename =  os.path.join(output_directory, sample.name + '.root')

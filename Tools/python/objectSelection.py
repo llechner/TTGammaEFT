@@ -12,10 +12,12 @@ jetIdNamingList        = [ "tightLepVeto", "tight", "loose" ]
 # see https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc80X_doc.html
 # or  https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
-vidNestedWPBitMapNamingList = [ 'MinPtCut', 'GsfEleSCEtaMultiRangeCut', 'GsfEleDEtaInSeedCut', 'GsfEleDPhiInCut', 'GsfEleFull5x5SigmaIEtaIEtaCut', 'GsfEleHadronicOverEMEnergyScaledCut', 'GsfEleEInverseMinusPInverseCut', 'GsfEleRelPFIsoScaledCut', 'GsfEleConversionVetoCut', 'GsfEleMissingHitsCut' ]
+vidNestedWPBitMapNamingList = [ 'MinPtCut', 'GsfEleSCEtaMultiRangeCut', 'GsfEleDEtaInSeedCut', 'GsfEleDPhiInCut', 'GsfEleFull5x5SigmaIEtaIEtaCut', 'GsfEleHadronicOverEMEnergyScaledCut', 'GsfEleEInverseMinusPInverseCut', 'GsfEleRelPFIsoScaledCut', 'GsfEleConversionVetoCut', 'GsfEleMissingHitsCut' ][::-1]
 vidNestedWPBitMap           = { 'fail':0, 'veto':1, 'loose':2, 'medium':3, 'tight':4 }  # Bitwise (Electron vidNestedWPBitMap ID flags (3 bits per cut), '000'=0 is fail, '001'=1 is veto, '010'=2 is loose, '011'=3 is medium, '100'=4 is tight)
 
-vidNestedWPBitMapNamingListPhoton = [ 'MinPtCut', 'PhoSCEtaMultiRangeCut', 'PhoSingleTowerHadOverEmCut', 'PhoFull5x5SigmaIEtaIEtaCut', 'PhoAnyPFIsoWithEACut', 'PhoAnyPFIsoWithEAAndQuadScalingCut', 'PhoAnyPFIsoWithEACut2' ]
+# the PhoAnyPFIsoWithEACut is used twice in the root info, thus I call one PhoAnyPFIsoWithEACut2 (they don't have the same cuts)
+# seems like the list is implemented reversed, thus the [::-1] at the end (values make more sense in that way)
+vidNestedWPBitMapNamingListPhoton = [ 'MinPtCut', 'PhoSCEtaMultiRangeCut', 'PhoSingleTowerHadOverEmCut', 'PhoFull5x5SigmaIEtaIEtaCut', 'PhoAnyPFIsoWithEACut', 'PhoAnyPFIsoWithEAAndQuadScalingCut', 'PhoAnyPFIsoWithEACut2' ][::-1]
 
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
 def jetIdBitMapToDict( val ):
@@ -29,9 +31,12 @@ def jetIdBitMapToDict( val ):
     return dict( zip( jetIdNamingList, idList ) )
 
 def photonIdBitMapToDict( val ):
-    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:02b}".format( val ) , 2) ]
-    idList = [0] * (7-len(idList)) + idList
+    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:014b}".format( val ) , 2) ]
     return dict( zip( vidNestedWPBitMapNamingListPhoton, idList ) )
+
+def photonIdBitMapToDictRev( val ):
+    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:014b}".format( val ) , 2) ]
+    return dict( zip( vidNestedWPBitMapNamingListPhoton[::-1], idList ) )
 
 # Attention: only for nanoAOD v94x or higher (in 80x, only 2 bits are used)
 def vidNestedWPBitMapToDict( val ):
@@ -39,7 +44,7 @@ def vidNestedWPBitMapToDict( val ):
     # split vidBitmap string (containing 3 bits per cut) in parts of 3 bits ( e.g. ["100","100","011","011","001","010","010","100","100","100"] )
     # convert 3 bits to int ( e.g. [4, 4, 3, 3, 1, 2, 2, 4, 4, 4])
     # create dictionary
-    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:03b}".format( val ) , 3) ] #use 2 for nanoAOD version 80x
+    idList = [ int( x, 2 ) for x in textwrap.wrap( "{0:030b}".format( val ) , 3) ] #use 2 for nanoAOD version 80x
     return dict( zip( vidNestedWPBitMapNamingList, idList ) )
 
 # General Selection Functions
@@ -104,18 +109,36 @@ def removekey(d, key):
     return r
 
 def photonVIDSelector( p, idVal, removedCuts=[] ):
+    # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2
+
     vidDict = photonIdBitMapToDict( p["vidNestedWPBitmap"] )
     if not removedCuts:
         return all( [ cut >= idVal for cut in vidDict.values() ] )
 
+#    # all cuts in removedCuts
+#    if not list( set(vidNestedWPBitMapNamingListPhoton) - set(removedCuts) ):
+#        return True
+
+    # sieie is implemented according to the twiki
     if ("sieie"          in removedCuts):
         vidDict = removekey( vidDict, "PhoFull5x5SigmaIEtaIEtaCut" )
+    # hoe is implemented according to the twiki
     if ("hoe"            in removedCuts):
         vidDict = removekey( vidDict, "PhoSingleTowerHadOverEmCut" )
-    if ("pfRelIso03" in removedCuts):
+    # PhoAnyPFIsoWithEACut seems to be chg-iso cut, pretty sure
+    if ("pfRelIso03_chg" in removedCuts):
         vidDict = removekey( vidDict, "PhoAnyPFIsoWithEACut" )
+    # PhoAnyPFIsoWithEACut2 seems to be very close to all-iso cut, but not everywhere, sometimes it's the neutral-iso cut
+    # no clue what PhoAnyPFIsoWithEAAndQuadScalingCut is, I think its the all-iso cut with additional pt**2 dependence, hard to check
+    if ("pfRelIso03_all" in removedCuts):
         vidDict = removekey( vidDict, "PhoAnyPFIsoWithEACut2" )
         vidDict = removekey( vidDict, "PhoAnyPFIsoWithEAAndQuadScalingCut" )
+    # no clue what the scEtaMultiRange cut really is, probably out of scope for this analysis as we only use SC barrel photons
+    if ("scEtaMultiRange" in removedCuts):
+        vidDict = removekey( vidDict, "PhoSCEtaMultiRangeCut" )
+    # no clue what the minPt cut really is
+    if ("minPt"          in removedCuts):
+        vidDict = removekey( vidDict, "MinPtCut" )
         
     return all( [ cut >= idVal for cut in vidDict.values() ] )
 
@@ -335,13 +358,28 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
     idVar    = "cutBased"       if year==2016 else "cutBasedBitmap"
     photonId = photonIdCutBased if year==2016 else photonIdCutBasedBitmap
 
+    if selection == "mva":
+        def func(g):
+            if not noPtEtaCut:
+                if g["pt"]       <= 20:        return False
+#                if not g["isScEtaEB"]:        return False # Supercluster Barrel only
+                if abs(g["eta"]) >= 1.479:     return False # Barrel only
+            if g["pixelSeed"]:                 return False
+            if not g["electronVeto"]:          return False
+            if not g["mvaID_WP80"]:            return False
+            return True
+        return func
+
     if selection == "medium":
         def func(g):
             if not noPtEtaCut:
                 if g["pt"]       <= 20:                                                  return False
+#                if not g["isScEtaEB"]:                                                   return False # Supercluster Barrel only
                 if abs(g["eta"]) >= 1.479:                                               return False # Barrel only
-            if g["pixelSeed"]:                                                           return False
-            if not g["electronVeto"]:                                                    return False
+            if not "pixelSeed" in removedCuts:
+                if g["pixelSeed"]:                                                       return False
+            if not "electronVeto" in removedCuts:
+                if not g["electronVeto"]:                                                return False
 #            if g[idVar]          <  photonId[selection]:                                 return False
             if not photonVIDSelector( g, photonId[selection], removedCuts=removedCuts ): return False
             return True
@@ -351,6 +389,7 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
         def func(g):
             if not noPtEtaCut:
                 if g["pt"]       <= 20:                                             return False
+#                if not g["isScEtaEB"]:                                                   return False # Supercluster Barrel only
                 if abs(g["eta"]) >= 1.479:                                          return False # Barrel only
             if g["pixelSeed"]:                                                      return False
             if not g["electronVeto"]:                                               return False

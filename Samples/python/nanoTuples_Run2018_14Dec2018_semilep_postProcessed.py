@@ -62,30 +62,39 @@ if __name__ == "__main__":
         '''
         import argparse
         argParser = argparse.ArgumentParser(description = "Argument parser for nanoPostProcessing")
-        argParser.add_argument('--check',      action='store_true', help="check root files?")
-        argParser.add_argument('--deepcheck',  action='store_true', help="check events of root files?")
-        argParser.add_argument('--remove',     action='store_true', help="remove corrupt root files?")
-        argParser.add_argument('--log',        action='store_true', help="print each filename?")
+        argParser.add_argument('--check',   action='store_true', help="check root files?")
+        argParser.add_argument('--deepcheck',   action='store_true', help="check events of root files?")
+        argParser.add_argument('--checkWeight', action='store_true', help="check weight?")
+        argParser.add_argument('--remove',  action='store_true', help="remove corrupt root files?")
+        argParser.add_argument('--log',         action='store_true', help="print each filename?")
         return argParser
 
     args = get_parser().parse_args()
 
-    if not (args.check or args.deepcheck): sys.exit(0)
+    if not (args.check or args.deepcheck or args.checkWeight): sys.exit(0)
 
     # check Root Files
-    from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile
+    from Analysis.Tools.helpers import checkRootFile, deepCheckRootFile, deepCheckWeight
+    from multiprocessing        import Pool
 
-    for file in Run2018.files:
-        if args.log: logger.info( "Checking filepath: %s"%file )
-        corrupt = False
-        if args.check:
-            corrupt = not checkRootFile(file, checkForObjects=["Events"])
-        if args.deepcheck and not corrupt:
-            corrupt = not deepCheckRootFile(file)
-        if corrupt:
-            if file.startswith("root://hephyse.oeaw.ac.at/"):
-                file = file.split("root://hephyse.oeaw.ac.at/")[1]
-            logger.info( "File corrupt: %s"%file )
-            if args.remove:
-                logger.info( "Removing file: %s"%file )
-                os.system( "/usr/bin/rfrm -f %s"%file )
+    def checkFile( file ):
+                if args.log: logger.info( "Checking filepath: %s"%file )
+                corrupt = False
+                if args.check:
+                    corrupt = not checkRootFile(file, checkForObjects=["Events"])
+                if args.deepcheck and not corrupt:
+                    corrupt = not deepCheckRootFile(file)
+                if args.checkWeight and not corrupt:
+                    corrupt = not deepCheckWeight(file)
+                if corrupt:
+                    if file.startswith("root://hephyse.oeaw.ac.at/"):
+                        file = file.split("root://hephyse.oeaw.ac.at/")[1]
+                    logger.info( "File corrupt: %s"%file )
+                    if args.remove:
+                        logger.info( "Removing file: %s"%file )
+                        os.system( "/usr/bin/rfrm -f %s"%file )
+
+    pool = Pool( processes=16 )
+    _ = pool.map( checkFile, Run2018.files )
+    pool.close()
+
