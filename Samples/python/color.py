@@ -17,6 +17,6 @@ color.T              = ROOT.kOrange+1
 color.TGamma         = ROOT.kGray
 color.W              = ROOT.kCyan+1
 
-color.TTG1L          = ROOT.kOrange
+color.TTG1L          = ROOT.kBlue+2
 color.TTG3LBuggy     = ROOT.kRed+1
-color.TTG3LPatched   = ROOT.kGreen+1
+color.TTG3LPatched   = ROOT.kGreen+3
