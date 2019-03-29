@@ -62,7 +62,10 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --p
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample WZZ #SPLIT1
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample ZZZ #SPLIT1
 
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample TTTT #SPLIT1
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample TTTT #SPLIT5
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample TTGG #SPLIT3
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample TTWZ #SPLIT9
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample TTZZ #SPLIT2
 
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample GluGluToContinToZZTo2e2mu #SPLIT8
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample GluGluToContinToZZTo2e2tau #SPLIT2
@@ -70,5 +73,3 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --p
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample GluGluToContinToZZTo4e #SPLIT4
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample GluGluToContinToZZTo4mu #SPLIT5
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v14 --fileBasedSplitting --sample GluGluToContinToZZTo4tau #SPLIT3
-
-
