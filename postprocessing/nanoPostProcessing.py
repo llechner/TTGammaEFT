@@ -778,7 +778,8 @@ def filler( event ):
             genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
             g['photonCat'] = getPhotonCategory( genMatch, gPart )
     else:
-        g['photonCat'] = -1
+        for g in allPhotons:
+            g['photonCat'] = -1
 
     mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                  allPhotons ) )
     mvaPhotons                   = list( filter( lambda g: recoPhotonSel_mva(g),                     allPhotons ) )
