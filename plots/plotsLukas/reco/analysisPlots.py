@@ -16,7 +16,7 @@ from TTGammaEFT.Tools.user            import plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
-from TTGammaEFT.Tools.objectSelection import isBJet
+from TTGammaEFT.Tools.objectSelection import isBJet, photonSelector, vidNestedWPBitMapNamingListPhoton
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.helpers           import getCollection
@@ -37,6 +37,8 @@ argParser.add_argument('--signal',             action='store',      default=None
 argParser.add_argument('--year',               action='store',      default=None,   type=int,  choices=[2016,2017,2018],               help="Which year to plot?")
 argParser.add_argument('--onlyTTG',            action='store_true', default=False,                                                     help="Plot only ttG")
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                     help="Normalize yields" )
+argParser.add_argument('--addOtherBg',         action='store_true', default=False,                                                     help="add others background" )
+argParser.add_argument('--categoryPlots',      action='store_true', default=False,                                                     help="plot in terms of photon category" )
 args = argParser.parse_args()
 
 # Logger
@@ -85,7 +87,9 @@ scaling = { 1:0 }
 # Plotting
 def drawPlots( plots, mode, dataMCScale ):
     for log in [False, True]:
-        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, "log" if log else "lin" )
+        subdir = "cat_" if args.categoryPlots else ""
+        subdir += "log" if log else "lin"
+        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, subdir )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos): 
@@ -103,7 +107,7 @@ def drawPlots( plots, mode, dataMCScale ):
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
 	                       ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
-	                       logX = False, logY = log, sorting = True,
+	                       logX = False, logY = log, sorting = False,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},
 	                       legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2],
@@ -129,10 +133,11 @@ leptonVariables  = NanoVars.getVariables(        "Lepton", postprocessed=True, d
 leptonVarString  = NanoVars.getVariableString(   "Lepton", postprocessed=True, data=(not args.noData), plot=True )
 photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
 photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, data=(not args.noData), plot=True )
+photonVarList    = NanoVars.getVariableNameList( "Photon", postprocessed=True, data=(not args.noData), plot=True )
 
-print leptonVariables
 # Read variables and sequences
-read_variables  = ["weight/F", #"ref_weight/F",
+read_variables  = ["weight/F", "overlapRemoval/I",
+                   "PhotonGood0_photonCat/I",
                    "PV_npvsGood/I",
                    "Jet[%s]" %jetVarString,
                    "PV_npvs/I", "PV_npvsGood/I",
@@ -143,6 +148,7 @@ read_variables  = ["weight/F", #"ref_weight/F",
                    "nLeptonGoodLead/I","nElectronGoodLead/I", "nMuonGoodLead/I",
                    "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
                    "nLeptonVeto/I", "nElectronVeto/I", "nMuonVeto/I",
+                   "Photon[%s]" %photonVarString,
                    "nPhoton/I",
                    "nPhotonGood/I",
                    "MET_pt/F", "MET_phi/F", "METSig/F", "ht/F",
@@ -165,6 +171,9 @@ read_variables  = ["weight/F", #"ref_weight/F",
 #read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
 
+read_variables += map( lambda var: "PhotonMVA0_"   + var, photonVariables )
+read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )
+read_variables += map( lambda var: "PhotonNoChgIsoNoSieie0_"  + var, photonVariables )
 read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
 read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
 read_variables += map( lambda var: "LeptonGood0_"  + var, leptonVariables )
@@ -174,18 +183,34 @@ read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
 read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
 read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
 
-print read_variables
-
-read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isSingleTopTch/I",
+read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
-                     "reweightLeptonSF/F", "reweightLeptonSFUp/F", "reweightLeptonSFDown/F",
-                     "reweightLeptonTrackingSF/F",
+                     "reweightLeptonMediumSF/F", "reweightLeptonMediumSFUp/F", "reweightLeptonMediumSFDown/F",
+                     "reweightLeptonTrackingMediumSF/F",
                      "reweightDilepTrigger/F", "reweightDilepTriggerUp/F", "reweightDilepTriggerDown/F",
                      "reweightDilepTriggerBackup/F", "reweightDilepTriggerBackupUp/F", "reweightDilepTriggerBackupDown/F",
                      "reweightPhotonSF/F", "reweightPhotonSFUp/F", "reweightPhotonSFDown/F",
                      "reweightPhotonElectronVetoSF/F",
                      "reweightBTag_SF/F", "reweightBTag_SF_b_Down/F", "reweightBTag_SF_b_Up/F", "reweightBTag_SF_l_Down/F", "reweightBTag_SF_l_Up/F",
+                     'reweightL1Prefire/F', 'reweightL1PrefireUp/F', 'reweightL1PrefireDown/F',
                     ]
+
+recoPhotonSel_medium_noSieie = photonSelector( 'medium', year=args.year, removedCuts=["sieie"] )
+
+def makePhotons( event, sample ):
+    allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
+    allPhotons.sort( key = lambda j: -j['pt'] )
+    mediumPhotonsNoSieie = list( filter( lambda g: recoPhotonSel_medium_noSieie(g), allPhotons ) + [None])[0]
+
+    for var in photonVarList:
+        if mediumPhotonsNoSieie:
+            setattr( event, "PhotonNoSieie0_" + var, mediumPhotonsNoSieie[var] )
+        else:
+            try:
+                setattr( event, "PhotonNoSieie0_" + var, float("nan") )
+            except:
+                setattr( event, "PhotonNoSieie0_" + var, 0 )
+
 
 def clean_Jets( event, sample ):
     allJets    = getCollection( event, 'Jet', jetVariableNames, 'nJet' )
@@ -207,6 +232,16 @@ def clean_Jets( event, sample ):
         for i, jet in enumerate ( looseJets[:2] ):
             getattr( event, "JetGood_" + var )[i] = jet[var]
 
+def printWeight( event, sample ):
+    print "pref", event.reweightL1Prefire
+    print "PU", event.reweightPU
+    print "Lep", event.reweightLeptonMediumSF
+    print "LepT", event.reweightLeptonTrackingMediumSF
+    print "PSF", event.reweightPhotonSF
+    print "Veto", event.reweightPhotonElectronVetoSF
+    print "Btag", event.reweightBTag_SF
+    print
+
 def make_Zpt( event, sample ):
     if event.nLeptonGood > 1:
         l0 = ROOT.TLorentzVector()
@@ -226,23 +261,67 @@ def make_Zpt( event, sample ):
 def printJet(event, sample):
     print event.Jet_neHEF[0]
     print event.Jet_neHEF[1]
+
+recoPhotonSel_mva                        = photonSelector( 'mva',    year=args.year )
+def mvaPhotons( event, sample ):
+    allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
+    allPhotons.sort( key = lambda j: -j['pt'] )
+    mvaPhotons = list( filter( lambda g: recoPhotonSel_mva(g) and g["mvaID_WP90"], allPhotons ) + [None])[0]
+
+    if mvaPhotons:
+        for var in photonVarList:
+            setattr( event, "PhotonMVA0_" + var, mvaPhotons[var] )
+
 # Sequence
-sequence = []#\
+sequence = [ makePhotons ]#\
 #            clean_Jets,
 #            make_Zpt,
 #           ]
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG: mc = [ TTG_16 ]
-    else:            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
+    if args.onlyTTG and not args.categoryPlots: mc = [ TTG_16 ]
+    elif not args.categoryPlots:
+        mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]
+        if args.addOtherBg: mc += [ other_16 ]
+    elif args.categoryPlots:
+        all = all_16 if args.addOtherBg else all_noOther_16
 elif args.year == 2017:
-    if args.onlyTTG: mc = [ TTG_17 ]
-    else:            mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, other_17 ]
+    if args.onlyTTG and not args.categoryPlots: mc = [ TTG_17 ]
+    elif not args.categoryPlots:
+        mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17 ]
+        if args.addOtherBg: mc += [ other_17 ]
+    elif args.categoryPlots:
+        all = all_17 if args.addOtherBg else all_noOther_17
 elif args.year == 2018:
-    if args.onlyTTG: mc = [ TTG_18 ]
-    else:            mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
-#    else:            mc = [ DY_LO_18, TT_pow_18, other_18 ]
+    if args.onlyTTG and not args.categoryPlots: mc = [ TTG_18 ]
+    elif not args.categoryPlots:
+        mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18, ZG_18 ]
+        if args.addOtherBg: mc += [ other_18 ]
+    elif args.categoryPlots:
+        all = all_18 if args.addOtherBg else all_noOther_18
+
+if args.categoryPlots:
+    all_cat0 = all
+    all_cat0.name = "cat0"
+    all_cat0.texName = "Genuine Photons"
+    all_cat0.color   = ROOT.kOrange
+
+    all_cat1 = copy.deepcopy(all)
+    all_cat1.name    = "cat1"
+    all_cat1.texName = "MisId Electrons"
+    all_cat1.color   = ROOT.kCyan+2
+
+    all_cat2 = copy.deepcopy(all)
+    all_cat2.name    = "cat2"
+    all_cat2.texName = "Hadronic Photons"
+    all_cat2.color   = ROOT.kBlue+2
+
+    all_cat3 = copy.deepcopy(all)
+    all_cat3.name    = "cat3"
+    all_cat3.texName = "Hadronic Fakes"
+    all_cat3.color   = ROOT.kRed+1
+    mc  = [ all_cat0, all_cat1, all_cat2, all_cat3 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -266,19 +345,19 @@ for sample in mc + signals:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     sample.style          = styles.fillStyle( sample.color )
-    sample.weight         = lambda event, sample: event.reweightDilepTriggerBackup*event.reweightPU*event.reweightLeptonSF*event.reweightLeptonTrackingSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+    sample.weight         = lambda event, sample: event.reweightL1Prefire*event.reweightPU*event.reweightLeptonMediumSF*event.reweightLeptonTrackingMediumSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 
 if args.small:
     for sample in stack.samples:
         sample.normalization=1.
-        sample.reduceFiles( factor=5 )
+        sample.reduceFiles( factor=20 )
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
-Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=cutInterpreter.cutString( args.selection ) )#, addOverFlowBin='upper' )
+preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
+Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )#, addOverFlowBin='upper' )
 
 # Import plots list (AFTER setDefaults!!)
 plotListFile = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), 'plotLists', args.plotFile + '.py' )
@@ -354,6 +433,11 @@ yields   = {}
 allPlots = {}
 allModes = [ 'mumu', 'mue', 'ee' ]
 
+filterCutData = getFilterCut( args.year, isData=True )
+filterCutMc   = getFilterCut( args.year, isData=False )
+tr            = TriggerSelector( args.year )
+triggerCutMc  = tr.getSelection( "MC" )
+
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
 
@@ -367,26 +451,31 @@ for index, mode in enumerate( allModes ):
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
+    if not args.noData:    data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
+    for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
 
-    if not args.noData:    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True  ), leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ getFilterCut( args.year, isData=False ), leptonSelection, tr.getSelection( "MC" ) ] )
+    if args.categoryPlots:
+        all_cat0.addSelectionString( "PhotonGood0_photonCat==0" )
+        all_cat1.addSelectionString( "PhotonGood0_photonCat==1" )
+        all_cat2.addSelectionString( "PhotonGood0_photonCat==2" )
+        all_cat3.addSelectionString( "PhotonGood0_photonCat==3" )
 
     # Overlap removal
-    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
-        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
-        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
+#    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
+#        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
+#        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
-    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
-        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+#    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
+#        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
+#        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
-    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
-        eval('WG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
+#    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
+#        eval('WG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
+#        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
 
-    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
-        eval('TG_'        + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==1" )
-        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isSingleTopTch==0" ) #ONLY IN THE T-channel!!!
+#    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
+#        eval('TG_'        + str(args.year)[-2:]).addSelectionString( "isTGamma==1" )
+#        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isTGamma==0" ) #ONLY IN THE T-channel!!!
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 
