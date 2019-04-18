@@ -62,7 +62,7 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --p
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample WZZ #SPLIT1
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample ZZZ #SPLIT1
 
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample TTTT #SPLIT5
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample TTTT #SPLIT1
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample TTGG #SPLIT3
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample TTWZ #SPLIT9
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v15 --fileBasedSplitting --sample TTZZ #SPLIT2

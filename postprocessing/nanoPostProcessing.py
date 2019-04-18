@@ -18,7 +18,7 @@ from RootTools.core.standard                     import *
 from Analysis.Tools.helpers                      import checkRootFile, deepCheckRootFile, deepCheckWeight
 
 # Tools for systematics
-from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi
+from Analysis.Tools.helpers                      import checkRootFile, bestDRMatchInCollection, deltaR, deltaPhi, mT
 from TTGammaEFT.Tools.helpers                    import m3
 from TTGammaEFT.Tools.user                       import cache_directory
 
@@ -460,7 +460,7 @@ new_variables += [ 'photonJetdR/F', 'photonLepdR/F', 'leptonJetdR/F', 'tightLept
 new_variables += [ 'MET_pt_photonEstimated/F', 'MET_phi_photonEstimated/F', 'METSig_photonEstimated/F' ]
 new_variables += [ 'mll/F',  'mllgamma/F' ] 
 new_variables += [ 'mlltight/F',  'mllgammatight/F' ] 
-new_variables += [ 'm3/F',   'm3wBJet/F' ] 
+new_variables += [ 'm3/F',   'm3wBJet/F', 'm3gamma/F' ] 
 new_variables += [ 'lldR/F', 'lldPhi/F' ] 
 new_variables += [ 'bbdR/F', 'bbdPhi/F' ] 
 new_variables += [ 'mLtight0Gamma/F',  'mL0Gamma/F',  'mL1Gamma/F' ] 
@@ -469,6 +469,8 @@ new_variables += [ 'ltight0GammadR/F', 'ltight0GammadPhi/F' ]
 new_variables += [ 'l1GammadR/F',  'l1GammadPhi/F' ] 
 new_variables += [ 'j0GammadR/F',  'j0GammadPhi/F' ] 
 new_variables += [ 'j1GammadR/F',  'j1GammadPhi/F' ] 
+
+new_variables += [ 'mT/F']
 
 if options.addPreFiringFlag: new_variables += [ 'unPreFirableEvent/I' ]
 
@@ -840,6 +842,8 @@ def filler( event ):
     # Additional observables
     event.m3          = m3( jets )[0]
     event.m3wBJet     = m3( jets, nBJets=1, tagger=tagger, year=options.year )[0]
+    if len(mediumPhotons) > 0:
+        event.m3gamma     = m3( jets, photon=mediumPhotons[0] )[0]
 
     event.ht          = sum( [ j['pt'] for j in jets ] )
     if event.ht > 0:
@@ -936,13 +940,14 @@ def filler( event ):
     if len(jets) > 0 and len(selectedLeptons) > 0:
         event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
 
-#    if event.nLeptonGood==2 and event.nLeptonVeto==2 and event.nPhotonGood > 0 and event.PhotonGood0_pt >= 20 and abs(event.mll - 91) > 15 and abs(event.mllgamma-91) > 15 and event.mll > 40:
-#        print event.overlapRemoval
+    met = {'pt':r.MET_pt, 'phi':r.MET_phi}
+    if len(tightLeptons) > 0:
+        event.mT = mT( tightLeptons[0], met )
 
     # Topreco
     if options.topReco:
         #topReco = TopReco( ROOT.Era.run2_13tev_2016_25ns, 2, 1, 0, 'btagDeepB', 0.6321 )
-        solution = topReco.evaluate( selectedLeptons, jets, met = {'pt':r.MET_pt, 'phi':r.MET_phi})
+        solution = topReco.evaluate( selectedLeptons, jets, met = met)
         if solution:
             event.topReco_nBTag   = solution.ntags
             event.topReco_weight  = solution.weight

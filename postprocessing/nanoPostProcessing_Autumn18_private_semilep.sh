@@ -25,6 +25,10 @@ python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processin
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTWToLNu #SPLIT20
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTWToQQ #SPLIT9
 
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTHbbLep #SPLIT10
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTHbbSemiLep #SPLIT10
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTHnobb_pow #SPLIT10
+
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTZToLLNuNu #SPLIT17
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v15 --fileBasedSplitting --sample TTZToLLNuNu_m1to10 #SPLIT10
 
