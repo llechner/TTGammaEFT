@@ -20,6 +20,14 @@ multiplicityGood.append( Plot(
 ))
 
 multiplicityGood.append( Plot(
+    name      = 'nPhotonMVA',
+    texX      = 'N_{#gamma}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nPhotonMVA/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
     name      = 'nLeptonGood',
     texX      = 'N_{l}',
     texY      = 'Number of Events',
