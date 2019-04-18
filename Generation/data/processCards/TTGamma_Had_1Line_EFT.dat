@@ -9,4 +9,4 @@ define partq = u c d s u~ c~ d~ s~
 
 generate p p > t t~ > b b~ partq partq partq partq a DIM6=1
 
-output TTGamma_Had_1Line_EFT -nojpeg
+output -f

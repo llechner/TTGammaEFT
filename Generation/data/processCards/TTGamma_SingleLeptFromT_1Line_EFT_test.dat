@@ -10,4 +10,4 @@ define partq = u~ d
 
 generate p p > t t~ > b b~ partl partl partq partq a DIM6=1
 
-output TTGamma_SingleLeptFromT_1Line_EFT_test -nojpeg
+output -f
