@@ -73,7 +73,8 @@ dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']   + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
-dirs['all']              = dirs['TTG'] + dirs['TT_pow'] + dirs['DY_LO'] + dirs['singleTop'] + dirs['TG'] + dirs['WJets'] + dirs['WG'] + dirs['other']
+dirs['all_noOther']      = dirs['TTG'] + dirs['TT_pow'] + dirs['DY_LO'] + dirs['singleTop'] + dirs['TG'] + dirs['WJets'] + dirs['WG']              
+dirs['all']              = dirs['all_noOther'] + dirs['other']
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
@@ -87,6 +88,7 @@ WJets_17           = Sample.fromDPMDirectory(name="WJets",            treeName="
 WG_17              = Sample.fromDPMDirectory(name="WG",               treeName="Events", isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'])
 other_17           = Sample.fromDPMDirectory(name="other",            treeName="Events", isData=False, color=color.Other,           texName="other",             directory=directories['other'])
 all_17             = Sample.fromDPMDirectory(name="all",              treeName="Events", isData=False, color=color.TT,              texName="all",               directory=directories['all'])
+all_noOther_17     = Sample.fromDPMDirectory(name="all_noOther",      treeName="Events", isData=False, color=color.TT,              texName="all_noOther",       directory=directories['all_noOther'])
 
 signals = []
 
