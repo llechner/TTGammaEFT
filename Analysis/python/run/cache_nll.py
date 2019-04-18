@@ -44,7 +44,7 @@ argParser.add_argument('--forceWriting',       action='store_true',             
 argParser.add_argument('--order',              action='store',      default=2,                                                                       help='Polynomial order of weight string (e.g. 2)')
 argParser.add_argument('--years',              action='store',      default=[ 2016, 2017 ], type=int, choices=[2016, 2017, 2018], nargs="*",         help="Which years to combine?")
 argParser.add_argument('--selections',         action='store',      default=[ "1l", "2l" ], type=str, choices=["1l", "2l"], nargs="*",               help="Which selections to combine?")
-argParser.add_argument('--binning',            action='store',      default=[50, -2, 2, 50, -2, 2 ], type=float, nargs=6,                            help="argument parameters")
+argParser.add_argument('--binning',            action='store',      default=[30, -2, 2, 30, -2, 2 ], type=float, nargs=6,                            help="argument parameters")
 argParser.add_argument('--cores',              action='store',      default=1,                       type=int,                                       help='number of cpu cores for multicore processing')
 argParser.add_argument('--checkOnly',          action='store_true',                                                                                  help='Just check if yield is already calculated', )
 argParser.add_argument('--inclusive',          action='store_true',                                                                                  help='run inclusive regions', )
@@ -115,6 +115,8 @@ cardname += [ 'small' if args.small else 'full' ]
 if args.inclusive: cardname += [ 'incl' ]
 cardname  = '_'.join( cardname )
 
+logger.info( "General card name: %s" %cardname )
+
 command = os.path.expandvars("$CMSSW_BASE/src/TTGammaEFT/Tools/scripts/recoverDB.sh")
 def recoverDB( path, file ):
     os.system("%s %s %s"%(command, file, path))
@@ -156,10 +158,13 @@ points2D += [ (0, varY) for varY in yRange] #1D plots
 points2D += [ (varX, 0) for varX in xRange] #1D plots
 points2D += [ (varX, varY) for varY in yRange for varX in xRange] #2D plots
 
+logger.info( "Checking %i points" %(len(points2D)) )
+
 if not args.overwrite:
     points2D = [ (x,y) for x,y in points2D if not isInDatabase( x, y ) ]
 
     if args.checkOnly:
+        print "Limit not calculated for %i points" %len(points2D)
         logger.info( "Limit not calculated for %i points" %(len(points2D)) )
         sys.exit(0)
 
@@ -184,7 +189,7 @@ for sel in args.selections:
 if 2016 in args.years:
     lumi_scale[2016]       = 35.92
     if "1l" in args.selections:
-        mc["1l"][2016]         = [ DY_LO_16, TT_pow_16, ZG_16, singleTop_16, other_16 ]
+        mc["1l"][2016]         = [ TT_pow_16, DY_LO_16, singleTop_16, WJets_16, ZG_16, other_16 ]
         ttGSample["1l"][2016]  = TTG_16
     if "2l" in args.selections:
         mc["2l"][2016]         = [ DY_LO_16, TT_pow_16, ZG_16, singleTop_16, other_16 ]
@@ -202,10 +207,10 @@ if 2017 in args.years:
 if 2018 in args.years:
     lumi_scale[2018]       = 58.83
     if "1l" in args.selections:
-        mc["1l"][2018]         = [ TT_pow_18, singleTop_18 ]#, DY_LO_18, other_18 ]
+        mc["1l"][2018]         = [ TT_pow_18, singleTop_18, DY_LO_18, other_18 ]
         ttGSample["1l"][2018]  = TTG_18
     if "2l" in args.selections:
-        mc["2l"][2018]         = [ DY_LO_18, TT_pow_18, singleTop_18]#, other_18 ]
+        mc["2l"][2018]         = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
         ttGSample["2l"][2018]  = TTG_18
 
 def calculation( (var1, var2) ):

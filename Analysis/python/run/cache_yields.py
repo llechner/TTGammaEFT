@@ -56,7 +56,7 @@ elif args.year == 2017:
 elif args.year == 2018:
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
     if not args.noData:
-        from TTGammaEFT.Samples.nanoTuples_Run2018_14Sep2018_postProcessed import *
+        from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_postProcessed import *
 
 # Logger
 import Analysis.Tools.logger as logger
@@ -72,7 +72,7 @@ elif args.year == 2017:
     mc = [ DY_LO_17, TT_pow_17, singleTop_17, other_17, TTG_17 ]
 
 elif args.year == 2018:
-    mc = [ DY_LO_18, TT_pow_18, TTG_18, singleTop_18]#, other_18 ]
+    mc = [ DY_LO_18, TT_pow_18, TTG_18, singleTop_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -91,7 +91,7 @@ else:
     data_sample.setSelectionString( [ getFilterCut( args.year, isData=True ), cutInterpreter.cutString( args.selection ) ] )
     allSamples = [data_sample] + mc
 
-tr = TriggerSelector( args.year, None )
+tr = TriggerSelector( args.year )
 
 for sample in mc:
     sample.style          = styles.fillStyle( sample.color )
