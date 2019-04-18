@@ -14,7 +14,7 @@ genTop1 = []
 genTop1.append( Plot(
     name      = 'genTop1_pt',
     texX      = 'p_{T}(gen t_{1}) (GeV)',
-    texY      = 'Number of Events / 20 GeV',
+    texY      = 'Number of Events',
     attribute = lambda event, sample: event.GenTop_pt[1],
     binning   = [ 20, 0, 400 ],
 ))

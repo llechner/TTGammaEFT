@@ -16,7 +16,7 @@ cutsPhoton0.append( Plot(
     texX      = 'H/E(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Photon_hoe[0],
-    binning   = [ 50, 0, 0.05 ],
+    binning   = [ 20, 0, 0.05 ],
 ))
 
 cutsPhoton0.append( Plot(
@@ -24,7 +24,7 @@ cutsPhoton0.append( Plot(
     texX      = 'charged relIso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Photon_pfRelIso03_chg[0],
-    binning   = [ 50, 0, 0.4 ],
+    binning   = [ 20, 0, 0.2 ],
 ))
 
 cutsPhoton0.append( Plot(
@@ -32,6 +32,6 @@ cutsPhoton0.append( Plot(
     texX      = 'relIso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.Photon_pfRelIso03_all[0],
-    binning   = [ 50, 0, 0.4 ],
+    binning   = [ 20, 0, 0.03 ],
 ))
 

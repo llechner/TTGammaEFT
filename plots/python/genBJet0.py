@@ -14,9 +14,9 @@ genBJet0 = []
 genBJet0.append( Plot(
     name      = 'genBJet0_pt',
     texX      = 'p_{T}(gen b_{0}) (GeV)',
-    texY      = 'Number of Events / 10 GeV',
+    texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "GenBj0_pt/F" ),
-    binning   = [ 20, 0, 200 ],
+    binning   = [ 40, 0, 200 ],
 ))
 
 genBJet0.append( Plot(
@@ -24,7 +24,7 @@ genBJet0.append( Plot(
     texX      = '#eta(gen b_{0})',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "GenBj0_eta/F" ),
-    binning   = [ 20, -5, 5 ],
+    binning   = [ 40, -6, 6 ],
 ))
 
 genBJet0.append( Plot(
@@ -32,5 +32,5 @@ genBJet0.append( Plot(
     texX      = '#phi(gen b_{0})',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "GenBj0_phi/F" ),
-    binning   = [ 10, -pi, pi ],
+    binning   = [ 20, -pi, pi ],
 ))

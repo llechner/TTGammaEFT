@@ -31,14 +31,7 @@ checksGood.append( Plot(
     name      = 'isZG',
     texX      = 'Flag_{single-t}',
     texY      = 'Number of Events',
-    attribute = TreeVariable.fromString( "isSingleTopTch/I" ),
+    attribute = TreeVariable.fromString( "isTGamma/I" ),
     binning   = [ 2, 0, 2 ],
 ))
 
-checksGood.append( Plot(
-    name      = 'photonGood0_category',
-    texX      = 'Category_{#gamma_{0}}',
-    texY      = 'Number of Events',
-    attribute = TreeVariable.fromString( "PhotonGood0_photonCat/I" ),
-    binning   = [ 4, 0, 4 ],
-))
