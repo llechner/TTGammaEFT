@@ -193,7 +193,7 @@ class NanoVariables:
                                 Variable( "charge",            "I", read=True,  write=True,  inData=True,  inPlot=False ),
                                 Variable( "electronIdx",       "I", read=True,  write=True,  inData=True,  inPlot=False ),
                                 Variable( "jetIdx",            "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "mvaID_WP90",        "O", read=True,  write=True,  inData=True,  inPlot=False ),
+                                Variable( "mvaID_WP90",        "O", read=True,  write=True,  inData=True,  inPlot=True ),
                                 Variable( "cleanmask",         "O", read=True,  write=True,  inData=True,  inPlot=False ),
  
                                 Variable( "genPartIdx",        "I", read=True,  write=True,  inData=False, inPlot=False ),

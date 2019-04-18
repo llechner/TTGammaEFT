@@ -26,6 +26,8 @@ special_cuts = {
     "mumu":              "nGenElectron==0&&nGenMuon==2",
     "mue":               "nGenElectron==1&&nGenMuon==1",
     "ee":                "nGenElectron==2&&nGenMuon==0",
+    "e":                 "nGenElectron==1&&nGenMuon==0",
+    "mu":                "nGenElectron==0&&nGenMuon==1",
     "all":               "(1)",
     "SF":                "(nGenElectron==2||nGenMuon==2)",
   }
