@@ -23,6 +23,7 @@ from Analysis.Tools.helpers           import getCollection
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
+photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "PhotonNoChgIso0", "PhotonNoChgIsoNoSieie0" ]
 
 # Arguments
 import argparse
@@ -38,7 +39,7 @@ argParser.add_argument('--year',               action='store',      default=None
 argParser.add_argument('--onlyTTG',            action='store_true', default=False,                                                     help="Plot only ttG")
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                     help="Normalize yields" )
 argParser.add_argument('--addOtherBg',         action='store_true', default=False,                                                     help="add others background" )
-argParser.add_argument('--categoryPlots',      action='store_true', default=False,                                                     help="plot in terms of photon category" )
+argParser.add_argument('--categoryPhoton',     action='store',      default="None", type=str, choices=photonCatChoices,                help="plot in terms of photon category, choose which photon to categorize!" )
 args = argParser.parse_args()
 
 # Logger
@@ -46,6 +47,8 @@ import Analysis.Tools.logger as logger
 import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
+
+categoryPlot = args.categoryPhoton != "None"
 
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
@@ -90,9 +93,9 @@ def drawPlots( plots, mode, dataMCScale ):
     logger.info( "Plotting mode: %s"%mode )
 
     for log in [False, True]:
-        subdir = "cat_" if args.categoryPlots else ""
-        subdir += "log" if log else "lin"
-        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, subdir )
+        sc  = "cat_" if categoryPlot else ""
+        sc += "log" if log else "lin"
+        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, sc )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos):
@@ -124,7 +127,7 @@ def getYieldPlot( index ):
                 name      = 'yield',
                 texX      = 'yield',
                 texY      = 'Number of Events',
-                attribute = lambda event, sample: 0.5 + index,
+                attribute = lambda event, sample: event.nElectronTight,
                 binning   = [ 2, 0, 2 ],
                 )
 
@@ -243,28 +246,28 @@ sequence = [makePhotons ]# printWeight ]#clean_Jets ]
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG and not args.categoryPlots: mc = [ TTG_16 ]
-    elif not args.categoryPlots:
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_16 ]
+    elif not categoryPlot:
         mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16 ] #ZG_16
         if args.addOtherBg: mc += [ other_16 ]
-    elif args.categoryPlots:
+    elif categoryPlot:
         all = all_16 if args.addOtherBg else all_noOther_16
 elif args.year == 2017:
-    if args.onlyTTG and not args.categoryPlots: mc = [ TTG_17 ]
-    elif not args.categoryPlots:
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_17 ]
+    elif not categoryPlot:
         mc = [ TTG_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17 ]
         if args.addOtherBg: mc += [ other_17 ]
-    elif args.categoryPlots:
+    elif categoryPlot:
         all = all_17 if args.addOtherBg else all_noOther_17
 elif args.year == 2018:
-    if args.onlyTTG and not args.categoryPlots: mc = [ TTG_18 ]
-    elif not args.categoryPlots:
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_18 ]
+    elif not categoryPlot:
         mc = [ TTG_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18 ] #ZG_18
         if args.addOtherBg: mc += [ other_18 ]
-    elif args.categoryPlots:
+    elif categoryPlot:
         all = all_18 if args.addOtherBg else all_noOther_18
 
-if args.categoryPlots:
+if categoryPlot:
     all_cat0 = all
     all_cat0.name = "cat0"
     all_cat0.texName = "Genuine Photons"
@@ -321,7 +324,8 @@ weight_ = lambda event, sample: event.weight
 tr = TriggerSelector( args.year, singleLepton=True )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
-preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
+#preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
+preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ) ] )
 Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )#, addOverFlowBin='upper' )
 
 # Import plots list (AFTER setDefaults!!)
@@ -352,19 +356,19 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    if mode in [ "mu", "e" ]: plots += [ getYieldPlot( index ) ]
+    plots += [ getYieldPlot( index ) ]
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
     if not args.noData:    data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
+    for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
     # Define 2l selections
-    if args.categoryPlots:
-        all_cat0.addSelectionString( "PhotonGood0_photonCat==0" )
-        all_cat1.addSelectionString( "PhotonGood0_photonCat==1" )
-        all_cat2.addSelectionString( "PhotonGood0_photonCat==2" )
-        all_cat3.addSelectionString( "PhotonGood0_photonCat==3" )
+    if categoryPlot:
+        all_cat0.addSelectionString( "%s_photonCat==0"%args.categoryPhoton )
+        all_cat1.addSelectionString( "%s_photonCat==1"%args.categoryPhoton )
+        all_cat2.addSelectionString( "%s_photonCat==2"%args.categoryPhoton )
+        all_cat3.addSelectionString( "%s_photonCat==3"%args.categoryPhoton )
 
     # Overlap removal
 #    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
