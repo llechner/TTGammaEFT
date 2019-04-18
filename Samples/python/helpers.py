@@ -17,8 +17,8 @@ def getSample( pd, runName, lumi, dirs ):
     sample.lumi = lumi
     return sample
 
-def getDPMSample( pd, runName, lumi, dirs ):
-    sample  = Sample.fromDPMDirectory( name=( pd + '_' + runName ), treeName="Events", texName=( pd + ' (' + runName + ')' ), directory=dirs[ pd + '_' + runName ] )
+def getDPMSample( pd, runName, lumi, dirs, redirector ):
+    sample  = Sample.fromDPMDirectory( name=( pd + '_' + runName ), treeName="Events", redirector=redirector, texName=( pd + ' (' + runName + ')' ), directory=dirs[ pd + '_' + runName ] )
     sample.lumi = lumi
     return sample
 

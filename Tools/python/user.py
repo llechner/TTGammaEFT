@@ -1,5 +1,8 @@
 import os
 
+redirector        = 'root://hephyse.oeaw.ac.at/'
+redirector_global = 'root://cms-xrd-global.cern.ch/'
+
 if os.environ['USER'] in ['schoef', 'rschoefbeck', 'schoefbeck']:
     results_directory               = "/afs/hephy.at/data/rschoefbeck02/TTGammaEFT/results/"
     skim_output_directory           = "/afs/hephy.at/data/rschoefbeck02/TTGammaEFT/skims/"
@@ -27,17 +30,17 @@ if os.environ['USER'] in ['llechner']:
 
     postprocessing_directoryGEN         = "TTGammaEFT_PP_GEN_TTG_v3/gen/"
 
-    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v12/dilep/"
-    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v12/dilep/"
-    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v12/dilep/"
+    postprocessing_directoryMC2016      = "TTGammaEFT_PP_2016_TTG_private_v15/dilep/"
+    postprocessing_directoryMC2017      = "TTGammaEFT_PP_2017_TTG_private_v15/dilep/"
+    postprocessing_directoryMC2018      = "TTGammaEFT_PP_2018_TTG_private_v15/dilep/"
 
     postprocessing_directoryRun2016     = "TTGammaEFT_PP_2016_TTG_Data_v12/dilep/"
     postprocessing_directoryRun2017     = "TTGammaEFT_PP_2017_TTG_Data_v12/dilep/"
     postprocessing_directoryRun2018     = "TTGammaEFT_PP_2018_TTG_Data_v12_v2/dilep/"
 
-    postprocessing_directoryMC2016_semilep  = "TTGammaEFT_PP_2016_TTG_private_v12/semilep/"
-    postprocessing_directoryMC2017_semilep  = "TTGammaEFT_PP_2017_TTG_private_v12/semilep/"
-    postprocessing_directoryMC2018_semilep  = "TTGammaEFT_PP_2018_TTG_private_v12/semilep/"
+    postprocessing_directoryMC2016_semilep  = "TTGammaEFT_PP_2016_TTG_private_v15/semilep/"
+    postprocessing_directoryMC2017_semilep  = "TTGammaEFT_PP_2017_TTG_private_v15/semilep/"
+    postprocessing_directoryMC2018_semilep  = "TTGammaEFT_PP_2018_TTG_private_v15/semilep/"
 
     postprocessing_directoryRun2016_semilep = "TTGammaEFT_PP_2016_TTG_Data_v12/semilep/"
     postprocessing_directoryRun2017_semilep = "TTGammaEFT_PP_2017_TTG_Data_v12/semilep/"
@@ -56,4 +59,3 @@ if os.environ['USER'] in ['llechner']:
     cardfileLocation                    = '/afs/hephy.at/data/llechner01/TTGammaEFT/results/cardfiles/'
 
     dpm_directory                       = '/dpm/oeaw.ac.at/home/cms/store/user/llechner/'
-
