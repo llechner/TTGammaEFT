@@ -446,13 +446,21 @@ new_variables += [ 'LeptonTight1_' + var for var in writeLeptonVariables ]
 new_variables += [ 'nPhoton/I' ] 
 new_variables += [ 'nPhotonGood/I' ] 
 new_variables += [ 'nPhotonMVA/I' ] 
+new_variables += [ 'nPhotonNoChgIso/I' ] 
+new_variables += [ 'nPhotonNoSieie/I' ] 
+new_variables += [ 'nPhotonNoChgIsoNoSieie/I' ] 
 new_variables += [ 'Photon[%s]'     %writePhotonVarString ]
 
 new_variables += [ 'PhotonGood0_'            + var for var in writePhotonVariables ]
 new_variables += [ 'PhotonMVA0_'            + var for var in writePhotonVariables ]
+new_variables += [ 'mllgammaMVA/F' ] 
 new_variables += [ 'PhotonGood1_'            + var for var in writePhotonVariables ]
 new_variables += [ 'PhotonNoChgIso0_'        + var for var in writePhotonVariables ]
+new_variables += [ 'mllgammaNoChgIso/F' ] 
+new_variables += [ 'PhotonNoSieie0_'         + var for var in writePhotonVariables ]
+new_variables += [ 'mllgammaNoSieie/F' ] 
 new_variables += [ 'PhotonNoChgIsoNoSieie0_' + var for var in writePhotonVariables ]
+new_variables += [ 'mllgammaNoChgIsoNoSieie/F' ] 
 
 # Others
 new_variables += [ 'ht/F', 'METSig/F' ]
@@ -544,6 +552,7 @@ recoMuonSel_tight       = muonSelector( "tight" )
 recoPhotonSel_medium                  = photonSelector( 'medium', year=options.year )
 recoPhotonSel_mva                     = photonSelector( 'mva', year=options.year )
 recoPhotonSel_medium_noChgIso         = photonSelector( 'medium', year=options.year, removedCuts=["pfRelIso03_chg"] )
+recoPhotonSel_medium_noSieie          = photonSelector( 'medium', year=options.year, removedCuts=["sieie"] )
 recoPhotonSel_medium_noChgIso_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03_chg"] )
 # Jet Selection
 recoJetSel            = jetSelector( options.year )
@@ -691,6 +700,7 @@ def filler( event ):
         if not event.jsonPassed: event.weight = 0
         # store decision to use after filler has been executed
         event.jsonPassed_ = event.jsonPassed
+        event.overlapRemoval = 1 # No OR for data
 
     else:
         raise NotImplementedError( "isMC %r isData %r " % (isMC, isData) )
@@ -777,7 +787,7 @@ def filler( event ):
     if isMC:
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
-            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 and isMC else None
+            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 else None
             g['photonCat'] = getPhotonCategory( genMatch, gPart )
     else:
         for g in allPhotons:
@@ -786,6 +796,7 @@ def filler( event ):
     mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                  allPhotons ) )
     mvaPhotons                   = list( filter( lambda g: recoPhotonSel_mva(g),                     allPhotons ) )
     mediumPhotonsNoChgIso        = list( filter( lambda g: recoPhotonSel_medium_noChgIso(g),         allPhotons ) )
+    mediumPhotonsNoSieie         = list( filter( lambda g: recoPhotonSel_medium_noSieie(g),          allPhotons ) )
     mediumPhotonsNoChgIsoNoSieie = list( filter( lambda g: recoPhotonSel_medium_noChgIso_noSieie(g), allPhotons ) )
 
 
@@ -793,6 +804,7 @@ def filler( event ):
     mediumPhotons                = deltaRCleaning( mediumPhotons,                selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
     mvaPhotons                   = deltaRCleaning( mvaPhotons,                   selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
     mediumPhotonsNoChgIso        = deltaRCleaning( mediumPhotonsNoChgIso,        selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
+    mediumPhotonsNoSieie         = deltaRCleaning( mediumPhotonsNoSieie,         selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
     mediumPhotonsNoChgIsoNoSieie = deltaRCleaning( mediumPhotonsNoChgIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
 
     # Photons are stored later in this script
@@ -893,9 +905,12 @@ def filler( event ):
             event.j1GammadPhi = deltaPhi( jets[1]['phi'], mediumPhotons[0]['phi'] )
             event.j1GammadR   = deltaR(   jets[1],        mediumPhotons[0] )
 
-    event.nPhoton      = len( allPhotons )
-    event.nPhotonGood  = len( mediumPhotons )
-    event.nPhotonMVA   = len( mvaPhotons )
+    event.nPhoton                = len( allPhotons )
+    event.nPhotonGood            = len( mediumPhotons )
+    event.nPhotonMVA             = len( mvaPhotons )
+    event.nPhotonNoChgIso        = len( mediumPhotonsNoChgIso )
+    event.nPhotonNoSieie         = len( mediumPhotonsNoSieie )
+    event.nPhotonNoChgIsoNoSieie = len( mediumPhotonsNoChgIsoNoSieie )
 
     # store all photons + default photons for a faster plot script
     fill_vector_collection( event, "Photon", writePhotonVarList, allPhotons[:20] )
@@ -910,6 +925,9 @@ def filler( event ):
 
     p0NoChgIsoNoSieie = ( mediumPhotonsNoChgIsoNoSieie + [None] )[0]
     fill_vector( event, "PhotonNoChgIsoNoSieie0",  writePhotonVarList, p0NoChgIsoNoSieie )
+
+    p0NoSieie = ( mediumPhotonsNoSieie + [None] )[0]
+    fill_vector( event, "PhotonNoSieie0",  writePhotonVarList, p0NoSieie )
 
     p0NoChgIso = ( mediumPhotonsNoChgIso + [None] )[0]
     fill_vector( event, "PhotonNoChgIso0", writePhotonVarList, p0NoChgIso )
@@ -936,6 +954,14 @@ def filler( event ):
 
         if len(mediumPhotons) > 0:
             event.mllgamma = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(mediumPhotons[0]) ).M()
+        if p0mva:
+            event.mllgammaMVA = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(p0mva) ).M()
+        if p0NoChgIso:
+            event.mllgammaNoChgIso = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(p0NoChgIso) ).M()
+        if p0NoSieie:
+            event.mllgammaNoSieie = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(p0NoSieie) ).M()
+        if p0NoChgIsoNoSieie:
+            event.mllgammaNoChgIsoNoSieie = ( get4DVec(selectedLeptons[0]) + get4DVec(selectedLeptons[1]) + get4DVec(p0NoChgIsoNoSieie) ).M()
 
     if len(jets) > 0 and len(selectedLeptons) > 0:
         event.leptonJetdR = min( deltaR( l, j ) for j in jets for l in selectedLeptons )
