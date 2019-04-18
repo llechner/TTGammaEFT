@@ -143,13 +143,13 @@ def drawPlots( plots ):
                            drawObjects = drawObjects( lumi_scale ),
 #                           histModifications = [histmodification(logY)],
 #                           ratioModifications = [ratiomodification],
-                           legendModifications = [legendmodification],
+#                           legendModifications = [legendmodification],
                            copyIndexPHP = True,
                          )
 
 # Sample definition
 if args.year == 2016:
-    mc = [ TT_pow_16, DY_LO_16, singleTop_16, ZG_16, other_16 ]
+    mc = [ TT_pow_16, DY_LO_16, singleTop_16, WJets_16, ZG_16, other_16 ]
     ttGammaSample = TTG_16
 
 elif args.year == 2017:
@@ -157,7 +157,7 @@ elif args.year == 2017:
     ttGammaSample = TTG_17
 
 elif args.year == 2018:
-    mc = [ TT_pow_18, singleTop_18]#, other_18 ]
+    mc = [ TT_pow_18, DY_LO_18, singleTop_18, other_18 ]
     ttGammaSample = TTG_18
 
 if args.noData:
