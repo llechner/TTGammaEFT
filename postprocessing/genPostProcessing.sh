@@ -40,4 +40,7 @@
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut  #SPLIT50
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut  #SPLIT50
 
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta  #SPLIT50
+
+python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_TTBarrunCard_modified  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_TTBarrunCard  #SPLIT50
