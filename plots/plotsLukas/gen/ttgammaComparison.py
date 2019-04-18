@@ -290,7 +290,14 @@ lumi_scale = 136.6
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noDeltaR], [TTG_CMS_RunCard_noJetPtCut], [TTG_CMS_RunCard_noDeltaR_xqcut], [TTG_CMS_RunCard_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut], [TTG_CMS_RunCard_noJetPtCut_xqcut] ]
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noDeltaR_xqcut], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut] ]
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta] ]
-comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut] ]
+#comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut] ]
+comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_TTBar_RunCard_modified] ]
+
+#print args.selection
+#print "CMS", TTG_CMS_RunCard.getYieldFromDraw( weightString="weight*%f"%lumi_scale, selectionString=cutInterpreter.cutString( args.selection ) )['val']
+#print "ATLAS", TTG_ATLAS_RunCard.getYieldFromDraw( weightString="weight*%f"%lumi_scale, selectionString=cutInterpreter.cutString( args.selection ) )['val']
+
+#exit()
 
 #comparisonSamples = [ [TTG_SingleLeptFromT_3LPatched_SM], [TTG_SingleLeptFromT_1L_SM] ]
 #comparisonSamples = [ [TTG_SingleLeptFromT_3LBuggy_SM], [TTG_SingleLeptFromT_3LPatched_SM], [TTG_SingleLeptFromT_1L_SM] ]

@@ -63,6 +63,9 @@ dirs["ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut"] = [ "ttGamma_
 dirs["ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut"] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut" ]
 dirs["ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta"] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta" ]
 
+dirs["ttGamma_NoFullyHad_SM_TTBarrunCard_modified"] = [ "ttGamma_NoFullyHad_SM_TTBarrunCard_modified" ]
+#dirs["ttGamma_NoFullyHad_SM_TTBarrunCard"] = [ "ttGamma_NoFullyHad_SM_TTBarrunCard" ]
+
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
@@ -117,3 +120,6 @@ TTG_CMS_RunCard_noDeltaR_xqcut                   = Sample.fromDirectory(name="TT
 TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut        = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut",        treeName="Events", isData=False, color=color.TTG1, texName="tt#gamma (CMS, no #DeltaR, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut'])
 TTG_CMS_RunCard_noJetPtCut_xqcut                 = Sample.fromDirectory(name="TTG_CMS_RunCard_noJetPtCut_xqcut",                 treeName="Events", isData=False, color=color.TTG5, texName="tt#gamma (CMS, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut'])
 TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta        = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta",        treeName="Events", isData=False, color=color.TTG4, texName="tt#gamma (CMS, no #DeltaR, pT(jet)>0, xqcut=0, abs(#eta(l))<5)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta'])
+
+#TTG_TTBar_RunCard                                  = Sample.fromDirectory(name="TTG_TTBar_RunCard",            treeName="Events", isData=False, color=color.TTG1,        texName="tt#gamma (tt)",   directory=directories['ttGamma_NoFullyHad_SM_TTBarrunCard'])
+TTG_TTBar_RunCard_modified                         = Sample.fromDirectory(name="TTG_TTBar_RunCard_modified",    treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (tt mod)",   directory=directories['ttGamma_NoFullyHad_SM_TTBarrunCard_modified'])
