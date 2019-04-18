@@ -7,7 +7,7 @@ import copy
 import imp 
 
 # TTGammaEFT
-from TTGammaEFT.Tools.user    import results_directory, tmp_directory
+from TTGammaEFT.Tools.user    import results_directory, tmp_directory, cache_directory
 from Analysis.Tools.u_float   import u_float
 from Analysis.Tools.ResultsDB import ResultsDB
 
@@ -46,7 +46,10 @@ class Process:
 
         # xsec cache location
         columns = [ "process", "nEvents" ] + self.config.all_model_couplings
-        self.xsecDB = ResultsDB( os.path.join( results_directory, xsec_cache ), self.config.model_name, columns )
+        cacheDir = os.path.join( cache_directory, "xsec" )
+        if not os.path.isdir( cacheDir ):
+            os.makedirs( cacheDir )
+        self.xsecDB = ResultsDB( os.path.join( cacheDir, xsec_cache ), self.config.model_name, columns )
 
     def __initialize( self, modified_couplings = None ):
 
@@ -87,9 +90,8 @@ class Process:
 
         # copy reweight cards
         if self.reweight:
-            source = os.path.join( self.config.data_path, 'template', 'template_reweight_card_' + self.config.model_name + '.dat' )
+            source = os.path.join( self.config.data_path, 'restrict', 'template_reweight_card_' + self.config.model_name + '.dat' )
             target = os.path.join( self.processTmpDir, 'Cards', 'reweight_card.dat' )
-            print target
             shutil.copyfile( source, target )
             if os.path.isfile( target ):
                 logger.debug( "Done with %s -> %s", source, target )
@@ -114,7 +116,7 @@ class Process:
         with open( self.templateProcessCard, 'r' ) as f:  #FIXME (somewhat dirty)
             for line in f:
                 if "import model" in line:
-                    out.write( "import model %s-no_b_mass\n\n"%self.config.model_name )
+                    out.write( "import model %s\n\n"%self.config.model_name )
                 elif "NP=1" in line and self.config.model_name == "TopEffTh":
                     out.write( line.replace("NP=1","NP=2") )
                 elif "NP=1" in line and self.config.model_name == "dim6top_LO":

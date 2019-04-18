@@ -22,13 +22,13 @@ else:
 
 # Find all processes
 process_path     = os.path.expandvars( "$CMSSW_BASE/src/TTGammaEFT/Generation/data/processCards" )
+run_path         = os.path.expandvars( "$CMSSW_BASE/src/TTGammaEFT/Generation/data/runCards" )
 defaultProcesses = [ os.path.splitext(f)[0] for f in os.listdir( process_path ) if os.path.isfile( os.path.join( process_path, f ) ) and f.endswith( '.dat' ) ]
-defaultModels    = [ 'dim6top_LO' ]
 defaultLogger    = [ 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET' ]
 
 argParser = argparse.ArgumentParser( description = "Argument parser" )
 argParser.add_argument('--process',       action='store',         default='TTGamma_SingleLeptFromT_3LineBuggy', choices=defaultProcesses, help="Which process?")
-argParser.add_argument('--model',         action='store',         default='dim6top_LO',                         choices=defaultModels,    help="Which madgraph model?")
+argParser.add_argument('--model',         action='store',         default='dim6top_LO',                                                   help="Which madgraph model?")
 argParser.add_argument('--couplings',     action='store',         default=[],         nargs='*',  type = str,                             help="Give a list of the non-zero couplings with values, e.g. NAME1 VALUE1 NAME2 VALUE2")
 argParser.add_argument('--runCard',       action='store',         default=None,                   type = str,                             help="Path to run card")
 argParser.add_argument('--overwrite',     action='store_true',                                                                            help="Overwrite exisiting x-sec calculation and gridpack")
@@ -39,9 +39,10 @@ argParser.add_argument('--makeGridpack',  action='store_true',                  
 argParser.add_argument('--calcXSec',      action='store_true',                                                                            help="calculate x-sec?" )
 args = argParser.parse_args()
 
-logger = logger.get_logger( args.logLevel, logFile=None )
-
 logger.debug( "Coupling arguments: %r", args.couplings )
+
+if not args.runCard.endswith(".dat"): args.runCard += ".dat"
+runCardPath = os.path.join( run_path, args.runCard )
 
 # Single argument -> interpret as file
 if len( args.couplings ) == 1 and os.path.isfile( args.couplings[0] ):
@@ -94,10 +95,11 @@ for i_param_point, param_point in enumerate( param_points ):
     # Let's not leave the user in the dark
     logger.info( "Model:        %s", args.model )
     logger.info( "Process:      %s", args.process )
+    logger.info( "Run card:     %s", args.runCard )
     logger.info( "Couplings:    %s", ", ".join( [ "%s=%5.4f" % c for c in modification_dict.items()] ) )
 
     # make process
-    p = Process( process=args.process, nEvents=args.nEvents, config=config, run_card=args.runCard ) 
+    p = Process( process=args.process, nEvents=args.nEvents, config=config, run_card=runCardPath ) 
 
     # Make grid pack
     if args.makeGridpack: 
