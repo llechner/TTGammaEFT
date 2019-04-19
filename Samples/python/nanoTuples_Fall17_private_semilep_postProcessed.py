@@ -23,6 +23,11 @@ from TTGammaEFT.Tools.user import dpm_directory as data_directory
 data_directory += "postprocessed/"
 from TTGammaEFT.Tools.user import postprocessing_directoryMC2017_semilep as postprocessing_directory
 
+# Redirector
+try:
+    redirector = sys.modules['__main__'].redirector
+except:
+    from TTGammaEFT.Tools.user import redirector as redirector
 
 logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory ) )
 

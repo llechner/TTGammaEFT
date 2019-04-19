@@ -1,5 +1,8 @@
 import os
 
+redirector        = 'root://hephyse.oeaw.ac.at/'
+redirector_global = 'root://cms-xrd-global.cern.ch/'
+
 if os.environ['USER'] in ['schoef', 'rschoefbeck', 'schoefbeck']:
     results_directory               = "/afs/hephy.at/data/rschoefbeck02/TTGammaEFT/results/"
     skim_output_directory           = "/afs/hephy.at/data/rschoefbeck02/TTGammaEFT/skims/"

@@ -169,11 +169,11 @@ ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta.nEvents  =
 
 ttGamma_NoFullyHad_SM_TTBarrunCard                  = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_TTBarrunCard", "/ttGamma_1Line_noFullyHad_TTBarrunCard_v2/llechner-ttGamma_1Line_noFullyHad_TTBarrunCard_v2-1d2fefe5e8f8ca18fa7ce16fa7fd3f92/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_SM_TTBarrunCard.xSection         = 7.495
-ttGamma_NoFullyHad_SM_TTBarrunCard.nEvents          = 1000000
+ttGamma_NoFullyHad_SM_TTBarrunCard.nEvents          = 960000
 
 ttGamma_NoFullyHad_SM_TTBarrunCard_modified                  = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_TTBarrunCard_modified", "/ttGamma_1Line_noFullyHad_TTBarrunCard_modified/llechner-ttGamma_1Line_noFullyHad_TTBarrunCard_modified-e3ad6238f1aa89850d9606dd6e9ea78a/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_SM_TTBarrunCard_modified.xSection         = 6.645
-ttGamma_NoFullyHad_SM_TTBarrunCard_modified.nEvents          = 590000
+ttGamma_NoFullyHad_SM_TTBarrunCard_modified.nEvents          = 1000000
 
 
 SM = [

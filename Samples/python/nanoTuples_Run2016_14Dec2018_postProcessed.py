@@ -23,6 +23,12 @@ from TTGammaEFT.Tools.user import dpm_directory as data_directory
 data_directory += "postprocessed/"
 from TTGammaEFT.Tools.user import postprocessing_directoryRun2016 as postprocessing_directory
 
+# Redirector
+try:
+    redirector = sys.modules['__main__'].redirector
+except:
+    from TTGammaEFT.Tools.user import redirector as redirector
+
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
 
 allSamples = [ 'MuonEG', 'DoubleMuon', 'DoubleEG', 'SingleMuon', 'SingleElectron' ]
@@ -44,7 +50,7 @@ for key in dirs:
 
 allSamples_Data25ns  = []
 for pd in allSamples:
-    vars()[ pd + '_Run2016' ] = getDPMSample( pd, 'Run2016', lumi*1000, dirs )
+    vars()[ pd + '_Run2016' ] = getDPMSample( pd, 'Run2016', lumi*1000, dirs, redirector = redirector )
     allSamples_Data25ns += [ vars()[ pd + '_Run2016' ] ]
 
 Run2016      = Sample.combine( "Run2016", allSamples_Data25ns, texName = "Data" )
