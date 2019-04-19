@@ -151,7 +151,7 @@ if __name__ == "__main__":
     for path in pathes:
         try:
             sample = Sample.fromDPMDirectory(name="sample", treeName="Events", redirector=redirector, directory=path)
-            files += sample.files #[ file.split(redir)[1] for file in sample.files ]
+            files += sample.files
             del sample
         except:
             logger.info( "Sample not processed: %s"%path )

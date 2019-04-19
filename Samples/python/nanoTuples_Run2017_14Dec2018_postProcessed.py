@@ -49,7 +49,7 @@ for key in dirs:
 
 allSamples_Data25ns  = []
 for pd in allSamples:
-    vars()[ pd + '_Run2017' ] = getDPMSample( pd, 'Run2017', lumi*1000, dirs, redirector = redirector )
+    vars()[ pd + '_Run2017' ] = getDPMSample( pd, 'Run2017', lumi*1000, dirs, redirector )
     allSamples_Data25ns += [ vars()[ pd + '_Run2017' ] ]
 
 Run2017      = Sample.combine( "Run2017", allSamples_Data25ns, texName = "Data" )
