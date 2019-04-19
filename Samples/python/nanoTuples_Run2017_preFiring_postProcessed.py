@@ -24,6 +24,12 @@ from TTGammaEFT.Tools.user import data_directory1 as data_directory
 #data_directory += "postprocessed/"
 from TTGammaEFT.Tools.user import postprocessing_directoryPrefiring as postprocessing_directory
 
+# Redirector
+try:
+    redirector = sys.modules['__main__'].redirector
+except:
+    from TTGammaEFT.Tools.user import redirector as redirector
+
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
 
 allSamples = [ 'SingleMuon' ]

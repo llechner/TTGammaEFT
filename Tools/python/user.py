@@ -59,4 +59,3 @@ if os.environ['USER'] in ['llechner']:
     cardfileLocation                    = '/afs/hephy.at/data/llechner01/TTGammaEFT/results/cardfiles/'
 
     dpm_directory                       = '/dpm/oeaw.ac.at/home/cms/store/user/llechner/'
-

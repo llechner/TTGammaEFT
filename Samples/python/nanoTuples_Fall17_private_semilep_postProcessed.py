@@ -84,6 +84,7 @@ dirs['all']              = dirs['all_noOther'] + dirs['other']
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
+
 DY_LO_17           = Sample.fromDPMDirectory(name="DY_LO",            treeName="Events", isData=False, color=color.DY,              texName="DY (LO)",           directory=directories['DY_LO'])
 TT_pow_17          = Sample.fromDPMDirectory(name="TT_pow",           treeName="Events", isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories['TT_pow'])
 singleTop_17       = Sample.fromDPMDirectory(name="singleTop",        treeName="Events", isData=False, color=color.T,               texName="single-t",          directory=directories['singleTop'])
@@ -141,7 +142,7 @@ if __name__ == "__main__":
     files = []
     for path in pathes:
         try:
-            sample = Sample.fromDPMDirectory(name="sample", treeName="Events", directory=path)
+            sample = Sample.fromDPMDirectory(name="sample", treeName="Events", redirector=redirector, directory=path)
             files += sample.files
             del sample
         except:
