@@ -13,6 +13,7 @@ from RootTools.core.standard          import *
 
 # Internal Imports
 from TTGammaEFT.Tools.user            import plot_directory
+from TTGammaEFT.Tools.helpers         import splitList
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
@@ -40,6 +41,9 @@ argParser.add_argument('--onlyTTG',            action='store_true', default=Fals
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                     help="Normalize yields" )
 argParser.add_argument('--addOtherBg',         action='store_true', default=False,                                                     help="add others background" )
 argParser.add_argument('--categoryPhoton',     action='store',      default="None", type=str, choices=photonCatChoices,                help="plot in terms of photon category, choose which photon to categorize!" )
+argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all"],              help="plot lepton mode" )
+argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3],                         help="Maximum number of simultaneous jobs.")
+argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2],                         help="Run only job i")
 args = argParser.parse_args()
 
 # Logger
@@ -144,7 +148,6 @@ photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, d
 
 # Read variables and sequences
 read_variables  = ["weight/F", "overlapRemoval/I",
-                   "PhotonGood0_photonCat/I",
                    "PV_npvsGood/I",
                    "PV_npvs/I", "PV_npvsGood/I",
                    "nJetGood/I", "nBTagGood/I",
@@ -164,6 +167,8 @@ read_variables  = ["weight/F", "overlapRemoval/I",
                    "m3/F", "m3wBJet/F",
                    "photonJetdR/F", "tightLeptonJetdR/F",
                   ]
+
+read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
 
 #read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
@@ -341,7 +346,13 @@ else:           from plotLists import plotListData   as plotList
 # Loop over channels
 yields   = {}
 allPlots = {}
-allModes = [ 'mu', 'e' ]
+if args.mode:
+    allModes = [ args.mode ]
+elif args.nJobs != 1:
+    allModes = [ 'mu', 'e', 'all']
+    allModes = splitList( allModes, args.nJobs)[args.job]
+else:
+    allModes = [ 'mu', 'e' ]
 
 filterCutData = getFilterCut( args.year, isData=True )
 filterCutMc   = getFilterCut( args.year, isData=False )
@@ -411,6 +422,8 @@ for index, mode in enumerate( allModes ):
     allPlots[mode] = copy.deepcopy(plots) # deep copy for creating SF/all plots afterwards!
     drawPlots( allPlots[mode], mode, dataMCScale )
 
+if args.mode:
+    sys.exit(0)
 
 # Add the different channels into all
 yields["all"] = {}
