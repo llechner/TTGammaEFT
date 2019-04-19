@@ -31,7 +31,6 @@ except:
 
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
 
-#allSamples = [ 'MuonEG', 'DoubleMuon', 'DoubleEG', 'SingleMuon', 'SingleElectron' ]
 allSamples = [ 'SingleMuon', 'SingleElectron' ]
 lumi       = 35.92
 

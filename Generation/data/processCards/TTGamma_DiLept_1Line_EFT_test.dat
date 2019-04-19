@@ -9,4 +9,4 @@ define partl = vm mu+ vm~ mu-
 
 generate p p > t t~ > b b~ partl partl partl partl a DIM6=1
 
-output TTGamma_DiLept_1Line_EFT_test -nojpeg
+output -f

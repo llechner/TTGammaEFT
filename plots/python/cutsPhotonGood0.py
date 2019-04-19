@@ -16,7 +16,7 @@ cutsPhotonGood0.append( Plot(
     texX      = 'H/E(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "PhotonGood0_hoe/F" ),
-    binning   = [ 50, 0, 0.05 ],
+    binning   = [ 20, 0, 0.05 ],
 ))
 
 cutsPhotonGood0.append( Plot(
@@ -24,7 +24,7 @@ cutsPhotonGood0.append( Plot(
     texX      = 'charged relIso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "PhotonGood0_pfRelIso03_chg/F" ),
-    binning   = [ 50, 0, 0.4 ],
+    binning   = [ 20, 0, 0.03 ],
 ))
 
 cutsPhotonGood0.append( Plot(
@@ -32,6 +32,46 @@ cutsPhotonGood0.append( Plot(
     texX      = 'relIso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "PhotonGood0_pfRelIso03_all/F" ),
-    binning   = [ 50, 0, 0.4 ],
+    binning   = [ 20, 0, 0.2 ],
+))
+
+cutsPhotonGood0.append( Plot(
+    name      = 'photonGood0_sieie',
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "PhotonGood0_sieie/F" ),
+    binning   = [ 40, 0.005, 0.025 ],
+))
+
+cutsPhotonGood0.append( Plot(
+    name      = 'photonGood0_pfIso03_all',
+    texX      = 'Iso_{0.3}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.PhotonGood0_pfRelIso03_all * event.PhotonGood0_pt,
+    binning   = [ 20, 0, 5 ],
+))
+
+cutsPhotonGood0.append( Plot(
+    name      = 'photonGood0_pfIso03_chg',
+    texX      = 'charged Iso_{0.3}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.PhotonGood0_pfRelIso03_chg * event.PhotonGood0_pt,
+    binning   = [ 20, 0, 0.5 ],
+))
+
+cutsPhotonGood0.append( Plot(
+    name      = 'photonGood0_pfIso03_chg_wide',
+    texX      = 'charged Iso_{0.3}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.PhotonGood0_pfRelIso03_chg * event.PhotonGood0_pt,
+    binning   = [ 20, 0, 20 ],
+))
+
+cutsPhotonGood0.append( Plot(
+    name      = 'photonGood0_pfIso03_n',
+    texX      = 'neutral Iso_{0.3}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: (event.PhotonGood0_pfRelIso03_all - event.PhotonGood0_pfRelIso03_chg) * event.PhotonGood0_pt,
+    binning   = [ 20, 0, 5 ],
 ))
 

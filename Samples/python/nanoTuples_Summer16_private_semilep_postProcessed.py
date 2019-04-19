@@ -45,9 +45,9 @@ dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext", "T_tch_pow", "TBar_tc
 
 dirs['ZGTo2LG']          = ["ZGTo2LG_ext"]
 
-#dirs['TG']               = ["TGJets"]
+dirs['TG']               = ["TGJets"]
 dirs['WJets']            = ["WJetsToLNu_comb"]
-#dirs['WG']               = ["WGToLNuG"]
+dirs['WG']               = ["WGToLNuG"]
 
 # other
 dirs['TZQ']              = ["tZq_ll_ext"]
@@ -81,7 +81,8 @@ dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
-#dirs['all']              = dirs['TTG'] + dirs['TT_pow'] + dirs['DY_LO'] + dirs['singleTop'] + dirs['ZGTo2LG'] + dirs['TG'] + dirs['WJets'] + dirs['WG'] + dirs['other']
+dirs['all_noOther']      = dirs['TTG'] + dirs['TT_pow'] + dirs['DY_LO'] + dirs['singleTop'] + dirs['ZGTo2LG'] + dirs['TG'] + dirs['WJets'] + dirs['WG']
+dirs['all']              = dirs['all_noOther'] + dirs['other']
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
@@ -91,11 +92,12 @@ TT_pow_16          = Sample.fromDPMDirectory(name="TT_pow",           treeName="
 singleTop_16       = Sample.fromDPMDirectory(name="singleTop",        treeName="Events", redirector=redirector, isData=False, color=color.T,               texName="single-t",          directory=directories['singleTop'])
 TTG_16             = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG'])
 WJets_16           = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories['WJets'])
-ZG_16              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,         texName="Z#gamma",           directory=directories['ZGTo2LG'] )
-#TG_16              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories['TG'])
-#WG_16              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'])
+#ZG_16              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGTo2LG'] )
+TG_16              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories['TG'])
+WG_16              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'])
 other_16           = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories['other'])
-#all_16             = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories['all'])
+all_16             = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories['all'])
+all_noOther_16     = Sample.fromDPMDirectory(name="all_noOther",      treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all_noOther",       directory=directories['all_noOther'])
 
 signals = []
 

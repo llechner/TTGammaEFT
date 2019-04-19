@@ -35,18 +35,3 @@ massGood.append( Plot(
     binning   = [ 50, 0, 200 ],
 ))
 
-massGood.append( Plot(
-    name      = 'm3Good',
-    texX      = 'M_{3} (GeV)',
-    texY      = 'Number of Events / 5 GeV',
-    attribute = TreeVariable.fromString( "m3/F" ),
-    binning   = [ 50, 0, 250 ],
-))
-
-massGood.append( Plot(
-    name      = 'm3wBJetGood',
-    texX      = 'M_{3} w/ 1 BJet (GeV)',
-    texY      = 'Number of Events / 5 GeV',
-    attribute = TreeVariable.fromString( "m3wBJet/F" ),
-    binning   = [ 50, 0, 250 ],
-))

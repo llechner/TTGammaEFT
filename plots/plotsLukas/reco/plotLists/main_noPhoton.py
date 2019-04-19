@@ -4,6 +4,7 @@
 
 # Standard Imports
 from math                             import pi
+import copy
 
 # RootTools
 from RootTools.core.standard          import *
@@ -16,10 +17,9 @@ from TTGammaEFT.plots.bjetGood0                import bjetGood0
 from TTGammaEFT.plots.bjetGood1                import bjetGood1
 from TTGammaEFT.plots.multiplicityGoodNoPhoton import multiplicityGoodNoPhoton
 from TTGammaEFT.plots.met                      import met
-from TTGammaEFT.plots.ht                       import ht
 from TTGammaEFT.plots.beam                     import beam
 from TTGammaEFT.plots.mll                      import mll
-#from TTGammaEFT.plots.metSig                   import metSig
+from TTGammaEFT.plots.checksGood               import checksGood
 
 # plotList
 plotListData  = []
@@ -31,9 +31,9 @@ plotListData += bjetGood0
 plotListData += bjetGood1
 plotListData += multiplicityGoodNoPhoton
 plotListData += met
-plotListData += ht
 plotListData += beam
 plotListData += mll
-#plotListData += metSig
 
-plotListDataMC  = plotListData
+plotListDataMC  = copy.copy(plotListData)
+plotListDataMC += checksGood
+

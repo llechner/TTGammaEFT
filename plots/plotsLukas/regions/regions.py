@@ -142,7 +142,7 @@ def drawPlots( plots ):
                            drawObjects = drawObjects( lumi_scale ),
 #                           histModifications = [histmodification(logY)],
 #                           ratioModifications = [ratiomodification],
-                           legendModifications = [legendmodification],
+#                           legendModifications = [legendmodification],
                            copyIndexPHP = True,
                          )
 
@@ -156,7 +156,7 @@ elif args.year == 2017:
     ttGammaSample = TTG_17
 
 elif args.year == 2018:
-    mc = [ DY_LO_18, TT_pow_18, singleTop_18]#, other_18 ]
+    mc = [ DY_LO_18, TT_pow_18, singleTop_18, other_18 ]
     ttGammaSample = TTG_18 
 
 if args.noData:

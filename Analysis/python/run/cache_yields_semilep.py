@@ -63,13 +63,13 @@ logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
 # Sample definition
 if args.year == 2016:
-    mc = [ TT_pow_16, DY_LO_16, singleTop_16, ZG_16, other_16, TTG_16 ]
+    mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, ZG_16, other_16 ]
 
 elif args.year == 2017:
-    mc = [ DY_LO_17, TG_17, WJets_17, WG_17, TT_pow_17, singleTop_17, other_17, TTG_17 ]
+    mc = [ TTG_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, other_17 ]
 
 elif args.year == 2018:
-    mc = [ TT_pow_18, TTG_18, singleTop_18 ]#, DY_LO_18, singleTop_18, other_18 ]
+    mc = [ TTG_18, TT_pow_18, DY_LO_18, singleTop_18, other_18 ]
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -88,7 +88,7 @@ else:
     data_sample.setSelectionString( [ getFilterCut( args.year, isData=True ), cutInterpreter.cutString( args.selection ) ] )
     allSamples = [data_sample] + mc
 
-tr = TriggerSelector( args.year, None, singleLepton=True )
+tr = TriggerSelector( args.year, singleLepton=True )
 
 for sample in mc:
     sample.style          = styles.fillStyle( sample.color )

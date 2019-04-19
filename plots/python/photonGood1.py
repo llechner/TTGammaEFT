@@ -24,7 +24,7 @@ photonGood1.append( Plot(
     texX      = 'p_{T}(#gamma_{1}) (GeV)',
     texY      = 'Number of Events / 100 GeV',
     attribute = TreeVariable.fromString( "PhotonGood1_pt/F" ),
-    binning   = [ 6, 20, 620 ],
+    binning   = [ 5, 20, 520 ],
 ))
 
 photonGood1.append( Plot(

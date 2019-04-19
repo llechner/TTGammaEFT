@@ -14,9 +14,9 @@ genLepton0 = []
 genLepton0.append( Plot(
     name      = 'genLepton0_pt',
     texX      = 'p_{T}(l_{0}) (GeV)',
-    texY      = 'Number of Events / 15 GeV',
+    texY      = 'Number of Events',
     attribute = lambda event, sample: event.GenLepton_pt[0],
-    binning   = [ 20, 0, 300 ],
+    binning   = [ 40, 0, 300 ],
 ))
 
 genLepton0.append( Plot(
@@ -24,7 +24,7 @@ genLepton0.append( Plot(
     texX      = '#eta(l_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.GenLepton_eta[0],
-    binning   = [ 30, -3, 3 ],
+    binning   = [ 40, -6, 6 ],
 ))
 
 genLepton0.append( Plot(
@@ -32,5 +32,5 @@ genLepton0.append( Plot(
     texX      = '#phi(l_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.GenLepton_phi[0],
-    binning   = [ 10, -pi, pi ],
+    binning   = [ 20, -pi, pi ],
 ))

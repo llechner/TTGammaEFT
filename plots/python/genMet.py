@@ -14,7 +14,7 @@ genMet = []
 genMet.append( Plot(
     name      = 'GenMET_pt_wide',
     texX      = 'E^{miss}_{T} (GeV)',
-    texY      = 'Number of Events / 20 GeV',
+    texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "GenMET_pt/F" ),
     binning   = [ 20, 0, 400 ],
 ))
@@ -22,7 +22,7 @@ genMet.append( Plot(
 genMet.append( Plot(
     name      = 'GenMET_pt',
     texX      = 'E^{miss}_{T} (GeV)',
-    texY      = 'Number of Events / 10 GeV',
+    texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "GenMET_pt/F" ),
     binning   = [ 20, 0, 200 ],
 ))

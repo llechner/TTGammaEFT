@@ -47,6 +47,25 @@ dirs['ttGamma_SingleLeptFromTbar_SM_central']    = [ "ttGamma_SingleLeptFromTbar
 dirs['ttGamma_Dilept_SM_central']                = [ "ttGamma_Dilept_SM_central" ]
 dirs['ttGamma_Hadronic_SM_central']              = [ "ttGamma_Hadronic_SM_central" ]
 
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard']          = [ "ttGamma_NoFullyHad_SM_CMSrunCard" ]
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard_small']    = [ "ttGamma_NoFullyHad_SM_CMSrunCard_small" ]
+dirs['ttGamma_NoFullyHad_SM_ATLASrunCard']        = [ "ttGamma_NoFullyHad_SM_ATLASrunCard" ]
+dirs['ttGamma_NoFullyHad_SM_ATLASrunCard_small']  = [ "ttGamma_NoFullyHad_SM_ATLASrunCard_small" ]
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR'] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR" ]
+
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard_xqcut'] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_xqcut" ]
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut'] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut" ]
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_xqcut'] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_xqcut" ]
+dirs['ttGamma_NoFullyHad_SM_CMSrunCard_xqcut'] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_xqcut" ]
+#dirs['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut'] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut" ]
+
+dirs["ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut"] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut" ]
+dirs["ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut"] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut" ]
+dirs["ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta"] = [ "ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta" ]
+
+dirs["ttGamma_NoFullyHad_SM_TTBarrunCard_modified"] = [ "ttGamma_NoFullyHad_SM_TTBarrunCard_modified" ]
+#dirs["ttGamma_NoFullyHad_SM_TTBarrunCard"] = [ "ttGamma_NoFullyHad_SM_TTBarrunCard" ]
+
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
@@ -86,3 +105,21 @@ signals = []
 #ttGamma_Dilept_SM_central                        = Sample.fromDirectory(name="ttGamma_Dilept_SM_central",             treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_Dilept_SM_central'])
 #ttGamma_Hadronic_SM_central                      = Sample.fromDirectory(name="ttGamma_Hadronic_SM_central",           treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_Hadronic_SM_central'])
 
+# CMS ATLAS runcard comparison
+TTG_CMS_RunCard_noDeltaR                         = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR",   treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (CMS, no #DeltaR)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR'])
+TTG_CMS_RunCard                                  = Sample.fromDirectory(name="TTG_CMS_RunCard",            treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (CMS)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard'])
+#TTG_CMS_RunCard_small                            = Sample.fromDirectory(name="TTG_CMS_RunCard_small",      treeName="Events", isData=False, color=color.TTG1L,        texName="tt#gamma (CMS)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_small'])
+TTG_ATLAS_RunCard                                = Sample.fromDirectory(name="TTG_ATLAS_RunCard",          treeName="Events", isData=False, color=color.TTG3LBuggy,   texName="tt#gamma (ATLAS)", directory=directories['ttGamma_NoFullyHad_SM_ATLASrunCard'])
+#TTG_ATLAS_RunCard_small                          = Sample.fromDirectory(name="TTG_ATLAS_RunCard_small",    treeName="Events", isData=False, color=color.TTG3LBuggy,   texName="tt#gamma (ATLAS)", directory=directories['ttGamma_NoFullyHad_SM_ATLASrunCard_small'])
+
+TTG_CMS_RunCard_noJetPtCut                       = Sample.fromDirectory(name="TTG_CMS_RunCard_noJetPtCut",            treeName="Events", isData=False, color=color.TTG1, texName="tt#gamma (CMS, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut'])
+TTG_CMS_RunCard_xqcut                            = Sample.fromDirectory(name="TTG_CMS_RunCard_xqcut",                 treeName="Events", isData=False, color=color.TTG2, texName="tt#gamma (CMS, xqcut=0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_xqcut'])
+#TTG_CMS_RunCard_noDeltaR_noJetPtCut              = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR_noJetPtCut",   treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (CMS, no #DeltaR, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut'])
+TTG_CMS_RunCard_noDeltaR_xqcut                   = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR_xqcut",        treeName="Events", isData=False, color=color.TTG3, texName="tt#gamma (CMS, no #DeltaR, xqcut=0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_xqcut'])
+
+TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut        = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut",        treeName="Events", isData=False, color=color.TTG1, texName="tt#gamma (CMS, no #DeltaR, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut'])
+TTG_CMS_RunCard_noJetPtCut_xqcut                 = Sample.fromDirectory(name="TTG_CMS_RunCard_noJetPtCut_xqcut",                 treeName="Events", isData=False, color=color.TTG5, texName="tt#gamma (CMS, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut'])
+TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta        = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta",        treeName="Events", isData=False, color=color.TTG4, texName="tt#gamma (CMS, no #DeltaR, pT(jet)>0, xqcut=0, abs(#eta(l))<5)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta'])
+
+#TTG_TTBar_RunCard                                  = Sample.fromDirectory(name="TTG_TTBar_RunCard",            treeName="Events", isData=False, color=color.TTG1,        texName="tt#gamma (tt)",   directory=directories['ttGamma_NoFullyHad_SM_TTBarrunCard'])
+TTG_TTBar_RunCard_modified                         = Sample.fromDirectory(name="TTG_TTBar_RunCard_modified",    treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (tt mod)",   directory=directories['ttGamma_NoFullyHad_SM_TTBarrunCard_modified'])

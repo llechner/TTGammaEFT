@@ -27,3 +27,11 @@ mll.append( Plot(
     binning   = [ 50, 0, 200 ],
 ))
 
+mll.append( Plot(
+    name      = 'mllTight',
+    texX      = 'M(ll) (GeV)',
+    texY      = 'Number of Events / 4 GeV',
+    attribute = TreeVariable.fromString( "mlltight/F" ),
+    binning   = [ 50, 0, 200 ],
+))
+

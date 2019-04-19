@@ -220,8 +220,8 @@ def plot1D( dat, var, xmin, xmax, profiled=False ):
     func.SetLineColor(ROOT.kBlack)
     func.SetNpx(1000)
 
-    print " ".join(args.selections+map(str,args.years)), var, '68', x68min, x68max
-    print " ".join(args.selections+map(str,args.years)), var, '95', x95min, x95max
+    print args.selections, " ".join(args.selections+map(str,args.years)), var, '68', x68min, x68max
+    print args.selections, " ".join(args.selections+map(str,args.years)), var, '95', x95min, x95max
 
     ROOT.gStyle.SetPadLeftMargin(0.14)
     ROOT.gStyle.SetPadRightMargin(0.1)

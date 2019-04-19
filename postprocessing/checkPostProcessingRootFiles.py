@@ -8,6 +8,7 @@ from RootTools.core.standard                     import *
 
 # User specific
 from TTGammaEFT.Tools.user import dpm_directory
+redirector        = 'root://hephyse.oeaw.ac.at/'
 
 def get_parser():
     ''' Argument parser for post-processing module.
@@ -75,7 +76,7 @@ for ppEntry in dictList:
     dirPath = os.path.join( dpm_directory, 'postprocessed', ppEntry["dir"], ppEntry["skim"], sample  )
     p = subprocess.Popen( ["dpns-ls -l %s" %dirPath], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
-    rootFiles = [ line[:-1].split()[-1].rstrip(".root") for line in p.stdout.readlines() if line[:-1].split()[-1].endswith(".root") ]
+    rootFiles = [ line[:-1].split()[-1].split(".root")[0] for line in p.stdout.readlines() if line[:-1].split()[-1].endswith(".root") ]
     if not rootFiles:
         logger.info("Sample %s not processed" %sample)
         if args.createExec:
@@ -83,12 +84,16 @@ for ppEntry in dictList:
         continue
 
     if len(rootFiles) != ppEntry['nFiles']:
-        logger.debug("Not all files of sample %s processed" %sample)
-        missingFiles = [ int( item.split("_")[-1] ) for item in rootFiles ]
+        logger.debug("Not all files of sample %s processed: %i of %i" %(sample, len(rootFiles), ppEntry["nFiles"]) )
+#        if len(rootFiles) > ppEntry['nFiles']:
+#            os.system(" ".join(["xrdfs", redirector, "rm", "/cms" + dirPath.split("/cms")[1] + "/" + sample + ".root" ]) )
+#            os.system(" ".join(["dpns-ls", dirPath + "/" + sample + ".root" ]) )
+        missingFiles = [ int( item.split("_")[-1] ) if item.split("_")[-1].isdigit() else item for item in rootFiles ]
         missingFiles = list( set( range( ppEntry['nFiles'] ) ) - set( missingFiles ) )
         missingFiles.sort()
         missingFiles = map( str, missingFiles )
         logger.info("Missing filenumbers of sample %s: %s" %(sample, ', '.join(missingFiles) ))
+
         if args.createExec:
             for miss in missingFiles:
                 execCommand += [ ppEntry["command"].split("#SPLIT")[0] + "--nJobs %s --job %s"%(ppEntry["nFiles"], miss) ]

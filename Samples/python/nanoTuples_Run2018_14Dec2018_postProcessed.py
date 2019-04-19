@@ -35,14 +35,14 @@ allSamples = [ 'MuonEG', 'DoubleMuon', 'EGamma', 'SingleMuon' ]
 lumi       = 58.83
 
 dirs = {}
-for ( run, version ) in [ ( 'A', '' ), ( 'B', '' ), ( 'C', '' ), ( 'D', '_ver2' ) ]:
+for ( run, version ) in [ ( 'A', '' ), ( 'B', '' ), ( 'C', '' ), ( 'D', '' ) ]:
     runTag = 'Run2018' + run + '_14Dec2018' + version
     for pd in allSamples:
         dirs[ pd + "_Run2018" + run + version ] = [ pd + "_" + runTag ]
 
 for pd in allSamples:
     merge( pd, 'Run2018ABC',    [ 'Run2018A', 'Run2018B', 'Run2018C' ], dirs )
-    merge( pd, 'Run2018',       [ 'Run2018ABC', 'Run2018D_ver2' ], dirs )
+    merge( pd, 'Run2018',       [ 'Run2018ABC', 'Run2018D' ], dirs )
 
 for key in dirs:
     dirs[key] = [ os.path.join( data_directory, postprocessing_directory, dir ) for dir in dirs[key] ]
