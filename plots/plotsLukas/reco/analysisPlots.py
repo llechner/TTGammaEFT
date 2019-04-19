@@ -13,6 +13,7 @@ from RootTools.core.standard          import *
 
 # Internal Imports
 from TTGammaEFT.Tools.user            import plot_directory
+from TTGammaEFT.Tools.helpers         import splitList
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
@@ -28,20 +29,21 @@ photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "Photon
 # Arguments
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
-argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                  help="Log level for logging")
+argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                     help="Log level for logging")
 argParser.add_argument('--plot_directory',     action='store',      default='102X_TTG_ppv1_v1')
 argParser.add_argument('--plotFile',           action='store',      default='all_noPhoton')
 argParser.add_argument('--selection',          action='store',      default='dilepOS-nLepVeto2-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40')
-argParser.add_argument('--small',              action='store_true',                                                                    help='Run only on a small subset of the data?', )
-argParser.add_argument('--noData',             action='store_true', default=False,                                                     help='also plot data?')
-argParser.add_argument('--signal',             action='store',      default=None,   nargs='?', choices=[None],                         help="Add signal to plot")
-argParser.add_argument('--year',               action='store',      default=None,   type=int,  choices=[2016,2017,2018],               help="Which year to plot?")
-argParser.add_argument('--onlyTTG',            action='store_true', default=False,                                                     help="Plot only ttG")
-argParser.add_argument('--normalize',          action='store_true', default=False,                                                     help="Normalize yields" )
-argParser.add_argument('--addOtherBg',         action='store_true', default=False,                                                     help="add others background" )
-argParser.add_argument('--categoryPhoton',     action='store',      default="None", type=str, choices=photonCatChoices,                help="plot in terms of photon category, choose which photon to categorize!" )
-argParser.add_argument('--runOnLxPlus',        action='store_true',                                                                    help='run on Condor' )
-argParser.add_argument('--copyToHephy',        action='store_true',                                                                    help='copy plots to Hephy www' )
+argParser.add_argument('--small',              action='store_true',                                                                       help='Run only on a small subset of the data?', )
+argParser.add_argument('--noData',             action='store_true', default=False,                                                        help='also plot data?')
+argParser.add_argument('--signal',             action='store',      default=None,   nargs='?', choices=[None],                            help="Add signal to plot")
+argParser.add_argument('--year',               action='store',      default=None,   type=int,  choices=[2016,2017,2018],                  help="Which year to plot?")
+argParser.add_argument('--onlyTTG',            action='store_true', default=False,                                                        help="Plot only ttG")
+argParser.add_argument('--normalize',          action='store_true', default=False,                                                        help="Normalize yields" )
+argParser.add_argument('--addOtherBg',         action='store_true', default=False,                                                        help="add others background" )
+argParser.add_argument('--categoryPhoton',     action='store',      default="None", type=str, choices=photonCatChoices,                   help="plot in terms of photon category, choose which photon to categorize!" )
+argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mumu", "mue", "ee", "SF", "all"], help="plot lepton mode" )
+argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                        help="Maximum number of simultaneous jobs.")
+argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                        help="Run only job i")
 args = argParser.parse_args()
 
 # Logger
@@ -170,7 +172,7 @@ read_variables  = ["weight/F", "overlapRemoval/I",
                    "j1GammadR/F", "j1GammadPhi/F",
                   ]
 
-read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices ]
+read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
 
 #read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
@@ -438,7 +440,13 @@ addPlots.append( Plot(
 # Loop over channels
 yields   = {}
 allPlots = {}
-allModes = [ 'mumu', 'mue', 'ee' ]
+if args.mode:
+    allModes = [ args.mode ]
+elif args.nJobs != 1:
+    allModes = [ 'mumu', 'mue', 'ee', 'SF', 'all']
+    allModes = splitList( allModes, args.nJobs)[args.job]
+else
+    allModes = [ 'mumu', 'mue', 'ee' ]
 
 filterCutData = getFilterCut( args.year, isData=True )
 filterCutMc   = getFilterCut( args.year, isData=False )
@@ -505,6 +513,8 @@ for index, mode in enumerate( allModes ):
     allPlots[mode] = copy.deepcopy(plots) # deep copy for creating SF/all plots afterwards!
     drawPlots( allPlots[mode], mode, dataMCScale )
 
+if args.mode:
+    sys.exit(0)
 
 # Add the different channels into SF and all
 for mode in [ "SF", "all" ]:

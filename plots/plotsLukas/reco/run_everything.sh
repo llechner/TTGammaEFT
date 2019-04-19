@@ -1,0 +1,6 @@
+submitCondor.py $@ --dpm --maxRetries 2 --resubmitFailedJobs --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/plot16/  --queue longlunch analysisPlots2016.sh
+submitCondor.py $@ --dpm --maxRetries 2 --resubmitFailedJobs --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/plot16s/ --queue longlunch analysisPlots2016_semilep.sh
+submitCondor.py $@ --dpm --maxRetries 2 --resubmitFailedJobs --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/plot17/  --queue longlunch analysisPlots2017.sh
+submitCondor.py $@ --dpm --maxRetries 2 --resubmitFailedJobs --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/plot17s/ --queue longlunch analysisPlots2017_semilep.sh
+submitCondor.py $@ --dpm --maxRetries 2 --resubmitFailedJobs --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/plot18/  --queue longlunch analysisPlots2018.sh
+submitCondor.py $@ --dpm --maxRetries 2 --resubmitFailedJobs --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/plot18s/ --queue longlunch analysisPlots2018_semilep.sh

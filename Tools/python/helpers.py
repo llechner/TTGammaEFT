@@ -42,4 +42,9 @@ def m3( jets, nBJets=0, tagger='DeepCSV', year=2016, photon=None ):
 
     return m3, i1, i2, i3
 
+def splitList( l, n ):
+    k, m = divmod(len(l), n)
+    return list(l[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in xrange(n))
+
+
 
