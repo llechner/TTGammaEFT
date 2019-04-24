@@ -160,15 +160,16 @@ elif len(samples)==1:
     sampleForPU = samples[0]
 
 if options.reduceSizeBy > 1:
+    if isData:
+        raise NotImplementedError( "Data samples shouldn't be reduced in size!!" )
     logger.info("Sample size will be reduced by a factor of %s", options.reduceSizeBy)
     logger.info("Recalculating the normalization of the sample. Before: %s", sample.normalization)
-    if isData:
-        NotImplementedError ( "Data samples shouldn't be reduced in size!!" )
     sample.reduceFiles( factor = options.reduceSizeBy )
     # recompute the normalization
     sample.clear()
     sample.name += "_redBy%s"%options.reduceSizeBy
     sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
+    sample.isData = isData
     logger.info("New normalization: %s", sample.normalization)
 
 postfix       = '_small' if options.small else ''
@@ -616,6 +617,8 @@ if not options.skipNanoTools:
     sample.files = newfiles
     sample.name  = MetSig.name
     sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
+    sample.isData = isData
+    del MetSig
 
 # Define a reader
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
