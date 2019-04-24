@@ -330,6 +330,7 @@ tr = TriggerSelector( args.year, singleLepton=True )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
+print args.selection
 preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ) ] )
 Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )#, addOverFlowBin='upper' )
 
@@ -346,7 +347,7 @@ else:           from plotLists import plotListData   as plotList
 # Loop over channels
 yields   = {}
 allPlots = {}
-if args.mode:
+if args.mode != "None":
     allModes = [ args.mode ]
 elif args.nJobs != 1:
     allModes = [ 'mu', 'e', 'all']
@@ -422,7 +423,7 @@ for index, mode in enumerate( allModes ):
     allPlots[mode] = copy.deepcopy(plots) # deep copy for creating SF/all plots afterwards!
     drawPlots( allPlots[mode], mode, dataMCScale )
 
-if args.mode:
+if args.mode != "None" or args.nJobs != 1:
     sys.exit(0)
 
 # Add the different channels into all

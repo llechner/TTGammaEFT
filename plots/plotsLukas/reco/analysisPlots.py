@@ -440,12 +440,12 @@ addPlots.append( Plot(
 # Loop over channels
 yields   = {}
 allPlots = {}
-if args.mode:
+if args.mode != "None":
     allModes = [ args.mode ]
 elif args.nJobs != 1:
     allModes = [ 'mumu', 'mue', 'ee', 'SF', 'all']
     allModes = splitList( allModes, args.nJobs)[args.job]
-else
+else:
     allModes = [ 'mumu', 'mue', 'ee' ]
 
 filterCutData = getFilterCut( args.year, isData=True )
@@ -513,7 +513,7 @@ for index, mode in enumerate( allModes ):
     allPlots[mode] = copy.deepcopy(plots) # deep copy for creating SF/all plots afterwards!
     drawPlots( allPlots[mode], mode, dataMCScale )
 
-if args.mode:
+if args.mode != "None" or args.nJobs != 1:
     sys.exit(0)
 
 # Add the different channels into SF and all
