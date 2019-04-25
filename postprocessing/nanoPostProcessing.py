@@ -616,7 +616,7 @@ if not options.skipNanoTools:
     sample.clear()
     sample.files = newfiles
     sample.name  = MetSig.name
-    sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
+    if isMC: sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
     sample.isData = isData
     del MetSig
 
