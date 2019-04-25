@@ -21,8 +21,8 @@ export HOME=`pwd`
 echo "Current home dir: ${HOME}"
 echo "---------------------"
 
-scram project CMSSW CMSSW_9_4_10
-cd CMSSW_9_4_10/src/
+scram project CMSSW CMSSW_10_2_9
+cd CMSSW_10_2_9/src/
 eval `scramv1 runtime -sh`
 # github repos
 git cms-init
@@ -31,6 +31,8 @@ git clone -b "ppv16" --single-branch --depth 1 https://github.com/llechner/TTGam
 git clone -b "ppv16" --single-branch --depth 1 https://github.com/llechner/Samples.git
 git clone -b "ppv16" --single-branch --depth 1 https://github.com/llechner/Analysis.git
 git clone -b "ppv16" --single-branch --depth 1 https://github.com/llechner/RootTools.git
+mkdir PhysicsTools
+git clone -b "ppv16" --single-branch --depth 1 https://github.com/llechner/nanoAOD-tools.git PhysicsTools/NanoAODTools
 
 scram b
 eval `scramv1 runtime -sh`
@@ -53,7 +55,7 @@ ls -l
 echo "---------------------"
 
 echo "Executing:"
-echo ${@:2} --runOnLxPlus --writeToDPM
+echo ${@:2} --runOnLxPlus
 echo "---------------------"
 
 ${@:2} --runOnLxPlus
