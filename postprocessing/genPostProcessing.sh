@@ -29,18 +29,24 @@
 # ATLAS CMS runCard check
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v5 --sample ttGamma_NoFullyHad_SM_CMSrunCard_small       #SPLIT20
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v5 --sample ttGamma_NoFullyHad_SM_ATLASrunCard_small     #SPLIT20
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR    #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard             #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_ATLASrunCard           #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_TTBarrunCard_mllOnly  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_TTBarrunCard_modified  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_TTBarrunCard  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard             #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_ATLASrunCard           #SPLIT50
 
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_xqcut                #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_xqcut       #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut           #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut  #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut  #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR    #SPLIT50
 
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_xqcut                #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_xqcut       #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut           #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut  #SPLIT50
 
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_TTBarrunCard_modified  #SPLIT50
-#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v8 --sample ttGamma_NoFullyHad_SM_TTBarrunCard  #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta  #SPLIT50
+
+python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Dilept_newCentral_1Line #SPLIT50
+python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_SemiLept_newCentral_1Line #SPLIT50
+python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Had_newCentral_1Line #SPLIT50
+python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_newCentral_1Line #SPLIT50

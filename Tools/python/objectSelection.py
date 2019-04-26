@@ -219,7 +219,7 @@ def barrelEndcapVeto( p ):
     return ( absEta > 1.556 or absEta <= 1.4442 )
 
 # Reco Selectors
-def jetSelector( year, noPtEtaCut=False ):
+def jetSelector( year, noPtEtaCut=False, ptVar="pt" ):
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetIDhttps://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
     if year == 2016:
         # According to AN-2017/197
@@ -227,7 +227,7 @@ def jetSelector( year, noPtEtaCut=False ):
         def func(j):
 #            if not j["cleanmask"]:                           return False # too much cleaning
             if not noPtEtaCut:
-                if j["pt"]       <= 30:                      return False
+                if j[ptVar]      <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
             if not jetIdBitMapToDict( j["jetId"] )["loose"]: return False
             return True
@@ -238,7 +238,7 @@ def jetSelector( year, noPtEtaCut=False ):
         def func(j):
 #            if not j["cleanmask"]:                           return False
             if not noPtEtaCut:
-                if j["pt"]       <= 30:                      return False
+                if j[ptVar]      <= 30:                      return False
                 if abs(j["eta"]) >= 2.4:                     return False
             if not jetIdBitMapToDict( j["jetId"] )["tight"]: return False
             return True

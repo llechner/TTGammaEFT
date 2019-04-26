@@ -291,7 +291,8 @@ lumi_scale = 136.6
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noDeltaR_xqcut], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut] ]
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta] ]
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut] ]
-comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_TTBar_RunCard_modified] ]
+#comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_TTBar_RunCard_modified], [TTG_TTBar_RunCard], [TTG_TTBar_RunCard_mllOnly] ]
+comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_NoFullyHad_comb_newCentral_RunCard], [TTG_NoFullyHad_newCentral_RunCard] ]
 
 #print args.selection
 #print "CMS", TTG_CMS_RunCard.getYieldFromDraw( weightString="weight*%f"%lumi_scale, selectionString=cutInterpreter.cutString( args.selection ) )['val']
@@ -436,6 +437,14 @@ addPlots.append( Plot(
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.GenAllPhotonsPt,
     binning   = [ 20, 0, 400 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenPhotonTopMother_pt',
+    texX      = 'p_{T}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllPhoton_pt[0] if abs(event.GenAllPhoton_motherPdgId[0]) == 6 else -999,
+    binning   = [ 40, 0, 200 ],
 ))
 
 addPlots.append( Plot(
