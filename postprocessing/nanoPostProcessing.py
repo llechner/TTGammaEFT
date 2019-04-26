@@ -664,7 +664,6 @@ def addMissingVariables( coll, vars ):
 
 def addJetFlags( jets, cleaningLeptons, cleaningPhotons ):
     for j in jets:
-        print "pt_nom", j["pt_nom"]
         minDRLep    = min( [ deltaR( l, j ) for l in cleaningLeptons ] + [999] )
         minDRPhoton = min( [ deltaR( g, j ) for g in cleaningPhotons ] + [999] )
         j["clean"]  = minDRLep > 0.4 and minDRPhoton > 0.1
@@ -705,7 +704,6 @@ def filler( event ):
     # shortcut
     r = reader.event
 
-    print "MET", r.MET_pt_nom
     event.isData = isData
 
     if options.addPreFiringFlag:
