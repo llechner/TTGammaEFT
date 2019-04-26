@@ -161,7 +161,7 @@ ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut.nEvents  = 1000000
 
 ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut          = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut", "/ttGamma_1Line_noFullyHad_CMSrunCard_noDeltaR_noJetPtCut_v2/llechner-ttGamma_1Line_noFullyHad_CMSrunCard_noDeltaR_noJetPtCut_v2-4f55cdb9331a749a20a4bc50482fb2ca/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut.xSection = 5.527
-ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut.nEvents  = 995000
+ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut.nEvents  = 1000000
 
 ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta          = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta", "/ttGamma_1Line_noFullyHad_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta/llechner-ttGamma_1Line_noFullyHad_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta-f709eb426af1740e1b0fee8558bc8aab/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta.xSection = 4.535
@@ -169,7 +169,7 @@ ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta.nEvents  =
 
 ttGamma_NoFullyHad_SM_TTBarrunCard                  = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_TTBarrunCard", "/ttGamma_1Line_noFullyHad_TTBarrunCard_v2/llechner-ttGamma_1Line_noFullyHad_TTBarrunCard_v2-1d2fefe5e8f8ca18fa7ce16fa7fd3f92/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_SM_TTBarrunCard.xSection         = 7.495
-ttGamma_NoFullyHad_SM_TTBarrunCard.nEvents          = 995000
+ttGamma_NoFullyHad_SM_TTBarrunCard.nEvents          = 1000000
 
 ttGamma_NoFullyHad_SM_TTBarrunCard_modified                  = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_TTBarrunCard_modified", "/ttGamma_1Line_noFullyHad_TTBarrunCard_modified/llechner-ttGamma_1Line_noFullyHad_TTBarrunCard_modified-e3ad6238f1aa89850d9606dd6e9ea78a/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_SM_TTBarrunCard_modified.xSection         = 6.645
@@ -180,7 +180,29 @@ ttGamma_NoFullyHad_SM_TTBarrunCard_mllOnly.xSection         = 4.285
 ttGamma_NoFullyHad_SM_TTBarrunCard_mllOnly.nEvents          = 995000
 
 
+# Private 1Line Production, new run card
+ttGamma_Dilept_newCentral_1Line                 = FWLiteSample.fromDAS("ttGamma_Dilept_newCentral_1Line", "/ttGamma_1Line_Dilept/llechner-ttGamma_1Line_Dilept-ad7c181eaba4dcf9b36e872f951a2fd9/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Dilept_newCentral_1Line.xSection        = 1.512
+ttGamma_Dilept_newCentral_1Line.nEvents         = 960000
+
+ttGamma_SemiLept_newCentral_1Line               = FWLiteSample.fromDAS("ttGamma_SemiLept_newCentral_1Line", "/ttGamma_1Line_SemiLept/llechner-ttGamma_1Line_SemiLept-278d719001d8ddc9de05a9c5f6ca8736/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SemiLept_newCentral_1Line.xSection      = 5.125
+ttGamma_SemiLept_newCentral_1Line.nEvents       = 980000
+
+ttGamma_Had_newCentral_1Line                    = FWLiteSample.fromDAS("ttGamma_Had_newCentral_1Line", "/ttGamma_1Line_Had/llechner-ttGamma_1Line_Had-141227a8e6d27ca9a0e4ef7748f55f6c/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Had_newCentral_1Line.xSection           = 4.213
+ttGamma_Had_newCentral_1Line.nEvents            = 995000
+
+ttGamma_NoFullyHad_newCentral_1Line             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line", "/ttGamma_1Line_NoFullyHad/llechner-ttGamma_1Line_NoFullyHad-17628da6eab494c9f81686715e5b9d62/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_newCentral_1Line.xSection    = 6.634
+ttGamma_NoFullyHad_newCentral_1Line.nEvents     = 990000
+
+
 SM = [
+    ttGamma_Dilept_newCentral_1Line,
+    ttGamma_SemiLept_newCentral_1Line,
+    ttGamma_Had_newCentral_1Line,
+    ttGamma_NoFullyHad_newCentral_1Line,
     TTGamma_SingleLeptFromT_SM_1Line_test,
     TTGamma_SingleLeptFromT_SM_3LineBuggy_test,
     TTGamma_SingleLeptFromT_SM_3LinePatched_test,
