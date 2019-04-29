@@ -1283,7 +1283,7 @@ if options.writeToDPM:
 
         for fname in files:
 
-            if not fname.endswith(".root"): continue # remove that for copying log files
+            if not fname.endswith(".root") or fname.startswith("nanoAOD_"): continue # remove that for copying log files
 
             source  = os.path.abspath( os.path.join( dirname, fname ) )
             target  = os.path.join( targetPath, fname )
