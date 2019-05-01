@@ -143,7 +143,7 @@ photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, d
 photonVarList    = NanoVars.getVariableNameList( "Photon", postprocessed=True, data=(not args.noData), plot=True )
 
 # Read variables and sequences
-read_variables  = ["weight/F", "overlapRemoval/I",
+read_variables  = ["weight/F",
                    "PV_npvsGood/I",
                    "Jet[%s]" %jetVarString,
                    "PV_npvs/I", "PV_npvsGood/I",
@@ -191,7 +191,7 @@ read_variables += map( lambda var: "LeptonTight1_" + var, leptonVariables )
 read_variables += map( lambda var: "Bj0_"          + var, bJetVariables )
 read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
 
-read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I",
+read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
                      "reweightLeptonMediumSF/F", "reweightLeptonMediumSFUp/F", "reweightLeptonMediumSFDown/F",
                      "reweightLeptonTrackingMediumSF/F",
