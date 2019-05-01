@@ -34,7 +34,7 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 # Directories
 dirs = {}
 
-dirs['DY_LO']            = ["DYJetsToLL_M50_LO_ext1_comb", "DYJetsToLL_M10to50_LO" ]
+dirs['DY_LO']            = ["DYJetsToLL_M50_LO_ext1_comb", "DYJetsToLL_M10to50_NLO" ]
 
 dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow" ] 
 
@@ -95,8 +95,8 @@ WJets_16           = Sample.fromDPMDirectory(name="WJets",            treeName="
 ZG_16              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGTo2LG'] )
 TG_16              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories['TG'])
 WG_16              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'])
-other_16           = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories['other'])
-all_16             = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories['all'])
+#other_16           = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories['other'])
+#all_16             = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories['all'])
 all_noOther_16     = Sample.fromDPMDirectory(name="all_noOther",      treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all_noOther",       directory=directories['all_noOther'])
 
 signals = []
