@@ -23,6 +23,8 @@ if os.environ['USER'] in ['llechner']:
 #    skim_directory                      = "/afs/hephy.at/data/llechner01/TTGammaEFT/skims/"
 #    skim_output_directory               = "/afs/hephy.at/data/llechner01/TTGammaEFT/skims/"
 
+    mva_directory                       = "/afs/hephy.at/data/llechner01/TTGammaEFT/mva/"
+
     plot_directory                      = "/afs/hephy.at/user/l/llechner/www/TTGammaEFT/"
     data_directory1                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
     data_directory2                     = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
