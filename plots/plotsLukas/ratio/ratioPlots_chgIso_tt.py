@@ -42,6 +42,7 @@ argParser.add_argument('--categoryPhoton',     action='store',      default="Pho
 argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "mumu", "mue", "ee", "SF", "all"], help="plot lepton mode" )
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                        help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                        help="Run only job i")
+argParser.add_argument('--sideband',           action='store',      default="sieie",   type=str, choices=["chgIso", "sieie"],                help="which sideband to plot?")
 args = argParser.parse_args()
 
 # Logger
@@ -98,18 +99,23 @@ def drawObjects( plotData, lumi_scale ):
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
-scaling = { 1:0, 2:0, 3:0, 4:0 } if args.noData else { 1:0, 2:0, 3:0, 4:0, 5:0 } 
+scaling = { 1:0, 2:0, 3:0, 4:0 } if args.noData else { 0:5, 1:5, 2:5, 3:5, 4:5 } 
 
 # Plotting
 def drawPlots( plots, mode ):
     for log in [False, True]:
-        sc = "log" if log else "lin"
+        sc = args.sideband + "_"
+        sc += "log" if log else "lin"
         plot_directory_ = os.path.join( plot_directory, 'ratioPlots', str(args.year), args.plot_directory, args.selection, mode, sc )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos): 
                 continue # Empty plot
-            postFix = " (#sigma_{i#etai#eta} sideband)"
+            postFix = ""
+            if args.sideband == "sieie":
+                postFix = " (#sigma_{i#etai#eta} sideband)"
+            elif args.sideband == "chgIso":
+                postFix = " (chg Iso sideband)"
             plot.histos[0][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=False, errors = False )
             plot.histos[1][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=True, errors = False )
             plot.histos[2][0].style          = styles.lineStyle( ROOT.kRed+2, width = 2, dotted=False, dashed=False, errors = False )
@@ -125,7 +131,7 @@ def drawPlots( plots, mode ):
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
-                           ratio = {'histos':[(1,0),(2,0),(3,0),(4,0),(5,0)] if not args.noData else [(1,0),(2,0),(3,0),(4,0)], 'texY': 'Ratio', 'yRange':(0.1,1.9)},
+                           ratio = {'histos':[(0,5),(1,5),(2,5),(3,5),(4,5)] if not args.noData else [(1,0),(2,0),(3,0),(4,0)], 'texY': 'Ratio', 'yRange':(0.1,1.9)},
 	                       logX = False, logY = log, sorting = False,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling,
@@ -222,22 +228,34 @@ elif args.year == 2018:
 ttg_sb = copy.deepcopy(ttg)
 ttg_sb.name = "sb"
 ttg_sb.texName  = "tt#gamma "
-ttg_sb.texName += "#sigma_{i#etai#eta} sideband"
+if args.sideband == "chgIso":
+    ttg_sb.texName += "chg Iso sideband"
+elif args.sideband == "sieie":
+    ttg_sb.texName += "#sigma_{i#etai#eta} sideband"
 
 ttg_fit = copy.deepcopy(ttg)
 ttg_fit.name = "fit"
 ttg_fit.texName  = "tt#gamma "
-ttg_fit.texName += "#sigma_{i#etai#eta} fit region"
+if args.sideband == "chgIso":
+    ttg_fit.texName += "chg Iso fit region"
+elif args.sideband == "sieie":
+    ttg_fit.texName += "#sigma_{i#etai#eta} fit region"
 
 tt_sb = copy.deepcopy(tt)
 tt_sb.name = "sb"
 tt_sb.texName  = "tt "
-tt_sb.texName += "#sigma_{i#etai#eta} sideband"
+if args.sideband == "chgIso":
+    tt_sb.texName += "chg Iso sideband"
+elif args.sideband == "sieie":
+    tt_sb.texName += "#sigma_{i#etai#eta} sideband"
 
 tt_fit = copy.deepcopy(tt)
 tt_fit.name = "fit"
 tt_fit.texName  = "tt "
-tt_fit.texName += "#sigma_{i#etai#eta} fit region"
+if args.sideband == "chgIso":
+    tt_fit.texName += "chg Iso fit region"
+elif args.sideband == "sieie":
+    tt_fit.texName += "#sigma_{i#etai#eta} fit region"
 
 mc  = [ tt_fit, tt_sb, ttg_fit, ttg_sb ]
 stackSamples  = [ [s] for s in mc ]
@@ -296,6 +314,38 @@ Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=p
 addPlots = []
 
 addPlots.append( Plot(
+    name      = '%s_sieie_top'%(args.categoryPhoton),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "%s_sieie/F"%args.categoryPhoton ),
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
+    name      = '%s_sieie_top_20ptG120'%(args.categoryPhoton),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_pt" ) > 20 and getattr( event, args.categoryPhoton + "_pt" ) < 120 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
+    name      = '%s_sieie_top_120ptG220'%(args.categoryPhoton),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_pt" ) > 120 and getattr( event, args.categoryPhoton + "_pt" ) < 220 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
+    name      = '%s_sieie_top_220ptGinf'%(args.categoryPhoton),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_pt" ) > 220 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
     name      = '%s_pfIso03_chg_top'%(args.categoryPhoton),
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
@@ -339,7 +389,7 @@ addPlots.append( Plot(
     name      = '%s_category_top_20ptG120'%(args.categoryPhoton),
     texX      = 'Category_{#gamma_{0}}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_photonCat/I" ) if getattr( event, args.categoryPhoton + "_pt" ) > 20 and getattr( event, args.categoryPhoton + "_pt" ) < 120 else -999,
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_photonCat" ) if getattr( event, args.categoryPhoton + "_pt" ) > 20 and getattr( event, args.categoryPhoton + "_pt" ) < 120 else -999,
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -347,7 +397,7 @@ addPlots.append( Plot(
     name      = '%s_category_top_120ptG220'%(args.categoryPhoton),
     texX      = 'Category_{#gamma_{0}}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_photonCat/I" ) if getattr( event, args.categoryPhoton + "_pt" ) > 120 and getattr( event, args.categoryPhoton + "_pt" ) < 220 else -999,
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_photonCat" ) if getattr( event, args.categoryPhoton + "_pt" ) > 120 and getattr( event, args.categoryPhoton + "_pt" ) < 220 else -999,
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -355,7 +405,7 @@ addPlots.append( Plot(
     name      = '%s_category_top_220ptGinf'%(args.categoryPhoton),
     texX      = 'Category_{#gamma_{0}}',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_photonCat/I" ) if getattr( event, args.categoryPhoton + "_pt" ) > 220 else -999,
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_photonCat" ) if getattr( event, args.categoryPhoton + "_pt" ) > 220 else -999,
     binning   = [ 4, 0, 4 ],
 ))
 
@@ -376,6 +426,13 @@ filterCutMc   = getFilterCut( args.year, isData=False )
 tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
+if args.sideband == "sieie":
+    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton), "%s_sieie<0.02"%(args.categoryPhoton) ]
+    fit_sel = ["%s_sieie<0.01015"%(args.categoryPhoton)]
+elif args.sideband == "chgIso":
+    sb_sel  = ["(%s_pfRelIso03_chg*%s_pt)>=1.141"%(args.categoryPhoton, args.categoryPhoton)]
+    fit_sel = ["(%s_pfRelIso03_chg*%s_pt)<1.141"%(args.categoryPhoton, args.categoryPhoton)]
+
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
 
@@ -395,11 +452,11 @@ for index, mode in enumerate( allModes ):
 #    for sample in mc: sample.setSelectionString( mcSelection )
 
     # sideband/fit region cuts
-    if not args.noData: data_sample.setSelectionString( [filterCutData, leptonSelection, "%s_sieie>0.011&&%s_sieie<0.02"%(args.categoryPhoton, args.categoryPhoton) ] )
-    tt_sb.setSelectionString( mcSelection + ["%s_sieie>0.011"%(args.categoryPhoton), "%s_sieie<0.02"%(args.categoryPhoton)] )
-    tt_fit.setSelectionString( mcSelection + ["%s_sieie<0.0102"%(args.categoryPhoton)] )
-    ttg_sb.setSelectionString( mcSelection + ["%s_sieie>0.011"%(args.categoryPhoton), "%s_sieie<0.02"%(args.categoryPhoton)] )
-    ttg_fit.setSelectionString( mcSelection + ["%s_sieie<0.0102"%(args.categoryPhoton)] )
+    if not args.noData: data_sample.setSelectionString( [filterCutData, leptonSelection] + sb_sel )
+    tt_sb.setSelectionString( mcSelection   + sb_sel )
+    tt_fit.setSelectionString( mcSelection  + fit_sel )
+    ttg_sb.setSelectionString( mcSelection  + sb_sel )
+    ttg_fit.setSelectionString( mcSelection + fit_sel )
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 

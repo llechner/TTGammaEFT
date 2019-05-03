@@ -24,7 +24,7 @@ from Analysis.Tools.helpers           import getCollection
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
-photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "PhotonNoChgIso0", "PhotonNoChgIsoNoSieie0" ]
+photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "PhotonNoChgIso0", "PhotonNoChgIsoNoSieie0", "PhotonNoSieie0" ]
 
 # Arguments
 import argparse
@@ -114,7 +114,7 @@ def drawPlots( plots, mode, dataMCScale ):
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
 	                       ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
-	                       logX = False, logY = log, sorting = False,
+	                       logX = False, logY = log, sorting = not categoryPlot,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},
 	                       legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2],
@@ -297,7 +297,7 @@ if args.year == 2016:
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_17 ]
     elif not categoryPlot:
-        mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17 ]
+        mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, ZG_17 ]
         if args.addOtherBg: mc += [ other_17 ]
     elif categoryPlot:
         all = all_17 if args.addOtherBg else all_noOther_17
