@@ -22,7 +22,7 @@ python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingE
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample tZq_ll #SPLIT30
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample tWll #SPLIT5
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample tWnunu #SPLIT5
-#python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample TTWToLNu #SPLIT20
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample TTWToLNu #SPLIT10
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample TTWToQQ #SPLIT9
 
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v17 --fileBasedSplitting --sample TTZToLLNuNu #SPLIT17
