@@ -99,8 +99,8 @@ def vertexSelector( l ):
 #    if abs(l['pdgId']) == 11: absEta = abs(l["eta"] + l["deltaEtaSC"])   # eta supercluster
 #    else:                     absEta = abs(l["eta"])                     # eta
     EC = 0 #absEta > 1.479 # only if difference for EndCaps
-    if abs(l["dxy"]) >= 0.05 + 0.05*EC: return False
-    if abs(l["dz"])  >= 0.1 + 0.1*EC:  return False
+    if abs(l["dxy"]) > 0.05 + 0.05*EC: return False
+    if abs(l["dz"])  > 0.1  + 0.1*EC:  return False
     return True
 
 def removekey(d, key):
@@ -216,7 +216,7 @@ def triggerEmulatorSelector( l, wp ):
 def barrelEndcapVeto( p ):
     if abs(p['pdgId']) == 11: absEta = abs(p["eta"] + p["deltaEtaSC"])   # eta supercluster
     else:                     absEta = abs(p["eta"])                     # eta
-    return ( absEta > 1.556 or absEta <= 1.4442 )
+    return ( absEta > 1.566 or absEta < 1.4442 )
 
 # Reco Selectors
 def jetSelector( year, noPtEtaCut=False, ptVar="pt" ):
@@ -252,13 +252,13 @@ def muonSelector( lepton_selection, leading=False, noPtEtaCut=False ):
     if lepton_selection == 'tight':
         def func(l):
             if not noPtEtaCut:
-                if l["pt"]         <  30:                         return False
-                if abs(l["eta"])   >= 2.4:                        return False
+                if l["pt"]          <  30:                        return False
+                if abs(l["eta"])    > 2.4:                        return False
             if not l["tightId"]:                                  return False
             if not vertexSelector(l):                             return False
-            if l['pfRelIso03_all'] >= 0.12:                       return False
+            if l['pfRelIso03_all']  > 0.12:                       return False
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoMedium']: return False
-            if l["sip3d"]          >= 4:                          return False
+            if l["sip3d"]           > 4:                          return False
             return True
         return func
 
@@ -266,13 +266,28 @@ def muonSelector( lepton_selection, leading=False, noPtEtaCut=False ):
         ptCut = 25 if leading else 15
         def func(l):
             if not noPtEtaCut:
-                if l["pt"]         <= ptCut:                      return False
-                if abs(l["eta"])   >= 2.4:                        return False
+                if l["pt"]          < ptCut:                      return False
+                if abs(l["eta"])    > 2.4:                        return False
             if not l["mediumId"]:                                 return False
             if not vertexSelector(l):                             return False
-            if l['pfRelIso03_all'] >= 0.12:                       return False
+            if l['pfRelIso03_all']  > 0.12:                       return False
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoMedium']: return False
-            if l["sip3d"]          >= 4:                          return False
+            if l["sip3d"]           > 4:                          return False
+            return True
+        return func
+
+    elif lepton_selection == 'veto2l':
+        # muon loose requirement
+        def func(l):
+            if not noPtEtaCut:
+                if l["pt"]          < 15:                            return False
+                if abs(l["eta"])    > 2.4:                           return False
+            if not l["isPFcand"]:                                    return False
+            if not ( l["isGlobal"] or l["isTracker"] ):              return False
+            if not vertexSelector(l):                                return False
+            if l['pfRelIso03_all']  > 0.4:                           return False
+#            if l['pfIsoId']        <  muonPfIsoId['PFIsoVeryLoose']: return False
+            if l["sip3d"]           > 4:                             return False
             return True
         return func
 
@@ -280,14 +295,14 @@ def muonSelector( lepton_selection, leading=False, noPtEtaCut=False ):
         # muon loose requirement
         def func(l):
             if not noPtEtaCut:
-                if l["pt"]         <= 15:                            return False
-                if abs(l["eta"])   >= 2.4:                           return False
+                if l["pt"]          < 15:                            return False
+                if abs(l["eta"])    > 2.4:                           return False
             if not l["isPFcand"]:                                    return False
             if not ( l["isGlobal"] or l["isTracker"] ):              return False
             if not vertexSelector(l):                                return False
-            if l['pfRelIso03_all'] >= 0.4:                           return False
+            if l['pfRelIso03_all']  > 0.25:                           return False
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoVeryLoose']: return False
-            if l["sip3d"]          >= 4:                             return False
+            if l["sip3d"]           > 4:                             return False
             return True
         return func
 
@@ -301,16 +316,31 @@ def eleSelector( lepton_selection, leading=False, noPtEtaCut=False ):
     if lepton_selection == 'tight':
         def func(l):
             if not noPtEtaCut:
-                if l["pt"]         <  35:                return False
-                if abs(l["eta"])   >= 2.1:               return False
+                if l["pt"]          < 35:                return False
+                if abs(l["eta"])    > 2.1:               return False
             if not barrelEndcapVeto(l):                  return False
             if l[idVar] < electronIdCutBased['tight']:   return False
-            if l['pfRelIso03_all'] >= 0.12:              return False
-            if l["sip3d"]          >= 4:                 return False
-            if int(l["lostHits"])  != 0:                 return False
-            if not l["convVeto"]:                        return False
+            if l['pfRelIso03_all']  > 0.12:              return False
+            if l["sip3d"]           > 4:                 return False
+#            if int(l["lostHits"])  != 0:                 return False # in the cutbased id? Ghent!
+#            if not l["convVeto"]:                        return False # in the cutbased id? Ghent!
             if not vertexSelector(l):                    return False
-#            if not triggerEmulatorSelector(l, 'medium'): return False # only when not using cutBasedId
+            return True
+        return func
+
+    elif lepton_selection == 'tight2l':
+        ptCut = 25 if leading else 15
+        def func(l):
+            if not noPtEtaCut:
+                if l["pt"]         <= ptCut:             return False
+                if abs(l["eta"])   >= 2.4:               return False
+            if not barrelEndcapVeto(l):                  return False
+            if l[idVar] < electronIdCutBased['tight']:   return False
+            if l['pfRelIso03_all']  > 0.12:              return False
+            if l["sip3d"]           > 4:                 return False
+#            if int(l["lostHits"])  != 0:                 return False # in the cutbased id? Ghent!
+#            if not l["convVeto"]:                        return False # in the cutbased id? Ghent!
+            if not vertexSelector(l):                    return False
             return True
         return func
 
@@ -322,24 +352,23 @@ def eleSelector( lepton_selection, leading=False, noPtEtaCut=False ):
                 if abs(l["eta"])   >= 2.4:               return False
             if not barrelEndcapVeto(l):                  return False
             if l[idVar] < electronIdCutBased['medium']:  return False
-            if l['pfRelIso03_all'] >= 0.12:              return False
-            if l["sip3d"]          >= 4:                 return False
-            if int(l["lostHits"])  != 0:                 return False
-            if not l["convVeto"]:                        return False
+            if l['pfRelIso03_all']  > 0.12:              return False
+            if l["sip3d"]           > 4:                 return False
+#            if int(l["lostHits"])  != 0:                 return False # in the cutbased id? Ghent!
+#            if not l["convVeto"]:                        return False # in the cutbased id? Ghent!
             if not vertexSelector(l):                    return False
-#            if not triggerEmulatorSelector(l, 'medium'): return False # only when not using cutBasedId
             return True
         return func
 
     elif lepton_selection == 'veto':
         def func(l):
             if not noPtEtaCut:
-                if l["pt"]         <= 15:              return False
-                if abs(l["eta"])   >= 2.4:             return False
+                if l["pt"]          < 15:              return False
+                if abs(l["eta"])    > 2.4:             return False
             if not barrelEndcapVeto(l):                return False
             if l[idVar] < electronIdCutBased['veto']:  return False
-            if l['pfRelIso03_all'] >= 0.4:             return False
-            if l["sip3d"]          >= 4:               return False
+            if l['pfRelIso03_all']  > 0.4:             return False
+            if l["sip3d"]           > 4:               return False
             if not vertexSelector(l):                  return False
             return True
         return func
@@ -375,7 +404,7 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
             if not noPtEtaCut:
                 if g["pt"]       <= 20:                                                  return False
 #                if not g["isScEtaEB"]:                                                   return False # Supercluster Barrel only
-                if abs(g["eta"]) >= 1.479:                                               return False # Barrel only
+                if abs(g["eta"]) >= 1.4442:                                              return False # Barrel only
             if not "pixelSeed" in removedCuts:
                 if g["pixelSeed"]:                                                       return False
             if not "electronVeto" in removedCuts:

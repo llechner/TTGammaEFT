@@ -195,7 +195,7 @@ ttGamma_Had_newCentral_1Line.nEvents            = 995000
 
 ttGamma_NoFullyHad_newCentral_1Line             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line", "/ttGamma_1Line_NoFullyHad/llechner-ttGamma_1Line_NoFullyHad-17628da6eab494c9f81686715e5b9d62/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_newCentral_1Line.xSection    = 6.634
-ttGamma_NoFullyHad_newCentral_1Line.nEvents     = 990000
+ttGamma_NoFullyHad_newCentral_1Line.nEvents     = 995000
 
 
 SM = [

@@ -24,7 +24,7 @@ from Analysis.Tools.helpers           import getCollection
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
-photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "PhotonNoChgIso0", "PhotonNoChgIsoNoSieie0" ]
+photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "PhotonNoChgIso0", "PhotonNoChgIsoNoSieie0", "PhotonNoSieie0" ]
 
 # Arguments
 import argparse
@@ -118,7 +118,7 @@ def drawPlots( plots, mode, dataMCScale ):
 	                       plot_directory = plot_directory_,
                            extensions = extensions_,
 	                       ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
-	                       logX = False, logY = log, sorting = False,
+	                       logX = False, logY = log, sorting = not categoryPlot,
 	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
 	                       scaling = scaling if args.normalize else {},
 	                       legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2],
@@ -147,7 +147,7 @@ photonVarList    = NanoVars.getVariableNameList( "Photon", postprocessed=True, d
 photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, data=(not args.noData), plot=True )
 
 # Read variables and sequences
-read_variables  = ["weight/F", "overlapRemoval/I",
+read_variables  = ["weight/F",
                    "PV_npvsGood/I",
                    "PV_npvs/I", "PV_npvsGood/I",
                    "nJetGood/I", "nBTagGood/I",
@@ -187,7 +187,7 @@ read_variables += map( lambda var: "LeptonTight1_"            + var, leptonVaria
 read_variables += map( lambda var: "Bj0_"                     + var, bJetVariables )
 read_variables += map( lambda var: "Bj1_"                     + var, bJetVariables )
 
-read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I",
+read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
                      "reweightLeptonTightSF/F", "reweightLeptonTightSFUp/F", "reweightLeptonTightSFDown/F",
                      "reweightLeptonTrackingTightSF/F",
@@ -253,21 +253,21 @@ sequence = [makePhotons ]# printWeight ]#clean_Jets ]
 if args.year == 2016:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_16 ]
     elif not categoryPlot:
-        mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16 ] #ZG_16
+        mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16 ]
         if args.addOtherBg: mc += [ other_16 ]
     elif categoryPlot:
         all = all_16 if args.addOtherBg else all_noOther_16
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_17 ]
     elif not categoryPlot:
-        mc = [ TTG_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17 ]
+        mc = [ TTG_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17 ]
         if args.addOtherBg: mc += [ other_17 ]
     elif categoryPlot:
         all = all_17 if args.addOtherBg else all_noOther_17
 elif args.year == 2018:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_18 ]
     elif not categoryPlot:
-        mc = [ TTG_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18 ] #ZG_18
+        mc = [ TTG_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18 ]
         if args.addOtherBg: mc += [ other_18 ]
     elif categoryPlot:
         all = all_18 if args.addOtherBg else all_noOther_18

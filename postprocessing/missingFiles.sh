@@ -1,467 +1,118 @@
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 --nJobs 60 --job 7
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 --nJobs 60 --job 14
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 --nJobs 60 --job 33
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 --nJobs 60 --job 36
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 --nJobs 60 --job 56
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M50_LO_ext1 DYJetsToLL_M50_LO_ext2 --nJobs 60 --job 58
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M10to50_NLO --nJobs 60 --job 13
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M10to50_NLO --nJobs 60 --job 47
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M10to50_NLO --nJobs 60 --job 51
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample DYJetsToLL_M10to50_NLO --nJobs 60 --job 52
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGTo2LG_ext --nJobs 30 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGTo2LG_ext --nJobs 30 --job 7
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGTo2LG_ext --nJobs 30 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGTo2LG_ext --nJobs 30 --job 11
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 11
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 42
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 43
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 46
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 47
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 49
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 55
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 6
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 7
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 13
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 20
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 21
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 26
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 29
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad --nJobs 15 --job 6
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad --nJobs 15 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 15 --job 3
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 15 --job 5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 15 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 15 --job 13
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiT --nJobs 15 --job 14
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 15 --job 1
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 15 --job 2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 15 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 15 --job 10
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TGJets --nJobs 10 --job 1
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TGJets --nJobs 10 --job 6
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 11
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 18
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 23
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 29
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 30
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 33
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 35 --job 6
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 35 --job 15
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 35 --job 19
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tWch_ext --nJobs 12 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample THQ --nJobs 2 --job 1
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 6
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 7
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 9
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHnobb_pow --nJobs 10 --job 2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 3
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 12
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 13
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 16
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 20
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 21
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 26
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu_ext2 --nJobs 5 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToQQ --nJobs 3 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToQQ --nJobs 3 --job 2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToQQ --nJobs 2 --job 1
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWTo1L1Nu2Q --nJobs 10 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWToLNuQQ --nJobs 10 --job 2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWToLNuQQ --nJobs 10 --job 5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 16
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 21
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 23
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 24
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 28
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 29
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2Q2Nu --nJobs 20 --job 3
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2Q2Nu --nJobs 20 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2Q2Nu --nJobs 20 --job 14
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 14
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 15
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 23
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 25
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 13
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 14
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 17
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 18
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 19
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 26
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 29
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo3LNu_ext --nJobs 30 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo3LNu_ext --nJobs 30 --job 27
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo3LNu_ext --nJobs 30 --job 28
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo3LNu_amcatnlo --nJobs 20 --job 4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WGToLNuG --nJobs 10 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WGToLNuG --nJobs 10 --job 9
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WGToLNuG_amcatnlo --nJobs 10 --job 0
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WGToLNuG_amcatnlo --nJobs 10 --job 6
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WGToLNuG_amcatnlo --nJobs 10 --job 9
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WJetsToLNu WJetsToLNu_ext --nJobs 40 --job 21
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WJetsToLNu WJetsToLNu_ext --nJobs 40 --job 24
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WJetsToLNu WJetsToLNu_ext --nJobs 40 --job 29
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTGG #SPLIT3
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWW --nJobs 9 --job 1
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWZ --nJobs 9 --job 7
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWZ --nJobs 9 --job 8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZZ #SPLIT2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluHToZZTo4L #SPLIT8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2e2mu #SPLIT8
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2e2tau #SPLIT2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau #SPLIT2
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4e #SPLIT4
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4mu #SPLIT5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4tau #SPLIT3
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample SingleMuon_Run2017F_31Mar2018 #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 9
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 16
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 19
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 27
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 32
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 33
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 36
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 37
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 41
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 43
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 48
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 52
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 56
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 57
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M10to50_LO --nJobs 60 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M10to50_LO --nJobs 60 --job 21
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M10to50_LO --nJobs 60 --job 41
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M10to50_LO --nJobs 60 --job 44
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 77 --job 11
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 77 --job 19
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 77 --job 55
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 12
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 32
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 43
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 58
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 59
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow --nJobs 69 --job 67
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad --nJobs 20 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad --nJobs 20 --job 4
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad --nJobs 20 --job 8
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 9
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 13
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 15
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 20 --job 19
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 20 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 20 --job 17
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 4
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 21
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 25
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 27
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 32
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 42
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 45
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 48
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 51
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 52
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo --nJobs 60 --job 53
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 8
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 11
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 23
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 33
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 34
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 48
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 60 --job 57
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 40 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 40 --job 2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 40 --job 34
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tWch_ext --nJobs 30 --job 4
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tWch_ext --nJobs 30 --job 6
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tWch_ext --nJobs 30 --job 8
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tWch_ext --nJobs 30 --job 17
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample THQ --nJobs 10 --job 5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample THQ --nJobs 10 --job 6
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 6
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHnobb_pow --nJobs 10 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 12
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 19
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 20
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 28
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 29
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll --nJobs 10 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll --nJobs 10 --job 5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll --nJobs 10 --job 6
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll --nJobs 10 --job 7
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll --nJobs 10 --job 8
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll --nJobs 10 --job 9
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 4
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 6
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 7
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 8
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu --nJobs 10 --job 9
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTW_LO TTW_LO_ext1 --nJobs 30 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTW_LO TTW_LO_ext1 --nJobs 30 --job 8
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTW_LO TTW_LO_ext1 --nJobs 30 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTW_LO TTW_LO_ext1 --nJobs 30 --job 23
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu --nJobs 20 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu --nJobs 20 --job 1
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu --nJobs 20 --job 4
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu --nJobs 20 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu --nJobs 20 --job 12
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu --nJobs 20 --job 19
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToQQ #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToQQ #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToLLNuNu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToLLNuNu_m1to10 #SPLIT2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWTo2L2Nu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWToLNuQQ #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWTo1L1Nu2Q #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Q #SPLIT40
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L3Nu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q #SPLIT40
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo3LNu_amcatnlo #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample VVTo2L2Nu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WGToLNuG #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGToLLG #SPLIT15
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWW_4F #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWZ_4F #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZZ #SPLIT2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZZ #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WJetsToLNu WJetsToLNu_ext1 #SPLIT50
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTTT #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWW #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWZ #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZZ #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluHToZZTo4L #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2e2mu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2e2tau #SPLIT3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4e #SPLIT15
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4mu #SPLIT15
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4tau #SPLIT15
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 0
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 3
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 4
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 5
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 6
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 9
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 11
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 14
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 15
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 16
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 17
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 18
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 20
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 21
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 22
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 23
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 24
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 25
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 26
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 27
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 28
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018A_17Sep2018 --nJobs 30 --job 29
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 #SPLIT30
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample SingleMuon_Run2018A_17Sep2018 --nJobs 30 --job 7
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample SingleMuon_Run2018A_17Sep2018 --nJobs 30 --job 20
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample SingleMuon_Run2018D_17Sep2018 #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiT --nJobs 30 --job 2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep --nJobs 30 --job 11
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 59
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTHad_pow --nJobs 60 --job 23
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTHad_pow --nJobs 60 --job 24
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTHad_pow --nJobs 60 --job 53
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tWch --nJobs 40 --job 34
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 5
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 9
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 11
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 13
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 15
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 18
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 19
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 22
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 23
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 24
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 25
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 26
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 27
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 28
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 29
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 30
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 32
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 33
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 34
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 37
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 38
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tch_pow --nJobs 40 --job 39
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tch_pow --nJobs 40 --job 37
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll --nJobs 30 --job 2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWToLNuQQ --nJobs 10 --job 2
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2Q2Nu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWZ --nJobs 7 --job 3
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZZ --nJobs 5 --job 0
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluHToZZTo4L --nJobs 16 --job 15
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 13
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 14
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 15
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGTo2LG_ext --nJobs 30 --job 10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample WGToLNuG_amcatnlo --nJobs 10 --job 4
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample WJetsToLNu WJetsToLNu_ext --nJobs 40 --job 13
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 4
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 12
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 19
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 29
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 34
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 35
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 41
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow --nJobs 60 --job 53
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 12
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 16
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 21
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSingleLep_pow --nJobs 30 --job 25
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad --nJobs 15 --job 5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar --nJobs 15 --job 0
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiT --nJobs 15 --job 2
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagSingleTopTch --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 2
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagSingleTopTch --reuseNanoAOD --sample T_tch_pow --nJobs 35 --job 5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagSingleTopTch --reuseNanoAOD --sample TBar_tch_pow --nJobs 35 --job 12
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tWch_ext --nJobs 11 --job 4
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tWch_ext --nJobs 11 --job 9
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 6
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 7
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 8
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 9
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHnobb_pow --nJobs 10 --job 1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 7
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll_ext --nJobs 40 --job 26
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu_ext2 --nJobs 5 --job 0
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu_ext2 --nJobs 5 --job 1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWTo1L1Nu2Q --nJobs 10 --job 3
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWToLNuQQ --nJobs 10 --job 8
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 14
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu --nJobs 30 --job 18
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 0
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q --nJobs 30 --job 15
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q --nJobs 30 --job 25
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample VVTo2L2Nu VVTo2L2Nu_ext --nJobs 15 --job 8
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTGG #SPLIT3
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZZ #SPLIT2
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluHToZZTo4L --nJobs 8 --job 7
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 #SPLIT60
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample DYJetsToLL_M10to50_LO #SPLIT60
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTLep_pow #SPLIT77
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --reuseNanoAOD --sample TTSemiLep_pow #SPLIT69
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGHad #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiTbar #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGSemiT #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --reuseNanoAOD --sample TTGLep #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTGamma --reuseNanoAOD --sample TGJets #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagSingleTopTch --reuseNanoAOD --sample T_tch_pow #SPLIT60
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagSingleTopTch --reuseNanoAOD --sample TBar_tch_pow #SPLIT40
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample T_tWch_ext #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TBar_tWch_ext #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TToLeptons_sch_amcatnlo #SPLIT60
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample THQ #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample THW #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbb --nJobs 10 --job 6
-python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHnobb_pow --nJobs 10 --job 3
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_ll #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tZq_nunu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWll #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample tWnunu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTW_LO TTW_LO_ext1 #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToLNu #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWToQQ #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToQQ #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToLLNuNu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZToLLNuNu_m1to10 #SPLIT2
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWTo2L2Nu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWToLNuQQ #SPLIT20
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWTo1L1Nu2Q #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Nu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZTo2L2Q #SPLIT40
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L3Nu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo1L1Nu2Q #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo2L2Q #SPLIT40
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZTo3LNu_amcatnlo #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample VVTo2L2Nu #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample ZGToLLG #SPLIT15
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --reuseNanoAOD --sample WGToLNuG #SPLIT30
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagDYWJets --reuseNanoAOD --sample WJetsToLNu WJetsToLNu_ext1 #SPLIT50
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWW_4F #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWZ_4F #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZZ #SPLIT2
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample ZZZ #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTTT #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWW #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTWZ #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTZZ #SPLIT1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluHToZZTo4L #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2e2mu #SPLIT10
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2e2tau #SPLIT3
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4e #SPLIT15
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4mu #SPLIT15
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo4tau #SPLIT15
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 1
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 2
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 3
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 4
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 6
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 8
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 9
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 10
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 11
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 12
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 13
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 14
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 15
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 19
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 21
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 22
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 23
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 24
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 25
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 26
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 27
-python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --reuseNanoAOD --sample SingleMuon_Run2018D_17Sep2018 --nJobs 30 --job 29
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample TTHbbSemiLep --nJobs 10 --job 9
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WWZ --nJobs 7 --job 1
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample WZZ --nJobs 7 --job 3
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluHToZZTo4L --nJobs 16 --job 15
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 13
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 14
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --reuseNanoAOD --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 15
+
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --sample ZGToLLG #SPLIT30
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 35 --job 5
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample THQ --nJobs 2 --job 1
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 5
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 6
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 7
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 8
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 9
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample WZTo1L1Nu2Q --nJobs 30 --job 23
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTZZ #SPLIT2
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 8 --job 7
+
+
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --sample TTSemiLep_pow --nJobs 69 --job 3
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --sample TTHad_pow #SPLIT60
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWll --nJobs 10 --job 3
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 4
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 5
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 6
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 7
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 8
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 9
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample TTWToLNu --nJobs 20 --job 0
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample TTWToQQ --nJobs 5 --job 0
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample TTZToLLNuNu --nJobs 30 --job 18
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WZTo1L3Nu --nJobs 30 --job 20
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WZTo1L1Nu2Q --nJobs 10 --job 0
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WZTo1L1Nu2Q --nJobs 10 --job 2
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WZTo3LNu_amcatnlo --nJobs 30 --job 13
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample VVTo2L2Nu --nJobs 30 --job 27
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WGToLNuG --nJobs 30 --job 0
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WGToLNuG_amcatnlo #SPLIT30
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --sample ZGToLLG --nJobs 15 --job 8
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WJetsToLNu WJetsToLNu_ext1 --nJobs 50 --job 47
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample TTTT #SPLIT1
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 6
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 7
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 8
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 9
+
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 0
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 3
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 19
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 21
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 27
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 29
+
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 11
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 18
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 19
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 23
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 24
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 26
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 29
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 34
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample T_tch_pow --nJobs 40 --job 39
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample ZZTo2Q2Nu --nJobs 10 --job 7
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample ZZTo2Q2Nu --nJobs 10 --job 9
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 16 --job 15
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 13
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 14
+python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 15
+
+
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --flagZWGamma --sample ZGToLLG #SPLIT30
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 5
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 6
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 7
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 8
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTHbb --nJobs 10 --job 9
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample WWToLNuQQ --nJobs 10 --job 8
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample TTZZ #SPLIT2
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 8 --job 7
+
+
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --sample DYJetsToLL_M50_LO DYJetsToLL_M50_LO_ext1 --nJobs 60 --job 55
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --sample TTLep_pow --nJobs 77 --job 67
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTBar --sample TTHad_pow #SPLIT60
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagTTGamma --sample TTGSemiT --nJobs 20 --job 12
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample TBar_tWch_ext --nJobs 30 --job 13
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tZq_ll --nJobs 30 --job 23
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWll --nJobs 10 --job 0
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWll --nJobs 10 --job 4
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 4
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 5
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 6
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 7
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 8
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample tWnunu --nJobs 10 --job 9
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample ZZTo2L2Q --nJobs 40 --job 14
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample ZZTo2L2Q --nJobs 40 --job 38
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WZTo1L3Nu --nJobs 30 --job 2
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample WZTo1L1Nu2Q --nJobs 10 --job 6
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample VVTo2L2Nu --nJobs 30 --job 2
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --flagZWGamma --sample WGToLNuG_amcatnlo #SPLIT30
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 6
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 7
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 8
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 10 --job 9
+
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 3
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 4
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 8
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 9
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 14
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 15
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 21
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 22
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 23
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 24
+python nanoPostProcessing.py --triggerSelection --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_Data_v16 --fileBasedSplitting --sample EGamma_Run2018D_17Sep2018 --nJobs 30 --job 26
+
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluHToZZTo4L --nJobs 16 --job 15
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 13
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 14
+python nanoPostProcessing.py --writeToDPM --skim semilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v16 --fileBasedSplitting --sample GluGluToContinToZZTo2mu2tau --nJobs 16 --job 15
+

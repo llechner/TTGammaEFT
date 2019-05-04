@@ -40,7 +40,7 @@ from TTGammaEFT.plots.massGood_pt              import massGood_pt
 #from TTGammaEFT.plots.massTight                import massTight
 #from TTGammaEFT.plots.massTight_pt             import massTight_pt
 from TTGammaEFT.plots.met                      import met
-#from TTGammaEFT.plots.metSig                   import metSig
+from TTGammaEFT.plots.metSig                   import metSig
 from TTGammaEFT.plots.mll                      import mll
 from TTGammaEFT.plots.mll_pt                   import mll_pt
 from TTGammaEFT.plots.multiplicityGood         import multiplicityGood
@@ -80,7 +80,7 @@ plotListData += massGood_pt
 #plotListData += massTight
 #plotListData += massTight_pt
 plotListData += met
-#plotListData += metSig
+plotListData += metSig
 plotListData += mll
 plotListData += mll_pt
 plotListData += multiplicityGood

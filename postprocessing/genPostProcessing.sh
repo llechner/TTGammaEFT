@@ -46,7 +46,7 @@
 
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta  #SPLIT50
 
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Dilept_newCentral_1Line #SPLIT50
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_SemiLept_newCentral_1Line #SPLIT50
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Had_newCentral_1Line #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Dilept_newCentral_1Line #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_SemiLept_newCentral_1Line #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Had_newCentral_1Line #SPLIT50
 python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_newCentral_1Line #SPLIT50

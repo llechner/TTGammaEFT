@@ -76,7 +76,7 @@ for ppEntry in dictList:
     dirPath = os.path.join( dpm_directory, 'postprocessed', ppEntry["dir"], ppEntry["skim"], sample  )
     p = subprocess.Popen( ["dpns-ls -l %s" %dirPath], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
-    rootFiles = [ line[:-1].split()[-1].split(".root")[0] for line in p.stdout.readlines() if line[:-1].split()[-1].endswith(".root") ]
+    rootFiles = [ line[:-1].split()[-1].split(".root")[0] for line in p.stdout.readlines() if line[:-1].split()[-1].endswith(".root") and not line[:-1].split()[-1].startswith("nanoAOD") ]
     if not rootFiles:
         logger.info("Sample %s not processed" %sample)
         if args.createExec:

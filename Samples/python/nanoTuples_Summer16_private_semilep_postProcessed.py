@@ -34,7 +34,7 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 # Directories
 dirs = {}
 
-dirs['DY_LO']            = ["DYJetsToLL_M50_LO_ext1_comb", "DYJetsToLL_M10to50_LO" ]
+dirs['DY_LO']            = ["DYJetsToLL_M50_LO_ext1_comb", "DYJetsToLL_M10to50_NLO" ]
 
 dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow" ]
 
