@@ -93,17 +93,20 @@ import Samples.Tools.logger as logger_samples
 logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
 
 # Flags 
-isDiLepGamma = options.skim.lower().startswith('dilepGamma')
-isDiLep      = options.skim.lower().startswith('dilep')
-isSemiLep    = options.skim.lower().startswith('semilep')
+isDiLepGamma   = options.skim.lower().startswith('dilepGamma')
+isDiLep        = options.skim.lower().startswith('dilep') and not isDiLepGamma
+isSemiLepGamma = options.skim.lower().startswith('semilepGamma')
+isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGamma
 
 skimConds = []
-if isDiLep:
-    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1" )
 if isDiLepGamma:
-    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<1.479)&&Photon_electronVeto&&!Photon_pixelSeed)>=1" )
+    skimConds.append( "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2&&(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all<=2.08+0.004017*Photon_pt)>=1" )
+elif isDiLep:
+    skimConds.append( "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2&&(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1" )
+elif isSemiLepGamma:
+    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.4&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all<=2.08+0.004017*Photon_pt)>=1" )
 elif isSemiLep:
-    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<2.4&&Muon_tightId&&Muon_pfRelIso03_all<0.12)>=1)" )
+    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.4&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)" )
 else:
     skimConds = ["(1)"]
 
@@ -1382,15 +1385,4 @@ if options.writeToDPM:
         subprocess.call( [ 'rm', '-rf', output_directory ] ) # Let's risk it.
 
 else:
-    if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ) and deepCheckWeight( outputFilePath ):
-        logger.info( "Target: File check ok!" )
-    else:
-        logger.info( "Corrupt rootfile! Removing file: %s"%outputFilePath )
-        os.remove( outputFilePath )
-        raise Exception("Corrupt rootfile! File not copied: %s"%source )
-
-# There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
-# Thus the job is resubmitted on condor even if the output is ok
-# Current idea is that the problem is with xrootd having a non-closed root file
-# Let's see if this works...
-sample.clear()
+    if checkRootFile( outputFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( outputFilePath ) and de
