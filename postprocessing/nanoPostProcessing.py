@@ -83,8 +83,13 @@ if len( filter( lambda x: x, [options.flagTTGamma, options.flagTTBar, options.fl
 
 # Logging
 import Analysis.Tools.logger as logger
-logFile = '/tmp/%s_%s_%s_njob%s.txt'%(options.skim, '_'.join(options.samples), os.environ['USER'], str(0 if options.nJobs==1 else options.job) )
+logdir  = "/tmp/%s/"%str(uuid.uuid4())
+logFile = '%s/%s_%s_%s_njob%s.txt'%(logdir, options.skim, '_'.join(options.samples), os.environ['USER'], str(0 if options.nJobs==1 else options.job) )
+if not os.path.exists( logdir ):
+    try: os.makedirs( logdir )
+    except: pass
 logger  = logger.get_logger(options.logLevel, logFile = logFile)
+
 
 import RootTools.core.logger as logger_rt
 logger_rt = logger_rt.get_logger(options.logLevel, logFile = None )
@@ -93,17 +98,20 @@ import Samples.Tools.logger as logger_samples
 logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
 
 # Flags 
-isDiLepGamma = options.skim.lower().startswith('dilepGamma')
-isDiLep      = options.skim.lower().startswith('dilep')
-isSemiLep    = options.skim.lower().startswith('semilep')
+isDiLepGamma   = options.skim.lower().startswith('dilepGamma')
+isDiLep        = options.skim.lower().startswith('dilep') and not isDiLepGamma
+isSemiLepGamma = options.skim.lower().startswith('semilepGamma')
+isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGamma
 
 skimConds = []
-if isDiLep:
-    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1" )
 if isDiLepGamma:
-    skimConds.append( "(Sum$(Electron_pt>=15&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=2&&(Sum$(Electron_pt>=25&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<2.4&&Muon_mediumId&&Muon_pfRelIso03_all<0.12))>=1&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<1.479)&&Photon_electronVeto&&!Photon_pixelSeed)>=1" )
+    skimConds.append( "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2&&(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt)>=1" )
+elif isDiLep:
+    skimConds.append( "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2&&(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1" )
+elif isSemiLepGamma:
+    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.4&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)&&(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt)>=1" )
 elif isSemiLep:
-    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<2.4&&Electron_convVeto&&Electron_pfRelIso03_all<0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<2.4&&Muon_tightId&&Muon_pfRelIso03_all<0.12)>=1)" )
+    skimConds.append( "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.4&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)||(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)" )
 else:
     skimConds = ["(1)"]
 
@@ -121,14 +129,17 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import *
+    from Samples.nanoAOD.Summer16_private           import *
 #    from Samples.nanoAOD.Run2016_14Dec2018          import *
     from Samples.nanoAOD.Run2016_17Jul2018_private  import *
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import *
+    from Samples.nanoAOD.Fall17_private             import *
 #    from Samples.nanoAOD.Run2017_14Dec2018          import *
     from Samples.nanoAOD.Run2017_31Mar2018_private  import *
 elif options.year == 2018:
     from Samples.nanoAOD.Autumn18_private_legacy_v1 import *
+    from Samples.nanoAOD.Autumn18_private           import *
 #    from Samples.nanoAOD.Run2018_14Dec2018          import *
     from Samples.nanoAOD.Run2018_17Sep2018_private  import *
 
@@ -373,14 +384,14 @@ NanoVars = NanoVariables( options.year )
 
 readGenVarString      = NanoVars.getVariableString(   "Gen",      postprocessed=False, data=sample.isData )
 readGenJetVarString   = NanoVars.getVariableString(   "GenJet",   postprocessed=False, data=sample.isData )
-readJetVarString      = NanoVars.getVariableString(   "Jet",      postprocessed=False, data=sample.isData )
+readJetVarString      = NanoVars.getVariableString(   "Jet",      postprocessed=False, data=sample.isData, skipSyst=options.skipNanoTools )
 readElectronVarString = NanoVars.getVariableString(   "Electron", postprocessed=False, data=sample.isData )
 readMuonVarString     = NanoVars.getVariableString(   "Muon",     postprocessed=False, data=sample.isData )
 readPhotonVarString   = NanoVars.getVariableString(   "Photon",   postprocessed=False, data=sample.isData )
 
 readGenVarList        = NanoVars.getVariableNameList( "Gen",      postprocessed=False, data=sample.isData )
 readGenJetVarList     = NanoVars.getVariableNameList( "GenJet",   postprocessed=False, data=sample.isData )
-readJetVarList        = NanoVars.getVariableNameList( "Jet",      postprocessed=False, data=sample.isData )
+readJetVarList        = NanoVars.getVariableNameList( "Jet",      postprocessed=False, data=sample.isData, skipSyst=options.skipNanoTools  )
 readElectronVarList   = NanoVars.getVariableNameList( "Electron", postprocessed=False, data=sample.isData )
 readMuonVarList       = NanoVars.getVariableNameList( "Muon",     postprocessed=False, data=sample.isData )
 readPhotonVarList     = NanoVars.getVariableNameList( "Photon",   postprocessed=False, data=sample.isData )
@@ -389,11 +400,11 @@ readLeptonVariables   = NanoVars.getVariables(        "Lepton",   postprocessed=
 
 writeGenVarString     = NanoVars.getVariableString(   "Gen",      postprocessed=True,  data=sample.isData )
 writeGenJetVarString  = NanoVars.getVariableString(   "GenJet",   postprocessed=True,  data=sample.isData )
-writeJetVarString     = NanoVars.getVariableString(   "Jet",      postprocessed=True,  data=sample.isData )
+writeJetVarString     = NanoVars.getVariableString(   "Jet",      postprocessed=True,  data=sample.isData, skipSyst=options.skipNanoTools  )
 writeLeptonVarString  = NanoVars.getVariableString(   "Lepton",   postprocessed=True,  data=sample.isData )
 writePhotonVarString  = NanoVars.getVariableString(   "Photon",   postprocessed=True,  data=sample.isData )
 
-writeJetVarList       = NanoVars.getVariableNameList( "Jet",      postprocessed=True,  data=sample.isData )
+writeJetVarList       = NanoVars.getVariableNameList( "Jet",      postprocessed=True,  data=sample.isData, skipSyst=options.skipNanoTools  )
 writeBJetVarList      = NanoVars.getVariableNameList( "BJet",     postprocessed=True,  data=sample.isData )
 writeGenVarList       = NanoVars.getVariableNameList( "Gen",      postprocessed=True,  data=sample.isData )
 writeGenJetVarList    = NanoVars.getVariableNameList( "GenJet",   postprocessed=True,  data=sample.isData )
@@ -402,7 +413,7 @@ writePhotonVarList    = NanoVars.getVariableNameList( "Photon",   postprocessed=
 
 writeGenVariables     = NanoVars.getVariables( "Gen",      postprocessed=True,  data=sample.isData )
 writeGenJetVariables  = NanoVars.getVariables( "GenJet",   postprocessed=True,  data=sample.isData )
-writeJetVariables     = NanoVars.getVariables( "Jet",      postprocessed=True,  data=sample.isData )
+writeJetVariables     = NanoVars.getVariables( "Jet",      postprocessed=True,  data=sample.isData, skipSyst=options.skipNanoTools  )
 writeBJetVariables    = NanoVars.getVariables( "BJet",     postprocessed=True,  data=sample.isData )
 writeLeptonVariables  = NanoVars.getVariables( "Lepton",   postprocessed=True,  data=sample.isData )
 writePhotonVariables  = NanoVars.getVariables( "Photon",   postprocessed=True,  data=sample.isData )
@@ -411,14 +422,15 @@ writePhotonVariables  = NanoVars.getVariables( "Photon",   postprocessed=True,  
 read_variables  = map( TreeVariable.fromString, ['run/I', 'luminosityBlock/I', 'event/l'] )
 read_variables += map( TreeVariable.fromString, ['MET_pt/F', 'MET_phi/F'] )
 
-if options.year == 2017:
-    read_variables += map(TreeVariable.fromString, [ 'METFixEE2017_pt/F', 'METFixEE2017_phi/F', 'METFixEE2017_pt_nom/F', 'METFixEE2017_phi_nom/F', 'MET_pt_min/F'])
+if not options.skipNanoTools:
+    if options.year == 2017:
+        read_variables += map(TreeVariable.fromString, [ 'METFixEE2017_pt/F', 'METFixEE2017_phi/F', 'METFixEE2017_pt_nom/F', 'METFixEE2017_phi_nom/F', 'MET_pt_min/F'])
+        if isMC:
+            read_variables += map(TreeVariable.fromString, [ 'METFixEE2017_pt_jesTotalUp/F', 'METFixEE2017_pt_jesTotalDown/F', 'METFixEE2017_pt_jerUp/F', 'METFixEE2017_pt_jerDown/F', 'METFixEE2017_pt_unclustEnDown/F', 'METFixEE2017_phi_unclustEnUp/F'])
+    read_variables += map(TreeVariable.fromString, [ 'MET_pt_nom/F', 'MET_phi_nom/F' ])
     if isMC:
-        read_variables += map(TreeVariable.fromString, [ 'METFixEE2017_pt_jesTotalUp/F', 'METFixEE2017_pt_jesTotalDown/F', 'METFixEE2017_pt_jerUp/F', 'METFixEE2017_pt_jerDown/F', 'METFixEE2017_pt_unclustEnDown/F', 'METFixEE2017_phi_unclustEnUp/F'])
-read_variables += map(TreeVariable.fromString, [ 'MET_pt_nom/F', 'MET_phi_nom/F' ])
-if isMC:
-    read_variables += map(TreeVariable.fromString, [ 'MET_pt_jesTotalUp/F', 'MET_pt_jesTotalDown/F', 'MET_pt_jerUp/F', 'MET_pt_jerDown/F', 'MET_pt_unclustEnDown/F', 'MET_pt_unclustEnUp/F'])
-    read_variables += map(TreeVariable.fromString, [ 'MET_phi_jesTotalUp/F', 'MET_phi_jesTotalDown/F', 'MET_phi_jerUp/F', 'MET_phi_jerDown/F', 'MET_phi_unclustEnDown/F', 'MET_phi_unclustEnUp/F'])
+        read_variables += map(TreeVariable.fromString, [ 'MET_pt_jesTotalUp/F', 'MET_pt_jesTotalDown/F', 'MET_pt_jerUp/F', 'MET_pt_jerDown/F', 'MET_pt_unclustEnDown/F', 'MET_pt_unclustEnUp/F'])
+        read_variables += map(TreeVariable.fromString, [ 'MET_phi_jesTotalUp/F', 'MET_phi_jesTotalDown/F', 'MET_phi_jerUp/F', 'MET_phi_jerDown/F', 'MET_phi_unclustEnDown/F', 'MET_phi_unclustEnUp/F'])
 
 read_variables += [ TreeVariable.fromString('nElectron/I'),
                     VectorTreeVariable.fromString('Electron[%s]'%readElectronVarString) ]
@@ -584,6 +596,8 @@ if options.topReco:
 if isData:
     new_variables += ['jsonPassed/I']
 
+ptVar="pt_nom" if not options.skipNanoTools else "pt"
+
 # Overlap removal Selection
 genPhotonSel_TTG_OR = genPhotonSelector( 'overlapTTGamma' )
 genPhotonSel_ZG_OR  = genPhotonSelector( 'overlapZWGamma' )
@@ -613,11 +627,12 @@ recoPhotonSel_medium_noSieie          = photonSelector( 'medium', year=options.y
 recoPhotonSel_medium_noChgIso_noSieie = photonSelector( 'medium', year=options.year, removedCuts=["sieie", "pfRelIso03_chg"] )
 # Jet Selection
 recoJetSel_noPtEtaCut   = jetSelector( options.year, noPtEtaCut=True )
-recoJetSel              = jetSelector( options.year, ptVar="pt_nom" ) #pt_nom?
-recoJetSel_jesTotalUp   = jetSelector( options.year, ptVar="pt_jesTotalUp" )
-recoJetSel_jesTotalDown = jetSelector( options.year, ptVar="pt_jesTotalDown" )
-recoJetSel_jerUp        = jetSelector( options.year, ptVar="pt_jerUp" )
-recoJetSel_jerDown      = jetSelector( options.year, ptVar="pt_jerDown" )
+recoJetSel              = jetSelector( options.year, ptVar=ptVar ) #pt_nom?
+if addSystematicVariations and not options.skipNanoTools:
+    recoJetSel_jesTotalUp   = jetSelector( options.year, ptVar="pt_jesTotalUp" )
+    recoJetSel_jesTotalDown = jetSelector( options.year, ptVar="pt_jesTotalDown" )
+    recoJetSel_jerUp        = jetSelector( options.year, ptVar="pt_jerUp" )
+    recoJetSel_jerDown      = jetSelector( options.year, ptVar="pt_jerDown" )
 
 if options.addPreFiringFlag: 
     from Analysis.Tools.PreFiring import PreFiring
@@ -919,8 +934,6 @@ def filler( event ):
     mediumPhotonsNoSieie         = deltaRCleaning( mediumPhotonsNoSieie,         selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
     mediumPhotonsNoChgIsoNoSieie = deltaRCleaning( mediumPhotonsNoChgIsoNoSieie, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.1 )
 
-    # Photons are stored later in this script
-
     # Jets
     allJets = getParticles( r, collVars=readJetVarList, coll="Jet" )
 
@@ -983,14 +996,18 @@ def filler( event ):
     event.nBTagGoodNoChgIsoNoSieie = len( filter( lambda x: x["isBJet"], goodNoChgIsoNoSieieJets ) )
 
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
-    if options.year == 2017:
+    if options.year == 2017 and not options.skipNanoTools:
         # v2 recipe. Could also use our own recipe
         event.MET_pt     = r.METFixEE2017_pt
         event.MET_phi    = r.METFixEE2017_phi
         event.MET_pt_min = r.MET_pt_min
-    else:
+    elif not options.skipNanoTools:
         event.MET_pt     = r.MET_pt_nom
         event.MET_phi    = r.MET_phi_nom
+        event.MET_pt_min = 0
+    else:
+        event.MET_pt     = r.MET_pt
+        event.MET_phi    = r.MET_phi
         event.MET_pt_min = 0
 
     # Additional observables
@@ -999,7 +1016,7 @@ def filler( event ):
     if len(mediumPhotons) > 0:
         event.m3gamma = m3( jets, photon=mediumPhotons[0] )[0]
 
-    event.ht = sum( [ j['pt_nom'] for j in jets ] )
+    event.ht = sum( [ j[ptVar] for j in jets ] )
     if event.ht > 0:
         event.METSig = event.MET_pt / sqrt( event.ht )
 
@@ -1117,7 +1134,7 @@ def filler( event ):
     bjets_sys     = {}
     nonBjets_sys  = {}
 
-    if addSystematicVariations:
+    if addSystematicVariations and not options.skipNanoTools:
         jets_sys["jesTotalUp"]   = filter(lambda j: recoJetSel_jesTotalUp(j) and j["clean"],   allGoodJets)
         jets_sys["jesTotalDown"] = filter(lambda j: recoJetSel_jesTotalDown(j) and j["clean"], allGoodJets)
         jets_sys["jerUp"]        = filter(lambda j: recoJetSel_jerUp(j) and j["clean"],        allGoodJets)
@@ -1137,7 +1154,7 @@ def filler( event ):
             for i in ["", "_photonEstimated"]:
                 # use cmg MET correction values ecept for JER where it is zero. There, propagate jet variations.
                 if 'jer' in var or 'jes' in var:
-                  (MET_corr_pt, MET_corr_phi) = getMetJetCorrected(getattr(event, "MET_pt" + i), getattr(event,"MET_phi" + i), allJets, var, ptVar='pt_nom')
+                  (MET_corr_pt, MET_corr_phi) = getMetJetCorrected(getattr(event, "MET_pt" + i), getattr(event,"MET_phi" + i), allJets, var, ptVar=ptVar)
                 else:
                   (MET_corr_pt, MET_corr_phi) = getMetCorrected(r, var, mediumPhotons[0] if i.count("photonEstimated") and len(mediumPhotons) else None)
 
@@ -1342,7 +1359,7 @@ if options.writeToDPM:
 
         for fname in files:
 
-            if not fname.endswith(".root") or fname.startswith("nanoAOD_"): continue # remove that for copying log files
+            if not fname.endswith(".root") or fname.startswith("nanoAOD_") or "_for_" in fname: continue # remove that for copying log files
 
             source  = os.path.abspath( os.path.join( dirname, fname ) )
             target  = os.path.join( targetPath, fname )
