@@ -49,4 +49,9 @@
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Dilept_newCentral_1Line #SPLIT50
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_SemiLept_newCentral_1Line #SPLIT50
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Had_newCentral_1Line #SPLIT50
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_newCentral_1Line #SPLIT50
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_newCentral_1Line #SPLIT50
+
+python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp  #SPLIT20
+python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp  #SPLIT20
+python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_newCentral_1Line_comp #SPLIT20
+python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_SM_ATLASrunCard_comp  #SPLIT20
