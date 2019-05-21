@@ -23,9 +23,8 @@ if os.environ['USER'] in ['llechner']:
     mva_directory                       = "/afs/hephy.at/data/llechner01/TTGammaEFT/mva/"
 
     plot_directory                      = "/afs/hephy.at/user/l/llechner/www/TTGammaEFT/"
-    data_directory1                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
-    data_directory2                     = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
-    data_directory3                     = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
+    #data_directory2                     = "/afs/hephy.at/data/llechner02/TTGammaEFT/nanoTuples/"
+    #data_directory3                     = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
 
     postprocessing_directoryGEN         = "TTGammaEFT_PP_GEN_TTG_v12/gen/"
 
@@ -44,9 +43,6 @@ if os.environ['USER'] in ['llechner']:
     postprocessing_directoryRun2016_semilep = "TTGammaEFT_PP_2016_TTG_Data_v17/semilep/"
     postprocessing_directoryRun2017_semilep = "TTGammaEFT_PP_2017_TTG_Data_v17/semilep/"
     postprocessing_directoryRun2018_semilep = "TTGammaEFT_PP_2018_TTG_Data_v17/semilep/"
-
-#    postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v2/dilep/"
-    postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v1/dilep/"
 
     postprocessing_output_directory     = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
 
