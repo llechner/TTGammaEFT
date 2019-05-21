@@ -21,8 +21,8 @@ from TTGammaEFT.Samples.color import color
 # Data directory
 from TTGammaEFT.Tools.user import dpm_directory as data_directory
 data_directory += "postprocessed/"
-from TTGammaEFT.Tools.user import postprocessing_directoryMC2017 as postprocessing_directory
-
+from TTGammaEFT.Samples.default_locations import postprocessing_locations
+postprocessing_directory = postprocessing_locations.MC2017
 # Redirector
 try:
     redirector = sys.modules['__main__'].redirector

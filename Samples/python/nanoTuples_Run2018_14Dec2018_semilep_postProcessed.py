@@ -21,7 +21,8 @@ else:
 # Data directory
 from TTGammaEFT.Tools.user import dpm_directory as data_directory
 data_directory += "postprocessed/"
-from TTGammaEFT.Tools.user import postprocessing_directoryRun2018_semilep as postprocessing_directory
+from TTGammaEFT.Samples.default_locations import postprocessing_locations
+postprocessing_directory = postprocessing_locations.Run2018_semilep
 
 # Redirector
 try:

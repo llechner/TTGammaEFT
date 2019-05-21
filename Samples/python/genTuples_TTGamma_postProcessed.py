@@ -20,8 +20,8 @@ from TTGammaEFT.Samples.color import color
 
 # Data directory
 from TTGammaEFT.Tools.user import gridpack_directory
-from TTGammaEFT.Tools.user import data_directory3             as data_directory
-from TTGammaEFT.Tools.user import postprocessing_directoryGEN as postprocessing_directory
+data_directory           = "/afs/hephy.at/data/llechner03/TTGammaEFT/nanoTuples/"
+postprocessing_directory = "TTGammaEFT_PP_GEN_TTG_v12/gen/"
 
 logger.info( "Loading MC samples from directory %s", os.path.join( data_directory, postprocessing_directory ) )
 
