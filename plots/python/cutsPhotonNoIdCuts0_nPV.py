@@ -436,7 +436,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt if event.PV_npvsGood < 20 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -444,7 +444,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt if event.PV_npvsGood >= 20 and event.PV_npvsGood < 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -452,7 +452,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt if event.PV_npvsGood >= 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 
@@ -461,7 +461,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt if event.PV_npvsGood < 20 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -469,7 +469,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt if event.PV_npvsGood >= 20 and event.PV_npvsGood < 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -477,7 +477,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt if event.PV_npvsGood >= 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 
@@ -542,7 +542,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt if event.PV_npvsGood < 20 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -550,7 +550,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt if event.PV_npvsGood >= 20 and event.PV_npvsGood < 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -558,7 +558,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt if event.PV_npvsGood >= 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 
@@ -567,7 +567,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt if event.PV_npvsGood < 20 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -575,7 +575,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt if event.PV_npvsGood >= 20 and event.PV_npvsGood < 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0_nPV.append( Plot(
@@ -583,7 +583,7 @@ cutsPhotonNoIdCuts0_nPV.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt if event.PV_npvsGood >= 60 else -999,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 

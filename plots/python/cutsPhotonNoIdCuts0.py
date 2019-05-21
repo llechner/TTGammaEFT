@@ -136,7 +136,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0.append( Plot(
@@ -144,7 +144,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt,
-    binning   = [ 50, 0, 0.5 ],
+    binning   = [ 50, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0.append( Plot(
@@ -168,7 +168,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt,
-    binning   = [ 50, 0, 0.5 ],
+    binning   = [ 50, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0.append( Plot(
@@ -176,7 +176,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0.append( Plot(
@@ -230,7 +230,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoSieie0_pfRelIso03_chg * event.PhotonNoSieie0_pt,
-    binning   = [ 50, 0, 0.5 ],
+    binning   = [ 50, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0.append( Plot(
@@ -246,7 +246,7 @@ cutsPhotonNoIdCuts0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonNoSieie0_pfRelIso03_chg * event.PhotonNoSieie0_pt,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonNoIdCuts0.append( Plot(
