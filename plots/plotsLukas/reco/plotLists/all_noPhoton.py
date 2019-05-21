@@ -23,6 +23,9 @@ from TTGammaEFT.plots.cutsLeptonGood1          import cutsLeptonGood1
 #from TTGammaEFT.plots.cutsPhotonNoIdCuts0      import cutsPhotonNoIdCuts0
 #from TTGammaEFT.plots.cutsPhotonNoIdCuts0_nPV  import cutsPhotonNoIdCuts0_nPV
 #from TTGammaEFT.plots.cutsPhotonNoIdCuts0_pt   import cutsPhotonNoIdCuts0_pt
+from TTGammaEFT.plots.cutsPhotonNoIdCuts0_invChgIso  import cutsPhotonNoIdCuts0_invChgIso
+from TTGammaEFT.plots.cutsPhotonNoIdCuts0_nPV_invChgIso  import cutsPhotonNoIdCuts0_nPV_invChgIso
+from TTGammaEFT.plots.cutsPhotonNoIdCuts0_pt_invChgIso   import cutsPhotonNoIdCuts0_pt_invChgIso
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_invSieie  import cutsPhotonNoIdCuts0_invSieie
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_nPV_invSieie  import cutsPhotonNoIdCuts0_nPV_invSieie
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_pt_invSieie   import cutsPhotonNoIdCuts0_pt_invSieie
@@ -84,6 +87,10 @@ plotListData += mll_pt
 plotListData += multiplicityGoodNoPhoton
 #plotListData += photonGood0
 #plotListData += photonGood1
+
+plotListData += cutsPhotonNoIdCuts0_invChgIso
+plotListData += cutsPhotonNoIdCuts0_nPV_invChgIso
+plotListData += cutsPhotonNoIdCuts0_pt_invChgIso
 
 plotListData += cutsPhotonNoIdCuts0_invSieie
 plotListData += cutsPhotonNoIdCuts0_nPV_invSieie

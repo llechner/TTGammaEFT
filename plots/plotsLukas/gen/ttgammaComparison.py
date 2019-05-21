@@ -40,8 +40,8 @@ import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
-if args.small:     args.plot_directory += "_small"
-if args.normalize: args.plot_directory += "_normalize"
+if args.small:     args.version += "_small"
+if args.normalize: args.version += "_normalize"
 
 # Samples
 from TTGammaEFT.Samples.genTuples_TTGamma_postProcessed      import *
@@ -56,33 +56,6 @@ def drawObjects( lumi_scale ):
       (0.65, 0.95, '%3.1f fb{}^{-1} (13 TeV)' % lumi_scale)
     ]
     return [tex.DrawLatex(*l) for l in lines] 
-
-if args.normalize:
-    scaling = { 0:i for i, _ in enumerate(comparisonSamples) }
-
-# Plotting
-def drawPlots( plots, mode ):
-    for log in [False, True]:
-        plot_directory_ = os.path.join( plot_directory, 'comparisonPlots', "runCardTest_%s"%args.version, args.selection, mode, "log" if log else "lin" )
-
-        for plot in plots:
-            if not max(l[0].GetMaximum() for l in plot.histos): 
-                continue # Empty plot
-            postFix = " (legacy)"
-            extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue'] else ['png']
-
-            plotting.draw( plot,
-	                       plot_directory = plot_directory_,
-                           extensions = extensions_,
-                           ratio = {'yRange': (0.5, 1.5), 'histos':[(i+1,0) for i, _ in enumerate(comparisonSamples[1:])], 'texY':'Ratio'},
-#	                       ratio = None,
-	                       logX = False, logY = log, sorting = False,
-	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
-	                       scaling = scaling if args.normalize else {},
-	                       legend = [ (0.18,0.85-0.03*sum(map(len, plot.histos)),0.9,0.88), 2],
-	                       drawObjects = drawObjects( lumi_scale ) if not args.normalize else drawObjects( lumi_scale ),
-                           copyIndexPHP = True,
-                         )
 
 def getYieldPlot( index ):
     return Plot(
@@ -103,7 +76,7 @@ genLeptonVarString   = "pt/F,eta/F,phi/F,pdgId/I,motherPdgId/I,grandmotherPdgId/
 genLeptonVars        = [ item.split("/")[0] for item in genLeptonVarString.split(",") ]
 
 #genPhotonVarString   = "pt/F,status/I,phi/F,eta/F,mass/F,motherPdgId/I,relIso04_all/F,photonLepdR/F,photonJetdR/F"
-genPhotonVarString   = "pt/F,phi/F,eta/F,mass/F,motherPdgId/I,relIso04_all/F,photonLepdR/F,photonJetdR/F"
+genPhotonVarString   = "pt/F,phi/F,eta/F,mass/F,motherPdgId/I,relIso04_all/F,photonLepdR/F,photonJetdR/F,status/I"
 genPhotonVars        = [ item.split("/")[0] for item in genPhotonVarString.split(",") ]
 
 # Read variables and sequences
@@ -116,6 +89,8 @@ read_variables  = ["weight/F",
                    "GenLepton[%s]"   %genLeptonVarString,
                    "nGenPhoton/I",
                    "GenPhoton[%s]"   %genPhotonVarString,
+                   "nGenMGPhoton/I",
+                   "GenMGPhoton[%s]"   %genPhotonVarString,
                    "nGenJet/I",
                    "GenJet[%s]"      %genJetVarString,
                    "nGenTop/I",
@@ -134,6 +109,8 @@ read_variables  += [
                    "GenAllLepton[%s]"   %genLeptonVarString,
                    "nGenAllPhoton/I",
                    "GenAllPhoton[%s]"   %genPhotonVarString,
+                   "nGenMGAllPhoton/I",
+                   "GenMGAllPhoton[%s]"   %genPhotonVarString,
 #                   "nGenPhotonAll/I",
 #                   "GenPhotonAll[%s]"   %genPhotonVarString,
 #                   "nGenPhotonPT/I",
@@ -163,125 +140,45 @@ read_variables_EFT = [
                       VectorTreeVariable.fromString('p[C/F]', nMax=100)
                      ]
 
-def getlowPtPhotons( event, sample ):
-    GenAllPhotons    = getCollection( event, 'GenAllPhoton', ["pt","eta","phi"], 'nGenAllPhoton' )
-    GenAllLeptons    = getCollection( event, 'GenAllLepton', ["pt","eta","phi"], 'nGenAllLepton' )
-    GenAllJets       = getCollection( event, 'GenAllJet',    ["pt","eta","phi","matchBParton"], 'nGenAllJet' )
-    GenJets          = getCollection( event, 'GenJet',       ["pt","eta","phi","matchBParton"], 'nGenJet' )
-
-    GenAllJets.sort( key = lambda p:-p['pt'] )
-    GenJets.sort( key = lambda p:-p['pt'] )
-    GenAllPhotons.sort( key = lambda p:-p['pt'] )
-    if GenAllPhotons:
-        event.GenAllPhotonsEta  = GenAllPhotons[0]["eta"]
-        event.GenAllPhotonsPt   = GenAllPhotons[0]["pt"]
-    else:
-        event.GenAllPhotonsEta  = -999
-        event.GenAllPhotonsPt   = -999
-
-    GenBJets      = list( filter( lambda g: g["matchBParton"], GenJets ) )
-    GenNonBJets   = list( filter( lambda g: not g["matchBParton"], GenJets ) )
-    event.nGenBJets     = len(GenBJets)
-    event.nGenNonBJets  = len(GenNonBJets)
-
-    GenAllBJets      = list( filter( lambda g: g["matchBParton"], GenAllJets ) )
-    GenAllNonBJets   = list( filter( lambda g: not g["matchBParton"], GenAllJets ) )
-    event.nGenAllBJets     = len(GenBJets)
-    event.nGenAllNonBJets  = len(GenNonBJets)
-
-    if len(GenAllBJets)>0:
-        event.GenAllBJets0Pt  = GenAllBJets[0]["pt"]
-        event.GenAllBJets0Eta = GenAllBJets[0]["eta"]
-    else:
-        event.GenAllBJets0Pt  = -999
-        event.GenAllBJets0Eta = -999
-
-    if len(GenAllBJets)>1:
-        event.GenAllBJets1Pt  = GenAllBJets[1]["pt"]
-        event.GenAllBJets1Eta = GenAllBJets[1]["eta"]
-    else:
-        event.GenAllBJets1Pt  = -999
-        event.GenAllBJets1Eta = -999
-
-    GenJetlowPT   = list( filter( lambda g: g["pt"]<20, GenAllJets ) )
-    event.nGenJetlowPT  = len(GenJetlowPT)
-
-    GenPhotonlowPT   = list( filter( lambda g: g["pt"]<20, GenAllPhotons ) )
-    event.nGenPhotonlowPT  = len(GenPhotonlowPT)
-
-    GenLeptonlowPT   = list( filter( lambda g: g["pt"]<20, GenAllLeptons ) )
-    event.nGenLeptonlowPT  = len(GenLeptonlowPT)
-
-    if GenJetlowPT:
-        event.GenJetlowPTEta  = GenJetlowPT[0]["eta"]
-        event.GenJetlowPTPt   = GenJetlowPT[0]["pt"]
-    else:
-        event.GenJetlowPTEta  = -999
-        event.GenJetlowPTPt   = -999
-
-    if GenPhotonlowPT:
-        GenPhotonlowPT[0]["clean"] = 1 #dont clean the high pT photons
-        for i, GenPhoton in enumerate(GenPhotonlowPT[::-1][:-1]):
-            GenPhoton['clean'] = min( [999] + [ deltaR2( GenPhoton, p ) for p in GenPhotonlowPT[::-1][i+1:] ] ) > 0.09
-        event.GenPhotonlowPTEta  = GenPhotonlowPT[0]["eta"]
-        event.GenPhotonlowPTPt   = GenPhotonlowPT[0]["pt"]
-        GenPhotonlowPT = list( filter( lambda j: j["clean"], GenPhotonlowPT ) )
-        event.nGenPhotonlowPTDR  = len(GenPhotonlowPT)
-    else:
-        event.nGenPhotonlowPTDR  = -999
-        event.GenPhotonlowPTEta  = -999
-        event.GenPhotonlowPTPt   = -999
-
-
 def getMinDR( event, sample ):
     GenJets    = getCollection( event, 'GenJet', ["pt","eta","phi","pdgId","matchBParton"], 'nGenJet' )
     trueBjets    = list( filter( lambda j: j['matchBParton'], GenJets ) )
     trueNonBjets = list( filter( lambda j: not j['matchBParton'], GenJets ) )
 
     GenPromptLeptons = getCollection( event, 'GenLepton', ["pt","eta","phi"], 'nGenLepton' )
+    GenMGPhotonsAll     = getCollection( event, 'GenMGPhoton', ["pt","eta","phi","status", "motherPdgId"], 'nGenMGPhoton' )
 
-#    trueNonBjets = list( filter( lambda g: abs(g["pdgId"]) in [1,2,3,4], trueNonBjets ) )
+    if "nPhoton" in args.selection: GenMGPhotonsAll  = list( filter( lambda g: g["status"]>1, GenMGPhotonsAll ) )
 
-#    GenPhotonPT      = getCollection( event, 'GenPhotonPT', ["pt","eta","phi","status"], 'nGenPhotonPT' )
-#    GenPhoton        = getCollection( event, 'GenPhoton', ["pt","eta","phi","status"], 'nGenPhoton' )
-    GenPhotonsAll     = getCollection( event, 'GenPhoton', ["pt","eta","phi","status", "motherPdgId"], 'nGenPhoton' )
+    event.minDRaa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenMGPhotonsAll[:-1])   for g2 in GenMGPhotonsAll[i+1:]       ] + [999] )
+    event.minDRaj = min( [ deltaR( a, j ) for a     in GenMGPhotonsAll                       for j  in trueNonBjets           ] + [999] )
+    event.minDRab = min( [ deltaR( a, b ) for a     in GenMGPhotonsAll                       for b  in trueBjets              ] + [999] )
+    event.minDRal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenMGPhotonsAll             ] + [999] )
 
-#    GenPhotonAll = GenPhotonsAll #list( filter( lambda g: g["status"] , GenPhotonsAll ) )
-#    GenPhotonPT = list( filter( lambda g: g["pt"]>13 , GenPhotonsAll ) )
-#    GenPhoton = list( filter( lambda g: g["pt"]>13 and abs(g["motherPdgId"]) in [6,21], GenPhotonsAll ) )
+#
 
-#    event.nGenPhotonAll  = len(GenPhotonAll)
-#    event.nGenPhotonPt   = len(GenPhotonPT)
-#    event.nGenPhotonStat = len(GenPhoton)
 
-#    event.minDRstataa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhoton[:-1])   for g2 in GenPhoton[i+1:]       ] + [999] )
-#    event.minDRstataj = min( [ deltaR( a, j ) for a     in GenPhoton                       for j  in trueNonBjets           ] + [999] )
-#    event.minDRstatab = min( [ deltaR( a, b ) for a     in GenPhoton                       for b  in trueBjets              ] + [999] )
-#    event.minDRstatal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhoton             ] + [999] )
+def getStatusPhotons( event, sample ):
+    GenMGPhotons    = getCollection( event, 'GenMGPhoton', ["pt","eta","phi","status"], 'nGenMGPhoton' )
+    GenMGAllPhotons = getCollection( event, 'GenMGAllPhoton', ["pt","eta","phi","status"], 'nGenMGAllPhoton' )
+    GenAllJet       = getCollection( event, 'GenAllJet', ["pt","eta","phi"], 'nGenAllJet' )
+    GenLepton       = getCollection( event, 'GenLepton', ["pt","eta","phi"], 'nGenLepton' )
+    GenAllLepton    = getCollection( event, 'GenLepton', ["pt","eta","phi"], 'nGenAllLepton' )
 
-#    event.minDRpt13aa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhotonPT[:-1])   for g2 in GenPhotonPT[i+1:]       ] + [999] )
-#    event.minDRpt13aj = min( [ deltaR( a, j ) for a     in GenPhotonPT                       for j  in trueNonBjets           ] + [999] )
-#    event.minDRpt13ab = min( [ deltaR( a, b ) for a     in GenPhotonPT                       for b  in trueBjets              ] + [999] )
-#    event.minDRpt13al = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhotonPT             ] + [999] )
 
-#    event.minDRallaa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhotonAll[:-1])   for g2 in GenPhotonAll[i+1:]       ] + [999] )
-#    event.minDRallaj = min( [ deltaR( a, j ) for a     in GenPhotonAll                       for j  in trueNonBjets           ] + [999] )
-#    event.minDRallab = min( [ deltaR( a, b ) for a     in GenPhotonAll                       for b  in trueBjets              ] + [999] )
-#    event.minDRallal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhotonAll             ] + [999] )
+    GenMGAllPhotons  = list( filter( lambda j: min( [999] + [ deltaR2( j, p ) for p in GenAllJet ] ) > 0.04, GenMGAllPhotons ) )
+#    GenMGAllPhotons  = list( filter( lambda j: min( [999] + [ deltaR2( j, p ) for p in GenLepton ] ) > 0.04, GenMGAllPhotons ) )
+    GenLepton  = list( filter( lambda j: min( [999] + [ deltaR2( j, p ) for p in GenMGAllPhotons if p["status"]>1 ] ) > 0.04, GenLepton ) )
 
-    event.minDRjj = min( [ deltaR(j1, j2) for i, j1 in enumerate(trueNonBjets[:-1])     for j2 in trueNonBjets[i+1:]     ] + [999] )
-    event.minDRbb = min( [ deltaR(b1, b2) for i, b1 in enumerate(trueBjets[:-1])        for b2 in trueBjets[i+1:]        ] + [999] )
-    event.minDRll = min( [ deltaR(l1, l2) for i, l1 in enumerate(GenPromptLeptons[:-1]) for l2 in GenPromptLeptons[i+1:] ] + [999] )
-    event.minDRaa = min( [ deltaR(g1, g2) for i, g1 in enumerate(GenPhotonsAll[:-1])   for g2 in GenPhotonsAll[i+1:]       ] + [999] )
-    event.minDRbj = min( [ deltaR( b, j ) for b     in trueBjets                        for j  in trueNonBjets           ] + [999] )
-    event.minDRaj = min( [ deltaR( a, j ) for a     in GenPhotonsAll                       for j  in trueNonBjets           ] + [999] )
-    event.minDRjl = min( [ deltaR( l, j ) for l     in GenPromptLeptons                 for j  in trueNonBjets           ] + [999] )
-    event.minDRab = min( [ deltaR( a, b ) for a     in GenPhotonsAll                       for b  in trueBjets              ] + [999] )
-    event.minDRbl = min( [ deltaR( l, b ) for l     in GenPromptLeptons                 for b  in trueBjets              ] + [999] )
-    event.minDRal = min( [ deltaR( l, a ) for l     in GenPromptLeptons                 for a  in GenPhotonsAll             ] + [999] )
+#    GenMGPhotons = filter( lambda x: x["status"]>1, GenMGPhotons )
+    event.nGenMGPhoton = len( GenMGPhotons ) if event.nGenLepton == len(GenLepton) and len(GenAllLepton)==1 else 0
+#    event.GenMGPhoton_pt[0] = GenMGAllPhotons[0]["pt"] if GenMGAllPhotons else -999
+#    event.GenMGPhoton_eta[0] = GenMGAllPhotons[0]["eta"] if GenMGAllPhotons else -999
+#    event.GenMGPhoton_phi[0] = GenMGAllPhotons[0]["phi"] if GenMGAllPhotons else -999
+#    event.GenMGPhoton_status[0] = GenMGAllPhotons[0]["status"] if GenMGAllPhotons else -999
 
 # Sequence
-sequence = [ getlowPtPhotons ]#getMinDR]
+sequence = [getMinDR, getStatusPhotons]
 
 lumi_scale = 136.6
 
@@ -292,7 +189,45 @@ lumi_scale = 136.6
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta] ]
 #comparisonSamples = [ [TTG_CMS_RunCard], [TTG_ATLAS_RunCard], [TTG_CMS_RunCard_noJetPtCut_xqcut], [TTG_CMS_RunCard_noDeltaR_noJetPtCut_xqcut] ]
 #comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_TTBar_RunCard_modified], [TTG_TTBar_RunCard], [TTG_TTBar_RunCard_mllOnly] ]
-comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_NoFullyHad_comb_newCentral_RunCard], [TTG_NoFullyHad_newCentral_RunCard] ]
+#comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_NoFullyHad_newCentral_RunCard] ]
+
+if "100to200" in args.selection.replace("To","to"):
+    comparisonSamples = [ [TTG_ATLAS_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_pTG100To200_comp] ]
+#    comparisonSamples = [ [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_pTG100To200_comp] ]
+elif "200" in args.selection:
+    comparisonSamples = [ [TTG_ATLAS_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_pTGgt200_comp] ]
+#    comparisonSamples = [ [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_pTGgt200_comp] ]
+else:
+    comparisonSamples = [ [TTG_ATLAS_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_comp] ]
+#    comparisonSamples = [ [TTG_ATLAS_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_pTG100To200_comp], [TTG_NoFullyHad_newCentral_RunCard_pTGgt200_comp] ]
+
+
+if args.normalize:
+    scaling = { i:0 for i, _ in enumerate(comparisonSamples) }
+
+# Plotting
+def drawPlots( plots, mode ):
+    for log in [False, True]:
+        plot_directory_ = os.path.join( plot_directory, 'comparisonPlots', "runCardTest_%s"%args.version, args.selection, mode, "log" if log else "lin" )
+
+        for plot in plots:
+            if not max(l[0].GetMaximum() for l in plot.histos): 
+                continue # Empty plot
+            postFix = " (legacy)"
+            extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue'] else ['png']
+
+            plotting.draw( plot,
+	                       plot_directory = plot_directory_,
+                           extensions = extensions_,
+                           ratio = {'yRange': (0.5, 1.5), 'histos':[(i+1,0) for i, _ in enumerate(comparisonSamples[1:])], 'texY':'Ratio'},
+#	                       ratio = None,
+	                       logX = False, logY = log, sorting = False,
+	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
+	                       scaling = scaling if args.normalize else {},
+	                       legend = [ (0.18,0.85-0.03*sum(map(len, plot.histos)),0.9,0.88), 2],
+	                       drawObjects = drawObjects( lumi_scale ) if not args.normalize else drawObjects( lumi_scale ),
+                           copyIndexPHP = True,
+                         )
 
 #print args.selection
 #print "CMS", TTG_CMS_RunCard.getYieldFromDraw( weightString="weight*%f"%lumi_scale, selectionString=cutInterpreter.cutString( args.selection ) )['val']
@@ -515,8 +450,9 @@ addPlots.append( Plot(
 # Loop over channels
 yields   = {}
 allPlots = {}
-if args.selection.count("dilep"): allModes = [ 'mumu', 'mue', 'ee', "SF", "all" ]
-else: allModes = [ 'e', "mu", "all" ]
+if args.selection.count("dilep"): allModes = [ "all", 'mumu', 'mue', 'ee', "SF" ]
+elif args.selection.count("nLep"): allModes = [ "all", 'e', "mu" ]
+else: allModes = [ "all" ]
 
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
@@ -526,8 +462,8 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    plots += addPlots
-    if mode != 'all': plots += [ getYieldPlot( index ) ]
+#    plots += addPlots
+#    if mode != 'all': plots += [ getYieldPlot( index ) ]
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
