@@ -7,6 +7,7 @@ from Analysis.Tools.CutInterpreter import CutInterpreter
 mZ = 91.1876
 
 special_cuts = {
+    "leadLepPT15":       "Sum$(GenLepton_pt>15)>=1",
     "OS":                "(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0",
     "dilep":             "nGenLepton==2",
     "dilepOS":           "nGenLepton==2&&(GenLepton_pdgId[0]*GenLepton_pdgId[1])<0",
@@ -30,10 +31,11 @@ special_cuts = {
     "mu":                "nGenElectron==0&&nGenMuon==1",
     "all":               "(1)",
     "SF":                "(nGenElectron==2||nGenMuon==2)",
+    "clean":             "nGenLepton==nGenAllLepton",
   }
 
-continous_variables = [ ("met", "GenMET_pt"), ("pTG","GenPhoton_pt[0]"), ("mll", "mll"), ("mllgamma", "mllgamma") ]
-discrete_variables  = [ ("nJet", "nGenJet"), ("nBTag", "nGenBJet"), ("nLep","nGenLepton"), ("nPhoton","nGenPhoton") ]
+continous_variables = [ ("met", "GenMET_pt"), ("pTG","GenMGPhoton_pt[0]*(GenMGPhoton_status[0]>1)"), ("pTAllG", "GenMGPhoton_pt[0]"), ("mll", "mll"), ("mllgamma", "mllgamma") ]
+discrete_variables  = [ ("nJet", "nGenJet"), ("nBTag", "nGenBJet"), ("nLep","nGenLepton"), ("nAllPhoton","nGenMGPhoton"), ("nPhoton","Sum$(GenMGPhoton_status>1)") ]
 
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 

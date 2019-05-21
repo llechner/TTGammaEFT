@@ -8,12 +8,13 @@
 
 class Variable:
 
-    def __init__( self, name, type, read=True, write=True, inData=False, inPlot=False ):
+    def __init__( self, name, type, read=True, write=True, inData=False, inPlot=False, isSyst=False ):
 
         self.name   = name
         self.type   = type
         self.inData = inData
         self.inPlot = inPlot
+        self.isSyst = isSyst
         self.read   = read
         self.write  = write
 
@@ -30,212 +31,212 @@ class NanoVariables:
         self.knownParticleLists = [ "Electron", "Muon", "Lepton", "Jet", "BJet", "Photon", "Gen", "GenJet" ]
 
         self.ElectronVariables = [\
-                                  Variable( "pt",                       "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "eta",                      "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "phi",                      "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "pfRelIso03_all",           "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "pfRelIso03_chg",           "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "eInvMinusPInv",            "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "hoe",                      "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "sieie",                    "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "sip3d",                    "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "convVeto",                 "O", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "cutBased",                 "I", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "pdgId",                    "I", read=True,  write=True,  inData=True,  inPlot=True ),
-                                  Variable( "vidNestedWPBitmap",        "I", read=True,  write=True,  inData=True,  inPlot=True ),
+                                  Variable( "pt",                       "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "eta",                      "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "phi",                      "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "pfRelIso03_all",           "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "pfRelIso03_chg",           "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "eInvMinusPInv",            "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "hoe",                      "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "sieie",                    "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "sip3d",                    "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "convVeto",                 "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "cutBased",                 "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "pdgId",                    "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "vidNestedWPBitmap",        "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                                  Variable( "lostHits",                 "b", read=True,  write=False, inData=True,  inPlot=False ),
-                                  Variable( "lostHits",                 "I", read=False, write=True,  inData=True,  inPlot=True ),
+                                  Variable( "lostHits",                 "b", read=True,  write=False, inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "lostHits",                 "I", read=False, write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                                  Variable( "deltaEtaSC",               "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "dr03EcalRecHitSumEt",      "F", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "dr03HcalDepth1TowerSumEt", "F", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "dr03TkSumPt",              "F", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "dxy",                      "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "dxyErr",                   "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "dz",                       "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "dzErr",                    "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "energyErr",                "F", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "ip3d",                     "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "mass",                     "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "miniPFRelIso_all",         "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "miniPFRelIso_chg",         "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "r9",                       "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "mvaTTH",                   "F", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "charge",                   "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "jetIdx",                   "I", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "photonIdx",                "I", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "tightCharge",              "I", read=True,  write=True, inData=True,  inPlot=False ),
-                                  Variable( "cutBased_HEEP",            "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "isPFcand",                 "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                                  Variable( "cleanmask",                "O", read=True,  write=True,  inData=True,  inPlot=False ),
+                                  Variable( "deltaEtaSC",               "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "dr03EcalRecHitSumEt",      "F", read=True,  write=True, inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "dr03HcalDepth1TowerSumEt", "F", read=True,  write=True, inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "dr03TkSumPt",              "F", read=True,  write=True, inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "dxy",                      "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "dxyErr",                   "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "dz",                       "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "dzErr",                    "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "energyErr",                "F", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "ip3d",                     "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "mass",                     "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "miniPFRelIso_all",         "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "miniPFRelIso_chg",         "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "r9",                       "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                  Variable( "mvaTTH",                   "F", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "charge",                   "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "jetIdx",                   "I", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "photonIdx",                "I", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "tightCharge",              "I", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "cutBased_HEEP",            "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "isPFcand",                 "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                  Variable( "cleanmask",                "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
 
-                                  Variable( "genPartIdx",               "I", read=True,  write=True,  inData=False, inPlot=False ),
+                                  Variable( "genPartIdx",               "I", read=True,  write=True,  inData=False, inPlot=False, isSyst=False ),
 
-                                  Variable( "genPartFlav",              "b", read=True,  write=False, inData=False, inPlot=False ),
-                                  Variable( "genPartFlav",              "I", read=False, write=True,  inData=False, inPlot=False ),
+                                  Variable( "genPartFlav",              "b", read=True,  write=False, inData=False, inPlot=False, isSyst=False ),
+                                  Variable( "genPartFlav",              "I", read=False, write=True,  inData=False, inPlot=False, isSyst=False ),
 
-                                  Variable( "index",                    "I", read=False, write=True,  inData=True, inPlot=False ),
+                                  Variable( "index",                    "I", read=False, write=True,  inData=True, inPlot=False, isSyst=False ),
                                  ]
 
         self.MuonVariables = [\
-                              Variable( "pt",               "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "eta",              "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "phi",              "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "pfRelIso03_all",   "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "pfRelIso03_chg",   "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "sip3d",            "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "mediumId",         "O", read=True,  write=True,  inData=True,  inPlot=True ),
-                              Variable( "pdgId",            "I", read=True,  write=True,  inData=True,  inPlot=True ),
+                              Variable( "pt",               "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "eta",              "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "phi",              "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "pfRelIso03_all",   "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "pfRelIso03_chg",   "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "sip3d",            "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "mediumId",         "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                              Variable( "pdgId",            "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                              Variable( "dxy",              "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "dxyErr",           "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "dz",               "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "dzErr",            "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "mass",             "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "dxy",              "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "miniPFRelIso_all", "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "miniPFRelIso_chg", "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "pfRelIso04_all",   "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "ptErr",            "F", read=True,  write=True, inData=True,  inPlot=False ),
-                              Variable( "segmentComp",      "F", read=True,  write=True, inData=True,  inPlot=False ),
-                              Variable( "mvaTTH",           "F", read=True,  write=True, inData=True,  inPlot=False ),
-                              Variable( "charge",           "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "jetIdx",           "I", read=True,  write=True, inData=True,  inPlot=False ),
-                              Variable( "nStations",        "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "nTrackerLayers",   "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "tightCharge",      "I", read=True,  write=True, inData=True,  inPlot=False ),
-                              Variable( "highPtId",         "I", read=True,  write=True, inData=True,  inPlot=False ),
-                              Variable( "isPFcand",         "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "softId",           "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "tightId",          "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "cleanmask",        "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "isGlobal",         "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                              Variable( "isTracker",        "O", read=True,  write=True,  inData=True,  inPlot=False ),
+                              Variable( "dxy",              "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "dxyErr",           "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "dz",               "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "dzErr",            "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "mass",             "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "dxy",              "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "miniPFRelIso_all", "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "miniPFRelIso_chg", "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "pfRelIso04_all",   "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "ptErr",            "F", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "segmentComp",      "F", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "mvaTTH",           "F", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "charge",           "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "jetIdx",           "I", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "nStations",        "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "nTrackerLayers",   "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "tightCharge",      "I", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "highPtId",         "I", read=True,  write=True, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "isPFcand",         "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "softId",           "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "tightId",          "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "cleanmask",        "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "isGlobal",         "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "isTracker",        "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
 
-                              Variable( "genPartIdx",       "I", read=True,  write=True,  inData=False, inPlot=False ),
+                              Variable( "genPartIdx",       "I", read=True,  write=True,  inData=False, inPlot=False, isSyst=False ),
 
-                              Variable( "pfIsoId",          "b", read=True,  write=False, inData=True,  inPlot=False ),
-                              Variable( "pfIsoId",          "I", read=False, write=True,  inData=True,  inPlot=False ),
-                              Variable( "genPartFlav",      "b", read=True,  write=False, inData=False, inPlot=False ),
-                              Variable( "genPartFlav",      "I", read=False, write=True,  inData=False, inPlot=False ),
+                              Variable( "pfIsoId",          "b", read=True,  write=False, inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "pfIsoId",          "I", read=False, write=True,  inData=True,  inPlot=False, isSyst=False ),
+                              Variable( "genPartFlav",      "b", read=True,  write=False, inData=False, inPlot=False, isSyst=False ),
+                              Variable( "genPartFlav",      "I", read=False, write=True,  inData=False, inPlot=False, isSyst=False ),
 
-                              Variable( "index",            "I", read=False, write=True,  inData=True, inPlot=False ),
+                              Variable( "index",            "I", read=False, write=True,  inData=True, inPlot=False, isSyst=False ),
                              ]
 
         self.JetVariables = [\
-                             Variable( "pt",               "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "pt_nom",           "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "pt_jesTotalUp",    "F", read=True,  write=True,  inData=False, inPlot=True ),
-                             Variable( "pt_jesTotalDown",  "F", read=True,  write=True,  inData=False, inPlot=True ),
-                             Variable( "pt_jerUp",         "F", read=True,  write=True,  inData=False, inPlot=True ),
-                             Variable( "pt_jerDown",       "F", read=True,  write=True,  inData=False, inPlot=True ),
-#                             Variable( "pt_unclustEnUp",   "F", read=True,  write=True,  inData=False, inPlot=True ),
-#                             Variable( "pt_unclustEnDown", "F", read=True,  write=True,  inData=False, inPlot=True ),
-                             Variable( "eta",              "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "phi",              "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "neEmEF",           "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "neHEF",            "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "chEmEF",           "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "chHEF",            "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "btagCSVV2",        "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "btagDeepB",        "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "nConstituents",    "I", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "cleanmask",        "O", read=True,  write=True,  inData=True,  inPlot=True ),
-                             Variable( "jetId",            "I", read=True,  write=True,  inData=True,  inPlot=True ),
+                             Variable( "pt",               "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "pt_nom",           "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=True ),
+                             Variable( "pt_jesTotalUp",    "F", read=True,  write=True,  inData=False, inPlot=True, isSyst=True ),
+                             Variable( "pt_jesTotalDown",  "F", read=True,  write=True,  inData=False, inPlot=True, isSyst=True ),
+                             Variable( "pt_jerUp",         "F", read=True,  write=True,  inData=False, inPlot=True, isSyst=True ),
+                             Variable( "pt_jerDown",       "F", read=True,  write=True,  inData=False, inPlot=True, isSyst=True ),
+#                             Variable( "pt_unclustEnUp",   "F", read=True,  write=True,  inData=False, inPlot=True, isSyst=False ),
+#                             Variable( "pt_unclustEnDown", "F", read=True,  write=True,  inData=False, inPlot=True, isSyst=False ),
+                             Variable( "eta",              "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "phi",              "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "neEmEF",           "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "neHEF",            "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "chEmEF",           "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "chHEF",            "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "btagCSVV2",        "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "btagDeepB",        "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "nConstituents",    "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "cleanmask",        "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "jetId",            "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                             Variable( "isGood",           "I", read=False, write=True,  inData=True,  inPlot=True ),
-                             Variable( "isBJet",           "I", read=False, write=True,  inData=True,  inPlot=True ),
+                             Variable( "isGood",           "I", read=False, write=True,  inData=True,  inPlot=True, isSyst=False ),
+                             Variable( "isBJet",           "I", read=False, write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                             Variable( "area",             "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "btagCMVA",         "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "btagDeepC",        "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "mass",             "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "qgl",              "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "rawFactor",        "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "electronIdx1",     "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "electronIdx2",     "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "muonIdx1",         "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "muonIdx2",         "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "nElectrons",       "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "nMuons",           "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                             Variable( "puId",             "I", read=True,  write=True,  inData=True,  inPlot=False ),
+                             Variable( "area",             "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "btagCMVA",         "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "btagDeepC",        "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "mass",             "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "qgl",              "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "rawFactor",        "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "electronIdx1",     "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "electronIdx2",     "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "muonIdx1",         "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "muonIdx2",         "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "nElectrons",       "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "nMuons",           "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                             Variable( "puId",             "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
 
-                             Variable( "genJetIdx",        "I", read=True,  write=True,  inData=False, inPlot=False ),
-                             Variable( "hadronFlavour",    "I", read=True,  write=True,  inData=False, inPlot=False ),
-                             Variable( "partonFlavour",    "I", read=True,  write=True,  inData=False, inPlot=False ),
+                             Variable( "genJetIdx",        "I", read=True,  write=True,  inData=False, inPlot=False, isSyst=False ),
+                             Variable( "hadronFlavour",    "I", read=True,  write=True,  inData=False, inPlot=False, isSyst=False ),
+                             Variable( "partonFlavour",    "I", read=True,  write=True,  inData=False, inPlot=False, isSyst=False ),
 
-                             Variable( "index",            "I", read=False, write=True,  inData=True, inPlot=False ),
+                             Variable( "index",            "I", read=False, write=True,  inData=True, inPlot=False, isSyst=False ),
                             ]
 
         self.BJetVariables = [\
-                              Variable( "pt",    "F", read=True,  write=True,  inData=True, inPlot=True ),
-                              Variable( "eta",   "F", read=True,  write=True,  inData=True, inPlot=True ),
-                              Variable( "phi",   "F", read=True,  write=True,  inData=True, inPlot=True ),
-                              Variable( "index", "I", read=False, write=True,  inData=True, inPlot=False ),
+                              Variable( "pt",    "F", read=True,  write=True,  inData=True, inPlot=True, isSyst=False ),
+                              Variable( "eta",   "F", read=True,  write=True,  inData=True, inPlot=True, isSyst=False ),
+                              Variable( "phi",   "F", read=True,  write=True,  inData=True, inPlot=True, isSyst=False ),
+                              Variable( "index", "I", read=False, write=True,  inData=True, inPlot=False, isSyst=False ),
                              ]
 
         photonCutVarName = "cutBased" if year==2016 else "cutBasedBitmap"
 
         self.PhotonVariables = [\
-                                Variable( "eta",               "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "hoe",               "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "pfRelIso03_all",    "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "pfRelIso03_chg",    "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "phi",               "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "pt",                "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "sieie",             "F", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( photonCutVarName,    "I", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "electronVeto",      "O", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "pixelSeed",         "O", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "pdgId",             "I", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "vidNestedWPBitmap", "I", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "mvaID_WP80",        "O", read=True,  write=True,  inData=True,  inPlot=True ),
+                                Variable( "eta",               "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "hoe",               "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "pfRelIso03_all",    "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "pfRelIso03_chg",    "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "phi",               "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "pt",                "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "sieie",             "F", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( photonCutVarName,    "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "electronVeto",      "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "pixelSeed",         "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "pdgId",             "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "vidNestedWPBitmap", "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "mvaID_WP80",        "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                                Variable( "isScEtaEB",         "O", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "energyErr",         "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "mass",              "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "mvaID",             "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "r9",                "F", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "charge",            "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "electronIdx",       "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "jetIdx",            "I", read=True,  write=True,  inData=True,  inPlot=False ),
-                                Variable( "mvaID_WP90",        "O", read=True,  write=True,  inData=True,  inPlot=True ),
-                                Variable( "cleanmask",         "O", read=True,  write=True,  inData=True,  inPlot=False ),
+                                Variable( "isScEtaEB",         "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "energyErr",         "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "mass",              "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "mvaID",             "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "r9",                "F", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "charge",            "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "electronIdx",       "I", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "jetIdx",            "I", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
+                                Variable( "mvaID_WP90",        "O", read=True,  write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "cleanmask",         "O", read=True,  write=True,  inData=True,  inPlot=False, isSyst=False ),
  
-                                Variable( "genPartIdx",        "I", read=True,  write=True,  inData=False, inPlot=False ),
+                                Variable( "genPartIdx",        "I", read=True,  write=True,  inData=False, inPlot=False, isSyst=False ),
 
-                                Variable( "genPartFlav",       "b", read=True,  write=False,  inData=False, inPlot=False ),
-                                Variable( "genPartFlav",       "I", read=False, write=True,  inData=False, inPlot=False ),
-                                Variable( "photonCat",         "I", read=False, write=True,  inData=True,  inPlot=True ),
+                                Variable( "genPartFlav",       "b", read=True,  write=False,  inData=False, inPlot=False, isSyst=False ),
+                                Variable( "genPartFlav",       "I", read=False, write=True,  inData=False, inPlot=False, isSyst=False ),
+                                Variable( "photonCat",         "I", read=False, write=True,  inData=True,  inPlot=True, isSyst=False ),
 
-                                Variable( "index",             "I", read=False, write=True,  inData=True, inPlot=False ),
+                                Variable( "index",             "I", read=False, write=True,  inData=True, inPlot=False, isSyst=False ),
                                ]
 
 
         self.GenVariables = [\
-                             Variable( "pt",               "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "eta",              "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "phi",              "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "mass",             "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "pdgId",            "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "genPartIdxMother", "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "status",           "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "statusFlags" ,     "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                             Variable( "index",            "I", read=False, write=True,  inData=False,  inPlot=False ),
+                             Variable( "pt",               "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "eta",              "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "phi",              "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "mass",             "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "pdgId",            "I", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "genPartIdxMother", "I", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "status",           "I", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "statusFlags" ,     "I", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                             Variable( "index",            "I", read=False, write=True,  inData=False,  inPlot=False, isSyst=False ),
                             ]
 
         self.GenJetVariables = [\
-                                Variable( "pt",            "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                                Variable( "eta",           "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                                Variable( "phi",           "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                                Variable( "mass",          "F", read=True,  write=True,  inData=False,  inPlot=False ),
-                                Variable( "partonFlavour", "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                                Variable( "hadronFlavour", "I", read=True,  write=True,  inData=False,  inPlot=False ),
-                                Variable( "index",         "I", read=False, write=True,  inData=False,  inPlot=False ),
+                                Variable( "pt",            "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                                Variable( "eta",           "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                                Variable( "phi",           "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                                Variable( "mass",          "F", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                                Variable( "partonFlavour", "I", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                                Variable( "hadronFlavour", "I", read=True,  write=True,  inData=False,  inPlot=False, isSyst=False ),
+                                Variable( "index",         "I", read=False, write=True,  inData=False,  inPlot=False, isSyst=False ),
                                ]
 
-    def getVariableObjects( self, particle, postprocessed=False, data=False, plot=False ):
+    def getVariableObjects( self, particle, postprocessed=False, data=False, plot=False, skipSyst=False ):
 
         if particle not in self.knownParticleLists:
             raise Exception( "Variablelist not implemented for particle %s! Please use one of the following: %s"%( particle, ", ".join( self.knownParticleLists ) ) )
@@ -248,21 +249,22 @@ class NanoVariables:
         varList = filter( lambda var: var.write if postprocessed else var.read, varList ) 
         if data: varList = filter( lambda var: var.inData, varList )
         if plot: varList = filter( lambda var: var.inPlot, varList )
+        if skipSyst: varList = filter( lambda var: not var.isSyst, varList )
 
         return varList
 
-    def getVariableNameList( self, particle, postprocessed=False, data=False, plot=False ):
-        varList = self.getVariableObjects( particle, postprocessed=postprocessed, data=data, plot=plot )
+    def getVariableNameList( self, particle, postprocessed=False, data=False, plot=False, skipSyst=False ):
+        varList = self.getVariableObjects( particle, postprocessed=postprocessed, data=data, plot=plot, skipSyst=skipSyst )
         return list( set( map( lambda var: var.name, varList ) ) )
 
 
-    def getVariables( self, particle, postprocessed=False, data=False, plot=False ):
-        varList = self.getVariableObjects( particle, postprocessed=postprocessed, data=data, plot=plot )
+    def getVariables( self, particle, postprocessed=False, data=False, plot=False, skipSyst=False ):
+        varList = self.getVariableObjects( particle, postprocessed=postprocessed, data=data, plot=plot, skipSyst=skipSyst )
         return list( set( map( lambda var: "/".join( [var.name, var.type] ), varList ) ) )
 
 
-    def getVariableString( self, particle, postprocessed=False, data=False, plot=False ):
-        return ','.join( self.getVariables( particle, postprocessed=postprocessed, data=data, plot=plot ) )
+    def getVariableString( self, particle, postprocessed=False, data=False, plot=False, skipSyst=False ):
+        return ','.join( self.getVariables( particle, postprocessed=postprocessed, data=data, plot=plot, skipSyst=skipSyst ) )
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ def getAnyObjFromFile( fname, hname ):
     obj_t = f.FindObjectAny( hname )
 
     if not obj_t:
-        raise InputError( 'File ('+hname+') not found!' )
+        raise Error( 'File ('+hname+') not found!' )
 
     ROOT.gDirectory.cd( rootGDirectory )
     obj = obj_t.CloneTree() if type( obj_t ) == type( ROOT.TTree() ) else obj_t.Clone()

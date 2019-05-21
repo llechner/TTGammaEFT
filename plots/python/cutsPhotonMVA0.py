@@ -56,7 +56,7 @@ cutsPhotonMVA0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonMVA0_pfRelIso03_chg * event.PhotonMVA0_pt,
-    binning   = [ 20, 0, 0.5 ],
+    binning   = [ 20, 0, 1.2 ],
 ))
 
 cutsPhotonMVA0.append( Plot(
@@ -64,7 +64,7 @@ cutsPhotonMVA0.append( Plot(
     texX      = 'charged Iso_{0.3}(#gamma_{0})',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonMVA0_pfRelIso03_chg * event.PhotonMVA0_pt,
-    binning   = [ 50, 0, 0.5 ],
+    binning   = [ 50, 0, 1.2 ],
 ))
 
 cutsPhotonMVA0.append( Plot(

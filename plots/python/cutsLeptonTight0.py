@@ -28,6 +28,14 @@ cutsLeptonTight0.append( Plot(
 ))
 
 cutsLeptonTight0.append( Plot(
+    name      = 'leptonTight0_convVeto',
+    texX      = 'conversion veto (l_{0})',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "LeptonTight0_convVeto/I" ),
+    binning   = [ 2, 0, 2 ],
+))
+
+cutsLeptonTight0.append( Plot(
     name      = 'leptonTight0_sieie',
     texX      = '#sigma_{i#etai#eta}(l_{0})',
     texY      = 'Number of Events',

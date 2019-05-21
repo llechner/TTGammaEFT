@@ -23,6 +23,9 @@ from TTGammaEFT.plots.cutsPhotonGood0          import cutsPhotonGood0
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0      import cutsPhotonNoIdCuts0
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_nPV  import cutsPhotonNoIdCuts0_nPV
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_pt   import cutsPhotonNoIdCuts0_pt
+from TTGammaEFT.plots.cutsPhotonNoIdCuts0_invChgIso  import cutsPhotonNoIdCuts0_invChgIso
+from TTGammaEFT.plots.cutsPhotonNoIdCuts0_nPV_invChgIso  import cutsPhotonNoIdCuts0_nPV_invChgIso
+from TTGammaEFT.plots.cutsPhotonNoIdCuts0_pt_invChgIso   import cutsPhotonNoIdCuts0_pt_invChgIso
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_invSieie  import cutsPhotonNoIdCuts0_invSieie
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_nPV_invSieie  import cutsPhotonNoIdCuts0_nPV_invSieie
 from TTGammaEFT.plots.cutsPhotonNoIdCuts0_pt_invSieie   import cutsPhotonNoIdCuts0_pt_invSieie
@@ -44,6 +47,7 @@ from TTGammaEFT.plots.metSig                   import metSig
 from TTGammaEFT.plots.mll                      import mll
 from TTGammaEFT.plots.mll_pt                   import mll_pt
 from TTGammaEFT.plots.multiplicityGood         import multiplicityGood
+from TTGammaEFT.plots.multiplicityGood_pt      import multiplicityGood_pt
 #from TTGammaEFT.plots.multiplicityGoodNoPhoton import multiplicityGoodNoPhoton
 from TTGammaEFT.plots.photonGood0              import photonGood0
 
@@ -84,12 +88,17 @@ plotListData += metSig
 plotListData += mll
 plotListData += mll_pt
 plotListData += multiplicityGood
+plotListData += multiplicityGood_pt
 #plotListData += multiplicityGoodNoPhoton
 plotListData += photonGood0
 #plotListData += photonGood1
 
 plotListData += cutsPhotonMVA0
 plotListData += PhotonMVA0    
+
+plotListData += cutsPhotonNoIdCuts0_invChgIso
+plotListData += cutsPhotonNoIdCuts0_nPV_invChgIso
+plotListData += cutsPhotonNoIdCuts0_pt_invChgIso
 
 plotListData += cutsPhotonNoIdCuts0_invSieie
 plotListData += cutsPhotonNoIdCuts0_nPV_invSieie

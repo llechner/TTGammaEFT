@@ -61,6 +61,8 @@ if args.onlyTTG:         args.plot_directory += "_onlyTTG"
 if args.normalize:       args.plot_directory += "_normalize"
 
 # Samples
+#os.environ["gammaSkim"]="True" if "hoton" in args.selection or "pTG" in args.selection else "False"
+os.environ["gammaSkim"]="False"
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed      import *
     if not args.noData:
@@ -181,6 +183,7 @@ read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item !
 
 read_variables += map( lambda var: "PhotonMVA0_"   + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )
+read_variables += map( lambda var: "PhotonNoSieie0_"          + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIsoNoSieie0_"  + var, photonVariables )
 read_variables += map( lambda var: "PhotonGood0_"  + var, photonVariables )
 read_variables += map( lambda var: "PhotonGood1_"  + var, photonVariables )
@@ -193,8 +196,8 @@ read_variables += map( lambda var: "Bj1_"          + var, bJetVariables )
 
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
-                     "reweightLeptonMediumSF/F", "reweightLeptonMediumSFUp/F", "reweightLeptonMediumSFDown/F",
-                     "reweightLeptonTrackingMediumSF/F",
+                     "reweightLepton2lSF/F", "reweightLepton2lSFUp/F", "reweightLepton2lSFDown/F",
+                     "reweightLeptonTracking2lSF/F",
                      "reweightDilepTrigger/F", "reweightDilepTriggerUp/F", "reweightDilepTriggerDown/F",
                      "reweightDilepTriggerBackup/F", "reweightDilepTriggerBackupUp/F", "reweightDilepTriggerBackupDown/F",
                      "reweightPhotonSF/F", "reweightPhotonSFUp/F", "reweightPhotonSFDown/F",
@@ -243,8 +246,8 @@ def clean_Jets( event, sample ):
 def printWeight( event, sample ):
     print "pref", event.reweightL1Prefire
     print "PU", event.reweightPU
-    print "Lep", event.reweightLeptonMediumSF
-    print "LepT", event.reweightLeptonTrackingMediumSF
+    print "Lep", event.reweightLepton2lSF
+    print "LepT", event.reweightLeptonTracking2lSF
     print "PSF", event.reweightPhotonSF
     print "Veto", event.reweightPhotonElectronVetoSF
     print "Btag", event.reweightBTag_SF
@@ -281,30 +284,30 @@ def mvaPhotons( event, sample ):
             setattr( event, "PhotonMVA0_" + var, mvaPhotons[var] )
 
 # Sequence
-sequence = [ makePhotons ]#\
+sequence = [ ]#\
 #            clean_Jets,
 #            make_Zpt,
 #           ]
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_16 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_16 ]
     elif not categoryPlot:
-        mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]
+        mc = [ TTG_priv_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]
         if args.addOtherBg: mc += [ other_16 ]
     elif categoryPlot:
         all = all_16 if args.addOtherBg else all_noOther_16
 elif args.year == 2017:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_17 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_17 ]
     elif not categoryPlot:
-        mc = [ TTG_17, DY_LO_17, TT_pow_17, singleTop_17, ZG_17 ]
+        mc = [ TTG_priv_17, DY_LO_17, TT_pow_17, singleTop_17, ZG_17 ]
         if args.addOtherBg: mc += [ other_17 ]
     elif categoryPlot:
         all = all_17 if args.addOtherBg else all_noOther_17
 elif args.year == 2018:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_18 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_18 ]
     elif not categoryPlot:
-        mc = [ TTG_18, DY_LO_18, TT_pow_18, singleTop_18, ZG_18 ]
+        mc = [ TTG_priv_18, DY_LO_18, TT_pow_18, singleTop_18, ZG_18 ]
         if args.addOtherBg: mc += [ other_18 ]
     elif categoryPlot:
         all = all_18 if args.addOtherBg else all_noOther_18
@@ -317,13 +320,13 @@ if categoryPlot:
 
     all_cat1 = copy.deepcopy(all)
     all_cat1.name    = "cat1"
-    all_cat1.texName = "MisId Electrons"
-    all_cat1.color   = ROOT.kCyan+2
+    all_cat1.texName = "Hadronic Photons"
+    all_cat1.color   = ROOT.kBlue+2
 
     all_cat2 = copy.deepcopy(all)
     all_cat2.name    = "cat2"
-    all_cat2.texName = "Hadronic Photons"
-    all_cat2.color   = ROOT.kBlue+2
+    all_cat2.texName = "MisId Electrons"
+    all_cat2.color   = ROOT.kCyan+2
 
     all_cat3 = copy.deepcopy(all)
     all_cat3.name    = "cat3"
@@ -353,7 +356,7 @@ for sample in mc + signals:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     sample.style          = styles.fillStyle( sample.color )
-    sample.weight         = lambda event, sample: event.reweightL1Prefire*event.reweightPU*event.reweightLeptonMediumSF*event.reweightLeptonTrackingMediumSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+    sample.weight         = lambda event, sample: event.reweightL1Prefire*event.reweightPU*event.reweightLepton2lSF*event.reweightLeptonTracking2lSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 
 if args.small:
     for sample in stack.samples:
@@ -453,6 +456,12 @@ filterCutMc   = getFilterCut( args.year, isData=False )
 tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
+cat_sel0 = [ "%s_photonCat==0"%args.categoryPhoton ]
+cat_sel1 = [ "%s_photonCat==1"%args.categoryPhoton ]
+cat_sel2 = [ "%s_photonCat==2"%args.categoryPhoton ]
+cat_sel3 = [ "%s_photonCat==3"%args.categoryPhoton ]
+
+
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
 
@@ -467,17 +476,17 @@ for index, mode in enumerate( allModes ):
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
     if not args.noData:    data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
-
     if categoryPlot:
-        all_cat0.addSelectionString( "%s_photonCat==0"%args.categoryPhoton )
-        all_cat1.addSelectionString( "%s_photonCat==1"%args.categoryPhoton )
-        all_cat2.addSelectionString( "%s_photonCat==2"%args.categoryPhoton )
-        all_cat3.addSelectionString( "%s_photonCat==3"%args.categoryPhoton )
+        all_cat0.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel0 )
+        all_cat1.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel1 )
+        all_cat2.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel2 )
+        all_cat3.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel3 )
+    else:
+        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
     # Overlap removal
 #    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
-#        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
+#        eval('TTG_priv_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
 #        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
 #    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
@@ -499,7 +508,19 @@ for index, mode in enumerate( allModes ):
         if plot.name != "yield": continue
         for i, l in enumerate( plot.histos ):
             for j, h in enumerate( l ):
-                yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5+index ) )
+                if mode == "mumu":
+                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5 ) )
+                elif mode == "mue":
+                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 1.5 ) )
+                elif mode == "ee":
+                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 2.5 ) )
+                elif mode == "SF":
+                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+                elif mode == "all":
+                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
                 h.GetXaxis().SetBinLabel( 1, "#mu#mu" )
                 h.GetXaxis().SetBinLabel( 2, "#mue" )
                 h.GetXaxis().SetBinLabel( 3, "ee" )

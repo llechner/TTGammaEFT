@@ -3,10 +3,11 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 import random
 import ctypes
+import copy
 
 from root_numpy                       import ROOT_VERSION
 from helpers                          import *
-
+from array                            import array
 from TTGammaEFT.Tools.user            import mva_directory
 from TTGammaEFT.Tools.user            import plot_directory as user_plot_directory
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
@@ -47,7 +48,8 @@ methodBDT["name"]                = "BDT"
 methodBDT["lineColor"]           = ROOT.kBlue
 methodBDT["drawStatUncertainty"] = True
 methodBDT["niceName"]            = "BDT"
-methodBDT["options"]             = ("!H","!V","NTrees=850","MinNodeSize=5%","MaxDepth=4","BoostType=AdaBoost","AdaBoostBeta=0.5","SeparationType=GiniIndex","nCuts=20","PruneMethod=NoPruning")
+#methodBDT["options"]             = ("!H","!V","NTrees=850","MinNodeSize=5%","MaxDepth=4","BoostType=AdaBoost","AdaBoostBeta=0.5","SeparationType=GiniIndex","nCuts=20","PruneMethod=NoPruning")
+methodBDT["options"]             = ("!H","!V","NTrees=1000","BoostType=Grad","Shrinkage=0.20","UseBaggedBoost","GradBaggingFraction=0.5","SeparationType=GiniIndex","nCuts=500","PruneMethod=NoPruning","MaxDepth=5")
 
 allMethods = {}
 allMethods["BDT"]    = methodBDT
@@ -151,7 +153,7 @@ class MVA:
         maxBkgYield = float( max( [ b.yields for b in self.backgrounds ] ) )
         assert maxBkgYield > 0, "Maximum background yield non-positive: %f"%maxBkgYield
 
-        maxTrainingEvents = [ int( self.fractionTraining*b.count ) for b in self.backgrounds ]
+        maxTrainingEvents = [ int( self.fractionTraining * b.count ) for b in self.backgrounds ]
         for i, n in enumerate( maxTrainingEvents ):
             assert maxTrainingEvents > 0, "No training events found bkg sample nr. %i"%i
 
@@ -178,6 +180,7 @@ class MVA:
             s.yields = s.getYieldFromDraw( weightString=self.weightString, selectionString=self.selectionString )["val"]
             s.eList  = getEList( s.chain, self.selectionString )
             s.count  = s.eList.GetN()
+            logger.info( "Found %i events for sample %s" %(s.count, s.name) )
 
             # use only needed branches
             s.chain.SetBranchStatus( "*", 0 )
@@ -186,7 +189,6 @@ class MVA:
 
         # calculate training sample sizes
         trainingSampleSizes = self.getTrainingSampleSizes()
-
         # determine randomized training events
         signalEvents               = getRandList( self.signal.count )
         self.signal.trainingEvents = [ self.signal.eList.GetEntry(j) for j in signalEvents[:trainingSampleSizes["signal"]] ]
@@ -253,7 +255,7 @@ class MVA:
             i_isTraining.value = 0
             fillTree( self.tree, b.chain, b.testEvents, self.calc_variables, self.nMax ) 
 
-        self.eListBkg          = getEList( self.tree, "isSignal==0&&"                + self.selectionString, "eListBkg" )
+        self.eListBkg          = getEList( self.tree, "isSignal==0&&"                + self.selectionString, "eListBkg" )        
         self.eListSig          = getEList( self.tree, "isSignal==1&&"                + self.selectionString, "eListSig" )
         self.eListBkgTraining  = getEList( self.tree, "isTraining==1&&isSignal==0&&" + self.selectionString, "eListBkgTraining" )
         self.eListSigTraining  = getEList( self.tree, "isTraining==1&&isSignal==1&&" + self.selectionString, "eListSigTraining" )
@@ -270,14 +272,6 @@ class MVA:
         self.eListSigTest.Write()
         f.Close()
 
-#        del eListBkg
-#        del eListSig
-#        del eListBkgTraining
-#        del eListSigTraining
-#        del eListBkgTest
-#        del eListSigTest
-
- 
     def prepareSampleSettings( self, read_variables=[], calc_variables=[], selectionString="(1)", weightString="1" ):
         self.setReadVariables( read_variables=read_variables )
         self.setCalculateVariables( calc_variables=calc_variables )
@@ -375,6 +369,7 @@ class MVA:
         ROOT.TMVA.Tools.Instance()
         ROOT.TMVA.gConfig().GetIONames().fWeightFileDir = self.mvaWeightDir
         ROOT.TMVA.gConfig().GetVariablePlotting().fNbinsXOfROCCurve = 200
+        ROOT.TMVA.gConfig().GetVariablePlotting().fMaxNumOfAllowedVariablesForScatterPlots = 2
         
         fout    = ROOT.TFile( self.mvaOutFile, "RECREATE" )
         factory = ROOT.TMVA.Factory( "TMVAClassification", fout, ":".join(self.mva_settings) )
@@ -387,6 +382,7 @@ class MVA:
             varType[getObsName(vn)] = getObsType(vn)
 
         for v in self.mva_variables:
+            print getObsName(v), varType[v]
             dataloader.AddVariable(getObsName(v), varType[v])
 
         bkgTestTree  = data["tree"].CopyTree("isTraining==0&&isSignal==0")
@@ -594,6 +590,16 @@ class MVA:
 
         del mlpa_canvas
 
+    def __del__( self ):
+        del self.tree
+        del self.eListBkg
+        del self.eListSig
+        del self.eListBkgTraining
+        del self.eListSigTraining
+        del self.eListBkgTest
+        del self.eListSigTest
+
+ 
 
 
 
@@ -603,8 +609,8 @@ if __name__ == "__main__":
     import argparse
     argParser = argparse.ArgumentParser(description = "Argument parser")
     argParser.add_argument('--plot_directory',     action='store',             default=None)
-    argParser.add_argument('--selection',          action='store', type=str,   default="METSig>=0&&nLeptonTight==1&&nPhotonGood>=1")
-#    argParser.add_argument('--selection',          action='store', type=str,   default="METSig>=0&&nBTagGood>=1&&nJetGood>=3&&nLeptonTight==1&&nPhotonGood>=1")
+#    argParser.add_argument('--selection',          action='store', type=str,   default="METSig>=0&&nLeptonTight==1&&nPhotonGood>=1")
+    argParser.add_argument('--selection',          action='store', type=str,   default="METSig>=0&&nBTagGood>=1&&nJetGood>=3&&nLeptonTight==1")
     argParser.add_argument('--label',              action='store', type=str,   default="MVA")
     argParser.add_argument('--type',               action='store', type=str,   default="BDT")
     argParser.add_argument('--trainingFraction',   action='store', type=float, default=0.5)
@@ -620,12 +626,13 @@ if __name__ == "__main__":
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
 
     signal      = TTG_16
-    backgrounds = [ WG_16 ]
+    backgrounds = [ WJets_HT_16 ]
 
     weightString = "weight"
 
     read_variables = [\
-#                         "weight/F",
+                         "weight/F",
+                         "overlapRemoval/I",
                          "METSig/F",
                          "nBTagGood/I",
                          "nJetGood/I",
@@ -636,9 +643,27 @@ if __name__ == "__main__":
                          "PhotonGood0_pt/F",
                          "PhotonGood0_eta/F",
                          "PhotonGood0_phi/F",
+                         "PhotonGood0_pfRelIso03_all/F",
+                         "PhotonGood0_pfRelIso03_chg/F",
+                         "PhotonGood0_sieie/F",
+                         "PhotonNoChgIsoNoSieie0_pt/F",
+                         "PhotonNoChgIsoNoSieie0_eta/F",
+                         "PhotonNoChgIsoNoSieie0_phi/F",
+                         "PhotonNoChgIsoNoSieie0_pfRelIso03_all/F",
+                         "PhotonNoChgIsoNoSieie0_pfRelIso03_chg/F",
+                         "PhotonNoChgIsoNoSieie0_sieie/F",
                          "LeptonTight0_pt/F",
                          "LeptonTight0_eta/F",
                          "LeptonTight0_phi/F",
+                         "Bj0_pt/F",
+                         "Bj0_eta/F",
+                         "Bj0_phi/F",
+                         "JetGood0_pt/F",
+                         "JetGood0_eta/F",
+                         "JetGood0_phi/F",
+                         "JetGood1_pt/F",
+                         "JetGood1_eta/F",
+                         "JetGood1_phi/F",
                          "MET_pt/F", "MET_phi/F",
                          "ht/F",
                          "mLtight0Gamma/F",
@@ -655,26 +680,48 @@ if __name__ == "__main__":
 
     mva_settings = [ "!V", "!Silent", "Color", "DrawProgressBar", "Transformations=I;D;P;G,D", "AnalysisType=Classification" ]
     mva_variables = ["METSig",
+                         "weight",
+                         "nPhotonGood",
                          "nBTagGood",
                          "nJetGood",
-                         "nLeptonTight",
+#                         "nLeptonTight",
 #                         "nElectronTight",
 #                         "nMuonTight",
                          "PhotonGood0_pt",
                          "PhotonGood0_eta",
                          "PhotonGood0_phi",
+#                         "PhotonGood0_pfRelIso03_all",
+#                         "PhotonGood0_pfRelIso03_chg",
+#                         "PhotonGood0_sieie",
+#                         "PhotonNoChgIsoNoSieie0_pt",
+#                         "PhotonNoChgIsoNoSieie0_eta",
+#                         "PhotonNoChgIsoNoSieie0_phi",
+#                         "PhotonNoChgIsoNoSieie0_pfRelIso03_all",
+                         "PhotonNoChgIsoNoSieie0_pfRelIso03_chg",
+                         "PhotonNoChgIsoNoSieie0_sieie",
                          "LeptonTight0_pt",
-                         "LeptonTight0_eta",
-                         "LeptonTight0_phi",
+#                         "LeptonTight0_eta",
+#                         "LeptonTight0_phi",
+                         "Bj0_pt",
+                         "Bj0_eta",
+                         "Bj0_phi",
+                         "JetGood0_pt",
+                         "JetGood0_eta",
+                         "JetGood0_phi",
+                         "JetGood1_pt",
+                         "JetGood1_eta",
+                         "JetGood1_phi",
                          "MET_pt", "MET_phi",
                          "ht",
                          "mLtight0Gamma",
-#                         "ltight0GammadR", "ltight0GammadPhi",
+                         "ltight0GammadR", "ltight0GammadPhi",
                          "m3",
-                         "photonJetdR", "photonLepdR", "tightLeptonJetdR",
+                         "photonJetdR",
+#                         "photonLepdR",
+                         "tightLeptonJetdR",
 #                         "l0GammadR", "l0GammadPhi",
-#                         "j0GammadR", "j0GammadPhi",
-#                         "j1GammadR", "j1GammadPhi",
+                         "j0GammadR", "j0GammadPhi",
+                         "j1GammadR", "j1GammadPhi",
                         ] #add variables here
 
     mva = MVA( signal, backgrounds, label=args.label, fractionTraining=args.trainingFraction, overwrite=args.overwrite, createPkl=args.createPkl, nMax=1000 if args.small else -1, plot_directory=args.plot_directory )

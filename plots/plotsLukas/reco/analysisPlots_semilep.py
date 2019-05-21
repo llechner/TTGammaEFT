@@ -20,7 +20,7 @@ from TTGammaEFT.Tools.Variables       import NanoVariables
 from TTGammaEFT.Tools.objectSelection import isBJet, photonSelector, vidNestedWPBitMapNamingListPhoton
 
 from Analysis.Tools.metFilters        import getFilterCut
-from Analysis.Tools.helpers           import getCollection
+from Analysis.Tools.helpers           import getCollection, deltaR
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -54,6 +54,12 @@ logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
 categoryPlot = args.categoryPhoton != "None"
 
+addMissIDSF = False
+selDir = args.selection
+if args.selection.count("addMissIDSF"):
+    addMissIDSF = True
+    args.selection = args.selection.replace("-addMissIDSF", "").replace("addMissIDSF-", "")
+
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
 if args.signal:          args.plot_directory += "_signal_"+args.signal
@@ -61,6 +67,7 @@ if args.onlyTTG:         args.plot_directory += "_onlyTTG"
 if args.normalize:       args.plot_directory += "_normalize"
 
 # Samples
+os.environ["gammaSkim"]="True" if "hoton" in args.selection or "pTG" in args.selection else "False"
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
     if not args.noData:
@@ -99,7 +106,7 @@ def drawPlots( plots, mode, dataMCScale ):
     for log in [False, True]:
         sc  = "cat_" if categoryPlot else ""
         sc += "log" if log else "lin"
-        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, args.selection, mode, sc )
+        plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, selDir, mode, sc )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos):
@@ -114,17 +121,45 @@ def drawPlots( plots, mode, dataMCScale ):
 
             logger.info( "Plotting..." )
 
-            plotting.draw( plot,
-	                       plot_directory = plot_directory_,
-                           extensions = extensions_,
-	                       ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
-	                       logX = False, logY = log, sorting = not categoryPlot,
-	                       yRange = (0.03, "auto") if log else (0.001, "auto"),
-	                       scaling = scaling if args.normalize else {},
-	                       legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2],
-	                       drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ) if not args.normalize else drawObjects( not args.noData, 1.0 , lumi_scale ),
-                           copyIndexPHP = True,
-                         )
+            if isinstance( plot, Plot):
+                plotting.draw( plot,
+	                           plot_directory = plot_directory_,
+                               extensions = extensions_,
+	                           ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
+	                           logX = False, logY = log, sorting = not categoryPlot,
+	                           yRange = (0.03, "auto") if log else (0.001, "auto"),
+    	                       scaling = scaling if args.normalize else {},
+	                           legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2],
+	                           drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ) if not args.normalize else drawObjects( not args.noData, 1.0 , lumi_scale ),
+                               copyIndexPHP = True,
+                             )
+
+            elif isinstance( plot, Plot2D ):
+                p_mc = Plot2D.fromHisto( plot.name+'_mc', plot.histos[:1], texX = plot.texX, texY = plot.texY )
+                plotting.draw2D( p_mc,
+                    plot_directory = plot_directory_,
+                    extensions = extensions_,
+                    #ratio = {'yRange':(0.1,1.9)},
+                    logX = False, logY = False, logZ = log, #sorting = True,
+                    #yRange = (0.03, "auto") if log else (0.001, "auto"),
+                    #scaling = {},
+                    #legend = (0.50,0.88-0.04*sum(map(len, plot.histos)),0.9,0.88),
+                    drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ),
+                    copyIndexPHP = True,
+                )
+                p_data = Plot2D.fromHisto( plot.name+'_data', plot.histos[1:], texX = plot.texX, texY = plot.texY )
+                plotting.draw2D(p_data,
+                    plot_directory = plot_directory_,
+                    extensions = extensions_,
+                    #ratio = {'yRange':(0.1,1.9)},
+                    logX = False, logY = False, logZ = log, #sorting = True,
+                    #yRange = (0.03, "auto") if log else (0.001, "auto"),
+                    #scaling = {},
+                    #legend = (0.50,0.88-0.04*sum(map(len, plot.histos)),0.9,0.88),
+                    drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ),
+                    copyIndexPHP = True,
+                )
+
 
 def getYieldPlot( index ):
     return Plot(
@@ -132,7 +167,7 @@ def getYieldPlot( index ):
                 texX      = 'yield',
                 texY      = 'Number of Events',
                 attribute = lambda event, sample: event.nElectronTight,
-                binning   = [ 2, 0, 2 ],
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
                 )
 
 # get nano variable lists
@@ -141,7 +176,9 @@ NanoVars        = NanoVariables( args.year )
 jetVarString     = NanoVars.getVariableString(   "Jet",    postprocessed=True, data=(not args.noData), plot=True )
 jetVariableNames = NanoVars.getVariableNameList( "Jet",    postprocessed=True, data=(not args.noData), plot=True )
 bJetVariables    = NanoVars.getVariables(        "BJet",   postprocessed=True, data=(not args.noData), plot=True )
+leptonVarString  = NanoVars.getVariableString(   "Lepton", postprocessed=True, data=(not args.noData), plot=True )
 leptonVariables  = NanoVars.getVariables(        "Lepton", postprocessed=True, data=(not args.noData), plot=True )
+leptonVarList    = NanoVars.getVariableNameList( "Lepton", postprocessed=True, data=(not args.noData), plot=True )
 photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
 photonVarList    = NanoVars.getVariableNameList( "Photon", postprocessed=True, data=(not args.noData), plot=True )
 photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, data=(not args.noData), plot=True )
@@ -170,7 +207,7 @@ read_variables  = ["weight/F",
 
 read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
 
-#read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
+read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
@@ -178,6 +215,7 @@ read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item !
 read_variables += map( lambda var: "PhotonMVA0_"              + var, photonVariables )
 read_variables += map( lambda var: "PhotonGood0_"             + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )
+read_variables += map( lambda var: "PhotonNoSieie0_"          + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIsoNoSieie0_"  + var, photonVariables )
 
 read_variables += map( lambda var: "LeptonGood0_"             + var, leptonVariables )
@@ -200,6 +238,20 @@ read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval
                     ]
 
 recoPhotonSel_medium_noSieie = photonSelector( 'medium', year=args.year, removedCuts=["sieie"] )
+
+def missIDelectrons( event, sample ):
+    allLeptons = getCollection( event, 'Lepton', leptonVarList, 'nLepton' )
+    allLeptons = filter( lambda l: l["index"]==event.PhotonGood0_electronIdx and abs(l["pdgId"])==11, allLeptons )
+    allLeptons.sort( key = lambda j: -j['pt'] )
+    missID = allLeptons[:1]
+    for var in leptonVarList:
+        if missID:
+            setattr( event, "missIDElectron0_" + var, missID[0][var] )
+        else:
+            try:
+                setattr( event, "missIDElectron0_" + var, -999 )
+            except:
+                setattr( event, "missIDElectron0_" + var, 0 )
 
 def makePhotons( event, sample ):
     allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
@@ -247,27 +299,29 @@ def clean_Jets( event, sample ):
 def printWeight( event, sample ):
     print event.weight
 
-sequence = [makePhotons ]# printWeight ]#clean_Jets ]
+sequence = [missIDelectrons ]# printWeight ]#clean_Jets ]
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_16 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_16 ]
     elif not categoryPlot:
-        mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16 ]
+#        mc = [ TTG_priv_16, TT_pow_16, DY_HT_16, singleTop_16, WJets_HT_16, TG_16, WG_16, ZG_16 ]
+        mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16 ]
+#        mc = [ DY_LO_16 ]
         if args.addOtherBg: mc += [ other_16 ]
     elif categoryPlot:
         all = all_16 if args.addOtherBg else all_noOther_16
 elif args.year == 2017:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_17 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_17 ]
     elif not categoryPlot:
-        mc = [ TTG_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17 ]
+        mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17 ]
         if args.addOtherBg: mc += [ other_17 ]
     elif categoryPlot:
         all = all_17 if args.addOtherBg else all_noOther_17
 elif args.year == 2018:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_18 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_18 ]
     elif not categoryPlot:
-        mc = [ TTG_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18 ]
+        mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18 ]
         if args.addOtherBg: mc += [ other_18 ]
     elif categoryPlot:
         all = all_18 if args.addOtherBg else all_noOther_18
@@ -280,14 +334,14 @@ if categoryPlot:
 
     all_cat1 = copy.deepcopy(all)
     all_cat1.name    = "cat1"
-    all_cat1.texName = "MisId Electrons"
-    all_cat1.color   = ROOT.kCyan+2
+    all_cat1.texName = "Hadronic Photons"
+    all_cat1.color   = ROOT.kBlue+2
 
     all_cat2 = copy.deepcopy(all)
     all_cat2.name    = "cat2"
-    all_cat2.texName = "Hadronic Photons"
-    all_cat2.color   = ROOT.kBlue+2
-
+    all_cat2.texName = "MisId Electrons"
+    all_cat2.color   = ROOT.kCyan+2
+    
     all_cat3 = copy.deepcopy(all)
     all_cat3.name    = "cat3"
     all_cat3.texName = "Hadronic Fakes"
@@ -316,7 +370,7 @@ for sample in mc + signals:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     sample.style          = styles.fillStyle( sample.color )
-    sample.weight         = lambda event, sample: event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+    sample.weight         = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMissIDSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 #event.reweightDilepTriggerBackup
 
 if args.small:
@@ -330,9 +384,11 @@ tr = TriggerSelector( args.year, singleLepton=True )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
-print args.selection
 preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ) ] )
-Plot.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )#, addOverFlowBin='upper' )
+#Plot.setDefaults(   stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection, addOverFlowBin='upper' )
+#Plot2D.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )
+Plot.setDefaults(   stack=stack, weight="weight", selectionString=preSelection, addOverFlowBin='upper' )
+Plot2D.setDefaults( stack=stack, weight="weight", selectionString=preSelection )
 
 # Import plots list (AFTER setDefaults!!)
 plotListFile = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), 'plotLists', args.plotFile + '.py' )
@@ -344,21 +400,165 @@ plotModule = imp.load_source( "plotLists", os.path.expandvars( plotListFile ) )
 if args.noData: from plotLists import plotListDataMC as plotList
 else:           from plotLists import plotListData   as plotList
 
+# plotList
+add2DPlots = []
+
+add2DPlots.append( Plot2D(
+    name      = 'photonGood0_phi_eta_dataOnly',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      TreeVariable.fromString( "PhotonGood0_eta/F" ),
+      TreeVariable.fromString( "PhotonGood0_phi/F" ),
+    ),
+    binning   = [20, -1.5, 1.5, 20, -pi, pi],
+))
+
+# plotList
+addPlots = []
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_pt',
+    texX      = 'p_{T}(e_{miss}) (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_pt,
+    binning   = [ 20, 0, 120 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_eta',
+    texX      = '#eta(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_eta,
+    binning   = [ 30, -3, 3 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_phi',
+    texX      = '#phi(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_phi,
+    binning   = [ 10, -pi, pi ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_lostHits',
+    texX      = 'lost hits(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_lostHits,
+    binning   = [ 6, 0, 6 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_dr03EcalRecHitSumEt',
+    texX      = '#DeltaR_{0.3} EcalRecHitSumEt (e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_dr03EcalRecHitSumEt,
+    binning   = [ 20, 0, 4 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_dr03HcalDepth1TowerSumEt',
+    texX      = '#DeltaR_{0.3} HcalDepth1TowerSumEt (e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_dr03HcalDepth1TowerSumEt,
+    binning   = [ 20, 0, 4 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_dr03TkSumPt',
+    texX      = '#DeltaR_{0.3} TkSumPt (e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_dr03TkSumPt,
+    binning   = [ 20, 0, 4 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_r9',
+    texX      = 'R9(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_r9,
+    binning   = [ 20, 0, 1 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_hoe',
+    texX      = 'H/E(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_hoe,
+    binning   = [ 20, 0, 0.2 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_eInvMinusPInv',
+    texX      = '1/E - 1/p (e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_eInvMinusPInv,
+    binning   = [ 50, -0.3, 0.3 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_convVeto',
+    texX      = 'conversion veto (e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_convVeto,
+    binning   = [ 3, 0, 3 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_sieie',
+    texX      = '#sigma_{i#etai#eta}(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_sieie,
+    binning   = [ 20, 0, 0.02 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_pfRelIso03_chg',
+    texX      = 'charged relIso_{0.3}(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_pfRelIso03_chg,
+    binning   = [ 20, 0, 0.2 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_pfRelIso03_all',
+    texX      = 'relIso_{0.3}(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_pfRelIso03_all,
+    binning   = [ 20, 0, 1.2 ],
+))
+
+addPlots.append( Plot(
+    name      = 'missIDElectron0_pfRelIso03_n',
+    texX      = 'neutral relIso_{0.3}(e_{miss})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.missIDElectron0_pfRelIso03_all - event.missIDElectron0_pfRelIso03_chg,
+    binning   = [ 20, 0, 1.2 ],
+))
+
+
 # Loop over channels
 yields   = {}
 allPlots = {}
 if args.mode != "None":
     allModes = [ args.mode ]
 elif args.nJobs != 1:
-    allModes = [ 'mu', 'e', 'all']
+    allModes = [ 'mu', 'e', 'all'] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight","SFtight","all"]
     allModes = splitList( allModes, args.nJobs)[args.job]
 else:
-    allModes = [ 'mu', 'e' ]
+    allModes = [ 'mu', 'e' ] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight","SFtight","all"]
+
 
 filterCutData = getFilterCut( args.year, isData=True )
 filterCutMc   = getFilterCut( args.year, isData=False )
 tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
+
+cat_sel0 = [ "%s_photonCat==0"%args.categoryPhoton ]
+cat_sel1 = [ "%s_photonCat==1"%args.categoryPhoton ]
+cat_sel2 = [ "%s_photonCat==2"%args.categoryPhoton ]
+cat_sel3 = [ "%s_photonCat==3"%args.categoryPhoton ]
 
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
@@ -367,25 +567,27 @@ for index, mode in enumerate( allModes ):
 
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
-    plots += plotList
-    plots += [ getYieldPlot( index ) ]
+#    plots += plotList
+#    plots += [ getYieldPlot( index ) ]
+#    plots += addPlots
+    plots += add2DPlots
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
     if not args.noData:    data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
-
-    # Define 2l selections
     if categoryPlot:
-        all_cat0.addSelectionString( "%s_photonCat==0"%args.categoryPhoton )
-        all_cat1.addSelectionString( "%s_photonCat==1"%args.categoryPhoton )
-        all_cat2.addSelectionString( "%s_photonCat==2"%args.categoryPhoton )
-        all_cat3.addSelectionString( "%s_photonCat==3"%args.categoryPhoton )
+        all_cat0.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel0 )
+        all_cat1.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel1 )
+        all_cat2.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel2 )
+        all_cat3.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel3 )
+    else:
+        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
+#        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
 
     # Overlap removal
 #    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
 #        print "overlap removal TTgamma"
-#        eval('TTG_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
+#        eval('TTG_priv_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
 #        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
 
 #    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
@@ -410,9 +612,29 @@ for index, mode in enumerate( allModes ):
         if plot.name != "yield": continue
         for i, l in enumerate( plot.histos ):
             for j, h in enumerate( l ):
-                yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5+index ) )
-                h.GetXaxis().SetBinLabel( 1, "#mu" )
-                h.GetXaxis().SetBinLabel( 2, "e" )
+                if mode == "mu" or mode == "mumutight":
+                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5 ) )
+                elif mode == "e" or mode == "muetight":
+                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 1.5 ) )
+                elif mode == "eetight":
+                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 2.5 ) )
+                elif mode == "SFtight":
+                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+                elif mode == "all" and args.selection.count("nLepTight2"):
+                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+                elif mode == "all" and not args.selection.count("nLepTight2"):
+                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
+                if not args.selection.count("nLepTight2"):
+                    h.GetXaxis().SetBinLabel( 1, "#mu" )
+                    h.GetXaxis().SetBinLabel( 2, "e" )
+                else:
+                    h.GetXaxis().SetBinLabel( 1, "#mu#mu" )
+                    h.GetXaxis().SetBinLabel( 2, "#mue" )
+                    h.GetXaxis().SetBinLabel( 3, "ee" )
 
     if args.noData: yields[mode]["data"] = 0
 

@@ -118,26 +118,10 @@ genIso.append( Plot(
 ))
 
 genIso.append( Plot(
-    name      = 'minDRaa_pt13_close',
-    texX      = 'min( #DeltaR(#gamma, #gamma) )',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.minDRaa,
-    binning   = [ 40, 0, 1 ],
-))
-
-genIso.append( Plot(
     name      = 'minDRbj_close',
     texX      = 'min( #DeltaR(b-jet, jet) )',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.minDRbj,
-    binning   = [ 40, 0, 1 ],
-))
-
-genIso.append( Plot(
-    name      = 'minDRaj_pt13_close',
-    texX      = 'min( #DeltaR(#gamma, jet) )',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.minDRaj,
     binning   = [ 40, 0, 1 ],
 ))
 
@@ -150,27 +134,10 @@ genIso.append( Plot(
 ))
 
 genIso.append( Plot(
-    name      = 'minDRab_pt13_close',
-    texX      = 'min( #DeltaR(#gamma, b-jet) )',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.minDRab,
-    binning   = [ 40, 0, 1 ],
-))
-
-genIso.append( Plot(
     name      = 'minDRbl_close',
     texX      = 'min( #DeltaR(b-jet, lep) )',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.minDRbl,
     binning   = [ 40, 0, 1 ],
 ))
-
-genIso.append( Plot(
-    name      = 'minDRal_pt13_close',
-    texX      = 'min( #DeltaR(#gamma, lep) )',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.minDRal,
-    binning   = [ 40, 0, 1 ],
-))
-
 

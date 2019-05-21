@@ -100,8 +100,6 @@ def drawObjects( plotData, lumi_scale ):
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
-scaling = { 1:0, 2:0, 3:0, 4:0, 5:0 } if args.noData else { 0:6 1:6, 2:6, 3:6, 4:6, 5:6 } 
-
 # Plotting
 def drawPlots( plots, mode ):
     for log in [False, True]:
@@ -114,9 +112,9 @@ def drawPlots( plots, mode ):
                 continue # Empty plot
             postFix = ""
             if args.sideband == "sieie":
-                postFix = " (#sigma_{i#etai#eta} sideband)"
+                postFix = " (high #sigma_{i#etai#eta})"
             elif args.sideband == "chgIso":
-                postFix = " (chg Iso sideband)"
+                postFix = " (high chg Iso)"
             plot.histos[0][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=False, errors = False )
             plot.histos[1][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=True, errors = False )
             plot.histos[2][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=True, dashed=False, errors = False )
@@ -130,6 +128,8 @@ def drawPlots( plots, mode ):
                 if mode == "SF":
                     plot.histos[6][0].legendText = "data (SF)" + postFix
             extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue', "mu", "e"] else ['png']
+
+            scaling = { 1:0, 2:0, 3:0, 4:0, 5:0 } if args.noData or "_cat" in plot.name else { 0:6, 1:6, 2:6, 3:6, 4:6, 5:6 } 
 
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
@@ -235,54 +235,54 @@ all_sb_20To120 = copy.deepcopy(all)
 all_sb_20To120.name = "sb_20To120"
 all_sb_20To120.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_sb_20To120.texName += "chg Iso sideband, 20<p_{T}(#gamma)<120 GeV"
+    all_sb_20To120.texName += "high chg Iso, 20<p_{T}(#gamma)<120 GeV"
 elif args.sideband == "sieie":
-    all_sb_20To120.texName += "#sigma_{i#etai#eta} sideband, 20<p_{T}(#gamma)<120 GeV"
+    all_sb_20To120.texName += "high #sigma_{i#etai#eta}, 20<p_{T}(#gamma)<120 GeV"
 #all_sb_20To120.color   = ROOT.kCyan+2
 
 all_sb_120To220 = copy.deepcopy(all)
 all_sb_120To220.name = "sb_120To220"
 all_sb_120To220.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_sb_120To220.texName += "chg Iso sideband, 120<p_{T}(#gamma)<220 GeV"
+    all_sb_120To220.texName += "high chg Iso, 120<p_{T}(#gamma)<220 GeV"
 elif args.sideband == "sieie":
-    all_sb_120To220.texName += "#sigma_{i#etai#eta} sideband, 120<p_{T}(#gamma)<220 GeV"
+    all_sb_120To220.texName += "high #sigma_{i#etai#eta}, 120<p_{T}(#gamma)<220 GeV"
 #all_sb_120To220.color   = ROOT.kCyan+2
 
 all_sb_220Toinf = copy.deepcopy(all)
 all_sb_220Toinf.name = "sb_220Toinf"
 all_sb_220Toinf.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_sb_220Toinf.texName += "chg Iso sideband, p_{T}(#gamma)>220 GeV"
+    all_sb_220Toinf.texName += "high chg Iso, p_{T}(#gamma)>220 GeV"
 elif args.sideband == "sieie":
-    all_sb_220Toinf.texName += "#sigma_{i#etai#eta} sideband, p_{T}(#gamma)>220 GeV"
+    all_sb_220Toinf.texName += "high #sigma_{i#etai#eta}, p_{T}(#gamma)>220 GeV"
 #all_sb_220toinf.color   = ROOT.kCyan+2
 
 all_fit_20To120 = copy.deepcopy(all)
 all_fit_20To120.name = "fit_20To120"
 all_fit_20To120.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_fit_20To120.texName += "chg Iso fit region, 20<p_{T}(#gamma)<120 GeV"
+    all_fit_20To120.texName += "low chg Iso, 20<p_{T}(#gamma)<120 GeV"
 elif args.sideband == "sieie":
-    all_fit_20To120.texName += "#sigma_{i#etai#eta} fit region, 20<p_{T}(#gamma)<120 GeV"
+    all_fit_20To120.texName += "low #sigma_{i#etai#eta}, 20<p_{T}(#gamma)<120 GeV"
 #all_fit_20To120.color   = ROOT.kCyan+2
 
 all_fit_120To220 = copy.deepcopy(all)
 all_fit_120To220.name = "fit_120To220"
 all_fit_120To220.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_fit_120To220.texName += "chg Iso fit region, 120<p_{T}(#gamma)<220 GeV"
+    all_fit_120To220.texName += "low chg Iso, 120<p_{T}(#gamma)<220 GeV"
 elif args.sideband == "sieie":
-    all_fit_120To220.texName += "#sigma_{i#etai#eta} fit region, 120<p_{T}(#gamma)<220 GeV"
+    all_fit_120To220.texName += "low #sigma_{i#etai#eta}, 120<p_{T}(#gamma)<220 GeV"
 #all_fit_120To220.color   = ROOT.kCyan+2
 
 all_fit_220Toinf = copy.deepcopy(all)
 all_fit_220Toinf.name = "fit_220Toinf"
 all_fit_220Toinf.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_fit_220Toinf.texName += "chg Iso fit region, p_{T}(#gamma)>220 GeV"
+    all_fit_220Toinf.texName += "low chg Iso, p_{T}(#gamma)>220 GeV"
 elif args.sideband == "sieie":
-    all_fit_220Toinf.texName += "#sigma_{i#etai#eta} fit region, p_{T}(#gamma)>220 GeV"
+    all_fit_220Toinf.texName += "low #sigma_{i#etai#eta}, p_{T}(#gamma)>220 GeV"
 #all_fit_220toinf.color   = ROOT.kCyan+2
 
 mc  = [ all_fit_20To120, all_fit_120To220, all_fit_220Toinf, all_sb_20To120, all_sb_120To220, all_sb_220Toinf ]
@@ -384,7 +384,7 @@ tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
 if args.sideband == "sieie":
-    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton), "%s_sieie<0.02"%(args.categoryPhoton) ]
+    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton) ]#, "%s_sieie<0.02"%(args.categoryPhoton) ]
     fit_sel = ["%s_sieie<0.01015"%(args.categoryPhoton)]
 elif args.sideband == "chgIso":
     sb_sel  = ["(%s_pfRelIso03_chg*%s_pt)>=1.141"%(args.categoryPhoton, args.categoryPhoton)]
