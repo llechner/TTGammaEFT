@@ -392,7 +392,7 @@ def photonSelector( selection, noPtEtaCut=False, year=None, removedCuts=[] ):
             if not noPtEtaCut:
                 if g["pt"]       <= 20:        return False
 #                if not g["isScEtaEB"]:        return False # Supercluster Barrel only
-                if abs(g["eta"]) >= 1.479:     return False # Barrel only
+                if abs(g["eta"]) >= 1.4442:    return False # Barrel only
             if g["pixelSeed"]:                 return False
             if not g["electronVeto"]:          return False
             if not g["mvaID_WP80"]:            return False
@@ -453,32 +453,32 @@ def genPhotonSelector( photon_selection=None ):
     if photon_selection == 'overlapTTGamma':
         # Remove events from ttbar sample, keep ttgamma events
         def func(g):
-            if g["pt"]       <= 13:  return False
-            if abs(g["eta"]) >= 3.0: return False
+            if g["pt"]       < 13:  return False
+            if abs(g["eta"]) > 3.0: return False
             return True
         return func
 
     elif photon_selection == 'overlapZWGamma':
         # Remove events from DY and W+jets sample, keep Zgamma and Wgamma events
         def func(g):
-            if g["pt"]       <= 15:  return False
-            if abs(g["eta"]) >= 2.6: return False
+            if g["pt"]       < 15:  return False
+            if abs(g["eta"]) > 2.6: return False
             return True
         return func
 
     elif photon_selection == 'overlapSingleTopTch':
         # Remove events from single top t-channel sample, keep single top + photon events
         def func(g):
-            if g["pt"]       <= 10:  return False
-            if abs(g["eta"]) >= 2.6: return False
+            if g["pt"]       < 10:  return False
+            if abs(g["eta"]) > 2.6: return False
             return True
         return func
 
     else:
         # general gen-photon selection
         def func(g):
-            if g["pt"]       <= 13:    return False
-            if abs(g["eta"]) >= 1.479: return False
+            if g["pt"]       < 13:    return False
+            if abs(g["eta"]) > 1.479: return False
             return True
         return func
 
@@ -498,7 +498,7 @@ def filterGenMuons( genParts, status=None ):
     return muons
 
 def filterGenPhotons( genParts, status=None ):
-    photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] > 0, genParts ) )
+    photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] >= 0, genParts ) )
     return photons
 
 def filterGenTops( genParts ):
