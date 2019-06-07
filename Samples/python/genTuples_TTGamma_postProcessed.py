@@ -73,6 +73,11 @@ dirs['ttGamma_Had_newCentral']                   = [ "ttGamma_Had_newCentral_1Li
 dirs['ttGamma_NoFullyHad_newCentral']            = [ "ttGamma_NoFullyHad_newCentral_1Line" ]
 dirs['ttGamma_NoFullyHad_comb_newCentral']       = [ "ttGamma_Dilept_newCentral_1Line", "ttGamma_SemiLept_newCentral_1Line" ]
 
+dirs['ttGamma_NoFullyHad_SM_ATLASrunCard_comp']       = [ "ttGamma_NoFullyHad_SM_ATLASrunCard_comp" ]
+dirs['ttGamma_NoFullyHad_newCentral_comp']            = [ "ttGamma_NoFullyHad_newCentral_1Line_comp" ]
+dirs['ttGamma_NoFullyHad_newCentral_pTG100To200_comp']            = [ "ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp" ]
+dirs['ttGamma_NoFullyHad_newCentral_pTGgt200_comp']            = [ "ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp" ]
+
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
@@ -97,8 +102,8 @@ directories = { key : [ os.path.join( data_directory, postprocessing_directory, 
 #TTG_DiLept_1L_small_EFT                            = Sample.fromDirectory(name="TTG_DiLept_1L_small_EFT",          treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTGamma_DiLept_EFT_1Line_small'])
 #TTG_DiLept_1L_small_EFT.reweight_pkl               = os.path.join( gridpack_directory, "EFT/TTGamma_DiLept_1Line_EFT/", "TTGamma_DiLept_1Line_EFT_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
-TTG_DiLept_1L_EFT                                  = Sample.fromDirectory(name="TTG_DiLept_1L_EFT",          treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTGamma_DiLept_EFT_1Line'])
-TTG_DiLept_1L_EFT.reweight_pkl                     = os.path.join( gridpack_directory, "EFT/TTGamma_DiLept_1Line_EFT/", "TTGamma_DiLept_1Line_EFT_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
+#TTG_DiLept_1L_EFT                                  = Sample.fromDirectory(name="TTG_DiLept_1L_EFT",          treeName="Events", isData=False, color=color.TTG,          texName="tt#gamma", directory=directories['TTGamma_DiLept_EFT_1Line'])
+#TTG_DiLept_1L_EFT.reweight_pkl                     = os.path.join( gridpack_directory, "EFT/TTGamma_DiLept_1Line_EFT/", "TTGamma_DiLept_1Line_EFT_slc6_amd64_gcc630_CMSSW_9_3_0_tarball.pkl" )
 
 signals = []
 
@@ -113,10 +118,10 @@ signals = []
 #ttGamma_Hadronic_SM_central                      = Sample.fromDirectory(name="ttGamma_Hadronic_SM_central",           treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="tt#gamma (central)", directory=directories['ttGamma_Hadronic_SM_central'])
 
 # CMS ATLAS runcard comparison
-TTG_CMS_RunCard_noDeltaR                         = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR",   treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (CMS, no #DeltaR)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR'])
-TTG_CMS_RunCard                                  = Sample.fromDirectory(name="TTG_CMS_RunCard",            treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (CMS)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard'])
+#TTG_CMS_RunCard_noDeltaR                         = Sample.fromDirectory(name="TTG_CMS_RunCard_noDeltaR",   treeName="Events", isData=False, color=color.TTG3LPatched, texName="tt#gamma (CMS, no #DeltaR)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR'])
+#TTG_CMS_RunCard                                  = Sample.fromDirectory(name="TTG_CMS_RunCard",            treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (CMS)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard'])
 #TTG_CMS_RunCard_small                            = Sample.fromDirectory(name="TTG_CMS_RunCard_small",      treeName="Events", isData=False, color=color.TTG1L,        texName="tt#gamma (CMS)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_small'])
-TTG_ATLAS_RunCard                                = Sample.fromDirectory(name="TTG_ATLAS_RunCard",          treeName="Events", isData=False, color=color.TTG3LBuggy,   texName="tt#gamma (ATLAS)", directory=directories['ttGamma_NoFullyHad_SM_ATLASrunCard'])
+#TTG_ATLAS_RunCard                                = Sample.fromDirectory(name="TTG_ATLAS_RunCard",          treeName="Events", isData=False, color=color.TTG3LBuggy,   texName="tt#gamma (ATLAS)", directory=directories['ttGamma_NoFullyHad_SM_ATLASrunCard'])
 #TTG_ATLAS_RunCard_small                          = Sample.fromDirectory(name="TTG_ATLAS_RunCard_small",    treeName="Events", isData=False, color=color.TTG3LBuggy,   texName="tt#gamma (ATLAS)", directory=directories['ttGamma_NoFullyHad_SM_ATLASrunCard_small'])
 
 #TTG_CMS_RunCard_noJetPtCut                       = Sample.fromDirectory(name="TTG_CMS_RunCard_noJetPtCut",            treeName="Events", isData=False, color=color.TTG1, texName="tt#gamma (CMS, pT(jet)>0)",   directory=directories['ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut'])
@@ -132,9 +137,13 @@ TTG_ATLAS_RunCard                                = Sample.fromDirectory(name="TT
 #TTG_TTBar_RunCard_modified                         = Sample.fromDirectory(name="TTG_TTBar_RunCard_modified",    treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (tt mod)",   directory=directories['ttGamma_NoFullyHad_SM_TTBarrunCard_modified'])
 #TTG_TTBar_RunCard_mllOnly                          = Sample.fromDirectory(name="TTG_TTBar_RunCard_mllOnly",    treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (tt mmll=0)",   directory=directories['ttGamma_NoFullyHad_SM_TTBarrunCard_mllOnly'])
 
-TTG_Dilept_newCentral_RunCard                      = Sample.fromDirectory(name="TTG_Dilept_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG1,        texName="tt#gamma (2l, new)",   directory=directories['ttGamma_Dilept_newCentral'])
-TTG_SemiLept_newCentral_RunCard                    = Sample.fromDirectory(name="TTG_SemiLept_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (1l, new)",   directory=directories['ttGamma_SemiLept_newCentral'])
-TTG_Had_newCentral_RunCard                         = Sample.fromDirectory(name="TTG_Had_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (had, new)",   directory=directories['ttGamma_Had_newCentral'])
-TTG_NoFullyHad_newCentral_RunCard                  = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (new)",   directory=directories['ttGamma_NoFullyHad_newCentral'])
-TTG_NoFullyHad_comb_newCentral_RunCard             = Sample.fromDirectory(name="TTG_NoFullyHad_comb_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG1,        texName="tt#gamma (new, comb)",   directory=directories['ttGamma_NoFullyHad_comb_newCentral'])
+#TTG_Dilept_newCentral_RunCard                      = Sample.fromDirectory(name="TTG_Dilept_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG1,        texName="tt#gamma (2l, new)",   directory=directories['ttGamma_Dilept_newCentral'])
+#TTG_SemiLept_newCentral_RunCard                    = Sample.fromDirectory(name="TTG_SemiLept_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (1l, new)",   directory=directories['ttGamma_SemiLept_newCentral'])
+#TTG_Had_newCentral_RunCard                         = Sample.fromDirectory(name="TTG_Had_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (had, new)",   directory=directories['ttGamma_Had_newCentral'])
+#TTG_NoFullyHad_newCentral_RunCard                  = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (new)",   directory=directories['ttGamma_NoFullyHad_newCentral'])
+#TTG_NoFullyHad_comb_newCentral_RunCard             = Sample.fromDirectory(name="TTG_NoFullyHad_comb_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG1,        texName="tt#gamma (new, comb)",   directory=directories['ttGamma_NoFullyHad_comb_newCentral'])
 
+TTG_ATLAS_RunCard_comp                             = Sample.fromDirectory(name="TTG_ATLAS_RunCard",          treeName="Events", isData=False, color=color.TTG3LBuggy,   texName="tt#gamma (ATLAS)", directory=directories['ttGamma_NoFullyHad_SM_ATLASrunCard_comp'])
+TTG_NoFullyHad_newCentral_RunCard_comp             = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (new CMS)",   directory=directories['ttGamma_NoFullyHad_newCentral_comp'])
+TTG_NoFullyHad_newCentral_RunCard_pTG100To200_comp = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_pTG100To200", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (100<p_{T}(#gamma)<200 GeV)",   directory=directories['ttGamma_NoFullyHad_newCentral_pTG100To200_comp'])
+TTG_NoFullyHad_newCentral_RunCard_pTGgt200_comp    = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_pTGgt200", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (p_{T}(#gamma)>200 GeV)",   directory=directories['ttGamma_NoFullyHad_newCentral_pTGgt200_comp'])

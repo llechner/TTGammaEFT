@@ -22,6 +22,7 @@ else:
 from TTGammaEFT.Tools.user import dpm_directory as data_directory
 data_directory += "postprocessed/"
 from TTGammaEFT.Tools.user import postprocessing_directoryRun2018 as postprocessing_directory
+if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True": postprocessing_directory = postprocessing_directory.replace("/dilep/", "/dilepGamma/")
 
 # Redirector
 try:
