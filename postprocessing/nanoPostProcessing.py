@@ -1266,6 +1266,7 @@ def filler( event ):
         event.mT2linvg   = mt2Calculator.mt2ll()
     if len(tightLeptons) > 0 and len(mediumPhotons) > 0:
         mt2Calculator.setLepton1( tightLeptons[0]["pt"], tightLeptons[0]["eta"], tightLeptons[0]["phi"] )
+        mt2Calculator.setLepton2( mediumPhotons[0]["pt"], mediumPhotons[0]["eta"], mediumPhotons[0]["phi"] )
         event.mT2lg   = mt2Calculator.mt2ll()
     if len(selectedLeptons) > 1:
         mt2Calculator.setLepton1( selectedLeptons[0]["pt"], selectedLeptons[0]["eta"], selectedLeptons[0]["phi"] )
