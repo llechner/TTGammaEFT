@@ -17,10 +17,12 @@ from TTGammaEFT.Tools.helpers         import splitList
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
-from TTGammaEFT.Tools.objectSelection import isBJet, photonSelector, vidNestedWPBitMapNamingListPhoton
+from TTGammaEFT.Tools.objectSelection import isBJet, photonSelector, vidNestedWPBitMapNamingListPhoton, eleSelector, filterGenElectrons, filterGenMuons, filterGenTaus
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.helpers           import getCollection, deltaR
+from Analysis.Tools.mt2Calculator     import mt2Calculator
+from Analysis.Tools.overlapRemovalTTG import getParentIds
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -41,6 +43,7 @@ argParser.add_argument('--onlyTTG',            action='store_true', default=Fals
 argParser.add_argument('--normalize',          action='store_true', default=False,                                                     help="Normalize yields" )
 argParser.add_argument('--addOtherBg',         action='store_true', default=False,                                                     help="add others background" )
 argParser.add_argument('--categoryPhoton',     action='store',      default="None", type=str, choices=photonCatChoices,                help="plot in terms of photon category, choose which photon to categorize!" )
+argParser.add_argument('--leptonCategory',     action='store_true', default=False,                                                     help="plot in terms of lepton category" )
 argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all"],              help="plot lepton mode" )
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3],                         help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2],                         help="Run only job i")
@@ -54,11 +57,11 @@ logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
 categoryPlot = args.categoryPhoton != "None"
 
-addMissIDSF = False
+addMisIDSF = False
 selDir = args.selection
-if args.selection.count("addMissIDSF"):
-    addMissIDSF = True
-    args.selection = args.selection.replace("-addMissIDSF", "").replace("addMissIDSF-", "")
+if args.selection.count("addMisIDSF"):
+    addMisIDSF = True
+    args.selection = args.selection.replace("-addMisIDSF", "").replace("addMisIDSF-", "")
 
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
@@ -68,6 +71,7 @@ if args.normalize:       args.plot_directory += "_normalize"
 
 # Samples
 os.environ["gammaSkim"]="True" if "hoton" in args.selection or "pTG" in args.selection else "False"
+#os.environ["gammaSkim"]="False"
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
     if not args.noData:
@@ -104,7 +108,7 @@ def drawPlots( plots, mode, dataMCScale ):
     logger.info( "Plotting mode: %s"%mode )
 
     for log in [False, True]:
-        sc  = "cat_" if categoryPlot else ""
+        sc  = "cat_" if categoryPlot else "lep_" if args.leptonCategory else ""
         sc += "log" if log else "lin"
         plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, selDir, mode, sc )
 
@@ -126,7 +130,7 @@ def drawPlots( plots, mode, dataMCScale ):
 	                           plot_directory = plot_directory_,
                                extensions = extensions_,
 	                           ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
-	                           logX = False, logY = log, sorting = not categoryPlot,
+	                           logX = False, logY = log, sorting = not categoryPlot and not args.leptonCategory,
 	                           yRange = (0.03, "auto") if log else (0.001, "auto"),
     	                       scaling = scaling if args.normalize else {},
 	                           legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2],
@@ -141,7 +145,7 @@ def drawPlots( plots, mode, dataMCScale ):
                     extensions = extensions_,
                     #ratio = {'yRange':(0.1,1.9)},
                     logX = False, logY = False, logZ = log, #sorting = True,
-                    #yRange = (0.03, "auto") if log else (0.001, "auto"),
+                    zRange = (0.03, "auto") if log else (0.001, "auto"),
                     #scaling = {},
                     #legend = (0.50,0.88-0.04*sum(map(len, plot.histos)),0.9,0.88),
                     drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ),
@@ -153,7 +157,7 @@ def drawPlots( plots, mode, dataMCScale ):
                     extensions = extensions_,
                     #ratio = {'yRange':(0.1,1.9)},
                     logX = False, logY = False, logZ = log, #sorting = True,
-                    #yRange = (0.03, "auto") if log else (0.001, "auto"),
+                    zRange = (0.03, "auto") if log else (0.001, "auto"),
                     #scaling = {},
                     #legend = (0.50,0.88-0.04*sum(map(len, plot.histos)),0.9,0.88),
                     drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ),
@@ -182,6 +186,9 @@ leptonVarList    = NanoVars.getVariableNameList( "Lepton", postprocessed=True, d
 photonVariables  = NanoVars.getVariables(        "Photon", postprocessed=True, data=(not args.noData), plot=True )
 photonVarList    = NanoVars.getVariableNameList( "Photon", postprocessed=True, data=(not args.noData), plot=True )
 photonVarString  = NanoVars.getVariableString(   "Photon", postprocessed=True, data=(not args.noData), plot=True )
+genVariables     = NanoVars.getVariables(        "Gen",    postprocessed=True, data=False,             plot=True )
+genVarString     = NanoVars.getVariableString(   "Gen",    postprocessed=True, data=False,             plot=True )
+genVarList       = NanoVars.getVariableNameList( "Gen",    postprocessed=True, data=False,             plot=True )
 
 # Read variables and sequences
 read_variables  = ["weight/F",
@@ -201,14 +208,14 @@ read_variables  = ["weight/F",
                    "mlltight/F", "mllgammatight/F",
                    "mLtight0Gamma/F",
                    "ltight0GammadR/F", "ltight0GammadPhi/F",
-                   "m3/F", "m3wBJet/F",
+                   "m3/F", "m3wBJet/F", "mT/F",
                    "photonJetdR/F", "tightLeptonJetdR/F",
                   ]
 
 read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
 
-read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=10) ]
-#read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=10) ]
+read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=100) ]
+read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=100) ]
 #read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
 #read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
 
@@ -226,6 +233,13 @@ read_variables += map( lambda var: "Bj0_"                     + var, bJetVariabl
 read_variables += map( lambda var: "Bj1_"                     + var, bJetVariables )
 
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval/I",
+                     "nGenElectron/I",
+                     "nGenMuon/I",
+                     "nGenPhoton/I",
+                     "nGenBJet/I",
+                     "nGenTop/I",
+                     "nGenJet/I",
+                     "nGenPart/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
                      "reweightLeptonTightSF/F", "reweightLeptonTightSFUp/F", "reweightLeptonTightSFDown/F",
                      "reweightLeptonTrackingTightSF/F",
@@ -237,21 +251,151 @@ read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval
                      'reweightL1Prefire/F', 'reweightL1PrefireUp/F', 'reweightL1PrefireDown/F',
                     ]
 
-recoPhotonSel_medium_noSieie = photonSelector( 'medium', year=args.year, removedCuts=["sieie"] )
+read_variables_MC += [ VectorTreeVariable.fromString('GenPart[%s]'%genVarString, nMax=1000) ]
 
-def missIDelectrons( event, sample ):
+recoPhotonSel_medium_noSieie = photonSelector( 'medium', year=args.year, removedCuts=["sieie"] )
+recoPhotonSel_medium         = photonSelector( 'medium', year=args.year, removedCuts=[] )
+recoEleSel_veto              = eleSelector( 'veto' )
+
+def calcGenWdecays( event, sample ):
+    if sample.name == "data": return
+
+    gPart = getCollection( event, 'GenPart', genVarList, 'nGenPart' )
+    # get Ws from top or MG matrix element (from gluon)
+    GenW        = filter( lambda l: abs(l['pdgId']) == 24 and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+    GenW        = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"]) in [6,21], GenW )
+    # e/mu/tau with W mother
+    GenLepWMother    = filter( lambda l: abs(l['pdgId']) in [11,13,15] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+    GenLepWMother    = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==24, GenLepWMother )
+    # e/mu with tau mother and tau has a W in parentsList
+    GenLepTauMother  = filter( lambda l: abs(l['pdgId']) in [11,13] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+    GenLepTauMother  = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==15 and 24 in map( abs, getParentIds( gPart[l["genPartIdxMother"]], gPart)), GenLepTauMother )
+
+    GenElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepWMother )
+    GenMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepWMother )
+    GenTau      = filter( lambda l: abs(l['pdgId']) == 15, GenLepWMother )
+
+    GenTauElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepTauMother )
+    GenTauMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepTauMother )
+
+    # can't find jets from W in gParts, so assume non-Leptonic W decays are hadronic W decays
+    event.nGenWElectron    = len(GenElectron) # W -> e nu
+    event.nGenWMuon        = len(GenMuon) # W -> mu nu
+    event.nGenWTau         = len(GenTau) # W -> tau nu
+    event.nGenW            = len(GenW) # all W from tops
+    event.nGenWJets        = len(GenW)-len(GenLepWMother) # W -> q q
+    event.nGenWTauElectron = len(GenTauElectron) # W -> tau nu, tau -> e nu nu
+    event.nGenWTauMuon     = len(GenTauMuon) # W -> tau nu, tau -> mu nu nu
+    event.nGenWTauJets     = len(GenTau)-len(GenLepTauMother) # W -> tau nu, tau -> q q nu
+
+    event.cat_gen2L    = int( (event.nGenWElectron + event.nGenWMuon + event.nGenWTau) == 2 )
+    event.cat_genHad   = int( (event.nGenWElectron + event.nGenWMuon + event.nGenWTau) == 0 )
+    event.cat_genL     = int( (event.nGenWElectron + event.nGenWMuon) == 1 and not event.cat_gen2L )
+    event.cat_genTau_l = int( event.nGenWTau==1 and event.nGenWTauJets==0 and not event.cat_gen2L )
+    event.cat_genTau_q = int( event.nGenWTau==1 and event.nGenWTauJets==1 and not event.cat_gen2L )
+
+
+mt2Calculator = mt2Calculator()
+def mt2lg( event, sample ):
+    mt2Calculator.reset()
+    mt2Calculator.setMet( event.MET_pt, event.MET_phi )
+    mt2Calculator.setLepton1( event.LeptonTight0_pt, event.LeptonTight0_eta, event.LeptonTight0_phi )
+    mt2Calculator.setLepton2( event.PhotonGood0_pt, event.PhotonGood0_eta, event.PhotonGood0_phi )
+    event.mT2lg = mt2Calculator.mt2ll()
+
+def calcVetoElectrons( event, sample ):
+    allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
+    allPhotons.sort( key = lambda j: -j['pt'] )
+    goodPhotons = filter( lambda g: recoPhotonSel_medium(g), allPhotons )
+
     allLeptons = getCollection( event, 'Lepton', leptonVarList, 'nLepton' )
-    allLeptons = filter( lambda l: l["index"]==event.PhotonGood0_electronIdx and abs(l["pdgId"])==11, allLeptons )
     allLeptons.sort( key = lambda j: -j['pt'] )
-    missID = allLeptons[:1]
+    allElectrons = filter( lambda l: abs(l["pdgId"])==11, allLeptons )
+#    vetoElectrons = filter( lambda l: recoEleSel_veto(l), allElectrons )
+    vetoNoIsoElectrons = filter( lambda l: recoEleSel_veto(l,removedCuts=["pfRelIso03_all"]), allElectrons )
+
+    if event.nElectronVeto != len(vetoNoIsoElectrons):
+        for ele in vetoNoIsoElectrons:
+#          for g in goodPhotons:
+          for g in allPhotons:
+            if ele["index"]==g["electronIdx"]:
+                ele["pfRelIso03_all"] = min( ele["pfRelIso03_all"], g["pfRelIso03_all"] )
+        vetoNewElectrons = filter( lambda l: (l["pfRelIso03_all"]<0.198+0.506/l["pt"] and l["eta"]+l["deltaEtaSC"]<=1.479) or (l["pfRelIso03_all"]<0.203+0.963/l["pt"] and l["eta"]+l["deltaEtaSC"]>1.479), vetoNoIsoElectrons )
+        event.weight *= int( len(vetoNewElectrons)+event.nMuonVeto==1 )
+
+def printGen( event, sample ):
+    if sample.name != "data":
+        print sample.name, "e", event.nGenElectron, "mu", event.nGenMuon, "tau", event.nGenTau, "W", event.nGenW
+
+
+def printmisIDelectrons( event, sample ):
+    allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
+    allLeptons = getCollection( event, 'Lepton', leptonVarList, 'nLepton' )
+    allLeptons = filter( lambda l: abs(l["pdgId"])==11, allLeptons )
+
+
+    for photon in allPhotons:
+        leptons = filter( lambda l: l["index"]==photon["electronIdx"], allLeptons )
+        leptons.sort( key = lambda j: -j['pt'] )
+        misID = leptons[:1]
+        if misID:
+            if sample.name == "data":
+                    print "run", event.run, "lumi", event.luminosityBlock, "event", event.event
+            print "electron", misID[0]
+            print "photon", photon
+            print
+
+
+def misIDelectrons( event, sample ):
+#    photonGood = getCollection( event, 'P', leptonVarList, 'nLepton' )
+    allLeptons = getCollection( event, 'Lepton', leptonVarList, 'nLepton' )
+    allLeptons.sort( key = lambda j: -j['pt'] )
+    misID = filter( lambda l: l["index"]==event.PhotonGood0_electronIdx and abs(l["pdgId"])==11, allLeptons )[:1]
+    if misID and recoEleSel_veto(misID[0],removedCuts=["pfRelIso03_all"]):
+        misID[0]["pfRelIso03_all"] = min( misID[0]["pfRelIso03_all"], event.PhotonGood0_pfRelIso03_all )
+
     for var in leptonVarList:
-        if missID:
-            setattr( event, "missIDElectron0_" + var, missID[0][var] )
+        if misID:
+            setattr( event, "misIDElectron0_" + var, misID[0][var] )
         else:
             try:
-                setattr( event, "missIDElectron0_" + var, -999 )
+                setattr( event, "misIDElectron0_" + var, -999 )
             except:
-                setattr( event, "missIDElectron0_" + var, 0 )
+                setattr( event, "misIDElectron0_" + var, 0 )
+
+def allmisIDelectrons( event, sample ):
+#    photonGood = getCollection( event, 'P', leptonVarList, 'nLepton' )
+    allLeptons = getCollection( event, 'Lepton', leptonVarList, 'nLepton' )
+    allLeptons.sort( key = lambda j: -j['pt'] )
+    allElectrons = filter( lambda l: abs(l["pdgId"])==11, allLeptons )
+    allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
+    allElectrons = filter( lambda l: abs(l["pdgId"])==11, allLeptons )
+    allPhotons.sort( key = lambda j: -j['pt'] )
+#    misID = filter( lambda l: l["index"]==event.PhotonGood0_electronIdx and abs(l["pdgId"])==11, allLeptons )[:1]
+
+    misID = []
+    for ele in allElectrons:
+        for g in allPhotons:
+            if ele["index"]==g["electronIdx"]:
+                misID.append(ele)
+                break
+    misID.sort( key = lambda j: -j['pt'] )
+
+    if misID and recoEleSel_veto(misID[0],removedCuts=["pfRelIso03_all"]):
+        misID[0]["pfRelIso03_all"] = min( misID[0]["pfRelIso03_all"], event.PhotonGood0_pfRelIso03_all )
+
+    for var in leptonVarList:
+        if misID:
+            setattr( event, "allmisIDElectron0_" + var, misID[0][var] )
+        else:
+            try:
+                setattr( event, "allmisIDElectron0_" + var, -999 )
+            except:
+                setattr( event, "allmisIDElectron0_" + var, 0 )
+
+def printEventList( event, sample ):
+    if sample.name == "data":
+        print str(event.run) + ":" + str(event.luminosityBlock) + ":" + str(event.event)
 
 def makePhotons( event, sample ):
     allPhotons = getCollection( event, 'Photon', photonVarList, 'nPhoton' )
@@ -299,32 +443,47 @@ def clean_Jets( event, sample ):
 def printWeight( event, sample ):
     print event.weight
 
-sequence = [missIDelectrons ]# printWeight ]#clean_Jets ]
+#sequence = [calcGenWdecays]# printWeight ]#clean_Jets ]
+sequence = [calcGenWdecays, calcVetoElectrons, misIDelectrons, allmisIDelectrons, mt2lg ]# printWeight ]#clean_Jets ]
+#sequence = [misIDelectrons]# printWeight ]#clean_Jets ]
 
 # Sample definition
 if args.year == 2016:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_16 ]
-    elif not categoryPlot:
+    elif not categoryPlot and not args.leptonCategory:
 #        mc = [ TTG_priv_16, TT_pow_16, DY_HT_16, singleTop_16, WJets_HT_16, TG_16, WG_16, ZG_16 ]
-        mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16 ]
+        mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16, QCD_16 ]
+#        mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16 ]
 #        mc = [ DY_LO_16 ]
         if args.addOtherBg: mc += [ other_16 ]
     elif categoryPlot:
         all = all_16 if args.addOtherBg else all_noOther_16
+    elif args.leptonCategory:
+        all_noTT = all_noTT_16 if args.addOtherBg else all_noOther_noTT_16
+        TTbar    = TT_pow_16
+        TTG      = TTG_priv_16
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_17 ]
-    elif not categoryPlot:
+    elif not categoryPlot and not args.leptonCategory:
         mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17 ]
         if args.addOtherBg: mc += [ other_17 ]
     elif categoryPlot:
         all = all_17 if args.addOtherBg else all_noOther_17
+    elif args.leptonCategory:
+        all_noTT = all_noTT_17 if args.addOtherBg else all_noOther_noTT_17
+        TTbar    = TT_pow_17
+        TTG      = TTG_priv_17
 elif args.year == 2018:
     if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_18 ]
-    elif not categoryPlot:
+    elif not categoryPlot and not args.leptonCategory:
         mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18 ]
         if args.addOtherBg: mc += [ other_18 ]
     elif categoryPlot:
         all = all_18 if args.addOtherBg else all_noOther_18
+    elif args.leptonCategory:
+        all_noTT = all_noTT_18 if args.addOtherBg else all_noOther_noTT_18
+        TTbar    = TT_pow_18
+        TTG      = TTG_priv_18
 
 if categoryPlot:
     all_cat0 = all
@@ -348,6 +507,64 @@ if categoryPlot:
     all_cat3.color   = ROOT.kRed+1
     mc  = [ all_cat0, all_cat1, all_cat2, all_cat3 ]
 
+elif args.leptonCategory:
+
+    tt_2l         = TTbar
+    tt_2l.name    = "ttll"
+    tt_2l.texName = "tt (2l)"
+    tt_2l.color   = ROOT.kAzure+6
+
+    tt_tau_q         = copy.deepcopy(TTbar)
+    tt_tau_q.name    = "tttauq"
+    tt_tau_q.texName = "tt (#tau to had)"
+    tt_tau_q.color   = ROOT.kAzure-1
+
+    tt_tau_l         = copy.deepcopy(TTbar)
+    tt_tau_l.name    = "tttaul"
+    tt_tau_l.texName = "tt (#tau to e/#mu)"
+    tt_tau_l.color   = ROOT.kAzure+2
+
+    tt_l         = copy.deepcopy(TTbar)
+    tt_l.name    = "ttl"
+    tt_l.texName = "tt (e/#mu)"
+    tt_l.color   = ROOT.kAzure+1
+
+    tt_had         = copy.deepcopy(TTbar)
+    tt_had.name    = "tthad"
+    tt_had.texName = "tt (had)"
+    tt_had.color   = ROOT.kAzure+3
+
+    ttg_2l         = TTG
+    ttg_2l.name    = "ttgll"
+    ttg_2l.texName = "tt#gamma (2l)"
+    ttg_2l.color   = ROOT.kOrange
+
+    ttg_tau_q         = copy.deepcopy(TTG)
+    ttg_tau_q.name    = "ttgtauq"
+    ttg_tau_q.texName = "tt#gamma (#tau to had)"
+    ttg_tau_q.color   = ROOT.kOrange+2
+
+    ttg_tau_l         = copy.deepcopy(TTG)
+    ttg_tau_l.name    = "ttgtaul"
+    ttg_tau_l.texName = "tt#gamma (#tau to e/#mu)"
+    ttg_tau_l.color   = ROOT.kOrange+7
+
+    ttg_l         = copy.deepcopy(TTG)
+    ttg_l.name    = "ttgl"
+    ttg_l.texName = "tt#gamma (e/#mu)"
+    ttg_l.color   = ROOT.kOrange+1
+
+    ttg_had         = copy.deepcopy(TTG)
+    ttg_had.name    = "ttghad"
+    ttg_had.texName = "tt#gamma (had)"
+    ttg_had.color   = ROOT.kOrange+4
+
+    all_noTT.name    = "other"
+    all_noTT.texName = "other"
+    all_noTT.color   = ROOT.kGray
+    mc  = [ ttg_2l, tt_2l, ttg_l, tt_l, ttg_tau_l, tt_tau_l, ttg_tau_q, tt_tau_q, ttg_had, tt_had, all_noTT ]
+
+
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
     elif args.year == 2017: lumi_scale = 41.86
@@ -359,18 +576,18 @@ else:
     elif args.year == 2018: data_sample = Run2018
     data_sample.texName        = "data (legacy)"
     data_sample.name           = "data"
-    data_sample.read_variables = [ "event/I", "run/I" ]
+    data_sample.read_variables = [ "event/I", "run/I", "luminosityBlock/I" ]
     data_sample.scale          = 1
     lumi_scale                 = data_sample.lumi * 0.001
     stack                      = Stack( mc, data_sample )
 
 stack.extend( [ [s] for s in signals ] )
-
+sampleWeight = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 for sample in mc + signals:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     sample.style          = styles.fillStyle( sample.color )
-    sample.weight         = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMissIDSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+    sample.weight         = sampleWeight
 #event.reweightDilepTriggerBackup
 
 if args.small:
@@ -385,10 +602,8 @@ tr = TriggerSelector( args.year, singleLepton=True )
 # Use some defaults (set defaults before you create/import list of Plots!!)
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
 preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ) ] )
-#Plot.setDefaults(   stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection, addOverFlowBin='upper' )
-#Plot2D.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )
-Plot.setDefaults(   stack=stack, weight="weight", selectionString=preSelection, addOverFlowBin='upper' )
-Plot2D.setDefaults( stack=stack, weight="weight", selectionString=preSelection )
+Plot.setDefaults(   stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection, addOverFlowBin='upper' )
+Plot2D.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )
 
 # Import plots list (AFTER setDefaults!!)
 plotListFile = os.path.join( os.path.dirname( os.path.realpath( __file__ ) ), 'plotLists', args.plotFile + '.py' )
@@ -404,138 +619,374 @@ else:           from plotLists import plotListData   as plotList
 add2DPlots = []
 
 add2DPlots.append( Plot2D(
-    name      = 'photonGood0_phi_eta_dataOnly',
+    name      = 'photonGood0_eta_phi',
     texX      = '#eta(#gamma_{0})',
     texY      = '#phi(#gamma_{0})',
     attribute = (
       TreeVariable.fromString( "PhotonGood0_eta/F" ),
       TreeVariable.fromString( "PhotonGood0_phi/F" ),
     ),
-    binning   = [20, -1.5, 1.5, 20, -pi, pi],
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'misIDElectron0_eta_phi',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.misIDElectron0_eta,
+      lambda event, sample: event.misIDElectron0_phi,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'allmisIDElectron0_eta_phi',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.allmisIDElectron0_eta,
+      lambda event, sample: event.allmisIDElectron0_phi,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'misIDElectron0_eta_phi_misIDlostHits3',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.misIDElectron0_eta if event.misIDElectron0_lostHits==3 else -999,
+      lambda event, sample: event.misIDElectron0_phi if event.misIDElectron0_lostHits==3 else -999,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'allmisIDElectron0_eta_phi_misIDlostHits3',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.allmisIDElectron0_eta if event.misIDElectron0_lostHits==3 else -999,
+      lambda event, sample: event.allmisIDElectron0_phi if event.misIDElectron0_lostHits==3 else -999,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'photonGood0_eta_phi_misIDlostHits3',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.PhotonGood0_eta if event.misIDElectron0_lostHits==3 else -999,
+      lambda event, sample: event.misIDElectron0_phi if event.misIDElectron0_lostHits==3 else -999,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'misIDElectron0_eta_phi_misIDlostHitsleq2',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.misIDElectron0_eta if event.misIDElectron0_lostHits<=2 else -999,
+      lambda event, sample: event.misIDElectron0_phi if event.misIDElectron0_lostHits<=2 else -999,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'allmisIDElectron0_eta_phi_misIDlostHitsleq2',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.allmisIDElectron0_eta if event.misIDElectron0_lostHits<=2 else -999,
+      lambda event, sample: event.allmisIDElectron0_phi if event.misIDElectron0_lostHits<=2 else -999,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
+))
+
+add2DPlots.append( Plot2D(
+    name      = 'photonGood0_eta_phi_misIDlostHitsleq2',
+    texX      = '#eta(#gamma_{0})',
+    texY      = '#phi(#gamma_{0})',
+    attribute = (
+      lambda event, sample: event.PhotonGood0_eta if event.misIDElectron0_lostHits<=2 else -999,
+      lambda event, sample: event.misIDElectron0_phi if event.misIDElectron0_lostHits<=2 else -999,
+    ),
+    binning   = [10, -1.5, 1.5, 20, -pi, pi],
+    read_variables = read_variables,
 ))
 
 # plotList
 addPlots = []
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_pt',
-    texX      = 'p_{T}(e_{miss}) (GeV)',
+    name      = 'mT2lg',
+    texX      = 'M_{T2}(l,#gamma) (GeV)',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_pt,
+    attribute = lambda event, sample: event.mT2lg,
+    binning   = [ 20, 0, 200 ],
+))
+
+addPlots.append( Plot(
+    name      = 'mT2lg_20ptG120',
+    texX      = 'M_{T2}(l,#gamma) (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.mT2lg if event.PhotonGood0_pt < 120 else -999,
+    binning   = [ 20, 0, 200 ],
+))
+
+addPlots.append( Plot(
+    name      = 'mT2lg_120ptG220',
+    texX      = 'M_{T2}(l,#gamma) (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.mT2lg if event.PhotonGood0_pt > 120 and event.PhotonGood0_pt < 220 else -999,
+    binning   = [ 20, 0, 200 ],
+))
+
+addPlots.append( Plot(
+    name      = 'mT2lg_220ptGinf',
+    texX      = 'M_{T2}(l,#gamma) (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.mT2lg if event.PhotonGood0_pt > 220 else -999,
+    binning   = [ 20, 0, 200 ],
+))
+
+
+addPlots.append( Plot(
+    name      = 'misIDElectron0_pt',
+    texX      = 'p_{T}(e_{misID}) (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.misIDElectron0_pt,
     binning   = [ 20, 0, 120 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_eta',
-    texX      = '#eta(e_{miss})',
+    name      = 'misIDElectron0_eta',
+    texX      = '#eta(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_eta,
+    attribute = lambda event, sample: event.misIDElectron0_eta,
     binning   = [ 30, -3, 3 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_phi',
-    texX      = '#phi(e_{miss})',
+    name      = 'misIDElectron0_phi',
+    texX      = '#phi(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_phi,
+    attribute = lambda event, sample: event.misIDElectron0_phi,
     binning   = [ 10, -pi, pi ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_lostHits',
-    texX      = 'lost hits(e_{miss})',
+    name      = 'misIDElectron0_lostHits',
+    texX      = 'lost hits(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_lostHits,
-    binning   = [ 6, 0, 6 ],
+    attribute = lambda event, sample: event.misIDElectron0_lostHits,
+    binning   = [ 4, 0, 4 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_dr03EcalRecHitSumEt',
-    texX      = '#DeltaR_{0.3} EcalRecHitSumEt (e_{miss})',
+    name      = 'misIDElectron0_dr03EcalRecHitSumEt',
+    texX      = '#DeltaR_{0.3} EcalRecHitSumEt (e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_dr03EcalRecHitSumEt,
+    attribute = lambda event, sample: event.misIDElectron0_dr03EcalRecHitSumEt,
     binning   = [ 20, 0, 4 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_dr03HcalDepth1TowerSumEt',
-    texX      = '#DeltaR_{0.3} HcalDepth1TowerSumEt (e_{miss})',
+    name      = 'misIDElectron0_dr03HcalDepth1TowerSumEt',
+    texX      = '#DeltaR_{0.3} HcalDepth1TowerSumEt (e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_dr03HcalDepth1TowerSumEt,
+    attribute = lambda event, sample: event.misIDElectron0_dr03HcalDepth1TowerSumEt,
     binning   = [ 20, 0, 4 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_dr03TkSumPt',
-    texX      = '#DeltaR_{0.3} TkSumPt (e_{miss})',
+    name      = 'misIDElectron0_dr03TkSumPt',
+    texX      = '#DeltaR_{0.3} TkSumPt (e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_dr03TkSumPt,
+    attribute = lambda event, sample: event.misIDElectron0_dr03TkSumPt,
     binning   = [ 20, 0, 4 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_r9',
-    texX      = 'R9(e_{miss})',
+    name      = 'misIDElectron0_r9',
+    texX      = 'R9(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_r9,
+    attribute = lambda event, sample: event.misIDElectron0_r9,
     binning   = [ 20, 0, 1 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_hoe',
-    texX      = 'H/E(e_{miss})',
+    name      = 'misIDElectron0_hoe',
+    texX      = 'H/E(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_hoe,
+    attribute = lambda event, sample: event.misIDElectron0_hoe,
     binning   = [ 20, 0, 0.2 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_eInvMinusPInv',
-    texX      = '1/E - 1/p (e_{miss})',
+    name      = 'misIDElectron0_eInvMinusPInv',
+    texX      = '1/E - 1/p (e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_eInvMinusPInv,
+    attribute = lambda event, sample: event.misIDElectron0_eInvMinusPInv,
     binning   = [ 50, -0.3, 0.3 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_convVeto',
-    texX      = 'conversion veto (e_{miss})',
+    name      = 'misIDElectron0_sieie',
+    texX      = '#sigma_{i#etai#eta}(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_convVeto,
-    binning   = [ 3, 0, 3 ],
-))
-
-addPlots.append( Plot(
-    name      = 'missIDElectron0_sieie',
-    texX      = '#sigma_{i#etai#eta}(e_{miss})',
-    texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_sieie,
+    attribute = lambda event, sample: event.misIDElectron0_sieie,
     binning   = [ 20, 0, 0.02 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_pfRelIso03_chg',
-    texX      = 'charged relIso_{0.3}(e_{miss})',
+    name      = 'misIDElectron0_pfRelIso03_chg',
+    texX      = 'charged relIso_{0.3}(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_pfRelIso03_chg,
-    binning   = [ 20, 0, 0.2 ],
+    attribute = lambda event, sample: event.misIDElectron0_pfRelIso03_chg,
+    binning   = [ 20, 0, 0.4 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_pfRelIso03_all',
-    texX      = 'relIso_{0.3}(e_{miss})',
+    name      = 'misIDElectron0_pfRelIso03_all',
+    texX      = 'relIso_{0.3}(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_pfRelIso03_all,
-    binning   = [ 20, 0, 1.2 ],
+    attribute = lambda event, sample: event.misIDElectron0_pfRelIso03_all,
+    binning   = [ 20, 0, 1.4 ],
 ))
 
 addPlots.append( Plot(
-    name      = 'missIDElectron0_pfRelIso03_n',
-    texX      = 'neutral relIso_{0.3}(e_{miss})',
+    name      = 'misIDElectron0_pfRelIso03_n',
+    texX      = 'neutral relIso_{0.3}(e_{misID})',
     texY      = 'Number of Events',
-    attribute = lambda event, sample: event.missIDElectron0_pfRelIso03_all - event.missIDElectron0_pfRelIso03_chg,
-    binning   = [ 20, 0, 1.2 ],
+    attribute = lambda event, sample: event.misIDElectron0_pfRelIso03_all - event.misIDElectron0_pfRelIso03_chg,
+    binning   = [ 20, 0, 1.4 ],
 ))
+
+
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_pt',
+#    texX      = 'p_{T}(e_{misID}) (GeV)',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_pt,
+#    binning   = [ 20, 0, 120 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_eta',
+#    texX      = '#eta(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_eta,
+#    binning   = [ 30, -3, 3 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_phi',
+#    texX      = '#phi(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_phi,
+#    binning   = [ 10, -pi, pi ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_lostHits',
+#    texX      = 'lost hits(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_lostHits,
+#    binning   = [ 4, 0, 4 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_dr03EcalRecHitSumEt',
+#    texX      = '#DeltaR_{0.3} EcalRecHitSumEt (e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_dr03EcalRecHitSumEt,
+#    binning   = [ 20, 0, 4 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_dr03HcalDepth1TowerSumEt',
+#    texX      = '#DeltaR_{0.3} HcalDepth1TowerSumEt (e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_dr03HcalDepth1TowerSumEt,
+#    binning   = [ 20, 0, 4 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_dr03TkSumPt',
+#    texX      = '#DeltaR_{0.3} TkSumPt (e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_dr03TkSumPt,
+#    binning   = [ 20, 0, 4 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_r9',
+#    texX      = 'R9(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_r9,
+#    binning   = [ 20, 0, 1 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_hoe',
+#    texX      = 'H/E(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_hoe,
+#    binning   = [ 20, 0, 0.2 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_eInvMinusPInv',
+#    texX      = '1/E - 1/p (e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_eInvMinusPInv,
+#    binning   = [ 50, -0.3, 0.3 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_sieie',
+#    texX      = '#sigma_{i#etai#eta}(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_sieie,
+#    binning   = [ 20, 0, 0.02 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_pfRelIso03_chg',
+#    texX      = 'charged relIso_{0.3}(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_pfRelIso03_chg,
+#    binning   = [ 20, 0, 0.4 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_pfRelIso03_all',
+#    texX      = 'relIso_{0.3}(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_pfRelIso03_all,
+#    binning   = [ 20, 0, 1.4 ],
+#))
+
+#addPlots.append( Plot(
+#    name      = 'allmisIDElectron0_pfRelIso03_n',
+#    texX      = 'neutral relIso_{0.3}(e_{misID})',
+#    texY      = 'Number of Events',
+#    attribute = lambda event, sample: event.allmisIDElectron0_pfRelIso03_all - event.allmisIDElectron0_pfRelIso03_chg,
+#    binning   = [ 20, 0, 1.4 ],
+#))
 
 
 # Loop over channels
@@ -560,6 +1011,19 @@ cat_sel1 = [ "%s_photonCat==1"%args.categoryPhoton ]
 cat_sel2 = [ "%s_photonCat==2"%args.categoryPhoton ]
 cat_sel3 = [ "%s_photonCat==3"%args.categoryPhoton ]
 
+if args.leptonCategory:
+    ttg_2l.weight    = lambda event, sample: sampleWeight(event,sample) * event.cat_gen2L
+    ttg_l.weight     = lambda event, sample: sampleWeight(event,sample) * event.cat_genL
+    ttg_tau_l.weight = lambda event, sample: sampleWeight(event,sample) * event.cat_genTau_l
+    ttg_tau_q.weight = lambda event, sample: sampleWeight(event,sample) * event.cat_genTau_q
+    ttg_had.weight   = lambda event, sample: sampleWeight(event,sample) * event.cat_genHad
+
+    tt_2l.weight     = lambda event, sample: sampleWeight(event,sample) * event.cat_gen2L
+    tt_l.weight      = lambda event, sample: sampleWeight(event,sample) * event.cat_genL
+    tt_tau_l.weight  = lambda event, sample: sampleWeight(event,sample) * event.cat_genTau_l
+    tt_tau_q.weight  = lambda event, sample: sampleWeight(event,sample) * event.cat_genTau_q
+    tt_had.weight    = lambda event, sample: sampleWeight(event,sample) * event.cat_genHad
+
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
 
@@ -567,10 +1031,10 @@ for index, mode in enumerate( allModes ):
 
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
-#    plots += plotList
-#    plots += [ getYieldPlot( index ) ]
-#    plots += addPlots
-    plots += add2DPlots
+    plots += plotList
+    plots += [ getYieldPlot( index ) ]
+    plots += addPlots
+#    if not args.leptonCategory: plots += add2DPlots
 
     # Define 2l selections
     leptonSelection = cutInterpreter.cutString( mode )
@@ -606,6 +1070,9 @@ for index, mode in enumerate( allModes ):
 #        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isTGamma==0" ) #ONLY IN THE T-channel!!!
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
+#    for plot in plots:
+#        if isinstance( plot, Plot2D ):
+#            print "max",plot.histos[1][0].GetMaximum()
 
     # Get normalization yields from yield histogram
     for plot in plots:
@@ -657,6 +1124,7 @@ for y in yields["mu"]:
 
 dataMCScale = yields["all"]["data"] / yields["all"]["MC"] if yields["all"]["MC"] != 0 else float('nan')
 
+allPlots['mu'] = filter( lambda plot: "_ratio" not in plot.name, allPlots['mu'] )
 for plot in allPlots['mu']:
     for pl in ( p for p in allPlots['e'] if p.name == plot.name ):  
         for i, j in enumerate( list( itertools.chain.from_iterable( plot.histos ) ) ):
