@@ -4,7 +4,7 @@
 
 # Standard imports
 import ROOT, os, imp, sys, copy
-ROOT.gROOT.SetBatch(True)
+#ROOT.gROOT.SetBatch(True)
 import itertools
 from math                                import isnan, ceil, pi
 
@@ -25,7 +25,7 @@ loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTS
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='CRITICAL', nargs='?', choices=loggerChoices,                  help="Log level for logging")
-argParser.add_argument('--selection',          action='store',      default='dilepOS-nLepVeto2-offZSFll-mll40-nJet2p-nBTag1p')
+argParser.add_argument('--selection',          action='store',      default='dilepOS-nLepVeto2-offZSFll-mll40-nJet2p-nBTag1p-nPhoton1p')
 argParser.add_argument('--small',              action='store_true',                                                                    help='Run only on a small subset of the data?', )
 argParser.add_argument('--noData',             action='store_true', default=False,                                                     help='also plot data?')
 argParser.add_argument('--signal',             action='store',      default=None,   nargs='?', choices=[None],                         help="Add signal to plot")
@@ -121,6 +121,7 @@ elif "nLepTight1" in args.selection:
             mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18 ]
 
     weightString   = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
+
 
 if args.noData:
     if args.year == 2016:   lumi_scale = 35.92
@@ -251,7 +252,7 @@ with open("logs/%s.log"%args.selection, "w") as f:
         f.write("\\hline\n")
         f.write("Sample  & \\multicolumn{5}{c||}{low $\\sigma_{i\\eta i\\eta}$, low chg Iso (SR)} & \\multicolumn{5}{c||}{high $\\sigma_{i\\eta i\\eta}$, low chg Iso  (NN2)}   & \\multicolumn{5}{c||}{low $\\sigma_{i\\eta i\\eta}$, high chg Iso (NN1)}   & \\multicolumn{5}{c}{high $\\sigma_{i\\eta i\\eta}$, high chg Iso  (CR)} \\\\ \n")
         f.write("\\hline\n")
-        f.write("        & \\textbf{events} & cat0 & cat1 & cat2 & cat3 & \\textbf{events} & cat0 & cat1 & cat2 & cat3 & \\textbf{events} & cat0 & cat1 & cat2 & cat3 & \\textbf{events} & cat0 & cat1 & cat2 & cat3 \\\\ \n")
+        f.write("        & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake \\\\ \n")
         f.write("\\hline\n")
         f.write("\\hline\n")
         for s in mc:
@@ -267,7 +268,7 @@ with open("logs/%s.log"%args.selection, "w") as f:
 
         if highPT == -1:
             f.write("\\multicolumn{21}{c}{}\\\\ \n")
-            f.write("\\multicolumn{1}{c}{} & \\multicolumn{5}{c}{cat0 = genuine photons} & \\multicolumn{5}{c}{cat1 = hadronic photons} & \\multicolumn{5}{c}{cat2 = missID electrons} & \\multicolumn{5}{c}{cat3 = hadronic fakes} \\\\ \n")
+            f.write("\\multicolumn{1}{c}{} & \\multicolumn{5}{c}{$\gamma$ = genuine photons} & \\multicolumn{5}{c}{had $\gamma$ = hadronic photons} & \\multicolumn{5}{c}{misID e = misID electrons} & \\multicolumn{5}{c}{fake = hadronic fakes} \\\\ \n")
 
 
         f.write("\\end{tabular}\n")
