@@ -74,6 +74,11 @@ special_cuts = {
     "NoChgIsoPhoton":        "nPhotonNoChgIso>=1",
     "NoChgIsoNoSieiePhoton": "nPhotonNoChgIsoNoSieie>=1",
 
+    "offZeg":               "((abs(mLtight0Gamma-%s)>15&&nElectronTight==1)||(nElectronTight==0))"%(mZ),             # Cut Z-Window only for egamma
+    "onZeg":                "((abs(mLtight0Gamma-%s)<=15&&nElectronTight==1)||(nElectronTight==0))"%(mZ),             # Cut Z-Window only for egamma
+    "phiGlt1p1":             "abs(PhotonGood0_phi)<1.1",
+    "onZEphiGlt1p1":         "((abs(mLtight0Gamma-%s)<=15&&abs(PhotonGood0_phi)<1.1&&nElectronTight==1)||(abs(mLtight0Gamma-%s)>15&&nElectronTight==1)||(nElectronTight==0))"%(mZ,mZ),
+
   }
 
 continous_variables = [ ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
