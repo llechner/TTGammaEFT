@@ -14,7 +14,7 @@ photonGood0 = []
 photonGood0.append( Plot(
     name      = 'photonGood0_pt',
     texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 5 GeV',
+    texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "PhotonGood0_pt/F" ),
     binning   = [ 19, 20, 115 ],
 ))
@@ -22,7 +22,7 @@ photonGood0.append( Plot(
 photonGood0.append( Plot(
     name      = 'photonGood0_pt_EFT',
     texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 100 GeV',
+    texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "PhotonGood0_pt/F" ),
     binning   = [ 5, 20, 520 ],
 ))
@@ -41,6 +41,14 @@ photonGood0.append( Plot(
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "PhotonGood0_phi/F" ),
     binning   = [ 10, -pi, pi ],
+))
+
+photonGood0.append( Plot(
+    name      = 'photonGood0_mvaID',
+    texX      = 'MVA ID(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "PhotonGood0_mvaID/F" ),
+    binning   = [ 20, -1, 1 ],
 ))
 
 photonGood0.append( Plot(

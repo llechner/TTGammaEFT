@@ -99,8 +99,6 @@ def drawObjects( plotData, lumi_scale ):
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
-scaling = { 1:0, 2:0, 3:0, 4:0 } if args.noData else { 0:5, 1:5, 2:5, 3:5, 4:5 } 
-
 # Plotting
 def drawPlots( plots, mode ):
     for log in [False, True]:
@@ -113,9 +111,9 @@ def drawPlots( plots, mode ):
                 continue # Empty plot
             postFix = ""
             if args.sideband == "sieie":
-                postFix = " (#sigma_{i#etai#eta} sideband)"
+                postFix = " (high #sigma_{i#etai#eta})"
             elif args.sideband == "chgIso":
-                postFix = " (chg Iso sideband)"
+                postFix = " (high chg Iso)"
             plot.histos[0][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=False, errors = False )
             plot.histos[1][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=True, errors = False )
             plot.histos[2][0].style          = styles.lineStyle( ROOT.kRed+2, width = 2, dotted=False, dashed=False, errors = False )
@@ -127,6 +125,8 @@ def drawPlots( plots, mode ):
                 if mode == "SF":
                     plot.histos[4][0].legendText = "data (SF)" + postFix
             extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue', "mu", "e"] else ['png']
+
+            scaling = { 1:0, 2:0, 3:0, 4:0 } if args.noData or "_cat" in plot.name else { 0:5, 1:5, 2:5, 3:5, 4:5 } 
 
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
@@ -229,33 +229,33 @@ ttg_sb = copy.deepcopy(ttg)
 ttg_sb.name = "sb"
 ttg_sb.texName  = "tt#gamma "
 if args.sideband == "chgIso":
-    ttg_sb.texName += "chg Iso sideband"
+    ttg_sb.texName += "high chg Iso"
 elif args.sideband == "sieie":
-    ttg_sb.texName += "#sigma_{i#etai#eta} sideband"
+    ttg_sb.texName += "high #sigma_{i#etai#eta}"
 
 ttg_fit = copy.deepcopy(ttg)
 ttg_fit.name = "fit"
 ttg_fit.texName  = "tt#gamma "
 if args.sideband == "chgIso":
-    ttg_fit.texName += "chg Iso fit region"
+    ttg_fit.texName += "low chg Iso"
 elif args.sideband == "sieie":
-    ttg_fit.texName += "#sigma_{i#etai#eta} fit region"
+    ttg_fit.texName += "low #sigma_{i#etai#eta}"
 
 tt_sb = copy.deepcopy(tt)
 tt_sb.name = "sb"
 tt_sb.texName  = "tt "
 if args.sideband == "chgIso":
-    tt_sb.texName += "chg Iso sideband"
+    tt_sb.texName += "high chg Iso"
 elif args.sideband == "sieie":
-    tt_sb.texName += "#sigma_{i#etai#eta} sideband"
+    tt_sb.texName += "high #sigma_{i#etai#eta}"
 
 tt_fit = copy.deepcopy(tt)
 tt_fit.name = "fit"
 tt_fit.texName  = "tt "
 if args.sideband == "chgIso":
-    tt_fit.texName += "chg Iso fit region"
+    tt_fit.texName += "low chg Iso"
 elif args.sideband == "sieie":
-    tt_fit.texName += "#sigma_{i#etai#eta} fit region"
+    tt_fit.texName += "low #sigma_{i#etai#eta}"
 
 mc  = [ tt_fit, tt_sb, ttg_fit, ttg_sb ]
 stackSamples  = [ [s] for s in mc ]
@@ -269,7 +269,7 @@ else:
     if args.year == 2016:   data_sample = Run2016
     elif args.year == 2017: data_sample = Run2017
     elif args.year == 2018: data_sample = Run2018
-    data_sample.texName        = "data (#sigma_{i#etai#eta} sideband)"
+    data_sample.texName        = "data (low #sigma_{i#etai#eta})"
     data_sample.name           = "data"
     data_sample.read_variables = [ "event/I", "run/I" ]
     data_sample.scale          = 1
@@ -427,7 +427,7 @@ tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
 if args.sideband == "sieie":
-    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton), "%s_sieie<0.02"%(args.categoryPhoton) ]
+    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton)] #, "%s_sieie<0.02"%(args.categoryPhoton) ]
     fit_sel = ["%s_sieie<0.01015"%(args.categoryPhoton)]
 elif args.sideband == "chgIso":
     sb_sel  = ["(%s_pfRelIso03_chg*%s_pt)>=1.141"%(args.categoryPhoton, args.categoryPhoton)]

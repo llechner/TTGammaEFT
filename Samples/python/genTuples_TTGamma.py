@@ -193,9 +193,28 @@ ttGamma_Had_newCentral_1Line                    = FWLiteSample.fromDAS("ttGamma_
 ttGamma_Had_newCentral_1Line.xSection           = 4.213
 ttGamma_Had_newCentral_1Line.nEvents            = 995000
 
-ttGamma_NoFullyHad_newCentral_1Line             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line", "/ttGamma_1Line_NoFullyHad/llechner-ttGamma_1Line_NoFullyHad-17628da6eab494c9f81686715e5b9d62/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_newCentral_1Line             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line", "/ttGamma_1Line_NoFullyHad_v2/llechner-ttGamma_1Line_NoFullyHad_v2-17628da6eab494c9f81686715e5b9d62/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ttGamma_NoFullyHad_newCentral_1Line.xSection    = 6.634
-ttGamma_NoFullyHad_newCentral_1Line.nEvents     = 995000
+ttGamma_NoFullyHad_newCentral_1Line.nEvents     = 970000
+
+
+
+# Sample comparison
+ttGamma_NoFullyHad_newCentral_1Line_comp             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line_comp", "/ttGamma_1Line_NoFullyHad_v2/llechner-ttGamma_1Line_NoFullyHad_v2-17628da6eab494c9f81686715e5b9d62/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_newCentral_1Line_comp.xSection    = 6.634
+ttGamma_NoFullyHad_newCentral_1Line_comp.nEvents     = 1000000
+
+ttGamma_NoFullyHad_SM_ATLASrunCard_comp                = FWLiteSample.fromDAS("ttGamma_NoFullyHad_SM_ATLASrunCard_comp", "/ttGamma_1Line_noFullyHad_ATLASrunCard/llechner-ttGamma_1Line_noFullyHad_ATLASrunCard-02683d38485cee1dd1397b4ddb798321/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_SM_ATLASrunCard_comp.xSection       = 3.981
+ttGamma_NoFullyHad_SM_ATLASrunCard_comp.nEvents        = 1000000
+
+ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp", "/ttGamma_1Line_NoFullyHad_pTG100To200/llechner-ttGamma_1Line_NoFullyHad_pTG100To200-247c852135d86d5cd6079d15fa626189/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp.xSection    = 0.168
+ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp.nEvents     = 1000000
+
+ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp", "/ttGamma_1Line_NoFullyHad_pTGgt200/llechner-ttGamma_1Line_NoFullyHad_pTGgt200-3ec61e47eafa562ce3b543e2a9f923a7/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp.xSection    = 0.0342
+ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp.nEvents     = 795000
 
 
 SM = [
@@ -229,6 +248,11 @@ SM = [
     ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut,
     ttGamma_NoFullyHad_SM_CMSrunCard_noDeltaR_noJetPtCut_xqcut_wideLepEta,
     ttGamma_NoFullyHad_SM_CMSrunCard_noJetPtCut_xqcut,
+    ttGamma_NoFullyHad_newCentral_1Line,
+    ttGamma_NoFullyHad_newCentral_1Line_comp,
+    ttGamma_NoFullyHad_SM_ATLASrunCard_comp,
+    ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp,
+    ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp,
 ]
 
 EFT = [

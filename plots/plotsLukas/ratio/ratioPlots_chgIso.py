@@ -100,8 +100,6 @@ def drawObjects( plotData, lumi_scale ):
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
-scaling = { 0:1 } if args.noData else { 0:2, 1:2 } 
-
 # Plotting
 def drawPlots( plots, mode ):
     for log in [False, True]:
@@ -114,9 +112,9 @@ def drawPlots( plots, mode ):
                 continue # Empty plot
             postFix = ""
             if args.sideband == "sieie":
-                postFix = " (#sigma_{i#etai#eta} sideband)"
+                postFix = " (high #sigma_{i#etai#eta})"
             elif args.sideband == "chgIso":
-                postFix = " (chg Iso sideband)"
+                postFix = " (high chg Iso)"
             plot.histos[0][0].style          = styles.lineStyle( ROOT.kCyan+2, width = 2, dotted=False, dashed=False, errors = False )
             plot.histos[1][0].style          = styles.lineStyle( ROOT.kRed+2, width = 2, dotted=False, dashed=False, errors = False )
             if not args.noData: 
@@ -126,6 +124,8 @@ def drawPlots( plots, mode ):
                 if mode == "SF":
                     plot.histos[2][0].legendText = "data (SF)" + postFix
             extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue', "mu", "e"] else ['png']
+
+            scaling = { 0:1 } if args.noData or "_cat" in plot.name else { 0:2, 1:2 } 
 
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
@@ -229,18 +229,18 @@ all_sb = copy.deepcopy(all)
 all_sb.name = "sb"
 all_sb.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_sb.texName += "chg Iso sideband"
+    all_sb.texName += "high chg Iso"
 elif args.sideband == "sieie":
-    all_sb.texName += "#sigma_{i#etai#eta} sideband"
+    all_sb.texName += "high #sigma_{i#etai#eta}"
 all_sb.color   = ROOT.kRed+2
 
 all_fit = copy.deepcopy(all_sb)
 all_fit.name = "fit"
 all_fit.texName  = "tt " if args.onlyTT else "MC "
 if args.sideband == "chgIso":
-    all_fit.texName += "chg Iso fit region"
+    all_fit.texName += "low chg Iso"
 elif args.sideband == "sieie":
-    all_fit.texName += "#sigma_{i#etai#eta} fit region"
+    all_fit.texName += "low #sigma_{i#etai#eta}"
 all_fit.syles    = styles.lineStyle( ROOT.kOrange, width = 2, dotted=False, dashed=False, errors = False )
 all_fit.color   = ROOT.kCyan+2
 
@@ -367,6 +367,40 @@ addPlots.append( Plot(
     binning   = [ 20, 0, 20 ],
 ))
 
+
+
+
+addPlots.append( Plot(
+    name      = '%s_sieie_cat1_%s'%(args.categoryPhoton, "ttOnly" if args.onlyTT else "fullMC"),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_photonCat" ) == 1 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
+    name      = '%s_sieie_cat1_20ptG120_%s'%(args.categoryPhoton, "ttOnly" if args.onlyTT else "fullMC"),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_pt" ) > 20 and getattr( event, args.categoryPhoton + "_pt" ) < 120 and getattr( event, args.categoryPhoton + "_photonCat" ) == 1 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
+    name      = '%s_sieie_cat1_120ptG220_%s'%(args.categoryPhoton, "ttOnly" if args.onlyTT else "fullMC"),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_pt" ) > 120 and getattr( event, args.categoryPhoton + "_pt" ) < 220 and getattr( event, args.categoryPhoton + "_photonCat" ) == 1 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
+
+addPlots.append( Plot(
+    name      = '%s_sieie_cat1_220ptGinf_%s'%(args.categoryPhoton, "ttOnly" if args.onlyTT else "fullMC"),
+    texX      = '#sigma_{i#etai#eta}(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: getattr( event, args.categoryPhoton + "_sieie" ) if getattr( event, args.categoryPhoton + "_pt" ) > 220 and getattr( event, args.categoryPhoton + "_photonCat" ) == 1 else -999,
+    binning   = [ 20, 0.005, 0.025 ],
+))
 
 
 
@@ -557,7 +591,7 @@ tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
 if args.sideband == "sieie":
-    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton), "%s_sieie<0.02"%(args.categoryPhoton) ]
+    sb_sel  = ["%s_sieie>0.011"%(args.categoryPhoton) ] #, "%s_sieie<0.02"%(args.categoryPhoton) ]
     fit_sel = ["%s_sieie<0.01015"%(args.categoryPhoton)]
 elif args.sideband == "chgIso":
     sb_sel  = ["(%s_pfRelIso03_chg*%s_pt)>=1.141"%(args.categoryPhoton, args.categoryPhoton)]

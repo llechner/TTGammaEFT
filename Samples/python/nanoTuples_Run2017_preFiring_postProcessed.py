@@ -19,10 +19,9 @@ else:
     logger = logging.getLogger(__name__)
 
 # Data directory
-from TTGammaEFT.Tools.user import data_directory1 as data_directory
-#from TTGammaEFT.Tools.user import dpm_directory as data_directory
-#data_directory += "postprocessed/"
-from TTGammaEFT.Tools.user import postprocessing_directoryPrefiring as postprocessing_directory
+data_directory                      = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
+postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v1/dilep/"
+
 
 # Redirector
 try:
