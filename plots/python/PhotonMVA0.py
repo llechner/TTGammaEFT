@@ -14,7 +14,7 @@ PhotonMVA0 = []
 PhotonMVA0.append( Plot(
     name      = 'PhotonMVA0_pt',
     texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 5 GeV',
+    texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonMVA0_pt,
     binning   = [ 19, 20, 115 ],
 ))
@@ -22,7 +22,7 @@ PhotonMVA0.append( Plot(
 PhotonMVA0.append( Plot(
     name      = 'PhotonMVA0_pt_EFT',
     texX      = 'p_{T}(#gamma_{0}) (GeV)',
-    texY      = 'Number of Events / 100 GeV',
+    texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonMVA0_pt,
     binning   = [ 5, 20, 520 ],
 ))
@@ -41,5 +41,13 @@ PhotonMVA0.append( Plot(
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.PhotonMVA0_phi,
     binning   = [ 10, -pi, pi ],
+))
+
+PhotonMVA0.append( Plot(
+    name      = 'PhotonMVA0_mvaID',
+    texX      = 'MVA ID(#gamma_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.PhotonMVA0_mvaID,
+    binning   = [ 20, -1, 1 ],
 ))
 

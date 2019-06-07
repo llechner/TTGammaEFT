@@ -60,6 +60,31 @@ massTight_pt.append( Plot(
 ))
 
 massTight_pt.append( Plot(
+    name      = 'mT_20ptG120',
+    texX      = 'M_{T} (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.mT if event.PhotonGood0_pt < 120 else -999,
+    binning   = [ 20, 0, 200 ],
+))
+
+massTight_pt.append( Plot(
+    name      = 'mT_120ptG220',
+    texX      = 'M_{T} (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.mT if event.PhotonGood0_pt > 120 and event.PhotonGood0_pt < 220 else -999,
+    binning   = [ 20, 0, 200 ],
+))
+
+massTight_pt.append( Plot(
+    name      = 'mT_220ptGinf',
+    texX      = 'M_{T} (GeV)',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.mT if event.PhotonGood0_pt > 220 else -999,
+    binning   = [ 20, 0, 200 ],
+))
+
+
+massTight_pt.append( Plot(
     name      = 'm3_20ptG120',
     texX      = 'M_{3} (GeV)',
     texY      = 'Number of Events',
