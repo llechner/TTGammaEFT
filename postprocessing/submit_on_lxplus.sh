@@ -27,12 +27,12 @@ eval `scramv1 runtime -sh`
 # github repos
 git cms-init
 
-git clone -b "ppv17" --single-branch --depth 1 https://github.com/llechner/TTGammaEFT.git
-git clone -b "ppv17" --single-branch --depth 1 https://github.com/llechner/Samples.git
-git clone -b "ppv17" --single-branch --depth 1 https://github.com/llechner/Analysis.git
-git clone -b "ppv17" --single-branch --depth 1 https://github.com/llechner/RootTools.git
+git clone -b "ppv18" --single-branch --depth 1 https://github.com/llechner/TTGammaEFT.git
+git clone -b "ppv18" --single-branch --depth 1 https://github.com/llechner/Samples.git
+git clone -b "ppv18" --single-branch --depth 1 https://github.com/llechner/Analysis.git
+git clone -b "ppv18" --single-branch --depth 1 https://github.com/llechner/RootTools.git
 mkdir PhysicsTools
-git clone -b "ppv17" --single-branch --depth 1 https://github.com/llechner/nanoAOD-tools.git PhysicsTools/NanoAODTools
+git clone -b "ppv18" --single-branch --depth 1 https://github.com/llechner/nanoAOD-tools.git PhysicsTools/NanoAODTools
 
 scram b
 eval `scramv1 runtime -sh`
@@ -50,6 +50,7 @@ echo "---------------------"
 
 echo "---------------------"
 echo "Changing to script dir: $1"
+cd ..
 cd $1
 ls -l
 echo "---------------------"
