@@ -105,7 +105,6 @@ isDiLepGamma   = options.skim.lower().startswith('dilepGamma')
 isDiLep        = options.skim.lower().startswith('dilep') and not isDiLepGamma
 isSemiLepGamma = options.skim.lower().startswith('semilepGamma')
 isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGamma
-#isSemiNoIso    = options.skim.lower().startswith('semiNoIso')
 
 semilepNoIsoCond_ele   = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1)>=1)"
 semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4)>=1)"
