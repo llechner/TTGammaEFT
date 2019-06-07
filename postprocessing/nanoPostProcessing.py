@@ -1253,12 +1253,10 @@ def filler( event ):
     if len(tightLeptons) > 0:
         event.lpTight = lp( tightLeptons[0]["pt"], tightLeptons[0]["phi"], met["pt"], met["phi"] )
         event.mT      = mT( tightLeptons[0], met )
-        print event.lpTight
 
     if len(tightInvIsoLeptons) > 0:
         event.lpInvTight = lp( tightInvIsoLeptons[0]["pt"], tightInvIsoLeptons[0]["phi"], met["pt"], met["phi"] )
         event.mTinv      = mT( tightInvIsoLeptons[0], met )
-        print event.lpInvTight
 
     mt2Calculator.reset()
     mt2Calculator.setMet( met["pt"], met["phi"] )
