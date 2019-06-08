@@ -97,8 +97,8 @@ logger  = logger.get_logger(options.logLevel, logFile = logFile)
 import RootTools.core.logger as logger_rt
 logger_rt = logger_rt.get_logger(options.logLevel, logFile = None )
 
-import Samples.Tools.logger as logger_samples
-logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
+#import Samples.Tools.logger as logger_samples
+#logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
 
 # Flags 
 isDiLepGamma   = options.skim.lower().startswith('dilepGamma')
