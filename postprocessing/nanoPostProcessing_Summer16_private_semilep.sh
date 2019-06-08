@@ -94,44 +94,44 @@ python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processin
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample WJetsToLNu_HT1200to2500 WJetsToLNu_HT1200to2500_ext #SPLIT5
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample WJetsToLNu_HT2500toInf WJetsToLNu_HT2500toInf_ext #SPLIT5
 
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT70to100 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT100to200_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT200to400 DYJetsToLL_M50_HT200to400_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT400to600 DYJetsToLL_M50_HT400to600_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT600to800 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT800to1200 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT1200to2500 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT2500toInf #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT70to100 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT100to200 DYJetsToLL_M5to50_HT100to200_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT200to400 DYJetsToLL_M5to50_HT200to400_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT400to600 DYJetsToLL_M5to50_HT400to600_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT600toInf #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT70to100 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT100to200_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT200to400 DYJetsToLL_M50_HT200to400_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT400to600 DYJetsToLL_M50_HT400to600_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT600to800 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT800to1200 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT1200to2500 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M50_HT2500toInf #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT70to100 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT100to200 DYJetsToLL_M5to50_HT100to200_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT200to400 DYJetsToLL_M5to50_HT200to400_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT400to600 DYJetsToLL_M5to50_HT400to600_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagDYWJets --sample DYJetsToLL_M5to50_HT600toInf #SPLIT5
 
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt15to20 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt20to30 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt30to50 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt50to80 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt80to120 QCD_Mu_pt80to120_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt120to170 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt170to300 QCD_Mu_pt170to300_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt300to470 QCD_Mu_pt300to470_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt470to600 QCD_Mu_pt470to600_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt600to800 QCD_Mu_pt600to800_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt800to1000 QCD_Mu_pt800to1000_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt1000toInf QCD_Mu_pt1000toInf_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt15to20 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt20to30 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt30to50 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt50to80 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt80to120 QCD_Mu_pt80to120_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt120to170 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt170to300 QCD_Mu_pt170to300_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt300to470 QCD_Mu_pt300to470_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt470to600 QCD_Mu_pt470to600_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt600to800 QCD_Mu_pt600to800_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt800to1000 QCD_Mu_pt800to1000_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Mu_pt1000toInf QCD_Mu_pt1000toInf_ext1 #SPLIT5
 
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt20to30 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt30to50 QCD_Ele_pt30to50_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt50to80 QCD_Ele_pt50to80_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt80to120 QCD_Ele_pt80to120_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt120to170 QCD_Ele_pt120to170_ext1 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt170to300 #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt300toInf #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt20to30 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt30to50 QCD_Ele_pt30to50_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt50to80 QCD_Ele_pt50to80_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt80to120 QCD_Ele_pt80to120_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt120to170 QCD_Ele_pt120to170_ext1 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt170to300 #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagQCD --sample QCD_Ele_pt300toInf #SPLIT5
 
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT40to100 GJets_HT40to100_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT100to200 GJets_HT100to200_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT200to400 GJets_HT200to400_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT400to600 GJets_HT400to600_ext #SPLIT5
-python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT600toInf GJets_HT600toInf_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT40to100 GJets_HT40to100_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT100to200 GJets_HT100to200_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT200to400 GJets_HT200to400_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT400to600 GJets_HT400to600_ext #SPLIT5
+#python nanoPostProcessing.py --writeToDPM --skim semilep --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v18 --fileBasedSplitting --flagGJets --sample GJets_HT600toInf GJets_HT600toInf_ext #SPLIT5
 
