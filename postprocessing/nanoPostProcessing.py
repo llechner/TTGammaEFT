@@ -780,9 +780,28 @@ def filler( event ):
 
         # GEN Particles
         gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
-        gPart.sort( key = lambda p: -p['pt'] )
         # GEN Jets
         gJets = getParticles( r, collVars=readGenJetVarList, coll="GenJet" )
+
+        # Gen Leptons in ttbar/gamma decays
+        # get Ws from top or MG matrix element (from gluon)
+        GenW = filter( lambda l: abs(l['pdgId']) == 24 and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenW = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"]) in [6,21], GenW )
+        # e/mu/tau with W mother
+        GenLepWMother    = filter( lambda l: abs(l['pdgId']) in [11,13,15] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenLepWMother    = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==24, GenLepWMother )
+        # e/mu with tau mother and tau has a W in parentsList
+        GenLepTauMother  = filter( lambda l: abs(l['pdgId']) in [11,13] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenLepTauMother  = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==15 and 24 in map( abs, getParentIds( gPart[l["genPartIdxMother"]], gPart)), GenLepTauMother )
+
+        GenWElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepWMother )
+        GenWMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepWMother )
+        GenWTau      = filter( lambda l: abs(l['pdgId']) == 15, GenLepWMother )
+
+        GenTauElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepTauMother )
+        GenTauMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepTauMother )
+
+        gPart.sort( key = lambda p: -p['pt'] )
         gJets.sort( key = lambda p: -p['pt'] )
 
         # Overlap removal flags for ttgamma/ttbar and Zgamma/DY
@@ -853,24 +872,6 @@ def filler( event ):
         event.nGenBJet     = len(GenBJet)
         event.nGenJet      = len(GenJet)
         event.nGenTop      = len(GenTop)
-
-        # Gen Leptons in ttbar/gamma decays
-        # get Ws from top or MG matrix element (from gluon)
-        GenW = filter( lambda l: abs(l['pdgId']) == 24 and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
-        GenW = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"]) in [6,21], GenW )
-        # e/mu/tau with W mother
-        GenLepWMother    = filter( lambda l: abs(l['pdgId']) in [11,13,15] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
-        GenLepWMother    = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==24, GenLepWMother )
-        # e/mu with tau mother and tau has a W in parentsList
-        GenLepTauMother  = filter( lambda l: abs(l['pdgId']) in [11,13] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
-        GenLepTauMother  = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==15 and 24 in map( abs, getParentIds( gPart[l["genPartIdxMother"]], gPart)), GenLepTauMother )
-
-        GenWElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepWMother )
-        GenWMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepWMother )
-        GenWTau      = filter( lambda l: abs(l['pdgId']) == 15, GenLepWMother )
-
-        GenTauElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepTauMother )
-        GenTauMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepTauMother )
 
         # can't find jets from W in gParts, so assume non-Leptonic W decays are hadronic W decays
         event.nGenW            = len(GenW) # all W from tops
