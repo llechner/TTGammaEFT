@@ -146,17 +146,17 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import *
-    from Samples.nanoAOD.Summer16_private           import *
+#    from Samples.nanoAOD.Summer16_private           import *
 #    from Samples.nanoAOD.Run2016_14Dec2018          import *
     from Samples.nanoAOD.Run2016_17Jul2018_private  import *
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import *
-    from Samples.nanoAOD.Fall17_private             import *
+#    from Samples.nanoAOD.Fall17_private             import *
 #    from Samples.nanoAOD.Run2017_14Dec2018          import *
     from Samples.nanoAOD.Run2017_31Mar2018_private  import *
 elif options.year == 2018:
     from Samples.nanoAOD.Autumn18_private_legacy_v1 import *
-    from Samples.nanoAOD.Autumn18_private           import *
+#    from Samples.nanoAOD.Autumn18_private           import *
 #    from Samples.nanoAOD.Run2018_14Dec2018          import *
     from Samples.nanoAOD.Run2018_17Sep2018_private  import *
 
