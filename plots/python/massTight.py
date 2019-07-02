@@ -20,6 +20,14 @@ massTight.append( Plot(
 ))
 
 massTight.append( Plot(
+    name      = 'mLinv0PhotonTight',
+    texX      = 'M(#gamma,l_{0}) (GeV)',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "mLinvtight0Gamma/F" ),
+    binning   = [ 50, 0, 200 ],
+))
+
+massTight.append( Plot(
     name      = 'mllPhotonTight',
     texX      = 'M(ll#gamma) (GeV)',
     texY      = 'Number of Events',
@@ -33,7 +41,15 @@ massTight.append( Plot(
     texX      = 'M(#gamma,l_{0}) (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "mLtight0Gamma/F" ),
-    binning   = [ 17, 20, 190 ],
+    binning   = [ 17, 25, 195 ],
+))
+
+massTight.append( Plot(
+    name      = 'mLinv0PhotonTight_coarse',
+    texX      = 'M(#gamma,l_{0}) (GeV)',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "mLinvtight0Gamma/F" ),
+    binning   = [ 17, 25, 195 ],
 ))
 
 massTight.append( Plot(
@@ -41,7 +57,7 @@ massTight.append( Plot(
     texX      = 'M(ll#gamma) (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "mllgammatight/F" ),
-    binning   = [ 17, 20, 190 ],
+    binning   = [ 17, 25, 195 ],
 ))
 
 
@@ -50,6 +66,14 @@ massTight.append( Plot(
     texX      = 'M_{T} (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "mT/F" ),
+    binning   = [ 20, 0, 200 ],
+))
+
+massTight.append( Plot(
+    name      = 'mTinv',
+    texX      = 'M_{T} (GeV)',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "mTinv/F" ),
     binning   = [ 20, 0, 200 ],
 ))
 
@@ -84,4 +108,37 @@ massTight.append( Plot(
     attribute = TreeVariable.fromString( "m3/F" ),
     binning   = [ 22, 60, 500 ],
 ))
+
+massTight.append( Plot(
+    name      = 'mT2lg',
+    texX      = 'M_{T2}(l,#gamma) (GeV)',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "mT2lg/F" ),
+    binning   = [ 20, 0, 200 ],
+))
+
+massTight.append( Plot(
+    name      = 'mT2lginv',
+    texX      = 'M_{T2}(l,#gamma) (GeV)',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "mT2linvg/F" ),
+    binning   = [ 20, 0, 200 ],
+))
+
+massTight.append( Plot(
+    name      = 'Lp',
+    texX      = 'Lp',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "lpTight/F" ),
+    binning   = [ 20, -0.5, 1.5 ],
+))
+
+massTight.append( Plot(
+    name      = 'Lpinv',
+    texX      = 'Lp',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "lpInvTight/F" ),
+    binning   = [ 20, -0.5, 1.5 ],
+))
+
 

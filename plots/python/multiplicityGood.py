@@ -52,6 +52,30 @@ multiplicityGood.append( Plot(
 ))
 
 multiplicityGood.append( Plot(
+    name      = 'nLeptonGoodInvIso',
+    texX      = 'N_{l}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nLeptonTightInvIso/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nElectronGoodInvIso',
+    texX      = 'N_{e}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nElectronTightInvIso/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nMuonGoodInvIso',
+    texX      = 'N_{#mu}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nMuonTightInvIso/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
     name      = 'nLeptonTight',
     texX      = 'N_{l}',
     texY      = 'Number of Events',
@@ -72,6 +96,30 @@ multiplicityGood.append( Plot(
     texX      = 'N_{#mu}',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "nMuonTight/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nLeptonTightInvIso',
+    texX      = 'N_{l}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nLeptonTightInvIso/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nElectronTightInvIso',
+    texX      = 'N_{e}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nElectronTightInvIso/I" ),
+    binning   = [ 4, 0, 4 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nMuonTightInvIso',
+    texX      = 'N_{#mu}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nMuonTightInvIso/I" ),
     binning   = [ 4, 0, 4 ],
 ))
 
