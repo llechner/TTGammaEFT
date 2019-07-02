@@ -36,7 +36,7 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 dirs = {}
 dirs['DY_LO']            = ["DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO"]
 
-dirs['TT_pow']           = ["TTLep_pow", "TTSemiLep_pow"]#, "TTHad_pow" ]
+dirs['TT_pow']           = ["TTLep_pow", "TTSingleLep_pow"]#, "TTHad_pow" ]
 
 dirs['TTGLep']           = ["TTGLep"]
 dirs['TTG']              = ["TTGLep", "TTGSemiTbar", "TTGSemiT", "TTGHad"]
@@ -63,6 +63,7 @@ dirs['ZGToLLG']          = ["ZGToLLG"]
 dirs['TG']               = ["TGJets"]
 dirs['WJets']            = ["WJetsToLNu"]
 dirs['WG']               = ["WGToLNuG"]
+dirs['WG_NLO']           = ["WGToLNuG_amcatnlo_ext1"]
 
 dirs['VV']               = ["VVTo2L2Nu"]
 
@@ -98,6 +99,7 @@ WJets_18           = Sample.fromDPMDirectory(name="WJets",            treeName="
 ZG_18              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGToLLG'], noCheckProxy=True)
 TG_18              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories['TG'], noCheckProxy=True)
 WG_18              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'], noCheckProxy=True)
+WG_NLO_18          = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG_NLO'], noCheckProxy=True)
 other_18           = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories['other'], noCheckProxy=True)
 all_18             = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories['all'], noCheckProxy=True)
 all_noOther_18     = Sample.fromDPMDirectory(name="all_noOther",      treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all_noOther",       directory=directories['all_noOther'], noCheckProxy=True)

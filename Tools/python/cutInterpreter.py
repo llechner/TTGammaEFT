@@ -45,7 +45,7 @@ special_cuts = {
     "onZllgNoChgIsoNoSieie":   "abs(mllgammaNoChgIsoNoSieie-%s)<=15"%(mZ),
 
     "onZllTight":        "abs(mlltight-%s)<=15"%(mZ),
-    "onZllgTight":       "abs(mllgtightamma-%s)<=15"%(mZ),
+    "onZllgTight":       "abs(mllgammatight-%s)<=15"%(mZ),
     "onZSFll":           "((abs(mll-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                     # Cut Z-Window only for SF dilep events
     "onZSFllg":          "((abs(mllgamma-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                # Cut Z-Window only for SF dilep events
 
@@ -55,7 +55,7 @@ special_cuts = {
     "onZSFllgNoChgIsoNoSieie": "((abs(mllgammaNoChgIsoNoSieie-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
 
     "onZSFllTight":      "((abs(mlltight-%s)<=15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),            # Cut Z-Window only for SF dilep events
-    "onZSFllgTight":     "((abs(mllgtightamma-%s)<=15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),       # Cut Z-Window only for SF dilep events
+    "onZSFllgTight":     "((abs(mllgammatight-%s)<=15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),       # Cut Z-Window only for SF dilep events
     "mumu":              "nElectronGood==0&&nMuonGood==2",
     "mue":               "nElectronGood==1&&nMuonGood==1",
     "ee":                "nElectronGood==2&&nMuonGood==0",
@@ -79,10 +79,37 @@ special_cuts = {
     "phiGlt1p1":             "abs(PhotonGood0_phi)<1.1",
     "onZEphiGlt1p1":         "((abs(mLtight0Gamma-%s)<=15&&abs(PhotonGood0_phi)<1.1&&nElectronTight==1)||(abs(mLtight0Gamma-%s)>15&&nElectronTight==1)||(nElectronTight==0))"%(mZ,mZ),
 
+    "n12Jet":               "nJetGood==1||nJetGood==2",
+
+    "lowSieie":          "PhotonNoChgIsoNoSieie0_sieie<0.01015",
+    "highSieie":         "PhotonNoChgIsoNoSieie0_sieie>0.011",
+    "lowChgIso":         "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt<1.141",
+    "highChgIso":        "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt>1.141",
+
+    "lowPT":             "PhotonGood0_pt>=20&&PhotonGood0_pt<120",
+    "medPT":             "PhotonGood0_pt>=120&&PhotonGood0_pt<220",
+    "highPT":            "PhotonGood0_pt>=220",
+    "incl":              "PhotonGood0_pt>=20",
+
+    "lowhadPT":          "PhotonNoChgIsoNoSieie0_pt>=20&&PhotonNoChgIsoNoSieie0_pt<120",
+    "medhadPT":          "PhotonNoChgIsoNoSieie0_pt>=120&&PhotonNoChgIsoNoSieie0_pt<220",
+    "highhadPT":         "PhotonNoChgIsoNoSieie0_pt>=220",
+    "inclhad":           "PhotonNoChgIsoNoSieie0_pt>=20",
+
+    "photoncat0":        "PhotonGood0_photonCat==0",
+    "photoncat1":        "PhotonGood0_photonCat==1",
+    "photoncat2":        "PhotonGood0_photonCat==2",
+    "photoncat3":        "PhotonGood0_photonCat==3",
+
+    "photonhadcat0":        "PhotonNoChgIsoNoSieie0_photonCat==0",
+    "photonhadcat1":        "PhotonNoChgIsoNoSieie0_photonCat==1",
+    "photonhadcat2":        "PhotonNoChgIsoNoSieie0_photonCat==2",
+    "photonhadcat3":        "PhotonNoChgIsoNoSieie0_photonCat==3",
+
   }
 
 continous_variables = [ ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
-discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepVeto","nLeptonVeto"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
+discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepNoCorrVeto","nLeptonVeto"), ("nLepVeto","nLeptonVetoIsoCorr"), ("nInvLepTight","nLeptonTightInvIso"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
 
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 

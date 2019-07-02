@@ -17,6 +17,7 @@ color.T              = ROOT.kOrange+1
 color.TGamma         = ROOT.kGray
 color.W              = ROOT.kCyan+1
 color.QCD            = ROOT.kGreen+3
+color.GJets          = ROOT.kGreen+4
 
 color.TTG1L          = ROOT.kBlue+2
 color.TTG3LBuggy     = ROOT.kRed+1
