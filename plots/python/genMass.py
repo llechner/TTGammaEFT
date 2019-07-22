@@ -26,3 +26,12 @@ genMass.append( Plot(
     attribute = TreeVariable.fromString( "mllgamma/F" ),
     binning   = [ 50, 0, 200 ],
 ))
+
+genMass.append( Plot(
+    name      = 'ht',
+    texX      = 'H_{T} (GeV)',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "ht/F" ),
+    binning   = [ 20, 0, 600 ],
+))
+
