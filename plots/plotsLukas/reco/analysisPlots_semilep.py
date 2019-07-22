@@ -62,6 +62,8 @@ import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
+ptSels = ["lowPT", "medPT", "highPT"]
+
 categoryPlot = args.categoryPhoton != "None"
 
 cache_dir = os.path.join(cache_directory, "qcdHistos")
@@ -69,6 +71,7 @@ dirDB     = DirDB(cache_dir)
 
 addMisIDSF = args.invLeptonIso # always true for QCD plots
 addDYSF = args.invLeptonIso #always true for QCD plots
+addVGSF = False
 selDir = args.selection
 if args.selection.count("addMisIDSF"):
     addMisIDSF = True
@@ -76,6 +79,17 @@ if args.selection.count("addMisIDSF"):
 if args.selection.count("addDYSF"):
     addDYSF = True
     args.selection = "-".join( [ item for item in args.selection.split("-") if item != "addDYSF" ] )
+if args.selection.count("addVGSF"):
+    addVGSF = True
+    if "nJet2" in args.selection:
+        vGSF = 1.3
+    elif "nJet3" in args.selection:
+        vGSF = 1.3
+    elif "nJet4" in args.selection:
+        vGSF = 1.44
+    elif "nJet5" in args.selection:
+        vGSF = 1.1
+    args.selection = "-".join( [ item for item in args.selection.split("-") if item != "addVGSF" ] )
 
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
@@ -127,6 +141,13 @@ def drawPlots( plots, mode, dataMCScale ):
 
     logger.info( "Plotting mode: %s"%mode )
 
+    # get the right labeling on the plots
+    if not args.invLeptonIso:      dMCScale = dataMCScale
+    elif "20ptG120" in plot.name:  dMCScale = dataMCScale["lowPT"]
+    elif "120ptG220" in plot.name: dMCScale = dataMCScale["medPT"]
+    elif "220ptGinf" in plot.name: dMCScale = dataMCScale["highPT"]
+    else:                          dMCScale = dataMCScale["incl"]
+
     for log in [False, True]:
         if categoryPlot:
             sc = "cat_"
@@ -134,6 +155,8 @@ def drawPlots( plots, mode, dataMCScale ):
             sc = "lep_"
         elif args.invLeptonIso:
             sc = "invIso_"
+        elif args.detailedMC:
+            sc = "det_"
         else:
             sc = ""
         sc += "log" if log else "lin"
@@ -168,7 +191,7 @@ def drawPlots( plots, mode, dataMCScale ):
 	                           yRange = (0.03, "auto") if log else (0.001, "auto"),
     	                       scaling = scaling if args.normalize else {},
 	                           legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2 if args.detailedMC or args.leptonCategory or categoryPlot else 3],
-	                           drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ) if not args.normalize else drawObjects( not args.noData, 1.0 , lumi_scale ),
+	                           drawObjects = drawObjects( not args.noData, dMCScale , lumi_scale ) if not args.normalize else drawObjects( not args.noData, 1.0 , lumi_scale ),
                                copyIndexPHP = True,
                              )
 
@@ -182,7 +205,7 @@ def drawPlots( plots, mode, dataMCScale ):
                     zRange = (0.03, "auto") if log else (0.001, "auto"),
                     #scaling = {},
                     #legend = (0.50,0.88-0.04*sum(map(len, plot.histos)),0.9,0.88),
-                    drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ),
+                    drawObjects = drawObjects( not args.noData, dMCScale , lumi_scale ),
                     copyIndexPHP = True,
                 )
                 p_data = Plot2D.fromHisto( plot.name+'_data', plot.histos[1:], texX = plot.texX, texY = plot.texY )
@@ -194,19 +217,78 @@ def drawPlots( plots, mode, dataMCScale ):
                     zRange = (0.03, "auto") if log else (0.001, "auto"),
                     #scaling = {},
                     #legend = (0.50,0.88-0.04*sum(map(len, plot.histos)),0.9,0.88),
-                    drawObjects = drawObjects( not args.noData, dataMCScale , lumi_scale ),
+                    drawObjects = drawObjects( not args.noData, dMCScale , lumi_scale ),
                     copyIndexPHP = True,
                 )
 
 
-def getYieldPlot( index ):
-    return Plot(
+def getYieldPlots( index ):
+    yieldPlots = []
+    yieldPlots.append( Plot(
                 name      = 'yield',
                 texX      = 'yield',
                 texY      = 'Number of Events',
                 attribute = lambda event, sample: event.nElectronTight,
                 binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
-                )
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_20ptG120',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTight if event.PhotonGood0_pt >= 20 and event.PhotonGood0_pt < 120 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_120ptG220',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTight if event.PhotonGood0_pt >= 120 and event.PhotonGood0_pt < 220 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_220ptGinf',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTight if event.PhotonGood0_pt >= 220 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+
+    return yieldPlots
+
+
+
+def getInvYieldPlots( index ):
+    yieldPlots = []
+    yieldPlots.append( Plot(
+                name      = 'yield',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_20ptG120',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonGood0_pt >= 20 and event.PhotonGood0_pt < 120 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_120ptG220',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonGood0_pt >= 120 and event.PhotonGood0_pt < 220 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_220ptGinf',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonGood0_pt >= 220 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+
+    return yieldPlots
 
 # get nano variable lists
 NanoVars        = NanoVariables( args.year )
@@ -492,47 +574,47 @@ if args.year == 2016:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
         mc = [ TTG_priv_16, QCD_16 ]
     elif categoryPlot:
-        all = all_16 if args.addOtherBg else all_noOther_16
+        all = all_noQCD_16 #all_16 if args.addOtherBg else all_noOther_16
     elif args.leptonCategory:
-        all_noTT = all_noTT_16 if args.addOtherBg else all_noOther_noTT_16
+        all_noTT = all_noTT_16# if args.addOtherBg else all_noOther_noTT_16
         TTbar    = TT_pow_16
         TTG      = TTG_priv_16
     else:
         if args.detailedMC:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16, QCD_16 ]
-            if args.addOtherBg: mc += [ other_16 ]
+            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16, other_16 ]
         else:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, VG_16, rest_16, QCD_16 ]
+            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, VG_16, rest_16]
+        if not args.invLeptonIso: mc += [ QCD_16 ]
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
         mc = [ TTG_priv_17, QCD_17 ]
     elif categoryPlot:
-        all = all_17 if args.addOtherBg else all_noOther_17
+        all = all_noQCD_17 #all_17 if args.addOtherBg else all_noOther_17
     elif args.leptonCategory:
-        all_noTT = all_noTT_17 if args.addOtherBg else all_noOther_noTT_17
+        all_noTT = all_noTT_17 #if args.addOtherBg else all_noOther_noTT_17
         TTbar    = TT_pow_17
         TTG      = TTG_priv_17
     else:
         if args.detailedMC:
-            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_NLO_17, ZG_17, QCD_17 ]
-            if args.addOtherBg: mc += [ other_17 ]
+            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17, other_17 ]
         else:
-            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, VG_17, rest_17, QCD_17 ]
+            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, VG_17, rest_17 ]
+        if not args.invLeptonIso: mc += [ QCD_17 ]
 elif args.year == 2018:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
         mc = [ TTG_priv_18, QCD_18 ]
     elif categoryPlot:
-        all = all_18 if args.addOtherBg else all_noOther_18
+        all = all_noQCD_18 #all_18 if args.addOtherBg else all_noOther_18
     elif args.leptonCategory:
-        all_noTT = all_noTT_18 if args.addOtherBg else all_noOther_noTT_18
+        all_noTT = all_noTT_18 #if args.addOtherBg else all_noOther_noTT_18
         TTbar    = TT_pow_18
         TTG      = TTG_priv_18
     else:
         if args.detailedMC:
-            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_NLO_18, ZG_18, QCD_18 ]
-            if args.addOtherBg: mc += [ other_18 ]
+            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18, other_18 ]
         else:
-            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, VG_18, rest_18, QCD_18 ]
+            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, VG_18, rest_18 ]
+        if not args.invLeptonIso: mc += [ QCD_18 ]
 
 if categoryPlot:
     all_cat0 = all
@@ -631,7 +713,7 @@ else:
     stack                      = Stack( mc, data_sample )
 
 stack.extend( [ [s] for s in signals ] )
-sampleWeight = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(1.17 if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+sampleWeight = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(vGSF if ("WG" in sample.name or "ZG" in sample.name or "VG" in sample.name) and addVGSF else 1.)*(1.17 if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 # no misIDSF included in weightString!!
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
@@ -655,11 +737,12 @@ tr = TriggerSelector( args.year, singleLepton=True )
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
 # what to do with the leptonVeto in invIso case?
 if args.invLeptonIso:
-    selection = "-".join( [ item.replace("nLepTight1", "nInvLepTight1") if not "nBTag" in item else "nBTag0" for item in args.selection.replace("nLepVeto1-","").split("-") ] )
+    selection  = "-".join( [ item.replace("nLepTight1", "nInvLepTight1").replace("nLepVeto1","nNoIsoLepTight1") if not "nBTag" in item else "nBTag0" for item in args.selection.split("-") ] )
+#    selection  = "-".join( [ item.replace("nLepTight1", "nInvLepTight1") if not "nBTag" in item else "nBTag0" for item in args.selection.replace("nLepVeto1-","nNoIsoLepTight1-").split("-") ] )
 else:
     selection = args.selection
 #selection = "-".join( [ item.replace("nLepTight1", "nInvLepTight1") for item in args.selection.replace("nLepVeto1-","").split("-") ] ) if args.invLeptonIso else args.selection
-preSelection = "&&".join( [ cutInterpreter.cutString( selection ), "weight<15" ] )
+preSelection = "&&".join( [ cutInterpreter.cutString( selection ) ] )#, "weight<15" ] )
 Plot.setDefaults(   stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection, addOverFlowBin=None if args.invLeptonIso else "upper" )
 Plot2D.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )
 
@@ -1023,6 +1106,9 @@ if args.invLeptonIso:
         gjets = GJets_18
 
 invPlotNames = {
+                "leptonTight0_pt":                 "leptonTightInvIso0_pt",
+                "leptonTight0_eta":                "leptonTightInvIso0_eta",
+                "leptonTight0_phi":                "leptonTightInvIso0_phi",
                 "mL0PhotonTight":                  "mLinv0PhotonTight",
                 "mL0PhotonTight_20ptG120":         "mLinv0PhotonTight_20ptG120",
                 "mL0PhotonTight_120ptG220":        "mLinv0PhotonTight_120ptG220",
@@ -1057,7 +1143,10 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    plots += [ getYieldPlot( index ) ]
+    if args.invLeptonIso:
+        plots += getInvYieldPlots( index ) 
+    else:
+        plots += getYieldPlots( index ) 
     plots += addPlots
 #    if not args.leptonCategory and not categoryPlot and not args.invLeptonIso: plots += add2DPlots
     if not "NoChgIso" in args.selection and not "NoSieie" in args.selection:
@@ -1097,36 +1186,28 @@ for index, mode in enumerate( allModes ):
 #        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
 
     if args.invLeptonIso:
-        preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), "weight<15", filterCutMc, isoleptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
-        preSelectionCR = "&&".join( [ cutInterpreter.cutString( selection ),      "weight<15", filterCutMc, invIsoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
+        preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), filterCutMc, isoleptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
+        preSelectionCR = "&&".join( [ cutInterpreter.cutString( selection ),      filterCutMc, invIsoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
+
+#        preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), "weight<15", filterCutMc, isoleptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
+#        preSelectionCR = "&&".join( [ cutInterpreter.cutString( selection ),      "weight<15", filterCutMc, invIsoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
 
         yield_QCD_CR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
         yield_QCD_CR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
         yield_QCD_SR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
         yield_QCD_SR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
 
-        transFacQCD    = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
+        transFacQCD = {}
+        transFacQCD["incl"] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
 
-    # Overlap removal
-#    if any( x.name == "TTG" for x in mc ) and any( x.name == "TT_pow" for x in mc ):
-#        print "overlap removal TTgamma"
-#        eval('TTG_priv_'    + str(args.year)[-2:]).addSelectionString( "isTTGamma==1" )
-#        eval('TT_pow_' + str(args.year)[-2:]).addSelectionString( "isTTGamma==0" )
+        if not "nPhoton0" in args.selection and transFacQCD["incl"].val > 0:
+            for pt in ptSels:
+                yield_QCD_CR  = qcd.getYieldFromDraw(   selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                yield_QCD_CR += gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                yield_QCD_SR  = qcd.getYieldFromDraw(   selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                yield_QCD_SR += gjets.getYieldFromDraw( selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
 
-#    if any( x.name == "ZG" for x in mc ) and any( x.name == "DY_LO" for x in mc ):
-#        print "overlap removal Zgamma"
-#        eval('ZG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-#        eval('DY_LO_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
-
-#    if any( x.name == "WG" for x in mc ) and any( x.name == "WJets" for x in mc ):
-#        print "overlap removal Wgamma"
-#        eval('WG_'    + str(args.year)[-2:]).addSelectionString( "isZWGamma==1" )
-#        eval('WJets_' + str(args.year)[-2:]).addSelectionString( "isZWGamma==0" )
-
-#    if any( x.name == "TG" for x in mc ) and any( x.name == "singleTop" for x in mc ):
-#        print "overlap removal singleTop"
-#        eval('TG_'        + str(args.year)[-2:]).addSelectionString( "isTGamma==1" )
-#        eval('singleTop_' + str(args.year)[-2:]).addSelectionString( "isTGamma==0" ) #ONLY IN THE T-channel!!!
+                transFacQCD[pt] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 #    for plot in plots:
@@ -1154,7 +1235,7 @@ for index, mode in enumerate( allModes ):
                         res = "_".join( ["qcdHisto", args.selection+cat, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
                         if dirDB.contains(res):
                             logger.info( "Adding QCD histogram from cache for plot %s and selection %s"%(plot.name, args.selection+cat) )
-                            qcdHist = dirDB.get(res)
+                            qcdHist = copy.deepcopy(dirDB.get(res))
                             for h in plot.histos[0]:
                                 if "cat%i"%i_cat in h.GetName():
                                     h.Add(qcdHist)
@@ -1167,9 +1248,9 @@ for index, mode in enumerate( allModes ):
                     if dirDB.contains(res):
                         logger.info( "Adding QCD histogram from cache for plot %s"%plot.name )
                         if i_m == 0:
-                            qcdHist = dirDB.get(res)
+                            qcdHist = copy.deepcopy(dirDB.get(res))
                         else:
-                            qcdHist.Add( dirDB.get(res) )
+                            qcdHist.Add( copy.deepcopy(dirDB.get(res)) )
                     else:
                         logger.info( "No QCD histogram found for plot %s"%plot.name )
                         qcdHist = None
@@ -1177,38 +1258,45 @@ for index, mode in enumerate( allModes ):
                     if not args.leptonCategory:
                         qcdHist.SetName( "datadrivenQCD_" + qcdHist.GetName() )
                         plot.histos[0] = [ h if not "QCD" in h.GetName() else qcdHist for h in plot.histos[0] ]
-                    elif args.leptonCategory:
+                    else:
                         for h in plot.histos[0]:
-                            if not all_noTT.name in h.GetName(): continue
-                            h.Add(qcdHist)
+                            if all_noTT.name in h.GetName():
+                                h.Add(qcdHist)
     # Get normalization yields from yield histogram
     for plot in plots:
-        if plot.name != "yield": continue
-        for i, l in enumerate( plot.histos ):
-            for j, h in enumerate( l ):
-                if mode == "mu" or mode == "mumutight":
-                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5 ) )
-                elif mode == "e" or mode == "muetight":
-                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 1.5 ) )
-                elif mode == "eetight":
-                    yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 2.5 ) )
-                elif mode == "SFtight":
-                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
-                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
-                elif mode == "all" and args.selection.count("nLepTight2"):
-                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
-                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
-                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
-                elif mode == "all" and not args.selection.count("nLepTight2"):
-                    yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
-                    yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
-                if not args.selection.count("nLepTight2"):
-                    h.GetXaxis().SetBinLabel( 1, "#mu" )
-                    h.GetXaxis().SetBinLabel( 2, "e" )
-                else:
-                    h.GetXaxis().SetBinLabel( 1, "#mu#mu" )
-                    h.GetXaxis().SetBinLabel( 2, "#mue" )
-                    h.GetXaxis().SetBinLabel( 3, "ee" )
+        if "yield" in plot.name:
+            for i, l in enumerate( plot.histos ):
+                for j, h in enumerate( l ):
+                    if mode == "mu" or mode == "mumutight":
+                        yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5 ) )
+                    elif mode == "e" or mode == "muetight":
+                        yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 1.5 ) )
+                    elif mode == "eetight":
+                        yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 2.5 ) )
+                    elif mode == "SFtight":
+                        yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+                    elif mode == "all" and args.selection.count("nLepTight2"):
+                        yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
+                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+                    elif mode == "all" and not args.selection.count("nLepTight2"):
+                        yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
+                    if not args.selection.count("nLepTight2"):
+                        h.GetXaxis().SetBinLabel( 1, "#mu" )
+                        h.GetXaxis().SetBinLabel( 2, "e" )
+                    else:
+                        h.GetXaxis().SetBinLabel( 1, "#mu#mu" )
+                        h.GetXaxis().SetBinLabel( 2, "#mue" )
+                        h.GetXaxis().SetBinLabel( 3, "ee" )
+        elif "category" in plot.name:
+            for i, l in enumerate( plot.histos ):
+                for j, h in enumerate( l ):
+                     h.GetXaxis().SetBinLabel( 1, "genuine #gamma" )
+                     h.GetXaxis().SetBinLabel( 2, "had. #gamma" )
+                     h.GetXaxis().SetBinLabel( 3, "misID e" )
+                     h.GetXaxis().SetBinLabel( 4, "had. fake" )
 
     if args.noData: yields[mode]["data"] = 0
 
