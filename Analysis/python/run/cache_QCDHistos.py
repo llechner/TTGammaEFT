@@ -52,41 +52,6 @@ cache_dir = os.path.join(cache_directory, "qcdHistos")
 dirDB = DirDB(cache_dir)
 if not dirDB: raise
 
-
-
-""" 
-#QCD yields
-yield_cache_dir = os.path.join(cache_directory, "yields", str(args.year))
-yieldDB = DirDB( yield_cache_dir )
-if not yieldDB: raise
-
-qcdYields = {}
-#qcdModes = [ 'mu', 'e', 'all'] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight","SFtight","all"]
-qcdModes = [ 'mu', 'e'] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight"]
-qcdsel = args.selection.split("-photoncat")[0].split("-photonhadcat")[0]
-cat = [sel for sel in args.selection.split("-") if "photoncat" in sel or "photonhadcat" in sel][:1]
-
-for index, mode in enumerate( qcdModes ):
-    qcdYields[mode] = 0
-    for pt in ["lowPT","medPT","highPT"]: #fix for missing caches
-        res = "_".join( ["QCD", "-".join( [qcdsel,mode,pt] + cat ), "small" if args.small else "full"] )
-        if not yieldDB.contains( res ):
-            logger.info("No cache found for res %s"%res)
-            sys.exit(0)
-        qcdYields[mode] += float( yieldDB.get( res ) )
-
-if args.selection.count("nLepTight2"):
-    qcdYields["all"]  = qcdYields["eetight"] 
-    qcdYields["all"] += qcdYields["mumutight"] 
-    qcdYields["all"] += qcdYields["muetight"] 
-    qcdYields["SFtight"]  = qcdYields["eetight"] 
-    qcdYields["SFtight"] += qcdYields["mumutight"] 
-else:
-    qcdYields["all"]  = qcdYields["e"] 
-    qcdYields["all"] += qcdYields["mu"] 
-
-"""
-
 # Samples
 os.environ["gammaSkim"]="False" #always false for QCD estimate
 if args.year == 2016 and not args.checkOnly:
@@ -99,14 +64,135 @@ elif args.year == 2018 and not args.checkOnly:
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed      import *
     from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_semilep_postProcessed import *
 
-def getYieldPlot( index ):
-    return Plot(
+def getYieldPlots():
+    yieldPlots = []
+    yieldPlots.append( Plot(
                 name      = 'yield',
                 texX      = 'yield',
                 texY      = 'Number of Events',
                 attribute = lambda event, sample: event.nElectronTightInvIso,
                 binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
-                )
+                ) )
+
+    if "nPhoton0" in args.selection: return yieldPlots
+
+    yieldPlots.append( Plot(
+                name      = 'yield_20ptG120',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonGood0_pt >= 20 and event.PhotonGood0_pt < 120 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_120ptG220',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonGood0_pt >= 120 and event.PhotonGood0_pt < 220 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_220ptGinf',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonGood0_pt >= 220 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+
+
+    if not "NoChgIsoNoSieiePhoton" in args.selection: return yieldPlots
+
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoSieie0_sieie > 0.011 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_20ptG120',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoSieie0_pt >= 20 and event.PhotonNoSieie0_pt < 120 and event.PhotonNoSieie0_sieie > 0.011 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_120ptG220',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoSieie0_pt >= 120 and event.PhotonNoSieie0_pt < 220 and event.PhotonNoSieie0_sieie > 0.011 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_220ptGinf',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoSieie0_pt >= 220 and event.PhotonNoSieie0_sieie > 0.011 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+
+
+
+    yieldPlots.append( Plot(
+                name      = 'yield_invChgIso',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invChgIso_20ptG120',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIso0_pt >= 20 and event.PhotonNoChgIso0_pt < 120 and event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invChgIso_120ptG220',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIso0_pt >= 120 and event.PhotonNoChgIso0_pt < 220 and event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invChgIso_220ptGinf',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIso0_pt >= 220 and event.PhotonNoChgIso0_pfRelIso03_chg * event.PhotonNoChgIso0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+
+
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_invChgIso',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIsoNoSieie0_sieie > 0.011 and event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_invChgIso_20ptG120',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIsoNoSieie0_pt >= 20 and event.PhotonNoChgIsoNoSieie0_pt < 120 and event.PhotonNoChgIsoNoSieie0_sieie > 0.011 and event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_invChgIso_120ptG220',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIsoNoSieie0_pt >= 120 and event.PhotonNoChgIsoNoSieie0_pt < 220 and event.PhotonNoChgIsoNoSieie0_sieie > 0.011 and event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+    yieldPlots.append( Plot(
+                name      = 'yield_invSieie_invChgIso_220ptGinf',
+                texX      = 'yield',
+                texY      = 'Number of Events',
+                attribute = lambda event, sample: event.nElectronTightInvIso if event.PhotonNoChgIsoNoSieie0_pt >= 220 and event.PhotonNoChgIsoNoSieie0_sieie > 0.011 and event.PhotonNoChgIsoNoSieie0_pfRelIso03_chg * event.PhotonNoChgIsoNoSieie0_pt > 1.141 else -999,
+                binning   = [ 2, 0, 2 ] if not args.selection.count("nLepTight2") else [ 3, 0, 3 ],
+                ) )
+
+    return yieldPlots
+
 
 # get nano variable lists
 NanoVars        = NanoVariables( args.year )
@@ -126,6 +212,10 @@ genVarList       = NanoVars.getVariableNameList( "Gen",    postprocessed=True, d
 
 # Read variables and sequences
 read_variables  = ["weight/F",
+                   "nElectronTightInvIso/I",
+                   "nMuonTightInvIso/I",
+                   "nLeptonTightNoIso/I",
+                   "nLeptonTightInvIso/I",
                    "PV_npvsGood/I",
                    "PV_npvs/I", "PV_npvsGood/I",
                    "nJetGood/I", "nBTagGood/I",
@@ -150,11 +240,6 @@ read_variables  = ["weight/F",
 
 read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
 
-#read_variables += [ VectorTreeVariable.fromString('Lepton[%s]'%leptonVarString, nMax=100) ]
-#read_variables += [ VectorTreeVariable.fromString('Photon[%s]'%photonVarString, nMax=100) ]
-#read_variables += [ VectorTreeVariable.fromString('Jet[%s]'%jetVarString, nMax=10) ]
-#read_variables += [ VectorTreeVariable.fromString('JetGood[%s]'%jetVarString, nMax=10) ]
-
 read_variables += map( lambda var: "PhotonMVA0_"              + var, photonVariables )
 read_variables += map( lambda var: "PhotonGood0_"             + var, photonVariables )
 read_variables += map( lambda var: "PhotonNoChgIso0_"         + var, photonVariables )
@@ -165,6 +250,7 @@ read_variables += map( lambda var: "MisIDElectron0_"          + var, leptonVaria
 
 read_variables += map( lambda var: "LeptonGood0_"             + var, leptonVariables )
 read_variables += map( lambda var: "LeptonGood1_"             + var, leptonVariables )
+read_variables += map( lambda var: "LeptonTightInvIso0_"      + var, leptonVariables )
 read_variables += map( lambda var: "LeptonTight0_"            + var, leptonVariables )
 read_variables += map( lambda var: "LeptonTight1_"            + var, leptonVariables )
 read_variables += map( lambda var: "Bj0_"                     + var, bJetVariables )
@@ -173,9 +259,6 @@ read_variables += map( lambda var: "Bj1_"                     + var, bJetVariabl
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval/I",
                      "nGenWElectron/I", "nGenWMuon/I", "nGenWTau/I", "nGenW/I", "nGenWJets/I", "nGenWTauElectron/I", "nGenWTauMuon/I", "nGenWTauJets/I",
                      "nGenElectron/I",
-                     "nElectronTightInvIso/I",
-                     "nMuonTightInvIso/I",
-                     "nLeptonTightInvIso/I",
                      "nGenMuon/I",
                      "nGenPhoton/I",
                      "nGenBJet/I",
@@ -197,19 +280,19 @@ sequence = []
 
 # Sample definition
 if args.year == 2016 and not args.checkOnly:
-    mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16, other_16 ]
+    mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16, other_16 ]
     data_sample = Run2016
     qcd   = QCD_16
     gjets = GJets_16
 
 elif args.year == 2017 and not args.checkOnly:
-    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_NLO_17, ZG_17, other_17 ]
+    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17, other_17 ]
     data_sample = Run2017
     qcd   = QCD_17
     gjets = GJets_17
 
 elif args.year == 2018 and not args.checkOnly:
-    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_NLO_18, ZG_18, other_18 ]
+    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18, other_18 ]
     data_sample = Run2018
     qcd   = QCD_18
     gjets = GJets_18
@@ -226,6 +309,7 @@ else:
     stack = Stack( mc )
 
 
+#sampleWeight = lambda event, sample: (1.5 if "ZG" in sample.name and args.year != 2016 else 1.)*(2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 else 1.)*(1.17 if "DY" in sample.name else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 sampleWeight = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 else 1.)*(1.17 if "DY" in sample.name else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
@@ -244,11 +328,21 @@ weight_ = lambda event, sample: event.weight
 tr = TriggerSelector( args.year, singleLepton=True )
 
 selection = [ item if not "nBTag" in item else "nBTag0" for item in args.selection.split("-") ]
-selection = [ item for item in selection if not "photoncat" in item and not "photonhadcat" in item and not "nLepVeto" in item ]
+#selection = [ item for item in selection if not "nLepVeto" in item ]
 selection = "-".join(selection)
-preSelection = "&&".join( [ cutInterpreter.cutString( selection ), "weight<15" ] )
+preSelection = "&&".join( [ cutInterpreter.cutString( selection ) ] )#, "weight<15" ] )
+
+if "nPhoton0" in args.selection:
+    catSel = None
+elif "NoChgIsoNoSieiePhoton" in args.selection:
+    catSel = "photonhadcat" 
+    ptSels = ["lowhadPT", "medhadPT", "highhadPT"]
+else:
+    catSel = "photoncat" 
+    ptSels = ["lowPT", "medPT", "highPT"]
 
 replaceSelection = {
+    "nLeptonVetoIsoCorr":        "nLeptonTightNoIso",
     "nLeptonTight":    "nLeptonTightInvIso",
     "nMuonTight":      "nMuonTightInvIso",
     "nElectronTight":  "nElectronTightInvIso",
@@ -259,7 +353,6 @@ for key, val in replaceSelection.items():
     preSelection = preSelection.replace(key, val)
 
 Plot.setDefaults(   stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection, addOverFlowBin="upper" )
-
 # Import plots list (AFTER setDefaults!!)
 plotListFile = os.path.join( recoPlotsPath, 'plotLists', args.plotFile + '.py' )
 if not os.path.isfile( plotListFile ):
@@ -278,7 +371,6 @@ allPlots = {}
 if args.mode != "None":
     allModes = [ args.mode ]
 else:
-#    allModes = [ 'mu', 'e', 'all'] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight","SFtight","all"]
     allModes = [ 'mu', 'e'] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight"]
     if args.nJobs != 1:
         allModes = splitList( allModes, args.nJobs)[args.job]
@@ -289,6 +381,9 @@ tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
 invPlotNames = { 
+                "leptonTightInvIso0_pt":              "leptonTight0_pt",
+                "leptonTightInvIso0_eta":             "leptonTight0_eta",
+                "leptonTightInvIso0_phi":             "leptonTight0_phi",
                 "mLinv0PhotonTight":                  "mL0PhotonTight",
                 "mLinv0PhotonTight_20ptG120":         "mL0PhotonTight_20ptG120",
                 "mLinv0PhotonTight_120ptG220":        "mL0PhotonTight_120ptG220",
@@ -321,14 +416,14 @@ for index, mode in enumerate( allModes ):
 
     plots  = []
     plots += plotList
-    plots += [ getYieldPlot( index ) ]
+    plots += getYieldPlots()
 #    plots += addPlots
 
     plots = [ plot for plot in plots if plot.name not in invPlotNames.values() ]
     plots = [ plot for plot in plots if not ("nBJet" in plot.name and "ptG" in plot.name) ]
     if bSelection and "p" in bSelection[0]: #remove bjet plots if more than 1 bjet bin in plots (can not be modeled by data driven QCD estimate)
         plots = [ plot for plot in plots if not "nBJet" in plot.name ]
-    plots = [ plot for plot in plots if plot.name not in invPlotNames.values() ]
+
     for plot in plots:
         if plot.name in invPlotNames.keys(): plot.name = invPlotNames[plot.name]
 
@@ -339,32 +434,89 @@ for index, mode in enumerate( allModes ):
             continue
         if not plots: continue
 
-    # Define 2l selections
+    # Define selections
     isoleptonSelection = cutInterpreter.cutString( mode )
     leptonSelection    = isoleptonSelection.replace("Tight","TightInvIso")
 
     data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
     for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
-    preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), "weight<15", filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
-    preSelectionCR = "&&".join( [ preSelection, "weight<15", filterCutMc, leptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
+    plotting.fill( plots, read_variables=read_variables, sequence=sequence )
+
+    # Transfer factor
+    preSelectionCR = "&&".join( [ preSelection, filterCutMc, leptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
+    preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
 
     yield_QCD_CR  = qcd.getYieldFromDraw(   selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
     yield_QCD_CR += gjets.getYieldFromDraw( selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
     yield_QCD_SR  = qcd.getYieldFromDraw(   selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
     yield_QCD_SR += gjets.getYieldFromDraw( selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
 
-    transFacQCD    = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR != 0 else 0.
+    transFacQCD = {}
+    transFacQCD["incl"] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR != 0 else 0.
 
-    plotting.fill( plots, read_variables=read_variables, sequence=sequence )
+    # Transfer factor for photon category plots
+    for i in range(4):
+        if catSel and yield_QCD_CR != 0:
+            preSelectionSR_cat = "&&".join( [ cutInterpreter.cutString( "-".join([args.selection, catSel+str(i)]) ), filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
+            yield_QCD_SR_cat  = qcd.getYieldFromDraw(   selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+            yield_QCD_SR_cat += gjets.getYieldFromDraw( selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+            transFacQCD["incl_cat"+str(i)] = yield_QCD_SR_cat / yield_QCD_CR
+        else:
+            transFacQCD["incl_cat"+str(i)] = 0.
+
+    if not "nPhoton0" in args.selection and transFacQCD["incl"] > 0:
+        for pt in ptSels:
+            yield_QCD_CR  = qcd.getYieldFromDraw(   selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+            yield_QCD_CR += gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+            yield_QCD_SR  = qcd.getYieldFromDraw(   selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+            yield_QCD_SR += gjets.getYieldFromDraw( selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+
+            transFacQCD[pt] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR != 0 else 0.
+
+            # Transfer factor for photon category plots
+            for i in range(4):
+                if catSel and yield_QCD_CR != 0:
+                    preSelectionSR_cat = "&&".join( [ cutInterpreter.cutString( "-".join([args.selection, pt, catSel+str(i)]) ), filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
+                    yield_QCD_SR_cat   = qcd.getYieldFromDraw(   selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                    yield_QCD_SR_cat  += gjets.getYieldFromDraw( selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                    transFacQCD[pt+"_cat"+str(i)] = yield_QCD_SR_cat / yield_QCD_CR
+                else:
+                    transFacQCD[pt+"_cat"+str(i)] = 0
 
     for plot in plots:
         qcdHist = copy.deepcopy(plot.histos[1][0])
         for h in plot.histos[0]:
             qcdHist.Add( h, -1 )
-        qcdHist.Scale( transFacQCD )
+
+        if catSel:
+            qcdHist_cat0 = copy.deepcopy(qcdHist)
+            qcdHist_cat1 = copy.deepcopy(qcdHist)
+            qcdHist_cat2 = copy.deepcopy(qcdHist)
+            qcdHist_cat3 = copy.deepcopy(qcdHist)
+
+        if "20ptG120" in plot.name:
+            fac = "lowPT"
+        elif "120ptG220" in plot.name:
+            fac = "medPT"
+        elif "220ptGinf" in plot.name:
+            fac = "highPT"
+        else:
+            fac = "incl"
+
+        qcdHist.Scale( transFacQCD[fac] )
+        if catSel:
+            qcdHist_cat0.Scale( transFacQCD[fac+"_cat0"] )
+            qcdHist_cat1.Scale( transFacQCD[fac+"_cat1"] )
+            qcdHist_cat2.Scale( transFacQCD[fac+"_cat2"] )
+            qcdHist_cat3.Scale( transFacQCD[fac+"_cat3"] )
 
         cacheName = "_".join( ["qcdHisto", args.selection, plot.name, str(args.year), mode, "small" if args.small else "full"] + map( str, plot.binning ) )
         logger.info( "Adding QCD plot for %s for mode %s"%(plot.name, mode) )
-        dirDB.add( cacheName, qcdHist )
+        dirDB.add( cacheName, qcdHist, overwrite=True )
+        if catSel:
+            dirDB.add( cacheName.replace( args.selection, args.selection + "-" + catSel + "0" ), qcdHist_cat0, overwrite=True )
+            dirDB.add( cacheName.replace( args.selection, args.selection + "-" + catSel + "1" ), qcdHist_cat1, overwrite=True )
+            dirDB.add( cacheName.replace( args.selection, args.selection + "-" + catSel + "2" ), qcdHist_cat2, overwrite=True )
+            dirDB.add( cacheName.replace( args.selection, args.selection + "-" + catSel + "3" ), qcdHist_cat3, overwrite=True )
 
