@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-''' Analysis script for standard plots
-'''
+""" Analysis script for standard plots
+"""
 
 # Standard imports
 import ROOT, os, imp, sys, copy
@@ -15,19 +15,23 @@ from TTGammaEFT.Tools.user               import cache_directory
 from Analysis.Tools.DirDB               import DirDB
 
 # Default Parameter
-loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
+loggerChoices = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "NOTSET"]
 
 # Arguments
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
-argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                  help="Log level for logging")
-argParser.add_argument('--selection',          action='store',      default='dilepOS-nLepVeto2-offZSFll-mll40-nJet2p-nBTag1p-nPhoton1p')
-argParser.add_argument('--small',              action='store_true',                                                                    help='Run only on a small subset of the data?', )
-argParser.add_argument('--runOnNonValid',      action='store_true',                                                                    help='Skip missing cached yields?', )
-argParser.add_argument('--removeNegative',     action='store_true',                                                                    help='Set negative values to 0?', )
-argParser.add_argument('--noData',             action='store_true', default=False,                                                     help='also plot data?')
-argParser.add_argument('--year',               action='store',      default=None,   type=int,  choices=[2016,2017,2018],               help="which year?")
+argParser.add_argument("--logLevel",           action="store",      default="INFO", nargs="?", choices=loggerChoices,                  help="Log level for logging")
+argParser.add_argument("--selection",          action="store",      default="dilepOS-nLepVeto2-offZSFll-mll40-nJet2p-nBTag1p-nPhoton1p")
+argParser.add_argument("--small",              action="store_true",                                                                    help="Run only on a small subset of the data?", )
+argParser.add_argument("--runOnNonValid",      action="store_true",                                                                    help="Skip missing cached yields?", )
+argParser.add_argument("--removeNegative",     action="store_true",                                                                    help="Set negative values to 0?", )
+argParser.add_argument("--noData",             action="store_true", default=False,                                                     help="also plot data?")
+argParser.add_argument("--year",               action="store",      default=None,   type=int,  choices=[2016,2017,2018],               help="which year?")
+argParser.add_argument("--mode",               action="store",      default="all",  type=str,                                          help="which lepton selection?")
+argParser.add_argument("--label",              action="store",      default="Region",  type=str,                                          help="which region label?")
 args = argParser.parse_args()
+
+args.label = args.label.replace("geq", "$\\geq$")
 
 # Logger
 import Analysis.Tools.logger as logger
@@ -36,183 +40,136 @@ logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
 cache_dir = os.path.join(cache_directory, "yields", str(args.year))
+yield_dirDB = DirDB( cache_dir )
+if not yield_dirDB: raise
 
-os.environ["gammaSkim"]="False"
-if "dilep" in args.selection:
-    if args.year == 2016:
-        from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed      import *
-        if not args.noData:
-            from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_postProcessed import *
+if args.year == 2016:   lumi_scale = 35.92
+elif args.year == 2017: lumi_scale = 41.86
+elif args.year == 2018: lumi_scale = 58.83
 
-    elif args.year == 2017:
-        from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed        import *
-        if not args.noData:
-            from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
+selDir = args.selection
+addMisIDSF = False
+addDYSF = False
+if args.selection.count("addMisIDSF"):
+    addMisIDSF = True
+    args.selection = "-".join( [ item for item in args.selection.split("-") if item != "addMisIDSF" ] )
+if args.selection.count("addDYSF"):
+    addDYSF = True
+    args.selection = "-".join( [ item for item in args.selection.split("-") if item != "addDYSF" ] )
 
-    elif args.year == 2018:
-        from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
-        if not args.noData:
-            from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_postProcessed import *
+res = {"sample":None, "selection":args.selection, "mode":"all", "ptBin":"all", "cat":"all", "sieie":"all", "chgIso":"all", "small":args.small}
 
-elif "nLepTight" in args.selection:
-    if args.year == 2016:
-        from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
-        if not args.noData:
-            from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import *
+mc = [ "TTG", "TT_pow", "DY_LO", "singleTop", "WJets", "TG", "WG", "ZG", "other" ]
+if not "nLepTight2" in args.selection:
+    mc += [ "QCD" ]
 
-    elif args.year == 2017:
-        from TTGammaEFT.Samples.nanoTuples_Fall17_private_semilep_postProcessed        import *
-        if not args.noData:
-            from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_semilep_postProcessed import *
+allSamples = mc if args.noData else ["data"] + mc
 
-    elif args.year == 2018:
-        from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed      import *
-        if not args.noData:
-            from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_semilep_postProcessed import *
-
-
-# Sample definition
-if "dilep" in args.selection:
-    if args.year == 2016:
-            mc = [ TTG_priv_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
-    elif args.year == 2017:
-            mc = [ TTG_priv_17, DY_LO_17, TT_pow_17, singleTop_17, ZG_17, other_17 ]
-    elif args.year == 2018:
-            mc = [ TTG_priv_18, DY_LO_18, TT_pow_18, singleTop_18, ZG_18, other_18 ]
-
-elif "nLepTight" in args.selection:
-    #print "selection"
-    if args.year == 2016:
-        mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16, other_16, QCD_16 ]
-    elif args.year == 2017:
-        mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_NLO_17, ZG_17, other_17, QCD_17 ]
-    elif args.year == 2018:
-        mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_NLO_18, ZG_18, other_18, QCD_18 ]
-
-
-if args.noData:
-    if args.year == 2016:   lumi_scale = 35.92
-    elif args.year == 2017: lumi_scale = 41.86
-    elif args.year == 2018: lumi_scale = 58.83
-    allSamples = mc
-else:
-    if args.year == 2016:   data_sample = Run2016
-    elif args.year == 2017: data_sample = Run2017
-    elif args.year == 2018: data_sample = Run2018
-    lumi_scale = data_sample.lumi * 0.001
-    data_sample.name = "data"
-    allSamples = [data_sample] + mc
-
-
-ptSel     = ['lowPT', 'medPT', 'highPT']
-pthadSel  = ['lowhadPT', 'medhadPT', 'highhadPT']
-catSel    = ['photoncat0', 'photoncat1', 'photoncat2', 'photoncat3']
-hadcatSel = ['photonhadcat0', 'photonhadcat1', 'photonhadcat2', 'photonhadcat3']
-sieieSel  = ['lowSieie', 'highSieie']
-chgSel    = ['lowChgIso', 'highChgIso']
-noCat_sel = "(1)"
+hadFakeSel  = "NoChgIsoNoSieiePhoton" in args.selection
+noPhotonSel = not "nPhoton1p" in args.selection and not hadFakeSel
+ptSel     = ["all", "lowPT", "medPT", "highPT"]
+catSel    = ["all", "photoncat0", "photoncat1", "photoncat2", "photoncat3"]
+sieieSel  = ["all" ]
+chgSel    = ["all" ]
+noCat_sel = "all"
+modes     = [args.mode]
 region    = "manual"
 
 #for var in ptSel+pthadSel+catSel+hadcatSel+sieieSel+chgSel:
 #    vars()[var] = cutInterpreter.cutString( var )
 
-if "NoChgIsoNoSieiePhoton" in args.selection:
-    allCats  = [noCat_sel] + hadcatSel
-    allModes = []
-    for sieie in sieieSel:
-        for chg in chgSel:
-            for pt in pthadSel:
-                allModes.append( '-'.join( [ pt, sieie, chg ] ) )
-    regions = { 
-            "20To120":  [ mode for mode in allModes if "lowhadPT"  in mode],
-            "120To220": [ mode for mode in allModes if "medhadPT"  in mode],
-            "220To-1":  [ mode for mode in allModes if "highhadPT" in mode],
-    }
+if hadFakeSel:
+    catSel = ["all", "photonhadcat0", "photonhadcat1", "photonhadcat2", "photonhadcat3"]
+    ptSel  = ["all", "lowhadPT", "medhadPT", "highhadPT"]
+    sieieSel  = ["lowSieie", "highSieie"]
+    chgSel    = ["lowChgIso", "highChgIso"]
 
-else:
-    allCats     = [noCat_sel] + catSel
-    allModes    = ptSel
+if noPhotonSel:
+    modes  = ["all", "e", "mu"] if not "nLepTight2" in args.selection else ["SFtight", "eetight", "mumutight"]
+    catSel = ["all"]
+    ptSel  = ["all"]
+
+regions = [(mode, pt, sieie, chgIso, cat) for mode in modes for pt in ptSel for chgIso in chgSel for sieie in sieieSel for cat in catSel]
+
+#if hadFakeSel:
+#    sieieSel += ["all"]
+#    chgSel   += ["all"]
 
 yields = {}
-for i_mode, mode in enumerate(["incl"]+allModes):
-    yields[mode] = {}
-    for i_cat, cat in enumerate(allCats):
-        yields[mode][cat] = {}
-        yields[mode][cat]["MC"] = 0
-        for sample in allSamples:
-            yields[mode][cat][sample.name] = 0
-
-yieldDB = DirDB( cache_dir )
-if not yieldDB: raise
+for sample in allSamples + ["MC"]:
+    yields[sample] = {}
+    for i_sieie, sieie in enumerate(sieieSel):
+        yields[sample][sieie] = {}
+        for i_chgIso, chgIso in enumerate(chgSel):
+            yields[sample][sieie][chgIso] = {}
+            for i_pt, pt in enumerate(ptSel):
+                yields[sample][sieie][chgIso][pt] = {}
+                for i_cat, cat in enumerate(catSel):
+                    yields[sample][sieie][chgIso][pt][cat] = {}
+                    for i_mode, mode in enumerate(modes):
+                        yields[sample][sieie][chgIso][pt][cat][mode] = 0
 
 for sample in allSamples:
+    res["sample"] = sample
+    for i_sieie, sieie in enumerate(sieieSel):
+        res["sieie"] = sieie
+        for i_chgIso, chgIso in enumerate(chgSel):
+            res["chgIso"] = chgIso
+#            res["selection"] = args.selection
 
-    for i_mode, mode in enumerate(allModes):
-        for i_cat, cat in enumerate(allCats):
-            if not args.noData and (sample.name == data_sample.name) and cat != noCat_sel:
-                yields[mode][cat][sample.name] = -1
-                yields["incl"][cat][sample.name] = -1
-                continue
+#            if chgIso == "lowChgIso" and sieie == "lowSieie":
+#                res["sieie"] = "all"
+#                res["chgIso"] = "all"
+ #               res["selection"] = args.selection.replace("NoChgIsoNoSieiePhoton","nPhoton1p")
 
-            # do not unblind 17 and 18
-            if not args.noData and (sample.name == data_sample.name) and cat == noCat_sel and "NoChgIsoNoSieiePhoton" in args.selection and "lowSieie" in mode and "lowChgIso" in mode and args.year != 2016:
-                yields[mode][cat][sample.name] = -1
-                yields["incl"][cat][sample.name] = -1
-                continue
+            for i_pt, pt in enumerate(ptSel):
+                res["ptBin"] = pt
+                for i_cat, cat in enumerate(catSel):
+                    res["cat"] = cat
+                    for i_mode, mode in enumerate(modes):
+                        res["mode"] = mode
 
-            # do not unblind 17 and 18
-            if not args.noData and (sample.name == data_sample.name) and cat == noCat_sel and "nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p" in args.selection and args.year != 2016:
-                yields[mode][cat][sample.name] = -1
-                yields["incl"][cat][sample.name] = -1
-                continue
+                        if not args.noData and (sample == "data") and cat != noCat_sel:
+                            yields[sample][sieie][chgIso][pt][cat][mode] = -1
+                            continue
 
-            if "QCD" in sample.name and ("all" in args.selection or "SFtight" in args.selection):
-                leps = ["eetight", "mumutight", "muetight"] if "nLepTight2" in args.selection else ["e","mu"]
-                yields[mode][cat][sample.name] = 0
-                for lep in leps:
-                    if "SFtight" in args.selection and lep == "muetight": continue
-                    selection = "-".join( [args.selection.replace("all", lep), mode, cat] if cat != noCat_sel else [args.selection.replace("all", lep), mode] )
-                    res = "_".join( [sample.name, selection, "small" if args.small else "full"] )
+                        # do not unblind 17 and 18
+                        if not args.noData and (sample == "data") and cat == noCat_sel and hadFakeSel and sieie == "all" and chgIso == "all" and args.year != 2016:
+                            yields[sample][sieie][chgIso][pt][cat][mode] = -1
+                            continue
 
-                    if not yieldDB.contains( res ):
-                        print("Yield for sample %s and selection %s and year %i and mode %s and cat %s not cached!"%(sample.name, args.selection, args.year, mode, cat))
-                        if args.runOnNonValid:
-                            yields[mode][cat][sample.name] = -1
-                            yields["incl"][cat][sample.name] = -1
-                        continue
-                        sys.exit(0)
-                    yields[mode][cat][sample.name] += int(round(float(yieldDB.get( res ))))
-            else:
-                selection = "-".join( [args.selection, mode, cat] if cat != noCat_sel else [args.selection, mode] )
-                res = "_".join( [sample.name, selection, "small" if args.small else "full"] )
+                        # do not unblind 17 and 18
+                        if not args.noData and (sample == "data") and cat == noCat_sel and ("nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p" in args.selection or "nLepTight1-nLepVeto1-nJet3-nBTag1p-nPhoton1p" in args.selection) and args.year != 2016:
+                            yields[sample][sieie][chgIso][pt][cat][mode] = -1
+                            continue
 
-                if not yieldDB.contains( res ):
-                    print("Yield for sample %s and selection %s and year %i and mode %s and cat %s not cached!"%(sample.name, args.selection, args.year, mode, cat))
-                    if args.runOnNonValid:
-                        yields[mode][cat][sample.name] = -1
-                        yields["incl"][cat][sample.name] = -1
-                        continue
-                    sys.exit(0)
+                        if not yield_dirDB.contains( frozenset(res.items()) ):
+                            print res
+                            print("Yield for sample %s and selection %s and year %i and mode %s and cat %s and pt bin %s and sieie bin %s and chgIso bin %s not cached!"%(sample, args.selection, args.year, args.mode, cat, pt, sieie, chgIso))
+                            if args.runOnNonValid:
+                                yields[sample][sieie][chgIso][pt][cat][mode] = -1
+                                continue
+                            sys.exit(0)
 
-                yields[mode][cat][sample.name] = int(round(float(yieldDB.get( res ))))
+                        yields[sample][sieie][chgIso][pt][cat][mode] = int(round(float(yield_dirDB.get( frozenset(res.items()) ))))
+                        if "DY" in sample and addDYSF:
+                            yields[sample][sieie][chgIso][pt][cat][mode] *= 1.17
+                        if "2" in cat and addMisIDSF:
+                            diff = yields[sample][sieie][chgIso][pt][cat][mode] * 1.25
+                            yields[sample][sieie][chgIso][pt][cat][mode]   += diff
+                            yields[sample][sieie][chgIso][pt]["all"][mode] += diff
+                            yields["MC"][sieie][chgIso][pt]["all"][mode]   += diff
 
-            if args.removeNegative and yields[mode][cat][sample.name] < 0: yields[mode][cat][sample.name] = 0 #could be for QCD estimation
-#            print("Found yield for sample %s and selection %s and year %i: %i"%(sample.name, args.selection, args.year, yields[mode][cat][sample.name]))
-
-            if sample.name != data_sample.name:
-                yields[mode][cat]["MC"] += yields[mode][cat][sample.name]
-                if not "NoChgIsoNoSieiePhoton" in args.selection:
-                    yields["incl"][cat]["MC"] += yields[mode][cat][sample.name]
-
-            if not "NoChgIsoNoSieiePhoton" in args.selection:
-                yields["incl"][cat][sample.name] += yields[mode][cat][sample.name]
-
+                        if args.removeNegative and yields[sample][sieie][chgIso][pt][cat][mode] < 0: yields[sample][sieie][chgIso][pt][cat][mode] = 0 #could be for QCD estimation or negative weights
+                        if sample != "data":
+                            yields["MC"][sieie][chgIso][pt][cat][mode] += yields[sample][sieie][chgIso][pt][cat][mode]
+                            if args.removeNegative and yields["MC"][sieie][chgIso][pt][cat][mode] < 0: yields["MC"][sieie][chgIso][pt][cat][mode] = 0 #could be for QCD estimation or negative weights
 
 def printHadFakeYieldTable():
 
-    with open("logs/%i_%s.log"%(args.year,args.selection), "w") as f:
+    with open("logs/%i_%s-%s.log"%(args.year,selDir,args.mode), "w") as f:
         f.write("\\begin{frame}\n")
-        f.write("\\frametitle{Yields - hadronic fake CR}\n\n")
+        f.write("\\frametitle{Yields - %s}\n\n"%args.label)
 
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
@@ -224,7 +181,7 @@ def printHadFakeYieldTable():
             if lowPT == 20:
                 f.write("\\hline\n")
                 f.write("\\hline\n")
-                f.write("\\multicolumn{21}{c}{%s}\\\\ \n"%( ", ".join( args.selection.split("-") ) ) )
+                f.write("\\multicolumn{21}{c}{%s}\\\\ \n"%( ", ".join( selDir.split("-") + [args.mode] ) ) )
                 f.write("\\hline\n")
                 f.write("\\multicolumn{21}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
                 f.write("\\hline\n")
@@ -244,13 +201,15 @@ def printHadFakeYieldTable():
             f.write("\\hline\n")
             f.write("\\hline\n")
             for s in mc:
-                f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [s.name.replace("_","\_")] + [ int(yields[mode][cat][s.name]) for mode in regions["%iTo%i"%(lowPT, highPT)] for cat in allCats]) )
+                f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [s.replace("_","\_")] + [ int(yields[s][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions]) )
                 f.write("\\hline\n")
             f.write("\\hline\n")
-            f.write("MC total & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [int(yields[mode][cat]["MC"]) for mode in regions["%iTo%i"%(lowPT, highPT)] for cat in allCats] ))
+            f.write("MC total & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [int(yields["MC"][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions] ))
             f.write("\\hline\n")
             if not args.noData:
-                f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [int(yields[mode][noCat_sel][data_sample.name]) for mode in regions["%iTo%i"%(lowPT, highPT)]] ))
+                f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [int(yields["data"][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions if cat == "all"] ))
+                f.write("\\hline\n")
+                f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [float(yields["data"][sieie][chgIso][pt][cat][mode])/float(yields["MC"][sieie][chgIso][pt][cat][mode]) if float(yields["MC"][sieie][chgIso][pt][cat][mode]) > 0 else 1. for mode, pt, sieie, chgIso, cat in regions if cat == "all"] ))
                 f.write("\\hline\n")
             f.write("\\hline\n")
     
@@ -269,13 +228,12 @@ def printHadFakeYieldTable():
 
 
 def printYieldTable():
-    allSamples = [data_sample] + mc if not args.noData else mc
 
-    with open("logs/%i_%s.log"%(args.year,args.selection), "w") as f:
+    with open("logs/%i_%s-%s.log"%(args.year,selDir,args.mode), "w") as f:
     
-        if "-e" in args.selection or "-all" in args.selection:
+        if args.mode in ["e", "all"]:
             f.write("\\begin{frame}\n")
-            f.write("\\frametitle{Yields - CR}\n\n")
+            f.write("\\frametitle{Yields - %s}\n\n"%args.label)
 
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
@@ -286,7 +244,7 @@ def printYieldTable():
 
         f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("\\multicolumn{21}{c}{%s}\\\\ \n"%( ", ".join( args.selection.split("-") ) ) )
+        f.write("\\multicolumn{21}{c}{%s}\\\\ \n"%( ", ".join( selDir.split("-") + [args.mode] ) ) )
         f.write("\\hline\n")
         f.write("\\multicolumn{21}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
         f.write("\\hline\n")
@@ -301,13 +259,15 @@ def printYieldTable():
         f.write("\\hline\n")
         f.write("\\hline\n")
         for s in mc:
-            f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [s.name.replace("_","\_")] + [ int(round(yields[mode][cat][s.name])) for mode in ["incl"] + allModes for cat in allCats]) )
+            f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [s.replace("_","\_")] + [ int(yields[s][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions ]) )
             f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("MC total & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [int(yields[mode][cat]["MC"]) for mode in ["incl"] + allModes for cat in allCats] ))
+        f.write("MC total & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [int(yields["MC"][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions] ))
         f.write("\\hline\n")
         if not args.noData:
-            f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [int(yields[mode][noCat_sel][data_sample.name]) for mode in ["incl"] + allModes] ))
+            f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [ int(yields["data"][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions if cat=="all"] ))
+            f.write("\\hline\n")
+            f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [float(yields["data"][sieie][chgIso][pt][cat][mode])/float(yields["MC"][sieie][chgIso][pt][cat][mode]) if float(yields["MC"][sieie][chgIso][pt][cat][mode]) > 0 else 1. for mode, pt, sieie, chgIso, cat in regions if cat == "all"] ))
             f.write("\\hline\n")
         f.write("\\hline\n")
     
@@ -319,13 +279,74 @@ def printYieldTable():
         f.write("}\n\n") #resizebox
 
         f.write("\\end{table}\n\n")
-        if "-mu" in args.selection or "-all" in args.selection:
+        if args.mode in ["mu", "all"]:
             f.write("\\end{frame}\n")
         f.write("\n\n\n")
 
 
 
-if "NoChgIsoNoSieiePhoton" in args.selection:
+def printNoPhotonYieldTable():
+
+    with open("logs/%i_%s.log"%(args.year,selDir), "w") as f:
+    
+        if args.mode in ["e", "all"]:
+            f.write("\\begin{frame}\n")
+            f.write("\\frametitle{Yields - %s}\n\n"%args.label)
+
+        f.write("\\begin{table}\n")
+        f.write("\\centering\n")
+
+        f.write("\\resizebox{0.9\\textwidth}{!}{\n")
+#        f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
+        f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
+
+        f.write("\\hline\n")
+        f.write("\\hline\n")
+        f.write("\\multicolumn{16}{c}{%s}\\\\ \n"%( ", ".join( selDir.split("-") ) ) )
+        f.write("\\hline\n")
+        f.write("\\multicolumn{16}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
+        f.write("\\hline\n")
+        f.write("\\hline\n")
+        f.write("\\multicolumn{16}{c}{}\\\\ \n")
+
+        f.write("\\hline\n")
+        f.write("\\hline\n")
+        if "nLepTight2" in args.selection:
+            f.write("Sample  & \\multicolumn{5}{c||}{ SF (ee/$\\mu\\mu$) channel } & \\multicolumn{5}{c||}{ee channel} & \\multicolumn{5}{c}{$\\mu\\mu$ channel}\\\\ \n")
+        else:
+            f.write("Sample  & \\multicolumn{5}{c||}{ e/$\\mu$ channel } & \\multicolumn{5}{c||}{e channel} & \\multicolumn{5}{c}{$\\mu$ channel}\\\\ \n")
+        f.write("\\hline\n")
+        f.write("        & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake \\\\ \n")
+        f.write("\\hline\n")
+        f.write("\\hline\n")
+        for s in mc:
+            f.write("%s & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 \\\\ \n" %tuple( [s.replace("_","\_")] + [ int(yields[s][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions ]) )
+            f.write("\\hline\n")
+        f.write("\\hline\n")
+        f.write("MC total & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 \\\\ \n" %tuple( [int(yields["MC"][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions] ))
+        f.write("\\hline\n")
+        if not args.noData:
+            f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [ int(yields["data"][sieie][chgIso][pt][cat][mode]) for mode, pt, sieie, chgIso, cat in regions if cat=="all"] ))
+            f.write("\\hline\n")
+            f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [float(yields["data"][sieie][chgIso][pt][cat][mode])/float(yields["MC"][sieie][chgIso][pt][cat][mode]) if float(yields["MC"][sieie][chgIso][pt][cat][mode]) > 0 else 1. for mode, pt, sieie, chgIso, cat in regions if cat == "all"] ))
+            f.write("\\hline\n")
+        f.write("\\hline\n")
+    
+#        f.write("\\multicolumn{16}{c}{}\\\\ \n")
+
+        f.write("\\end{tabular}\n")
+        f.write("}\n\n") #resizebox
+
+        f.write("\\end{table}\n\n")
+        if args.mode in ["mu", "all"]:
+            f.write("\\end{frame}\n")
+        f.write("\n\n\n")
+
+
+
+if hadFakeSel:
     printHadFakeYieldTable()
+elif noPhotonSel:
+    printNoPhotonYieldTable()
 else:
     printYieldTable()
