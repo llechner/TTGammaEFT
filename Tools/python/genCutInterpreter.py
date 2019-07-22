@@ -34,11 +34,10 @@ special_cuts = {
     "clean":             "nGenLepton==nGenAllLepton",
   }
 
-continous_variables = [ ("met", "GenMET_pt"), ("pTG","GenMGPhoton_pt[0]*(GenMGPhoton_status[0]>1)"), ("pTAllG", "GenMGPhoton_pt[0]"), ("mll", "mll"), ("mllgamma", "mllgamma") ]
-discrete_variables  = [ ("nJet", "nGenJet"), ("nBTag", "nGenBJet"), ("nLep","nGenLepton"), ("nAllPhoton","nGenMGPhoton"), ("nPhoton","Sum$(GenMGPhoton_status>1)") ]
+continous_variables = [ ("met", "GenMET_pt"), ("pTG","GenPhoton_pt[0]"), ("pTAllG", "GenMGPhoton_pt[0]"), ("mll", "mll"), ("mllgamma", "mllgamma") ]
+discrete_variables  = [ ("nGenLepGood", "Sum$(GenPart_pt>30&&abs(GenPart_eta)<2.4&&(abs(GenPart_pdgId)==11||abs(GenPart_pdgId)==13))"), ("nGenJet", "Sum$(GenJet_pt>30)"), ("nJet", "nGenJet"), ("nBTag", "nGenBJet"), ("nLep","nGenLepton"), ("nAllPhoton","nGenMGPhoton"), ("nPhoton","nGenPhoton") ]
 
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 
 if __name__ == "__main__":
     print cutInterpreter.cutString("dilepOS-pTG20-nPhoton1p-offZSFll-offZSFllg-mll40")
-

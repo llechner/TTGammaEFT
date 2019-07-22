@@ -4,7 +4,8 @@
 # TTGamma Imports
 from Analysis.Tools.CutInterpreter import CutInterpreter
 
-mZ = 91.1876
+mZ         = 91.1876
+zMassRange = 15
 
 special_cuts = {
     "OS":                "(LeptonGood0_pdgId*LeptonGood1_pdgId)<0",
@@ -16,46 +17,46 @@ special_cuts = {
     "dilepOFSS":         "nLeptonGood==2&&nLeptonGoodLead>=1&&(LeptonGood0_pdgId*LeptonGood1_pdgId)>0&&nElectronGood==1&&nMuonGood==1",
     "dilepSFOS":         "nLeptonGood==2&&nLeptonGoodLead>=1&&(LeptonGood0_pdgId*LeptonGood1_pdgId)<0&&(nElectronGood==2||nMuonGood==2)",
     "dilepSFSS":         "nLeptonGood==2&&nLeptonGoodLead>=1&&(LeptonGood0_pdgId*LeptonGood1_pdgId)>0&&(nElectronGood==2||nMuonGood==2)",
-    "offZll":            "abs(mll-%s)>15"%(mZ),
-    "offZllg":           "abs(mllgamma-%s)>15"%(mZ),
+    "offZll":            "abs(mll-%s)>%s"%(mZ, zMassRange),
+    "offZllg":           "abs(mllgamma-%s)>%s"%(mZ, zMassRange),
 
-    "offZllgMVA":               "abs(mllgammaMVA-%s)>15"%(mZ),
-    "offZllgNoChgIso":          "abs(mllgammaNoChgIso-%s)>15"%(mZ),
-    "offZllgNoSieie":           "abs(mllgammaNoSieie-%s)>15"%(mZ),
-    "offZllgNoChgIsoNoSieie":   "abs(mllgammaNoChgIsoNoSieie-%s)>15"%(mZ),
+    "offZllgMVA":               "abs(mllgammaMVA-%s)>%s"%(mZ, zMassRange),
+    "offZllgNoChgIso":          "abs(mllgammaNoChgIso-%s)>%s"%(mZ, zMassRange),
+    "offZllgNoSieie":           "abs(mllgammaNoSieie-%s)>%s"%(mZ, zMassRange),
+    "offZllgNoChgIsoNoSieie":   "abs(mllgammaNoChgIsoNoSieie-%s)>%s"%(mZ, zMassRange),
 
-    "offZllTight":       "abs(mlltight-%s)>15"%(mZ),
-    "offZllgTight":      "abs(mllgammatight-%s)>15"%(mZ),
-    "offZSFll":          "((abs(mll-%s)>15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                      # Cut Z-Window only for SF dilep events
-    "offZSFllg":         "((abs(mllgamma-%s)>15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
+    "offZllTight":       "abs(mlltight-%s)>%s"%(mZ, zMassRange),
+    "offZllgTight":      "abs(mllgammatight-%s)>%s"%(mZ, zMassRange),
+    "offZSFll":          "((abs(mll-%s)>%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                      # Cut Z-Window only for SF dilep events
+    "offZSFllg":         "((abs(mllgamma-%s)>%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
 
-    "offZSFllgMVA":             "((abs(mllgammaMVA-%s)>15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
-    "offZSFllgNoChgIso":        "((abs(mllgammaNoChgIso-%s)>15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
-    "offZSFllgNoSieie":         "((abs(mllgammaNoSieie-%s)>15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
-    "offZSFllgNoChgIsoNoSieie": "((abs(mllgammaNoChgIsoNoSieie-%s)>15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
+    "offZSFllgMVA":             "((abs(mllgammaMVA-%s)>%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
+    "offZSFllgNoChgIso":        "((abs(mllgammaNoChgIso-%s)>%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
+    "offZSFllgNoSieie":         "((abs(mllgammaNoSieie-%s)>%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
+    "offZSFllgNoChgIsoNoSieie": "((abs(mllgammaNoChgIsoNoSieie-%s)>%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
 
-    "offZSFllTight":     "((abs(mlltight-%s)>15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),             # Cut Z-Window only for SF dilep events
-    "offZSFllgTight":    "((abs(mllgammatight-%s)>15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),        # Cut Z-Window only for SF dilep events
-    "onZll":             "abs(mll-%s)<=15"%(mZ),
-    "onZllg":            "abs(mllgamma-%s)<=15"%(mZ),
+    "offZSFllTight":     "((abs(mlltight-%s)>%s&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ, zMassRange),             # Cut Z-Window only for SF dilep events
+    "offZSFllgTight":    "((abs(mllgammatight-%s)>%s&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ, zMassRange),        # Cut Z-Window only for SF dilep events
+    "onZll":             "abs(mll-%s)<=%s"%(mZ, zMassRange),
+    "onZllg":            "abs(mllgamma-%s)<=%s"%(mZ, zMassRange),
 
-    "onZllgMVA":               "abs(mllgammaMVA-%s)<=15"%(mZ),
-    "onZllgNoChgIso":          "abs(mllgammaNoChgIso-%s)<=15"%(mZ),
-    "onZllgNoSieie":           "abs(mllgammaNoSieie-%s)<=15"%(mZ),
-    "onZllgNoChgIsoNoSieie":   "abs(mllgammaNoChgIsoNoSieie-%s)<=15"%(mZ),
+    "onZllgMVA":               "abs(mllgammaMVA-%s)<=%s"%(mZ, zMassRange),
+    "onZllgNoChgIso":          "abs(mllgammaNoChgIso-%s)<=%s"%(mZ, zMassRange),
+    "onZllgNoSieie":           "abs(mllgammaNoSieie-%s)<=%s"%(mZ, zMassRange),
+    "onZllgNoChgIsoNoSieie":   "abs(mllgammaNoChgIsoNoSieie-%s)<=%s"%(mZ, zMassRange),
 
-    "onZllTight":        "abs(mlltight-%s)<=15"%(mZ),
-    "onZllgTight":       "abs(mllgammatight-%s)<=15"%(mZ),
-    "onZSFll":           "((abs(mll-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                     # Cut Z-Window only for SF dilep events
-    "onZSFllg":          "((abs(mllgamma-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                # Cut Z-Window only for SF dilep events
+    "onZllTight":        "abs(mlltight-%s)<=%s"%(mZ, zMassRange),
+    "onZllgTight":       "abs(mllgammatight-%s)<=%s"%(mZ, zMassRange),
+    "onZSFll":           "((abs(mll-%s)<=%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                     # Cut Z-Window only for SF dilep events
+    "onZSFllg":          "((abs(mllgamma-%s)<=%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                # Cut Z-Window only for SF dilep events
 
-    "onZSFllgMVA":             "((abs(mllgammaMVA-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
-    "onZSFllgNoChgIso":        "((abs(mllgammaNoChgIso-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
-    "onZSFllgNoSieie":         "((abs(mllgammaNoSieie-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
-    "onZSFllgNoChgIsoNoSieie": "((abs(mllgammaNoChgIsoNoSieie-%s)<=15&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ),                 # Cut Z-Window only for SF dilep events
+    "onZSFllgMVA":             "((abs(mllgammaMVA-%s)<=%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
+    "onZSFllgNoChgIso":        "((abs(mllgammaNoChgIso-%s)<=%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
+    "onZSFllgNoSieie":         "((abs(mllgammaNoSieie-%s)<=%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
+    "onZSFllgNoChgIsoNoSieie": "((abs(mllgammaNoChgIsoNoSieie-%s)<=%s&&(nElectronGood==2||nMuonGood==2))||(nElectronGood==1&&nMuonGood==1))"%(mZ, zMassRange),                 # Cut Z-Window only for SF dilep events
 
-    "onZSFllTight":      "((abs(mlltight-%s)<=15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),            # Cut Z-Window only for SF dilep events
-    "onZSFllgTight":     "((abs(mllgammatight-%s)<=15&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ),       # Cut Z-Window only for SF dilep events
+    "onZSFllTight":      "((abs(mlltight-%s)<=%s&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ, zMassRange),            # Cut Z-Window only for SF dilep events
+    "onZSFllgTight":     "((abs(mllgammatight-%s)<=%s&&(nElectronTight==2||nMuonTight==2))||(nElectronTight==1&&nMuonTight==1))"%(mZ, zMassRange),       # Cut Z-Window only for SF dilep events
     "mumu":              "nElectronGood==0&&nMuonGood==2",
     "mue":               "nElectronGood==1&&nMuonGood==1",
     "ee":                "nElectronGood==2&&nMuonGood==0",
@@ -74,10 +75,10 @@ special_cuts = {
     "NoChgIsoPhoton":        "nPhotonNoChgIso>=1",
     "NoChgIsoNoSieiePhoton": "nPhotonNoChgIsoNoSieie>=1",
 
-    "offZeg":               "((abs(mLtight0Gamma-%s)>15&&nElectronTight==1)||(nElectronTight==0))"%(mZ),             # Cut Z-Window only for egamma
-    "onZeg":                "((abs(mLtight0Gamma-%s)<=15&&nElectronTight==1)||(nElectronTight==0))"%(mZ),             # Cut Z-Window only for egamma
+    "offZeg":               "((abs(mLtight0Gamma-%s)>%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
+    "onZeg":                "((abs(mLtight0Gamma-%s)<=%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
     "phiGlt1p1":             "abs(PhotonGood0_phi)<1.1",
-    "onZEphiGlt1p1":         "((abs(mLtight0Gamma-%s)<=15&&abs(PhotonGood0_phi)<1.1&&nElectronTight==1)||(abs(mLtight0Gamma-%s)>15&&nElectronTight==1)||(nElectronTight==0))"%(mZ,mZ),
+    "onZEphiGlt1p1":         "((abs(mLtight0Gamma-%s)<=%s&&abs(PhotonGood0_phi)<1.1&&nElectronTight==1)||(abs(mLtight0Gamma-%s)>%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ,zMassRange,mZ,zMassRange),
 
     "n12Jet":               "nJetGood==1||nJetGood==2",
 
@@ -106,11 +107,12 @@ special_cuts = {
     "photonhadcat2":        "PhotonNoChgIsoNoSieie0_photonCat==2",
     "photonhadcat3":        "PhotonNoChgIsoNoSieie0_photonCat==3",
 
+    "BadEEJetVeto":        "Sum$((2.6<abs(Jet_eta)&&abs(Jet_eta)<3&&Jet_pt>30))==0",
+
   }
 
 continous_variables = [ ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
-discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepNoCorrVeto","nLeptonVeto"), ("nLepVeto","nLeptonVetoIsoCorr"), ("nInvLepTight","nLeptonTightInvIso"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
-
+discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepNoCorrVeto","nLeptonVeto"), ("nLepVeto","nLeptonVetoIsoCorr"), ("nNoIsoLepTight","nLeptonTightNoIso"), ("nInvLepTight","nLeptonTightInvIso"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 
 if __name__ == "__main__":
