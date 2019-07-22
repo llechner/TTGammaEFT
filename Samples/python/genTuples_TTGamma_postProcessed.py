@@ -78,6 +78,11 @@ dirs['ttGamma_NoFullyHad_newCentral_comp']            = [ "ttGamma_NoFullyHad_ne
 dirs['ttGamma_NoFullyHad_newCentral_pTG100To200_comp']            = [ "ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp" ]
 dirs['ttGamma_NoFullyHad_newCentral_pTGgt200_comp']            = [ "ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp" ]
 
+dirs['WGamma_noPtj']   = [ "WGamma_noPtj" ]
+dirs['ZGamma_noPtj']   = [ "ZGamma_noPtj" ]
+dirs['WGamma_central'] = [ "WGamma_central" ]
+dirs['ZGamma_central'] = [ "ZGamma_central" ]
+
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
@@ -147,3 +152,8 @@ TTG_ATLAS_RunCard_comp                             = Sample.fromDirectory(name="
 TTG_NoFullyHad_newCentral_RunCard_comp             = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard", treeName="Events", isData=False, color=color.TTG5,        texName="tt#gamma (new CMS)",   directory=directories['ttGamma_NoFullyHad_newCentral_comp'])
 TTG_NoFullyHad_newCentral_RunCard_pTG100To200_comp = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_pTG100To200", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (100<p_{T}(#gamma)<200 GeV)",   directory=directories['ttGamma_NoFullyHad_newCentral_pTG100To200_comp'])
 TTG_NoFullyHad_newCentral_RunCard_pTGgt200_comp    = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_pTGgt200", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (p_{T}(#gamma)>200 GeV)",   directory=directories['ttGamma_NoFullyHad_newCentral_pTGgt200_comp'])
+
+ZGamma_central  = Sample.fromDirectory(name="ZGamma_central", treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="Z#gamma (p_{T}(jet)>10)", directory=directories['ZGamma_central'])
+ZGamma_noPtj    = Sample.fromDirectory(name="ZGamma_noPtj",   treeName="Events", isData=False, color=color.TTG3LPatched,   texName="Z#gamma (p_{T}(jet)>0)",  directory=directories['ZGamma_noPtj'])
+WGamma_central  = Sample.fromDirectory(name="WGamma_central", treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="W#gamma (p_{T}(jet)>10)", directory=directories['WGamma_central'])
+WGamma_noPtj    = Sample.fromDirectory(name="WGamma_noPtj",   treeName="Events", isData=False, color=color.TTG3LPatched,   texName="W#gamma (p_{T}(jet)>0)",  directory=directories['WGamma_noPtj'])

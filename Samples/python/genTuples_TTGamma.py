@@ -217,6 +217,24 @@ ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp.xSection    = 0.0342
 ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp.nEvents     = 795000
 
 
+# Sample comparison VGamma
+WGamma_noPtj          = FWLiteSample.fromDAS("WGamma_noPtj", "/WGamma_noPtj_NLO_v1/llechner-WGamma_noPtj_NLO_v1-b5b2816dddfb90dc835a6661ec19164c/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+WGamma_noPtj.xSection = 724.3
+WGamma_noPtj.nEvents  = 1000000
+
+WGamma_central          = FWLiteSample.fromDAS("WGamma_central", "/WGamma_central_NLO_v1/llechner-WGamma_central_NLO_v1-7862da6a82507fca7a336a1a15f86fef/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+WGamma_central.xSection = 300.3
+WGamma_central.nEvents  = 985000
+
+ZGamma_noPtj          = FWLiteSample.fromDAS("ZGamma_noPtj", "/ZGamma_noPtj_NLO_v1/llechner-ZGamma_noPtj_NLO_v1-d83db26adbeec9c4413b48620e5bc468/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_noPtj.xSection = 261.0
+ZGamma_noPtj.nEvents  = 1000000
+
+ZGamma_central          = FWLiteSample.fromDAS("ZGamma_central", "/ZGamma_central_NLO_v1/llechner-ZGamma_central_NLO_v1-38c6460c023e7ff49f40e64c5d271665/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central.xSection = 77.79
+ZGamma_central.nEvents  = 990000
+
+
 SM = [
     ttGamma_Dilept_newCentral_1Line,
     ttGamma_SemiLept_newCentral_1Line,
@@ -263,8 +281,16 @@ EFT = [
     TTGamma_SingleLeptFromTbar_EFT_1Line,
 ]
 
-allSamples = SM + EFT
+VGamma = [
+    WGamma_noPtj,
+    WGamma_central,
+    ZGamma_noPtj,
+    ZGamma_central,
+]
+
+allSamples = SM + EFT + VGamma
 
 for s in allSamples:
     s.isData = False
+
 
