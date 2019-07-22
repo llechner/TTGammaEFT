@@ -582,7 +582,7 @@ if isMC:
     new_variables += [ 'GenElectron[%s]' %writeGenVarString ]
     new_variables += [ 'GenMuon[%s]'     %writeGenVarString ]
     new_variables += [ 'GenPhoton[%s]'   %writeGenVarString ]
-    new_variables += [ 'GenJet[%s]'      %writeGenJetVarString ]
+    new_variables += [ 'GenJets[%s]'      %writeGenJetVarString ]
     new_variables += [ 'GenBJet[%s]'     %writeGenJetVarString ]
     new_variables += [ 'GenTop[%s]'      %writeGenVarString ]
     new_variables += [ 'isTTGamma/I', 'isZWGamma/I', 'isTGamma/I', 'isGJets/I', 'overlapRemoval/I' ]
@@ -865,14 +865,14 @@ def filler( event ):
         fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     )
         fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   )
         fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20]     )
-        fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20]      )
+        fill_vector_collection( event, "GenJets",      writeGenJetVarList, GenJet[:20]      )
         fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      )
         
         event.nGenElectron = len(GenElectron)
         event.nGenMuon     = len(GenMuon)
         event.nGenPhoton   = len(GenPhoton)
         event.nGenBJet     = len(GenBJet)
-        event.nGenJet      = len(GenJet)
+        event.nGenJets     = len(GenJet)
         event.nGenTop      = len(GenTop)
 
         # can't find jets from W in gParts, so assume non-Leptonic W decays are hadronic W decays
