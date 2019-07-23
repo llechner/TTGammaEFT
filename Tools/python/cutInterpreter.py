@@ -62,8 +62,6 @@ special_cuts = {
     "ee":                "nElectronGood==2&&nMuonGood==0",
     "all":               "(1)",
     "SF":                "(nElectronGood==2||nMuonGood==2)",
-    "mu":                "nMuonTight==1",
-    "e":                 "nElectronTight==1",
     "mumutight":         "nElectronTight==0&&nMuonTight==2",
     "muetight":          "nElectronTight==1&&nMuonTight==1",
     "eetight":           "nElectronTight==2&&nMuonTight==0",
@@ -75,8 +73,18 @@ special_cuts = {
     "NoChgIsoPhoton":        "nPhotonNoChgIso>=1",
     "NoChgIsoNoSieiePhoton": "nPhotonNoChgIsoNoSieie>=1",
 
+    "offZegInv":            "((abs(mLinvtight0Gamma-%s)>%s&&nElectronTightInvIso==1)||(nElectronTightInvIso==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
+    "onZegInv":             "((abs(mLinvtight0Gamma-%s)<=%s&&nElectronTightInvIso==1)||(nElectronTightInvIso==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
+    "muInv":                "nMuonTightInvIso==1",
+    "eInv":                 "nElectronTightInvIso==1",
+    "allInv":               "(1)",
+
     "offZeg":               "((abs(mLtight0Gamma-%s)>%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
     "onZeg":                "((abs(mLtight0Gamma-%s)<=%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
+    "mu":                   "nMuonTight==1",
+    "e":                    "nElectronTight==1",
+    "all":                  "(1)",
+
     "phiGlt1p1":             "abs(PhotonGood0_phi)<1.1",
     "onZEphiGlt1p1":         "((abs(mLtight0Gamma-%s)<=%s&&abs(PhotonGood0_phi)<1.1&&nElectronTight==1)||(abs(mLtight0Gamma-%s)>%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ,zMassRange,mZ,zMassRange),
 
