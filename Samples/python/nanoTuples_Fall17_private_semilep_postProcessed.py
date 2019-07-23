@@ -98,7 +98,7 @@ dirs["all_noTT"]         = dirs["all_noOther_noTT"] + dirs["other"]
 dirs["all_noQCD"]        = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGToLLG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] +  dirs["other"]
 
 dirs["VG"]               = dirs["ZGToLLG"] + dirs["WG"]
-dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["WJets"] + dirs["other"]
+dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["other"]
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
@@ -122,7 +122,7 @@ QCD_17              = Sample.fromDPMDirectory(name="QCD",              treeName=
 GJets_17            = Sample.fromDPMDirectory(name="GJets",            treeName="Events", redirector=redirector, isData=False, color=color.GJets,           texName="#gamma+jets",       directory=directories["GJets"], noCheckProxy=True)
 
 VG_17              = Sample.fromDPMDirectory(name="VG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="V+#gamma",          directory=directories["VG"], noCheckProxy=True)
-rest_17            = Sample.fromDPMDirectory(name="rest",             treeName="Events", redirector=redirector, isData=False, color=color.Other,          texName="other",             directory=directories["rest"], noCheckProxy=True)
+rest_17            = Sample.fromDPMDirectory(name="other",             treeName="Events", redirector=redirector, isData=False, color=color.Other,          texName="other",             directory=directories["rest"], noCheckProxy=True)
 
 all_17              = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories["all"], noCheckProxy=True)
 all_noQCD_17        = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories["all_noQCD"], noCheckProxy=True)

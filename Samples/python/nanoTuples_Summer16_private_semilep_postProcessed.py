@@ -119,7 +119,7 @@ dirs["all_noQCD"]         = dirs["all_noQCD_noOther"] + dirs["other"]
 dirs["W"]                = dirs["WJets_HT"] + dirs["WG"]
 
 dirs["VG"]               = dirs["ZGTo2LG"] + dirs["WG"]
-dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["WJets"] + dirs["other"]
+dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["other"]
 
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
@@ -151,7 +151,7 @@ GJets_16           = Sample.fromDPMDirectory(name="GJets",            treeName="
 other_16           = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories["other"], noCheckProxy=True)
 
 VG_16              = Sample.fromDPMDirectory(name="VG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="V+#gamma",          directory=directories["VG"], noCheckProxy=True)
-rest_16            = Sample.fromDPMDirectory(name="rest",             treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories["rest"], noCheckProxy=True)
+rest_16            = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories["rest"], noCheckProxy=True)
 
 all_16             = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories["all"], noCheckProxy=True)
 all_noQCD_noOther_16 = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories["all_noQCD_noOther"], noCheckProxy=True)
