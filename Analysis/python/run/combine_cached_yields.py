@@ -43,11 +43,14 @@ argParser.add_argument('--sieie',              action='store',      default='all
 argParser.add_argument('--chgIso',             action='store',      default='all')
 args = argParser.parse_args()
 
-# Logger
-import Analysis.Tools.logger as logger
-import RootTools.core.logger as logger_rt
-logger    = logger.get_logger(   args.logLevel, logFile = None)
-logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( args.logLevel, logFile=None)
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 
 cache_dir = os.path.join(cache_directory, "yields", str(args.year))
@@ -57,11 +60,11 @@ if not yield_dirDB: raise
 res = {"sample":None, "selection":args.selection, "mode":args.mode, "ptBin":args.ptBin, "cat":args.gammaCat, "sieie":args.sieie, "chgIso":args.chgIso, "small":args.small}
 
 if args.noQCD or "tight" in args.mode:
-    mc = [ "TTG", "TT_pow", "DY_LO", "singleTop", "WJets", "TG", "WG", "ZG", "other" ]
+    mc = [ "TTG", "TT_pow", "DY_LO", "WJets", "WG", "ZG", "other" ]
 elif args.QCDOnly:
     mc = [ "QCD" ]
 else:
-    mc = [ "TTG", "TT_pow", "DY_LO", "singleTop", "WJets", "TG", "WG", "ZG", "other", "QCD" ]
+    mc = [ "TTG", "TT_pow", "DY_LO", "WJets", "WG", "ZG", "other", "QCD" ]
 
 if args.QCDOnly or args.noData:
     allSamples = mc

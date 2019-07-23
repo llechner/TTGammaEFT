@@ -76,11 +76,15 @@ dbPath = os.path.join(cache_dir_nll, dbFile)
 nllCache  = Cache( dbPath, tableName, ["cardname", "year", "WC1_name", "WC1_val", "WC2_name", "WC2_val", "nll_prefit", "nll_postfit" ] )
 if nllCache is None: raise
 
-# Logger
-import Analysis.Tools.logger as logger
-import RootTools.core.logger as logger_rt
-logger    = logger.get_logger(    args.logLevel, logFile = None)
-logger_rt = logger_rt.get_logger( args.logLevel, logFile = None)
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( args.logLevel, logFile=None)
+else:
+    import logging
+    logger = logging.getLogger(__name__)
+
 
 # Samples
 if 2016 in args.years:

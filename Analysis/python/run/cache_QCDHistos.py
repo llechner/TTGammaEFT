@@ -42,11 +42,13 @@ argParser.add_argument('--nJobs',              action='store',      default=1,  
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                     help="Run only job i")
 args = argParser.parse_args()
 
-# Logger
-import Analysis.Tools.logger as logger
-import RootTools.core.logger as logger_rt
-logger    = logger.get_logger(   args.logLevel, logFile = None)
-logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( args.logLevel, logFile=None)
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 cache_dir = os.path.join(cache_directory, "qcdHistos")
 dirDB = DirDB(cache_dir)
@@ -280,19 +282,19 @@ sequence = []
 
 # Sample definition
 if args.year == 2016 and not args.checkOnly:
-    mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16, other_16 ]
+    mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, VG_16, rest_16 ]
     data_sample = Run2016
     qcd   = QCD_16
     gjets = GJets_16
 
 elif args.year == 2017 and not args.checkOnly:
-    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17, other_17 ]
+    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, VG_17, rest_17 ]
     data_sample = Run2017
     qcd   = QCD_17
     gjets = GJets_17
 
 elif args.year == 2018 and not args.checkOnly:
-    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18, other_18 ]
+    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, VG_18, rest_18 ]
     data_sample = Run2018
     qcd   = QCD_18
     gjets = GJets_18

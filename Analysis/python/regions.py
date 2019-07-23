@@ -24,8 +24,13 @@ thresholds = [ 20, -999 ]
 genTTGammaRegionsIncl  = getRegionsFromThresholds( "GenPhoton_pt[0]", thresholds )
 recoTTGammaRegionsIncl = getRegionsFromThresholds( "PhotonGood0_pt", thresholds )
 
-#differencial
+#differencial EFT
 thresholds = [ 20, 120, 220, 320, 420, -999 ]
+genTTGammaRegionsEFT  = getRegionsFromThresholds( "GenPhoton_pt[0]", thresholds )
+recoTTGammaRegionsEFT = getRegionsFromThresholds( "PhotonGood0_pt", thresholds )
+
+#differencial
+thresholds = [ 20, 120, 220, -999 ]
 genTTGammaRegions  = getRegionsFromThresholds( "GenPhoton_pt[0]", thresholds )
 recoTTGammaRegions = getRegionsFromThresholds( "PhotonGood0_pt", thresholds )
 
@@ -39,11 +44,14 @@ preFiringSumJetPt     = getRegionsFromThresholds( "Jet_pt",  [30, 40, 50, 60, 70
 preFiringSumJetPtLog  = getRegionsFromThresholds( "Jet_pt",  [30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, -999] )
 preFiringSumJet       = getRegionsFromThresholds( "Jet_phi", [-pi, -pi*(4./5), -pi*(3./5), -pi*(2./5), -pi*(1./5), 0., pi*(1./5), pi*(2./5), pi*(3./5), pi*(4./5), pi], gtLastThreshold=False )
 
+pTG_thresh        = [ 20, 120, 220, -999 ]
+regionsTTG        = getRegionsFromThresholds( "PhotonGood0_pt", pTG_thresh )
+inclRegionsTTG    = [Region( "PhotonGood0_pt", (20,-1) )]
+noPhotonRegionTTG = [Region( "nPhotonGood", (0,0) )]
+
 if __name__ == "__main__":
-    for region in preFiringSumJetPtLog:
+    for region in noPhotonRegionTTG+inclRegionsTTG+regionsTTG:
         print type(region.vals)
         for val0, val1 in region.vals.values():
             print val0
         print val1
-    for region in preFiringSumJetEta:
-        print region.vals
