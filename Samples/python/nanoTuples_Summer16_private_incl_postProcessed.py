@@ -35,10 +35,12 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 # Directories
 dirs = {}
 dirs["TTG_NoFullyHad_priv"] = ["TTGNoFullyHad_priv"]
+dirs["TTG_NoFullyHad_fnal"] = ["TTGNoFullyHad_fnal"]
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
 TTG_NoFullyHad_priv_16 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True)
+TTG_NoFullyHad_fnal_16 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_fnal"], noCheckProxy=True)
 
 
