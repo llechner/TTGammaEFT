@@ -91,10 +91,10 @@ def isBJet( j, tagger='DeepCSV', year=2016 ):
         else:
             raise (NotImplementedError, "Don't know what cut to use for year %s"%year)
 
-def vertexSelector( l ):
-#    if abs(l['pdgId']) == 11: absEta = abs(l["eta"] + l["deltaEtaSC"])   # eta supercluster
-#    else:                     absEta = abs(l["eta"])                     # eta
-    EC = 0 #absEta > 1.479 # only if difference for EndCaps
+def vertexSelector( l, barrelECdiff=False ):
+    if abs(l['pdgId']) == 11: absEta = abs(l["eta"] + l["deltaEtaSC"])   # eta supercluster
+    else:                     absEta = abs(l["eta"])                     # eta
+    EC = absEta > 1.479 and barrelECdiff # only if difference for EndCaps
     if abs(l["dxy"]) > 0.05 + 0.05*EC: return False
     if abs(l["dz"])  > 0.1  + 0.1*EC:  return False
     return True
@@ -196,7 +196,7 @@ def jetSelector( year ):
         def func(j, removedCuts=[], ptVar="pt"):
 #            if not j["cleanmask"]:                           return False # too much cleaning
             if not "pt" in removedCuts:
-                if j[ptVar]      <= 30:                      return False
+                if j[ptVar]      < 30:                      return False
             if not "eta" in removedCuts:
                 if abs(j["eta"]) >= 2.4:                     return False
             if not jetIdBitMapToDict( j["jetId"] )["loose"]: return False
@@ -208,7 +208,7 @@ def jetSelector( year ):
         def func(j, removedCuts=[], ptVar="pt"):
 #            if not j["cleanmask"]:                           return False
             if not "pt" in removedCuts:
-                if j[ptVar]      <= 30:                      return False
+                if j[ptVar]      < 30:                      return False
             if not "eta" in removedCuts:
                 if abs(j["eta"]) >= 2.4:                     return False
             if not jetIdBitMapToDict( j["jetId"] )["tight"]: return False
@@ -218,7 +218,8 @@ def jetSelector( year ):
     else:
         raise (NotImplementedError, "Don't know what cut to use for year %s"%year)
 
-muonRelIsoCut = 0.12
+#muonRelIsoCut = 0.12
+muonRelIsoCut = 0.15
 def muonSelector( lepton_selection ):
     # According to AN-2017/197
     if lepton_selection == 'tight':
@@ -228,12 +229,12 @@ def muonSelector( lepton_selection ):
             if not "eta" in removedCuts:
                 if abs(l["eta"])    > 2.4:                        return False
             if not l["tightId"]:                                  return False
-            if not "vertex" in removedCuts:
-                if not vertexSelector(l):                         return False
-            if not "pfRelIso03_all" in removedCuts:
-                if l['pfRelIso03_all']  > muonRelIsoCut:          return False
-            if not "sip3d" in removedCuts:
-                if l["sip3d"]           > 4:                      return False
+#            if not "vertex" in removedCuts:
+#                if not vertexSelector(l):                         return False #sync with FNAL
+            if not "pfRelIso04_all" in removedCuts:
+                if l['pfRelIso04_all']  > muonRelIsoCut:          return False
+#            if not "sip3d" in removedCuts:
+#                if l["sip3d"]           > 4:                      return False #sync with FNAL
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoMedium']: return False
             return True
         return func
@@ -288,12 +289,12 @@ def muonSelector( lepton_selection ):
             if not "ID" in removedCuts:
                 if not l["isPFcand"]:                                return False
                 if not ( l["isGlobal"] or l["isTracker"] ):          return False
-            if not "vertex" in removedCuts:
-                if not vertexSelector(l):                            return False
-            if not "pfRelIso03_all" in removedCuts:
-                if l['pfRelIso03_all']  > 0.25:                      return False
-            if not "sip3d" in removedCuts:
-                if l["sip3d"]           > 4:                         return False
+#            if not "vertex" in removedCuts:
+#                if not vertexSelector(l):                            return False #sync with FNAL
+            if not "pfRelIso04_all" in removedCuts:
+                if l['pfRelIso04_all']  > 0.25:                      return False
+#            if not "sip3d" in removedCuts:
+#                if l["sip3d"]           > 4:                         return False #sync with FNAL
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoVeryLoose']: return False
             return True
         return func
@@ -330,12 +331,12 @@ def eleSelector( lepton_selection ):
             if not "eta" in removedCuts:
                 if abs(l["eta"])    > 2.1:                   return False
             if not electronVIDSelector( l, vidNestedWPBitMap["tight"], removedCuts=removedCuts ): return False
-            if not "pfRelIso03_all" in removedCuts:
-                if l['pfRelIso03_all']  > 0.12:              return False
-            if not "sip3d" in removedCuts:
-                if l["sip3d"]           > 4:                 return False
+#            if not "pfRelIso03_all" in removedCuts:
+#                if l['pfRelIso03_all']  > 0.12:              return False
+#            if not "sip3d" in removedCuts:
+#                if l["sip3d"]           > 4:                 return False
             if not "vertex" in removedCuts:
-                if not vertexSelector(l):                    return False
+                if not vertexSelector(l, barrelECdiff=True):                    return False
 #            if l[idVar] < electronIdCutBased['tight']:       return False
 #            if int(l["lostHits"])  != 0:                 return False # in the cutbased id? Ghent!
 #            if not l["convVeto"]:                        return False # in the cutbased id? Ghent!
@@ -375,14 +376,14 @@ def eleSelector( lepton_selection ):
                     if l["pt"]         <= 15:            return False
             if not "eta" in removedCuts:
                 if abs(l["eta"])   >= 2.4:               return False
-            if not electronVIDSelector( l, vidNestedWPBitMap["medium"], removedCuts=removedCuts ): return False
+#            if not electronVIDSelector( l, vidNestedWPBitMap["medium"], removedCuts=removedCuts ): return False
             if not "pfRelIso03_all" in removedCuts:
                 if l['pfRelIso03_all']  > 0.12:          return False
             if not "sip3d" in removedCuts:
                 if l["sip3d"]           > 4:             return False
             if not "vertex" in removedCuts:
                 if not vertexSelector(l):                return False
-#            if l[idVar] < electronIdCutBased['medium']:  return False
+            if l[idVar] < electronIdCutBased['medium']:  return False
 #            if int(l["lostHits"])  != 0:                 return False # in the cutbased id? Ghent!
 #            if not l["convVeto"]:                        return False # in the cutbased id? Ghent!
             return True
@@ -396,12 +397,12 @@ def eleSelector( lepton_selection ):
             if not "eta" in removedCuts:
                 if abs(l["eta"])    > 2.4:             return False
             if not electronVIDSelector( l, vidNestedWPBitMap["veto"], removedCuts=removedCuts ): return False
-            if not "pfRelIso03_all" in removedCuts:
-                if l['pfRelIso03_all']  > 0.4:         return False
-            if not "sip3d" in removedCuts:
-                if l["sip3d"]           > 4:           return False
+#            if not "pfRelIso03_all" in removedCuts:
+#                if l['pfRelIso03_all']  > 0.4:         return False
+#            if not "sip3d" in removedCuts:
+#                if l["sip3d"]           > 4:           return False
             if not "vertex" in removedCuts:
-                if not vertexSelector(l):              return False
+                if not vertexSelector(l, barrelECdiff=True):              return False
 #            if l[idVar] < electronIdCutBased['veto']:  return False
             return True
         return func

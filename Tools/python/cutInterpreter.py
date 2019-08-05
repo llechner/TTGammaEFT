@@ -109,11 +109,13 @@ special_cuts = {
     "photoncat1":        "PhotonGood0_photonCat==1",
     "photoncat2":        "PhotonGood0_photonCat==2",
     "photoncat3":        "PhotonGood0_photonCat==3",
+    "photoncat13":       "(PhotonGood0_photonCat==1||PhotonGood0_photonCat==3)",
 
     "photonhadcat0":        "PhotonNoChgIsoNoSieie0_photonCat==0",
     "photonhadcat1":        "PhotonNoChgIsoNoSieie0_photonCat==1",
     "photonhadcat2":        "PhotonNoChgIsoNoSieie0_photonCat==2",
     "photonhadcat3":        "PhotonNoChgIsoNoSieie0_photonCat==3",
+    "photonhadcat13":       "(PhotonNoChgIsoNoSieie0_photonCat==1||PhotonNoChgIsoNoSieie0_photonCat==3)",
 
     "BadEEJetVeto":        "Sum$((2.6<abs(Jet_eta)&&abs(Jet_eta)<3&&Jet_pt>30))==0",
 
