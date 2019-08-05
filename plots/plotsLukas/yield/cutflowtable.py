@@ -38,10 +38,13 @@ import RootTools.core.logger as logger_rt
 logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
-os.environ["gammaSkim"]="True" if "hoton" in args.selection or "pTG" in args.selection else "False"
-from TTGammaEFT.Samples.nanoTuples_Summer16_private_incl_postProcessed      import TTG_NoFullyHad_priv_16 as TTG_16
-from TTGammaEFT.Samples.nanoTuples_Fall17_private_incl_postProcessed        import TTG_NoFullyHad_priv_17 as TTG_17
-from TTGammaEFT.Samples.nanoTuples_Autumn18_private_incl_postProcessed      import TTG_NoFullyHad_priv_18 as TTG_18
+#os.environ["gammaSkim"]="True" if "hoton" in args.selection or "pTG" in args.selection else "False"
+from TTGammaEFT.Samples.nanoTuples_Summer16_private_incl_postProcessed      import TTG_NoFullyHad_fnal_16 as TTG_16
+from TTGammaEFT.Samples.nanoTuples_Fall17_private_incl_postProcessed        import TTG_NoFullyHad_fnal_17 as TTG_17
+from TTGammaEFT.Samples.nanoTuples_Autumn18_private_incl_postProcessed      import TTG_NoFullyHad_fnal_18 as TTG_18
+#from TTGammaEFT.Samples.nanoTuples_Summer16_private_incl_postProcessed      import TTG_NoFullyHad_priv_16 as TTG_16
+#from TTGammaEFT.Samples.nanoTuples_Fall17_private_incl_postProcessed        import TTG_NoFullyHad_priv_17 as TTG_17
+#from TTGammaEFT.Samples.nanoTuples_Autumn18_private_incl_postProcessed      import TTG_NoFullyHad_priv_18 as TTG_18
 
 # Read variables and sequences
 read_variables  = ["weight/F", 
@@ -69,20 +72,12 @@ read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval
 
 weightString   = "1" #"%f*weight*reweightL1Prefire*reweightPU*reweightLepton2lSF*reweightLeptonTracking2lSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"%lumi_scale
 
-if args.small:
-    TTG.normalization=1.
-    TTG.reduceFiles( factor=15 )
-    weightString += "*%f"%(1./TTG.normalization)
-
 ptSel     = ['all', 'lowPT', 'medPT', 'highPT']
 allYears  = ['2016', '2017', '2018']
 pthadSel  = ['lowhadPT', 'medhadPT', 'highhadPT']
 catSel    = ['photoncat0', 'photoncat1', 'photoncat2', 'photoncat3']
 hadcatSel = ['photonhadcat0', 'photonhadcat1', 'photonhadcat2', 'photonhadcat3']
-sieieSel  = ['lowSieie', 'highSieie']
-chgSel    = ['lowChgIso', 'highChgIso']
 noCat_sel = "all"
-region    = "manual"
 
 allCats     = [noCat_sel] + catSel
 allModes    = allYears #ptSel
@@ -136,12 +131,12 @@ def calculation( arg ):
     selCut = "-".join( [ cut for cut in selCut.split("-") if cut ] )
 
     if not selCut: selCut = "all"
-    print("Calcuating yield for mode %s and category %s and selection %s"%(mode,cat,sel))
+    #print("Calcuating yield for mode %s and category %s and selection %s"%(mode,cat,sel))
 
     selCuts = [ cutInterpreter.cutString( "-".join( [ selCut, cat ] ) ) ]
 
     filterCutMc   = getFilterCut( int(mode), isData=False )
-    tr            = TriggerSelector( int(mode) )
+    tr            = TriggerSelector( int(mode), singleLepton=args.selection.count("nLepTight1") )
     triggerCutMc  = tr.getSelection( "MC" )
 
     if triggercut: selCuts += [triggerCutMc]
@@ -154,9 +149,11 @@ def calculation( arg ):
     if not "hoton" in selCut and cat != noCat_sel:
         yields[mode][cat][sel] = -1
         return
-    yields[mode][cat][sel] = int(round(TTG.getYieldFromDraw( selectionString=preSelectionSR, weightString=weight )['val']))
+
+    print TTG.getEventList( preSelectionSR ).GetN()
+    yields[mode][cat][sel] = TTG.getEventList( selectionString=preSelectionSR ).GetN() #int(round(TTG.getYieldFromDraw( selectionString=preSelectionSR, weightString=weight )['val']))
 #    yields["incl"][cat][sel] += yields[mode][cat][sel]
-    print("Got yield of %f for selection %s and mode %s and category %s"%(yields[mode][cat][sel],sel,mode,cat))
+    #print("Got yield of %f for selection %s and mode %s and category %s"%(yields[mode][cat][sel],sel,mode,cat))
 
 
 def printAllYieldTable():
@@ -164,7 +161,22 @@ def printAllYieldTable():
     with open("logs/cutFlow_%s.log"%(args.selection), "w") as f:
     
         f.write("\\begin{frame}\n")
-        f.write("\\frametitle{Yields - Cutflow Table}\n\n")
+        f.write("\\frametitle{Yields - Cutflow Table FNAL Samples}\n\n")
+
+        if "-mu" in args.selection:
+            f.write("\\begin{itemize}\n")
+            f.write("\\item Muons\n")
+            f.write("\\end{itemize}\n\n")
+
+        elif "-e" in args.selection:
+            f.write("\\begin{itemize}\n")
+            f.write("\\item Electrons\n")
+            f.write("\\end{itemize}\n\n")
+        else:
+            f.write("\\begin{itemize}\n")
+            f.write("\\item Electrons + Muons\n")
+            f.write("\\end{itemize}\n\n")
+
 
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
