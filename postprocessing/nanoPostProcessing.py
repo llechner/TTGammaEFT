@@ -109,9 +109,13 @@ isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGam
 semilepNoIsoCond_ele   = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1)>=1)"
 semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4)>=1)"
 semilepNoIsoCond       = "||".join( [semilepNoIsoCond_ele, semilepNoIsoCond_mu] )
-semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)"
-semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)"
+
+semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4)>=1)"
+#semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)"
+semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso04_all<=0.15)>=1)"
+#semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)"
 semilepCond            = "||".join( [semilepCond_ele, semilepCond_mu] )
+
 dilepCond_sublead      = "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2"
 dilepCond_lead         = "(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1"
 dilepCond              = "&&".join( [dilepCond_lead, dilepCond_sublead] )
@@ -553,7 +557,7 @@ new_variables += [ 'MET_pt_photonEstimated/F', 'MET_phi_photonEstimated/F', 'MET
 new_variables += [ 'MET_pt/F', 'MET_phi/F', 'MET_pt_min/F', 'METSig/F' ]
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
-        new_variables.extend( ['nJetGood_'+var+'/I', 'nBTag_'+var+'/I','ht_'+var+'/F'] )
+        new_variables.extend( ['nJetGood_'+var+'/I', 'nBTagGood_'+var+'/I','ht_'+var+'/F'] )
         new_variables.extend( ['MET_pt_'+var+'/F', 'MET_phi_'+var+'/F', 'METSig_'+var+'/F'] )
 
 new_variables += [ 'mll/F',  'mllgamma/F' ] 
@@ -964,7 +968,7 @@ def filler( event ):
     tightNoIsoLeptons.sort( key = lambda l: -l['pt'] )
 
     tightInvIsoElectrons = list( filter( lambda l: l["pfRelIso03_all"]>getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="tight" ), tightNoIsoElectrons) )
-    tightInvIsoMuons     = list( filter( lambda l: l["pfRelIso03_all"]>muonRelIsoCut, tightNoIsoMuons ) )
+    tightInvIsoMuons     = list( filter( lambda l: l["pfRelIso04_all"]>muonRelIsoCut, tightNoIsoMuons ) )
     tightInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
     tightInvIsoLeptons.sort( key = lambda l: -l['pt'] )
 
@@ -1074,12 +1078,13 @@ def filler( event ):
     event.nJetGood  = len(jets)
 
     # get nJet for jets cleaned against photons with relaxed cuts
-    goodJets = list( filter( lambda j: recoJetSel(j, ptVar=ptVar), allGoodJets ) )
-    goodJets = deltaRCleaning( goodJets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
+    goodJets                = list( filter( lambda j: recoJetSel(j, ptVar=ptVar), allGoodJets ) )
+    goodJets                = deltaRCleaning( goodJets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
     goodMVAJets             = deltaRCleaning( goodJets, mvaPhotons, dRCut=0.1 ) 
     goodNoChgIsoJets        = deltaRCleaning( goodJets, mediumPhotonsNoChgIso, dRCut=0.1 ) 
     goodNoSieieJets         = deltaRCleaning( goodJets, mediumPhotonsNoSieie, dRCut=0.1 ) 
     goodNoChgIsoNoSieieJets = deltaRCleaning( goodJets, mediumPhotonsNoChgIsoNoSieie, dRCut=0.1 ) 
+    goodJets                = deltaRCleaning( goodJets, mediumPhotons, dRCut=0.1 ) 
 
     event.nJetGoodMVA             = len(goodMVAJets)
     event.nJetGoodNoChgIso        = len(goodNoChgIsoJets)
@@ -1296,9 +1301,9 @@ def filler( event ):
             bjets_sys[var]      = filter(lambda j: j["isBJet"], jets_sys[var])
             nonBjets_sys[var]   = filter(lambda j: not j["isBJet"], jets_sys[var])
 
-            setattr(event, "nJetGood_"+var, len(jets_sys[var]))
-            setattr(event, "ht_"+var,       sum([j['pt_'+var] for j in jets_sys[var]]))
-            setattr(event, "nBTag_"+var,    len(bjets_sys[var]))
+            setattr(event, "nJetGood_"+var,  len(jets_sys[var]))
+            setattr(event, "ht_"+var,        sum([j['pt_'+var] for j in jets_sys[var]]))
+            setattr(event, "nBTagGood_"+var, len(bjets_sys[var]))
 
         for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
             for i in ["", "_photonEstimated"]:
