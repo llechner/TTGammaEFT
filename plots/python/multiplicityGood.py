@@ -148,6 +148,22 @@ multiplicityGood.append( Plot(
 ))
 
 multiplicityGood.append( Plot(
+    name      = 'nJetGood_semi2',
+    texX      = 'N_{jet}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nJetGood/I" ),
+    binning   = [ 6, 2, 8 ],
+))
+
+multiplicityGood.append( Plot(
+    name      = 'nJetGood_semi3',
+    texX      = 'N_{jet}',
+    texY      = 'Number of Events',
+    attribute = TreeVariable.fromString( "nJetGood/I" ),
+    binning   = [ 5, 3, 8 ],
+))
+
+multiplicityGood.append( Plot(
     name      = 'nBJetGood',
     texX      = 'N_{bJet}',
     texY      = 'Number of Events',
