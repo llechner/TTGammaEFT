@@ -39,7 +39,7 @@ argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO', nargs='?', choices=loggerChoices,                  help="Log level for logging")
 argParser.add_argument('--plot_directory',     action='store',      default='102X_TTG_ppv1_v1')
 argParser.add_argument('--plotFile',           action='store',      default='all_noPhoton')
-argParser.add_argument('--selection',          action='store',      default='dilepOS-nLepVeto2-pTG20-nPhoton1p-offZSFllg-offZSFll-mll40')
+argParser.add_argument('--selection',          action='store',      default='nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p')
 argParser.add_argument('--small',              action='store_true',                                                                    help='Run only on a small subset of the data?', )
 argParser.add_argument('--noData',             action='store_true', default=False,                                                     help='also plot data?')
 argParser.add_argument('--signal',             action='store',      default=None,   nargs='?', choices=[None],                         help="Add signal to plot")
@@ -63,11 +63,16 @@ logger    = logger.get_logger(   args.logLevel, logFile = None)
 logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 
 ptSels = ["lowPT", "medPT", "highPT"]
+ptLabels = {"lowPT":"20ptG120", "medPT":"120ptG220", "highPT":"220ptGinf"}
 
 categoryPlot = args.categoryPhoton != "None"
 
 cache_dir = os.path.join(cache_directory, "qcdHistos")
 dirDB     = DirDB(cache_dir)
+
+# Selection Manipulation
+if args.year == 2017:
+    args.selection += "-BadEEJetVeto"
 
 addMisIDSF = args.invLeptonIso # always true for QCD plots
 addDYSF = args.invLeptonIso #always true for QCD plots
@@ -141,13 +146,6 @@ def drawPlots( plots, mode, dataMCScale ):
 
     logger.info( "Plotting mode: %s"%mode )
 
-    # get the right labeling on the plots
-    if not args.invLeptonIso:      dMCScale = dataMCScale
-    elif "20ptG120" in plot.name:  dMCScale = dataMCScale["lowPT"]
-    elif "120ptG220" in plot.name: dMCScale = dataMCScale["medPT"]
-    elif "220ptGinf" in plot.name: dMCScale = dataMCScale["highPT"]
-    else:                          dMCScale = dataMCScale["incl"]
-
     for log in [False, True]:
         if categoryPlot:
             sc = "cat_"
@@ -163,6 +161,12 @@ def drawPlots( plots, mode, dataMCScale ):
         plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, selDir, mode, sc )
 
         for plot in plots:
+            # get the right labeling on the plots
+            if   "20ptG120"  in plot.name: dMCScale = dataMCScale["20ptG120"]
+            elif "120ptG220" in plot.name: dMCScale = dataMCScale["120ptG220"]
+            elif "220ptGinf" in plot.name: dMCScale = dataMCScale["220ptGinf"]
+            else:                          dMCScale = dataMCScale["incl"]
+
             if not max(l[0].GetMaximum() for l in plot.histos):
                 logger.info( "Empty plot!" )
                 continue # Empty plot
@@ -173,7 +177,7 @@ def drawPlots( plots, mode, dataMCScale ):
                     h.style      = styles.fillStyle( color.QCD )
                     h.legendText = "QCD (data)"
 
-            postFix = "" #" (legacy)"
+            postFix = " (%s)"%args.mode.replace("mu","#mu").replace("all","e+#mu") #" (legacy)"
             if not args.noData: 
                 plot.histos[1][0].style = styles.errorStyle( ROOT.kBlack )
                 if mode == "all":
@@ -186,11 +190,11 @@ def drawPlots( plots, mode, dataMCScale ):
                 plotting.draw( plot,
 	                           plot_directory = plot_directory_,
                                extensions = extensions_,
-	                           ratio = {'yRange':(0.1,1.9)} if not args.noData else None,
+	                           ratio = {'yRange':(0.1,1.9)} if not args.noData and not "_category" in plot.name else None,
 	                           logX = False, logY = log, sorting = not categoryPlot and not args.leptonCategory,
 	                           yRange = (0.03, "auto") if log else (0.001, "auto"),
     	                       scaling = scaling if args.normalize else {},
-	                           legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2 if args.detailedMC or args.leptonCategory or categoryPlot else 3],
+	                           legend = [ (0.15,0.9-0.03*sum(map(len, plot.histos)),0.9,0.9), 2 if args.leptonCategory or categoryPlot else 3],
 	                           drawObjects = drawObjects( not args.noData, dMCScale , lumi_scale ) if not args.normalize else drawObjects( not args.noData, 1.0 , lumi_scale ),
                                copyIndexPHP = True,
                              )
@@ -581,9 +585,9 @@ if args.year == 2016:
         TTG      = TTG_priv_16
     else:
         if args.detailedMC:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_16, ZG_16, other_16 ]
+            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
         else:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, VG_16, rest_16]
+            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, VG_16, WJets_16, rest_16]
         if not args.invLeptonIso: mc += [ QCD_16 ]
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
@@ -596,9 +600,9 @@ elif args.year == 2017:
         TTG      = TTG_priv_17
     else:
         if args.detailedMC:
-            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, singleTop_17, WJets_17, TG_17, WG_17, ZG_17, other_17 ]
+            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, ZG_17, rest_17 ]
         else:
-            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, VG_17, rest_17 ]
+            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, VG_17, WJets_17, rest_17 ]
         if not args.invLeptonIso: mc += [ QCD_17 ]
 elif args.year == 2018:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
@@ -611,9 +615,9 @@ elif args.year == 2018:
         TTG      = TTG_priv_18
     else:
         if args.detailedMC:
-            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, singleTop_18, WJets_18, TG_18, WG_18, ZG_18, other_18 ]
+            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, ZG_18, rest_18 ]
         else:
-            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, VG_18, rest_18 ]
+            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, VG_18, WJets_18, rest_18 ]
         if not args.invLeptonIso: mc += [ QCD_18 ]
 
 if categoryPlot:
@@ -731,18 +735,19 @@ if args.small:
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year, singleLepton=True )
+tr = TriggerSelector( args.year, singleLepton="nLepTight1" in args.selection )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
 # what to do with the leptonVeto in invIso case?
 if args.invLeptonIso:
-    selection  = "-".join( [ item.replace("nLepTight1", "nInvLepTight1").replace("nLepVeto1","nNoIsoLepTight1") if not "nBTag" in item else "nBTag0" for item in args.selection.split("-") ] )
+    selection  = "-".join( [ item.replace("nLepTight1", "nInvLepTight1").replace("nLepVeto1","nNoIsoLepTight1").replace("offZeg","offZegInv").replace("onZeg","onZegInv") if not "nBTag" in item else "nBTag0" for item in args.selection.split("-") ] )
 #    selection  = "-".join( [ item.replace("nLepTight1", "nInvLepTight1") if not "nBTag" in item else "nBTag0" for item in args.selection.replace("nLepVeto1-","nNoIsoLepTight1-").split("-") ] )
 else:
     selection = args.selection
 #selection = "-".join( [ item.replace("nLepTight1", "nInvLepTight1") for item in args.selection.replace("nLepVeto1-","").split("-") ] ) if args.invLeptonIso else args.selection
 preSelection = "&&".join( [ cutInterpreter.cutString( selection ) ] )#, "weight<15" ] )
+
 Plot.setDefaults(   stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection, addOverFlowBin=None if args.invLeptonIso else "upper" )
 Plot2D.setDefaults( stack=stack, weight=staticmethod( weight_ ), selectionString=preSelection )
 
@@ -1138,7 +1143,11 @@ invPlotNames = {
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
 
-    yields[mode] = {}
+    yields = {}
+    dataMCScale = {}
+    for m in ["incl", "20ptG120", "120ptG220", "220ptGinf"]:
+        yields[m] = {}
+        yields[m][mode] = {}
 
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
@@ -1161,7 +1170,8 @@ for index, mode in enumerate( allModes ):
     invIsoleptonSelection = isoleptonSelection.replace("Tight","TightInvIso")
     leptonSelection       = invIsoleptonSelection if args.invLeptonIso and not categoryPlot and not args.leptonCategory else isoleptonSelection
 
-    if not args.noData:    data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
+    if not args.noData:
+        data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
     if categoryPlot:
         all_cat0.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel0 )
         all_cat1.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] + cat_sel1 )
@@ -1202,12 +1212,12 @@ for index, mode in enumerate( allModes ):
 
         if not "nPhoton0" in args.selection and transFacQCD["incl"].val > 0:
             for pt in ptSels:
-                yield_QCD_CR  = qcd.getYieldFromDraw(   selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
-                yield_QCD_CR += gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
-                yield_QCD_SR  = qcd.getYieldFromDraw(   selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
-                yield_QCD_SR += gjets.getYieldFromDraw( selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                yield_QCD_CR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+                yield_QCD_CR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+                yield_QCD_SR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+                yield_QCD_SR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
 
-                transFacQCD[pt] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
+                transFacQCD[ptLabels[pt]] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 #    for plot in plots:
@@ -1267,22 +1277,6 @@ for index, mode in enumerate( allModes ):
         if "yield" in plot.name:
             for i, l in enumerate( plot.histos ):
                 for j, h in enumerate( l ):
-                    if mode == "mu" or mode == "mumutight":
-                        yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5 ) )
-                    elif mode == "e" or mode == "muetight":
-                        yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 1.5 ) )
-                    elif mode == "eetight":
-                        yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 2.5 ) )
-                    elif mode == "SFtight":
-                        yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
-                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
-                    elif mode == "all" and args.selection.count("nLepTight2"):
-                        yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
-                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
-                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
-                    elif mode == "all" and not args.selection.count("nLepTight2"):
-                        yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
-                        yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
                     if not args.selection.count("nLepTight2"):
                         h.GetXaxis().SetBinLabel( 1, "#mu" )
                         h.GetXaxis().SetBinLabel( 2, "e" )
@@ -1290,6 +1284,24 @@ for index, mode in enumerate( allModes ):
                         h.GetXaxis().SetBinLabel( 1, "#mu#mu" )
                         h.GetXaxis().SetBinLabel( 2, "#mue" )
                         h.GetXaxis().SetBinLabel( 3, "ee" )
+                    yields["incl" if plot.name == "yield" else plot.name.split("_")[1]][mode][plot.stack[i][j].name] = h.Integral()
+#                    if plot.name == "yield":
+#                        if mode == "mu" or mode == "mumutight":
+#                            yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 0.5 ) )
+#                        elif mode == "e" or mode == "muetight":
+#                            yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 1.5 ) )
+#                        elif mode == "eetight":
+#                            yields[mode][plot.stack[i][j].name] = h.GetBinContent( h.FindBin( 2.5 ) )
+#                        elif mode == "SFtight":
+#                            yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+#                            yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+#                        elif mode == "all" and args.selection.count("nLepTight2"):
+#                            yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+#                            yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
+#                            yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 2.5 ) )
+#                        elif mode == "all" and not args.selection.count("nLepTight2"):
+#                            yields[mode][plot.stack[i][j].name]  = h.GetBinContent( h.FindBin( 0.5 ) )
+#                            yields[mode][plot.stack[i][j].name] += h.GetBinContent( h.FindBin( 1.5 ) )
         elif "category" in plot.name:
             for i, l in enumerate( plot.histos ):
                 for j, h in enumerate( l ):
@@ -1298,10 +1310,10 @@ for index, mode in enumerate( allModes ):
                      h.GetXaxis().SetBinLabel( 3, "misID e" )
                      h.GetXaxis().SetBinLabel( 4, "had. fake" )
 
-    if args.noData: yields[mode]["data"] = 0
-
-    yields[mode]["MC"] = sum( yields[mode][s.name] for s in mc )
-    dataMCScale        = yields[mode]["data"] / yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
+    for m in ["incl", "20ptG120", "120ptG220", "220ptGinf"]:
+        if args.noData: yields[m][mode]["data"] = 0
+        yields[m][mode]["MC"] = sum( yields[m][mode][s.name] for s in mc )
+        dataMCScale[m]        = yields[m][mode]["data"] / yields[m][mode]["MC"] if yields[m][mode]["MC"] != 0 else float('nan')
 
     logger.info( "Plotting mode %s", mode )
     allPlots[mode] = copy.deepcopy(plots) # deep copy for creating SF/all plots afterwards!
@@ -1313,11 +1325,11 @@ if args.mode != "None" or args.nJobs != 1:
 # Add the different channels into all
 yields["all"] = {}
 
-for y in yields["mu"]:
-    try:    yields["all"][y] = sum( yields[c][y] for c in ['mu','e'] )
-    except: yields["all"][y] = 0
-
-dataMCScale = yields["all"]["data"] / yields["all"]["MC"] if yields["all"]["MC"] != 0 else float('nan')
+for m in ["incl", "20ptG120", "120ptG220", "220ptGinf"]:
+    for y in yields["mu"]:
+        try:    yields[m]["all"][y] = sum( yields[m][c][y] for c in ['mu','e'] )
+        except: yields[m]["all"][y] = 0
+    dataMCScale[m] = yields[m]["all"]["data"] / yields[m]["all"]["MC"] if yields[m]["all"]["MC"] != 0 else float('nan')
 
 allPlots['mu'] = filter( lambda plot: "_ratio" not in plot.name, allPlots['mu'] )
 for plot in allPlots['mu']:

@@ -587,7 +587,7 @@ else:
 
 filterCutData = getFilterCut( args.year, isData=True )
 filterCutMc   = getFilterCut( args.year, isData=False )
-tr            = TriggerSelector( args.year )
+tr            = TriggerSelector( args.year, singleLepton="nLepTight1" in args.selection )
 triggerCutMc  = tr.getSelection( "MC" )
 
 if args.sideband == "sieie":

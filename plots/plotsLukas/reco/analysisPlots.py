@@ -453,7 +453,7 @@ else:
 
 filterCutData = getFilterCut( args.year, isData=True )
 filterCutMc   = getFilterCut( args.year, isData=False )
-tr            = TriggerSelector( args.year )
+tr            = TriggerSelector( args.year, singleLepton="nLepTight1" in args.selection )
 triggerCutMc  = tr.getSelection( "MC" )
 
 cat_sel0 = [ "%s_photonCat==0"%args.categoryPhoton ]

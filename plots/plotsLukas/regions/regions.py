@@ -178,7 +178,7 @@ w         = WeightInfo( signalSample.reweight_pkl )
 w.set_order( int(args.order) )
 variables = w.variables
 
-tr = TriggerSelector( args.year )
+tr = TriggerSelector( args.year, singleLepton="nLepTight1" in args.selection )
 
 signals = []
 # Sample definition
