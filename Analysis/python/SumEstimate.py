@@ -11,7 +11,7 @@ class SumEstimate(SystematicEstimator):
     def __init__(self, name, cacheDir=None):
         super(SumEstimate, self).__init__(name, cacheDir=cacheDir)
 
-    def _estimate(self, region, channel, setup):
+    def _estimate(self, region, channel, setup, overwrite=False):
         if channel=='all':
             # 'all' is the total of all contributions
             return sum([self.cachedEstimate(region, c, setup) for c in lepChannels])

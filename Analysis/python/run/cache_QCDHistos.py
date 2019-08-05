@@ -312,12 +312,14 @@ else:
 
 
 #sampleWeight = lambda event, sample: (1.5 if "ZG" in sample.name and args.year != 2016 else 1.)*(2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 else 1.)*(1.17 if "DY" in sample.name else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
-sampleWeight = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 else 1.)*(1.17 if "DY" in sample.name else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+sampleWeight = lambda event, sample: (event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)+(1.25*(event.nPhotonGood>0)*(event.PhotonGood0_photonCat==2)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
 for sample in mc:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
+    if "DY" in sample.name:
+        sample.scale          *= 1.17
     sample.weight         = sampleWeight
 
 if args.small and not args.checkOnly:
@@ -438,7 +440,7 @@ for index, mode in enumerate( allModes ):
 
     # Define selections
     isoleptonSelection = cutInterpreter.cutString( mode )
-    leptonSelection    = isoleptonSelection.replace("Tight","TightInvIso")
+    leptonSelection    = cutInterpreter.cutString( mode + "Inv" )
 
     data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
     for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
@@ -446,7 +448,7 @@ for index, mode in enumerate( allModes ):
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 
     # Transfer factor
-    preSelectionCR = "&&".join( [ preSelection, filterCutMc, leptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
+    preSelectionCR = "&&".join( [ preSelection,                               filterCutMc, leptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
     preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
 
     yield_QCD_CR  = qcd.getYieldFromDraw(   selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
@@ -488,6 +490,7 @@ for index, mode in enumerate( allModes ):
 
     for plot in plots:
         qcdHist = copy.deepcopy(plot.histos[1][0])
+        dataHist = copy.deepcopy(plot.histos[1][0])
         for h in plot.histos[0]:
             qcdHist.Add( h, -1 )
 
@@ -499,12 +502,20 @@ for index, mode in enumerate( allModes ):
 
         if "20ptG120" in plot.name:
             fac = "lowPT"
+#            if "yield" in plot.name:
+#                print fac, "data", dataHist.Integral(), "mc", sum([ h.Integral() for h in plot.histos[0]]), "data-mc", qcdHist.Integral(), "trans", transFacQCD[fac]
         elif "120ptG220" in plot.name:
             fac = "medPT"
+#            if "yield" in plot.name:
+#                print fac, "data", dataHist.Integral(), "mc", sum([ h.Integral() for h in plot.histos[0]]), "data-mc", qcdHist.Integral(), "trans", transFacQCD[fac]
         elif "220ptGinf" in plot.name:
             fac = "highPT"
+#            if "yield" in plot.name:
+#                print fac, "data", dataHist.Integral(), "mc", sum([ h.Integral() for h in plot.histos[0]]), "data-mc", qcdHist.Integral(), "trans", transFacQCD[fac]
         else:
             fac = "incl"
+#            if "yield" in plot.name:
+#                print fac, "data", dataHist.Integral(), "mc", sum([ h.Integral() for h in plot.histos[0]]), "data-mc", qcdHist.Integral(), "trans", transFacQCD[fac]
 
         qcdHist.Scale( transFacQCD[fac] )
         if catSel:

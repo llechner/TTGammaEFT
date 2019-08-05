@@ -18,7 +18,7 @@ from TTGammaEFT.Analysis.SetupHelpers import *
 from Analysis.Tools.metFilters        import getFilterCut
 
 class Setup:
-    def __init__(self, year=2016, photonSelection=False):
+    def __init__(self, year=2016, photonSelection=False, checkOnly=False):
         self.analysis_results = analysis_results
         self.zMassRange       = zMassRange
         self.prefixes         = []
@@ -40,7 +40,7 @@ class Setup:
         self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
 
         os.environ["gammaSkim"] = str(photonSelection)
-        if year == 2016:
+        if year == 2016 and not checkOnly:
             #define samples
             from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed  import TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, QCD_16, GJets_16, rest_16
             from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import Run2016
@@ -55,7 +55,7 @@ class Setup:
             gjets       = GJets_16
             data        = Run2016
 
-        elif year == 2017:
+        elif year == 2017 and not checkOnly:
             #define samples
             #os.environ["gammaSkim"]="False" #always false for QCD estimate
             from TTGammaEFT.Samples.nanoTuples_Fall17_private_semilep_postProcessed    import TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, ZG_17, QCD_17, GJets_17, rest_17
@@ -71,7 +71,7 @@ class Setup:
             gjets       = GJets_17
             data        = Run2017
 
-        elif year == 2018:
+        elif year == 2018 and not checkOnly:
             #define samples
             #os.environ["gammaSkim"]="False" #always false for QCD estimate
             from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed  import TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, ZG_18, QCD_18, GJets_18, rest_18
@@ -87,12 +87,20 @@ class Setup:
             gjets       = GJets_18
             data        = Run2018
 
-        mc           = [ ttg, tt, DY, zg, wjets, wg, other, qcd, gjets ]
-        self.samples = { sample.name:sample for sample in mc }
-        self.samples["Data"] = data
 
-        self.lumi     = data.lumi
-        self.dataLumi = data.lumi # get from data samples later
+        if checkOnly:
+            self.samples = { sample:None for sample in default_sampleList }
+            self.samples["Data"] = None
+
+            self.lumi     = -1
+            self.dataLumi = -1
+        else:
+            mc           = [ ttg, tt, DY, zg, wjets, wg, other, qcd, gjets ]
+            self.samples = { sample.name:sample for sample in mc }
+            self.samples["Data"] = data
+
+            self.lumi     = data.lumi
+            self.dataLumi = data.lumi # get from data samples later
         
 #        dataPUHistForSignalPath = "$CMSSW_BASE/src/TTGammaEFT/Tools/data/puFastSimUncertainty/dataPU.root"
 #        self.dataPUHistForSignal = getObjFromFile(os.path.expandvars(dataPUHistForSignalPath), "data")
@@ -160,6 +168,7 @@ class Setup:
                         dileptonic=False, invertLepIso=False, addMisIDSF=False,
                         nJet=None, nBTag=None, nPhoton=None,
                         zWindow="all",
+                        photonCat="all",
                         channel="all"):
         """Define full selection
            dataMC: "Data" or "MC"
@@ -187,9 +196,9 @@ class Setup:
             vetoLepton = "nNoIsoLepTight1"
 
         if dileptonic:
-            if   channel == "e":   channel = "eetight"
-            elif channel == "mu":  channel = "mumutight"
-            elif channel == "all": channel = "SFtight"
+#            if   channel == "e":   channel = "eetight"
+#            elif channel == "mu":  channel = "mumutight"
+#            elif channel == "all": channel = "SFtight"
             tightLepton = "nLepTight2-OStight"
             vetoLepton = "nLepVeto2"
 
@@ -229,10 +238,14 @@ class Setup:
 
         if nBTag and not (nBTag[0]==0 and nBTag[1]<0):
             assert nBTag[0]>=0 and (nBTag[1]>=nBTag[0] or nBTag[1]<0), "Not a good nBTag selection: %r"% nBTag
-            nbtstr = "nBTag"+sysStr+">="+str(nBTag[0])
+
+            # change that after next pp
+            if sysStr: nbtstr = "nBTag"+sysStr+">="+str(nBTag[0])
+            else:      nbtstr = "nBTagGood"+sysStr+">="+str(nBTag[0])
+
             prefix = "nBTag"+str(nBTag[0])
             if nBTag[1]>=0:
-                nbtstr+= "&&nBTag"+sysStr+"<="+str(nBTag[1])
+                nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])
                 if nBTag[1]!=nBTag[0]: prefix+=str(nBTag[1])
             else:
                 prefix+="p"
@@ -257,6 +270,11 @@ class Setup:
         res["cuts"].append( preselZWindow )
         res["prefixes"].append( zWindow )
 
+        #photon category
+        photoncatCut = cutInterpreter.cutString( photonCat )
+        res["cuts"].append( photoncatCut )
+        res["prefixes"].append( photonCat )
+
         #badEEVeto
         if self.year == 2017:
 #            res["prefixes"].append("BadEEJetVeto")
@@ -267,7 +285,7 @@ class Setup:
             res["cuts"].append( "overlapRemoval==1" )
 #            res["prefixes"].append( "overlapRemoval" )
 
-            tr            = TriggerSelector( self.year )
+            tr            = TriggerSelector( self.year, singleLepton=args.selection.count("nLepTight1") )
             triggerCutMc  = tr.getSelection( "MC" )
 
             res["cuts"].append( triggerCutMc )
@@ -284,11 +302,11 @@ class Setup:
 
 if __name__ == "__main__":
     setup = Setup( year=2016 )
-    for reg in allSRCR:
+    for reg in allCR:
         print
         print reg["name"]
         print
-        if "DY" in reg["name"]: channels = dilepChannels
+        if reg["name"].startswith("DY"): channels = dilepChannels
         else:                   channels = lepChannels
         for channel in channels:
             print

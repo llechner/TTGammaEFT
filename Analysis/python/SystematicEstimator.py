@@ -46,9 +46,9 @@ class SystematicEstimator:
             self.helperCache=None
 
     # For the datadriven subclasses which often need the same getYieldFromDraw we write those yields to a cache
-    def yieldFromCache(self, setup, sample, c, selectionString, weightString):
+    def yieldFromCache(self, setup, sample, c, selectionString, weightString, overwrite=False):
         s = (sample, c, selectionString, weightString)
-        if self.helperCache and self.helperCache.contains(s):
+        if self.helperCache and self.helperCache.contains(s) and not overwrite:
             return self.helperCache.get(s)
         else:
             yieldFromDraw = u_float(**setup.samples[sample].getYieldFromDraw(selectionString, weightString))
@@ -67,22 +67,24 @@ class SystematicEstimator:
           else:                   return i
         except:                   return i
 
-    def cachedEstimate(self, region, channel, setup, save=True, overwrite=False):
+    def cachedEstimate(self, region, channel, setup, save=True, overwrite=False, checkOnly=False):
         key =  self.uniqueKey(region, channel, setup)
         if (self.cache and self.cache.contains(key)) and not overwrite and channel != "all" and channel != "SFtight":
             res = self.cache.get(key)
             logger.debug( "Loading cached %s result for %r : %r"%(self.name, key, res) )
-        elif self.cache:
+        elif self.cache and not checkOnly:
             logger.debug( "Calculating %s result for %r"%(self.name, key) )
-            res = self._estimate( region, channel, setup)
+            res = self._estimate( region, channel, setup, overwrite=overwrite)
             _res = self.cache.add( key, res, overwrite=True)
             logger.debug( "Adding cached %s result for %r : %r" %(self.name, key, res) )
+        elif not checkOnly:
+            res = self._estimate( region, channel, setup, overwrite=overwrite)
         else:
-            res = self._estimate( region, channel, setup)
-        return res if res > 0 else u_float(0,0)
+            res = u_float(-1,0)
+        return res if res > 0 or checkOnly else u_float(0,0)
 
     @abc.abstractmethod
-    def _estimate(self, region, channel, setup):
+    def _estimate(self, region, channel, setup, overwrite=False):
         """Estimate yield in "region" using setup"""
         return
 

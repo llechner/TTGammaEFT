@@ -13,7 +13,7 @@ from TTGammaEFT.Tools.user            import cache_directory
 
 class DataObservation():
 
-    def __init__(self, name, cacheDir=None):
+    def __init__(self, name, sample, cacheDir=None):
         self.name = name
         self.sample = sample
         self.initCache(cacheDir)
@@ -37,7 +37,7 @@ class DataObservation():
         else:                          return str(region), channel, json.dumps(setup.sys, sort_keys=True), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True)
 
     # alias for cachedObservation to make it easier to call the same function as for the mc"s
-    def cachedEstimate(self, region, channel, setup, save=True, overwrite=False):
+    def cachedEstimate(self, region, channel, setup, save=True, overwrite=False, checkOnly=False):
         return self.cachedObservation(region, channel, setup, overwrite=overwrite)
 
     def cachedObservation(self, region, channel, setup, save=True, overwrite=False):

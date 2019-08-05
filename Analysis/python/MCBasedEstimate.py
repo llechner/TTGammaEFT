@@ -13,7 +13,7 @@ class MCBasedEstimate(SystematicEstimator):
         super(MCBasedEstimate, self).__init__(name, cacheDir=cacheDir)
         self.sample=sample
         
-    def _estimate(self, region, channel, setup):
+    def _estimate(self, region, channel, setup, overwrite=False):
 
         ''' Concrete implementation of abstract method 'estimate' as defined in Systematic
         '''

@@ -111,13 +111,13 @@ elif not args.noQCD:
 
     elif "high" in args.ptBin:
         if args.sieie == "highSieie" and args.chgIso == "lowChgIso":
-            plotname = "yield_invSieie_120ptG220"
+            plotname = "yield_invSieie_220ptGinf"
         elif args.sieie == "lowSieie" and args.chgIso == "highChgIso":
-            plotname = "yield_invChgIso_120ptG220"
+            plotname = "yield_invChgIso_220ptGinf"
         elif args.sieie == "highSieie" and args.chgIso == "highChgIso":
-            plotname = "yield_invSieie_invChgIso_120ptG220"
+            plotname = "yield_invSieie_invChgIso_220ptGinf"
         else:
-            plotname = "yield_120ptG220"
+            plotname = "yield_220ptGinf"
 
     else:
         if args.sieie == "highSieie" and args.chgIso == "lowChgIso":
@@ -194,7 +194,7 @@ elif args.year == 2018:
 
 filterCutData = getFilterCut( args.year, isData=True )
 filterCutMc   = getFilterCut( args.year, isData=False )
-tr = TriggerSelector( args.year, singleLepton=True )
+tr = TriggerSelector( args.year, singleLepton=args.selection.count("nLepTight1") )
 triggerCutMc  = tr.getSelection( "MC" )
 
 
