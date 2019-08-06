@@ -5,7 +5,7 @@ import time
 from TTGammaEFT.Analysis.SetupHelpers import *
 from TTGammaEFT.Analysis.regions      import regionsTTG, inclRegionsTTG, noPhotonRegionTTG
 
-allRegions = regionsTTG
+allPhotonRegions = regionsTTG
 year = "2016"
 
 # Here, all the estimators are defined
@@ -24,8 +24,8 @@ estimators += ["Data"]
 #                "QCD-DD"
 #]
 
-submitCMD = "submitBatch.py --dpm "
-#submitCMD = "echo "
+#submitCMD = "submitBatch.py --dpm "
+submitCMD = "echo "
 #submitCMD = ""
 
 option  = ""
@@ -35,23 +35,21 @@ option += " --overwrite"
 #option += " --checkOnly"
 #option += " --createExecFile"
 
-#regions = [{"name":None, "parameters":None}]
-#regions  = allSR
-#regions  = allCR
-#regions  = allCR + allSR
-regions  = [ misDY3, misDY4p ]
+#regions  = signalRegions.keys()
+#regions  = controlRegions.keys()
+regions  = allRegions.keys()
 
 if "--dryrun" in option or "--createExecFile" in option: submitCMD = ""
 
 for control in regions:
-    controlString = " --controlRegion %s"%control["name"] if control["name"] else ""
+    controlString = " --controlRegion %s"%control if control else ""
     for i, estimator in enumerate(estimators):
         title = " --title est%s_%s"%(year[2:], estimator) if submitCMD.count("submit") else ""
-#        if "DD" in estimator and control["name"]: continue # safe time for qcd estimate
-#        if not "DD" in estimator and control["name"]: continue # qcd estimate only
+#        if "DD" in estimator and control: continue # safe time for qcd estimate
+#        if not "DD" in estimator and control: continue # qcd estimate only
 
-        allRegions = noPhotonRegionTTG if "nPhoton" in control["parameters"] and control["parameters"]["nPhoton"][1] == 0 else inclRegionsTTG + regionsTTG
-        for j, region in enumerate(allRegions):
+        allPhotonRegions = noPhotonRegionTTG if "nPhoton" in allRegions[control]["parameters"] and allRegions[control]["parameters"]["nPhoton"][1] == 0 else inclRegionsTTG + regionsTTG
+        for j, region in enumerate(allPhotonRegions):
             if submitCMD.count("submit") or submitCMD.count("echo"):
                 os.system( submitCMD + title + ' "python run_estimate.py --cores 1 --selectRegion %i --selectEstimator '%j + estimator + controlString + option + '"' )
             else:

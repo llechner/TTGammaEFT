@@ -4,13 +4,13 @@ import sys
 
 from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, inclRegionsTTG
 from TTGammaEFT.Analysis.Setup           import Setup
-from TTGammaEFT.Analysis.estimators      import *
+from TTGammaEFT.Analysis.EstimatorList   import EstimatorList
 from TTGammaEFT.Analysis.MCBasedEstimate import MCBasedEstimate
 from TTGammaEFT.Analysis.DataObservation import DataObservation
-from TTGammaEFT.Analysis.SetupHelpers    import dilepChannels, lepChannels, default_sampleList, allSRCR
+from TTGammaEFT.Analysis.SetupHelpers    import dilepChannels, lepChannels, default_sampleList, allRegions
 
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
-CRChoices     = [r["name"] for r in allSRCR]
+CRChoices     = allRegions.keys()
 # Arguments
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
@@ -36,12 +36,12 @@ else:
 
 CR_para = {}
 if args.controlRegion:
-    CR_para = filter( lambda d: d["name"]==args.controlRegion, allSRCR )[0]["parameters"]
+    CR_para = allRegions[args.controlRegion]["parameters"]
 
 photonSelection = not ("nPhoton" in CR_para and CR_para["nPhoton"][1] == 0)
 
 setup          = Setup(year=args.year, photonSelection=photonSelection)
-estimators     = estimatorList(setup)
+estimators     = EstimatorList(setup)
 allEstimators  = estimators.constructEstimatorList( default_sampleList )
 
 # Select estimate
@@ -80,6 +80,7 @@ else:
     channels = lepChannels
     combChannel = 'all'
 
+if args.checkOnly: channels += [combChannel]
 jobs=[]
 for channel in channels:
     for (i, r) in enumerate(allRegions):

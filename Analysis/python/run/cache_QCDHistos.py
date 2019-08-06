@@ -379,8 +379,8 @@ else:
     if args.nJobs != 1:
         allModes = splitList( allModes, args.nJobs)[args.job]
 
-filterCutData = getFilterCut( args.year, isData=True )
-filterCutMc   = getFilterCut( args.year, isData=False )
+filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
+filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
 tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 

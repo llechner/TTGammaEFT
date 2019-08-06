@@ -2,10 +2,11 @@ import os
 
 from TTGammaEFT.Tools.user import results_directory, cache_directory
 
+signalRegions = {}
 # Signal Regions Settings
-SR3    = { "name":"SR3",  "parameters":{"zWindow":"all", "nJet":(3,3),  "nBTag":(1,-1), "nPhoton":(1,-1)} }
-SR4p   = { "name":"SR4p", "parameters":{"zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1)} }
-default_SR = SR4p
+signalRegions["SR3"]  = { "parameters":{"zWindow":"all", "nJet":(3,3),  "nBTag":(1,-1), "nPhoton":(1,-1)} }
+signalRegions["SR4p"] = { "parameters":{"zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1)} }
+default_SR = signalRegions["SR4p"]
 
 #Define defaults here
 default_nJet         = default_SR["parameters"]["nJet"]
@@ -40,41 +41,40 @@ jmeVariations = ["jer", "jerUp", "jerDown", "jesTotalUp", "jesTotalDown"]
 
 # Control Regions Settings
 
+controlRegions = {}
 # dileptonic ee/mumu all m(l,l) nBTag0 nPhoton0 CR for DY ScaleFactor
-DY3     = { "name":"DY3",  "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(0,0)} }
-DY4p    = { "name":"DY4p", "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["DY2"]  = { "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(2,2),  "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["DY3"]  = { "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["DY4"]  = { "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(4,4),  "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["DY5"]  = { "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(5,5),  "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["DY4p"] = { "parameters":{"dileptonic":True, "zWindow":"onZSFllTight", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(0,0)} }
 
 # nPhoton0 nBTag1p CR for TTbar
-TT3     = { "name":"TT3",  "parameters":{"zWindow":"all", "nJet":(3,3),  "nBTag":(1,-1), "nPhoton":(0,0)} }
-TT4p    = { "name":"TT4p", "parameters":{"zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(0,0)} }
+controlRegions["TT3"]  = { "parameters":{"zWindow":"all", "nJet":(3,3),  "nBTag":(1,-1), "nPhoton":(0,0)} }
+controlRegions["TT4p"] = { "parameters":{"zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(0,0)} }
 
 # nPhoton0 nBTag0 CR for W+Jets
-WJets3  = { "name":"WJets3",  "parameters":{"zWindow":"all", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(0,0)} }
-WJets4p = { "name":"WJets4p", "parameters":{"zWindow":"all", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["WJets3"]  = { "parameters":{"zWindow":"all", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(0,0)} }
+controlRegions["WJets4p"] = { "parameters":{"zWindow":"all", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(0,0)} }
 
 # nPhoton1p nBTag0 offZeg m(e,gamma) CR for V+Gamma
-VG3     = { "name":"VG3",  "parameters":{"zWindow":"offZeg", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(1,-1)} }
-VG4p    = { "name":"VG4p", "parameters":{"zWindow":"offZeg", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["VG3"]  = { "parameters":{"zWindow":"offZeg", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["VG4p"] = { "parameters":{"zWindow":"offZeg", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(1,-1)} }
 
 # nPhoton1p nBTag0 onZeg m(e,gamma) CR for misID ScaleFactor DY
-misDY3  = { "name":"misDY3",  "parameters":{"zWindow":"onZeg", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(1,-1)} }
-misDY4p = { "name":"misDY4p", "parameters":{"zWindow":"onZeg", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["misDY2"]  = { "parameters":{"zWindow":"onZeg", "nJet":(2,2),  "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["misDY3"]  = { "parameters":{"zWindow":"onZeg", "nJet":(3,3),  "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["misDY4"]  = { "parameters":{"zWindow":"onZeg", "nJet":(4,4),  "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["misDY5"]  = { "parameters":{"zWindow":"onZeg", "nJet":(5,5),  "nBTag":(0,0), "nPhoton":(1,-1)} }
+controlRegions["misDY4p"] = { "parameters":{"zWindow":"onZeg", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(1,-1)} }
 
 # nPhoton1p nBTag2 nJet2 offZeg m(e,gamma) CR for misID ScaleFactor TTbar
-misTT2  = { "name":"misTT2", "parameters":{"zWindow":"offZeg", "nJet":(2,2),  "nBTag":(2,2), "nPhoton":(1,-1)} }
+controlRegions["misTT2"] = { "parameters":{"zWindow":"offZeg", "nJet":(2,2),  "nBTag":(2,2), "nPhoton":(1,-1)} }
 
 # updates for QCD estimation (else same settings)
 QCD_updates = {"invertLepIso":True, "nBTag":(0,0), "addMisIDSF":True}
 
 
-allCR  = []
-allCR += [ DY3,    DY4p    ]
-allCR += [ VG3,    VG4p    ]
-allCR += [ misDY3, misDY4p ]
-allCR += [ misTT2 ]
-allCR += [ TT3,    TT4p    ]
-allCR += [ WJets3, WJets4p ]
+allRegions = controlRegions
+allRegions.update(signalRegions)
 
-allSR = [ SR3, SR4p ]
-
-allSRCR = allSR + allCR

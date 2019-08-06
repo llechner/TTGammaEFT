@@ -192,8 +192,8 @@ elif args.year == 2018:
 
 
 
-filterCutData = getFilterCut( args.year, isData=True )
-filterCutMc   = getFilterCut( args.year, isData=False )
+filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
+filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
 tr = TriggerSelector( args.year, singleLepton=args.selection.count("nLepTight1") )
 triggerCutMc  = tr.getSelection( "MC" )
 

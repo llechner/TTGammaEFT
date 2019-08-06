@@ -109,7 +109,7 @@ class Setup:
         return "_".join(self.prefixes+[self.preselection("MC")["prefix"]])
 
     def defaultCacheDir(self):
-        cacheDir = cache_dir
+        cacheDir = os.path.join(cache_dir, self.year, "estimates")
         logger.info("Default cache dir is: %s", cacheDir)
         return cacheDir
 
@@ -245,7 +245,8 @@ class Setup:
 
             prefix = "nBTag"+str(nBTag[0])
             if nBTag[1]>=0:
-                nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])
+                if sysStr:             nbtstr+= "&&nBTag"+sysStr+"<="+str(nBTag[1])  # change that after next pp
+                else:                  nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])  # change that after next pp
                 if nBTag[1]!=nBTag[0]: prefix+=str(nBTag[1])
             else:
                 prefix+="p"
@@ -285,14 +286,14 @@ class Setup:
             res["cuts"].append( "overlapRemoval==1" )
 #            res["prefixes"].append( "overlapRemoval" )
 
-            tr            = TriggerSelector( self.year, singleLepton=args.selection.count("nLepTight1") )
+            tr            = TriggerSelector( self.year, singleLepton=(not dileptonic) )
             triggerCutMc  = tr.getSelection( "MC" )
 
             res["cuts"].append( triggerCutMc )
 #            res["prefixes"].append( "trigger" )
 
 
-        res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year) )
+        res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year, skipBadChargedCandidate=True) )
 #        if dataMC=="Data" and self.year == 2018:
 #            res["cuts"].append("reweightHEM>0")
 

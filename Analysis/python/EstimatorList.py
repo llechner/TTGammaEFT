@@ -7,7 +7,7 @@ from TTGammaEFT.Analysis.MCBasedEstimate             import MCBasedEstimate
 from TTGammaEFT.Analysis.SetupHelpers                import default_sampleList
 from TTGammaEFT.Analysis.Region                      import *
 
-class estimatorList:
+class EstimatorList:
     def __init__(self, setup, samples=default_sampleList):
         for s in samples:
             if "DD" in s:
