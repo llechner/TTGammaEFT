@@ -4,15 +4,22 @@ import abc
 from math import sqrt
 import json
 
-# Logging
-import logging
-logger = logging.getLogger(__name__)
-
-# StopsDilepton
+# Framework imports
 from Analysis.Tools.DirDB             import DirDB
 from Analysis.Tools.u_float           import u_float
 from TTGammaEFT.Tools.user            import cache_directory
 from TTGammaEFT.Analysis.SetupHelpers import allChannels
+from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( "INFO", logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( "INFO", logFile=None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 class SystematicEstimator:
     __metaclass__ = abc.ABCMeta
@@ -21,7 +28,11 @@ class SystematicEstimator:
         logger.info("Initializing Systematic Estimator for %s"%name)
         self.name = name
         self.initCache(cacheDir)
-        self.isSignal = False
+        self.processCut = None
+
+        if   "_gen"   in name: self.processCut = cutInterpreter.cutString( "photoncat0" )
+        elif "_misID" in name: self.processCut = cutInterpreter.cutString( "photoncat2" )
+        elif "_had"   in name: self.processCut = cutInterpreter.cutString( "photoncat13" )
 
     def initCache(self, cacheDir="systematics"):
         logger.info("Initializing cache for %s in directory %s"%(self.name, cacheDir))
@@ -46,12 +57,12 @@ class SystematicEstimator:
             self.helperCache=None
 
     # For the datadriven subclasses which often need the same getYieldFromDraw we write those yields to a cache
-    def yieldFromCache(self, setup, sample, c, selectionString, weightString, overwrite=False):
-        s = (sample, c, selectionString, weightString)
+    def yieldFromCache(self, setup, process, c, selectionString, weightString, overwrite=False):
+        s = (process, c, selectionString, weightString)
         if self.helperCache and self.helperCache.contains(s) and not overwrite:
             return self.helperCache.get(s)
         else:
-            yieldFromDraw = u_float(**setup.samples[sample].getYieldFromDraw(selectionString, weightString))
+            yieldFromDraw = u_float(**setup.processes[process].getYieldFromDraw(selectionString, weightString))
             if self.helperCache: self.helperCache.add(s, yieldFromDraw, overwrite=True)
             return yieldFromDraw
 
@@ -69,13 +80,13 @@ class SystematicEstimator:
 
     def cachedEstimate(self, region, channel, setup, save=True, overwrite=False, checkOnly=False):
         key =  self.uniqueKey(region, channel, setup)
-        if (self.cache and self.cache.contains(key)) and not overwrite and channel != "all" and channel != "SFtight":
+        if (self.cache and self.cache.contains(key)) and not overwrite:
             res = self.cache.get(key)
             logger.debug( "Loading cached %s result for %r : %r"%(self.name, key, res) )
         elif self.cache and not checkOnly:
             logger.debug( "Calculating %s result for %r"%(self.name, key) )
-            res = self._estimate( region, channel, setup, overwrite=overwrite)
-            _res = self.cache.add( key, res, overwrite=True)
+            res = self._estimate( region, channel, setup, overwrite=overwrite )
+            _res = self.cache.add( key, res, overwrite=True )
             logger.debug( "Adding cached %s result for %r : %r" %(self.name, key, res) )
         elif not checkOnly:
             res = self._estimate( region, channel, setup, overwrite=overwrite)
@@ -209,10 +220,10 @@ class SystematicEstimator:
           name = self.texName
         except:
           try:
-            name = self.sample[channel].texName
+            name = self.process[channel].texName
           except:
             try:
-              texNames = [self.sample[c].texName for c in allChannels]                # If all, only take texName if it is the same for all lepChannels
+              texNames = [self.process[c].texName for c in allChannels]                # If all, only take texName if it is the same for all lepChannels
               if texNames.count(texNames[0]) == len(texNames):
                 name = texNames[0]
               else:

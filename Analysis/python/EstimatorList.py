@@ -1,21 +1,31 @@
-# Logging
-import logging
-logger = logging.getLogger(__name__)
-
 from TTGammaEFT.Analysis.DataDrivenQCDEstimate       import DataDrivenQCDEstimate
 from TTGammaEFT.Analysis.MCBasedEstimate             import MCBasedEstimate
-from TTGammaEFT.Analysis.SetupHelpers                import default_sampleList
-from TTGammaEFT.Analysis.Region                      import *
+from TTGammaEFT.Analysis.SetupHelpers                import allProcesses
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( "INFO", logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( "INFO", logFile=None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
+
 
 class EstimatorList:
-    def __init__(self, setup, samples=default_sampleList):
-        for s in samples:
-            if "DD" in s:
-                setattr(self, s, DataDrivenQCDEstimate(name=s) )
+    def __init__( self, setup, processes=allProcesses ):
+        for p in processes:
+            if "DD" in p:
+                setattr( self, p, DataDrivenQCDEstimate( name=p ) )
             else:
-                setattr(self, s, MCBasedEstimate(name=s, sample=setup.samples[s]))
+                setattr( self, p, MCBasedEstimate( name=p, process=setup.processes[p] ) )
 
 
-    def constructEstimatorList(self, samples):
-        self.estimatorList = [ getattr(self, s) for s in samples ]
+    def constructEstimatorList(self, processes):
+        self.estimatorList = [ getattr(self, p) for p in processes ]
         return self.estimatorList
+
+    def constructProcessDict(self, processDict):
+        self.processDict = { pName:self.constructEstimatorList( processes=pList ) for pName, pList in processDict.items() }
+        return self.processDict

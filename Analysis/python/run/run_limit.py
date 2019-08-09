@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, copy
+import os, copy, time
 import ROOT
 
 from math                                import sqrt
@@ -24,17 +24,19 @@ loggerChoices = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "NOTS
 # Arguments
 import argparse
 argParser=argparse.ArgumentParser(description="Argument parser" )
-argParser.add_argument( "--logLevel",           action="store",      default="INFO",            choices=loggerChoices,  help="Log level for logging" )
-argParser.add_argument( "--label",              action="store",      default="defaultSetup",    type=str,               help="Label of results directory" )
-argParser.add_argument( "--inclRegion",         action="store_true",                                                    help="use inclusive photon pt region" )
-argParser.add_argument( "--overwrite",          action="store_true",                                                    help="Overwrite existing output files" )
-argParser.add_argument( "--addDYSF",            action="store_true",                                                    help="add default DY scale factor" )
-argParser.add_argument( "--keepCard",           action="store_true",                                                    help="Overwrite existing output files" )
-argParser.add_argument( "--expected",           action="store_true",                                                    help="Use sum of backgrounds instead of data." )
-argParser.add_argument( "--useTxt",             action="store_true",                                                    help="Use txt based cardFiles instead of root/shape based ones?" )
-argParser.add_argument( "--skipFitDiagnostics", action="store_true",                                                    help="Don't do the fitDiagnostics (this is necessary for pre/postfit plots, but not 2D scans)?" )
-argParser.add_argument( "--significanceScan",   action="store_true",                                                    help="Calculate significance instead?")
-argParser.add_argument( "--year",               action="store",      default=2016,   type=int,                          help="Which year?" )
+argParser.add_argument( "--logLevel",           action="store",      default="INFO",            choices=loggerChoices,      help="Log level for logging" )
+argParser.add_argument( "--label",              action="store",      default="defaultSetup",    type=str,                   help="Label of results directory" )
+argParser.add_argument( "--inclRegion",         action="store_true",                                                        help="use inclusive photon pt region" )
+argParser.add_argument( "--overwrite",          action="store_true",                                                        help="Overwrite existing output files" )
+argParser.add_argument( "--useRegions",         action="store",      nargs='*',       type=str, choices=allRegions.keys(),  help="Which regions to use?" )
+#argParser.add_argument( "--useChannel",         action="store",      default="all",   type=str, choices=["e", "mu", "all", "comb"], help="Which lepton channels to use?" )
+argParser.add_argument( "--addDYSF",            action="store_true",                                                        help="add default DY scale factor" )
+argParser.add_argument( "--keepCard",           action="store_true",                                                        help="Overwrite existing output files" )
+argParser.add_argument( "--expected",           action="store_true",                                                        help="Use sum of backgrounds instead of data." )
+argParser.add_argument( "--useTxt",             action="store_true",                                                        help="Use txt based cardFiles instead of root/shape based ones?" )
+argParser.add_argument( "--skipFitDiagnostics", action="store_true",                                                        help="Don't do the fitDiagnostics (this is necessary for pre/postfit plots, but not 2D scans)?" )
+argParser.add_argument( "--significanceScan",   action="store_true",                                                        help="Calculate significance instead?")
+argParser.add_argument( "--year",               action="store",      default=2016,   type=int,                              help="Which year?" )
 args=argParser.parse_args()
 
 # Logging
@@ -49,48 +51,46 @@ if args.keepCard:
 
 # Define estimators for CR
 default_setup            = Setup( year=args.year )
-
 estimators               = EstimatorList( default_setup )
 regionNames              = []
-
-default_setup.channels   = lepChannels
-#default_setup.estimators = estimators.constructEstimatorList( samples=["TTG", "WG"] )
-default_setup.estimators = estimators.constructEstimatorList( samples=default_sampleList )
+default_setup.processes  = estimators.constructProcessDict( processDict=default_processes )
 default_setup.addon      = ""
 default_setup.regions    = inclRegionsTTG if args.inclRegion else regionsTTG
 
-signalSetup3             = default_setup.sysClone( parameters=signalRegions["SR3"]["parameters"] )
-signalSetup3.channels    = default_setup.channels
-signalSetup3.estimators  = default_setup.estimators
-signalSetup3.addon       = "_signal3"
-signalSetup3.regions     = default_setup.regions
-regionNames             += ["SR3"]
+setups = []
+if "SR3" in args.useRegions:
+    signalSetup3             = default_setup.sysClone( parameters=signalRegions["SR3"]["parameters"] )
+    signalSetup3.channels    = signalRegions["SR3"]["channels"] #default_setup.channels
+    signalSetup3.regions     = signalRegions["SR3"]["regions"] if (not args.inclRegion) or signalRegions["SR3"]["noPhotonCR"] else inclRegionsTTG #default_setup.regions
+    signalSetup3.processes   = estimators.constructProcessDict( processDict=signalRegions["SR3"]["processes"] ) if "processes" in signalRegions["SR3"] else default_setup.processes
+    signalSetup3.addon       = "_signal3"
+    regionNames             += ["SR3"]
+    setups.append(signalSetup3)
 
-signalSetup4p            = default_setup.sysClone( parameters=signalRegions["SR4p"]["parameters"] )
-signalSetup4p.channels   = default_setup.channels
-signalSetup4p.estimators = default_setup.estimators
-signalSetup4p.addon      = "_signal4p"
-signalSetup4p.regions    = default_setup.regions
-regionNames             += ["SR4p"]
+if "SR4p" in args.useRegions:
+    signalSetup4p            = default_setup.sysClone( parameters=signalRegions["SR4p"]["parameters"] )
+    signalSetup4p.channels   = signalRegions["SR4p"]["channels"] #default_setup.channels
+    signalSetup4p.regions    = signalRegions["SR4p"]["regions"] if (not args.inclRegion) or signalRegions["SR4p"]["noPhotonCR"] else inclRegionsTTG #default_setup.regions
+    signalSetup4p.processes  = estimators.constructProcessDict( processDict=signalRegions["SR4p"]["processes"] ) if "processes" in signalRegions["SR4p"] else default_setup.processes
+    signalSetup4p.addon      = "_signal4p"
+    regionNames             += ["SR4p"]
+    setups.append(signalSetup4p)
 
 
 # Define CR, channels and regions
 for key, val in controlRegions.items():
+    if not key in args.useRegions: continue
     regionNames                     += [key]
-    noPhotonCR                       = "nPhoton" in val["parameters"] and val["parameters"]["nPhoton"][1] == 0
     locals()["setup"+key]            = default_setup.sysClone( parameters=val["parameters"] )
-    locals()["setup"+key].channels   = dilepChannels if key.startswith( "DY" ) else default_setup.channels
-    locals()["setup"+key].estimators = default_setup.estimators
+    locals()["setup"+key].channels   = val["channels"] #default_setup.channels
+    locals()["setup"+key].regions    = val["regions"] if (not args.inclRegion) or val["noPhotonCR"] else inclRegionsTTG
+    locals()["setup"+key].processes  = estimators.constructProcessDict( processDict=val["processes"] ) if "processes" in val else default_setup.processes
     locals()["setup"+key].addon      = "_control%s"%key
-    locals()["setup"+key].regions    = noPhotonRegionTTG if noPhotonCR else default_setup.regions
+    setups.append(locals()["setup"+key])
 
 # use the regions as key for caches
 regionNames.sort()
-
-# Define the regions that should be used
-setups = [ locals()["setup"+key] for key in controlRegions.keys() ] + [ signalSetup3, signalSetup4p ]
-#setups = [ setupVG3 ]
-
+if args.addDYSF: regionNames.append("addDYSF")
 
 baseDir       = os.path.join( cache_dir, str(args.year), "limits" )
 limitDir      = os.path.join( baseDir, "cardFiles", args.label, "expected" if args.expected else "observed" )
@@ -114,7 +114,6 @@ scaleUncCache   = DirDB( cacheFileName )
 cacheFileName   = os.path.join( limitDir, "systematics", "pdf" )
 pdfUncCache     = DirDB( cacheFileName )
 
-
 def getScaleUnc( name, r, channel ):
     if scaleUncCache.contains( (name, r, channel) ): max( 0.01, scaleUncCache.get( (name, r, channel) ) )
     else:                                            return 0.01
@@ -129,10 +128,12 @@ def getISRUnc( name, r, channel ):
 
 def wrapper():
     c = cardFileWriter.cardFileWriter()
-    c.releaseLocation = combineReleaseLocation #os.path.abspath( "/tmp/llechner/limits/" ) 
+    c.releaseLocation = combineReleaseLocation
 
-    cardFileName = os.path.join(limitDir, "_".join(regionNames)+".txt" )
-    if not os.path.exists(cardFileName) or args.overwrite:
+    cardFileNameTxt   = os.path.join( limitDir, "_".join( regionNames ) + ".txt" )
+    cardFileNameShape = cardFileNameTxt.replace( ".txt", "_shape.root" )
+    cardFileName      = cardFileNameTxt
+    if ( not os.path.exists(cardFileNameTxt) or ( not os.path.exists(cardFileNameShape) and not args.useTxt ) ) or args.overwrite:
         counter=0
         c.reset()
         c.setPrecision(3)
@@ -156,85 +157,132 @@ def wrapper():
         # only in SRs
         # all regions, lnN
         c.addUncertainty( "DY",         "lnN" )
-#        c.addUncertainty( "misID",      "lnN" )
+        c.addUncertainty( "TT",         "lnN" )
+        c.addUncertainty( "QCD",        "lnN" )
+        c.addUncertainty( "misID",      "lnN" )
 
         for setup in setups:
-            observation = DataObservation( name="Data", sample=setup.samples["Data"], cacheDir=setup.defaultCacheDir() )
-            for e in setup.estimators: e.initCache( setup.defaultCacheDir() )
+            observation = DataObservation( name="Data", process=setup.processes["Data"], cacheDir=setup.defaultCacheDir() )
+            for pList in setup.processes.values():
+                for e in pList:
+                    e.initCache( setup.defaultCacheDir() )
 
             for r in setup.regions:
-              for channel in setup.channels:
-                  niceName      = " ".join( [ channel, str(r), setup.addon ] )
-                  binname       = "Bin%i"%counter
-                  counter      += 1
-                  total_exp_bkg = 0
+                for channel in setup.channels:
+                    niceName      = " ".join( [ channel, str(r), setup.addon[1:] ] )
+                    binname       = "Bin%i"%counter
+                    counter      += 1
+                    total_exp_bkg = 0
 
-                  c.addBin( binname, [ e.name.split("-")[0] for e in setup.estimators if e.name != "TTG" ], niceName)
+                    c.addBin( binname, [ pName for pName in setup.processes.keys() if pName != "signal" ], niceName)
     
-                  mute = False
-                  for e in setup.estimators:
+                    mute = False
+                    for pName, pList in setup.processes.items():
 
-                      signal = False
-                      if e.name == "TTG": signal = True
+                        signal   = pName=="signal"
+                        expected = 0
 
-                      name           = e.name.split( "-" )[0] if not signal else "signal"
-                      print e.name
-                      print r, channel, setup
-                      expected       = e.cachedEstimate( r, channel, setup, save=True ) 
+                        for e in pList:
+                            exp_yield = e.cachedEstimate( r, channel, setup )
+                            if e.name.count( "DY" ) and args.addDYSF:
+                                exp_yield *= default_DYSF
+                                logger.info( "Scaling DY background by %f", default_DYSF )
+                            e.expYield = exp_yield
+                            expected  += exp_yield
 
-                      logger.info( "Expectation for process %s: %s", e.name, expected.val )
+                        logger.info( "Expectation for process %s: %s", pName, expected.val )
 
-                      y = expected.val
-                      if e.name.count( "DY" ) and args.addDYSF:
-                          y *= default_DYSF
-                          logger.info( "Scaling DY background by %f", default_DYSF )
+                        c.specifyExpectation( binname, pName, expected.val )
+                        if not signal: total_exp_bkg += expected.val
+                        if signal and expected.val <= 0.01: mute = True
 
-                      c.specifyExpectation( binname, name, y )
-                      if not signal: total_exp_bkg += y
-                      if signal and y <= 0.01: mute = True
+                        default_DY_unc    = 5.0
+                        default_TT_unc    = 5.0
+                        default_QCD_unc   = 5.0
+                        default_misID_unc = 5.0
 
-                      c.specifyUncertainty( "PU",            binname, name, 1 + e.PUSystematic(                   r, channel, setup).val )
-                      c.specifyUncertainty( "JEC",           binname, name, 1 + e.JECSystematic(                  r, channel, setup).val )
-                      c.specifyUncertainty( "JER",           binname, name, 1 + 0.03 )#e.JERSystematic(                   r, channel, setup).val )
-                      c.specifyUncertainty( "SFb",           binname, name, 1 + e.btaggingSFbSystematic(          r, channel, setup).val )
-                      c.specifyUncertainty( "SFl",           binname, name, 1 + e.btaggingSFlSystematic(          r, channel, setup).val )
-#                      c.specifyUncertainty( "trigger",       binname, name, 1 + e.triggerSystematic(              r, channel, setup).val )
-                      c.specifyUncertainty( "leptonSF",      binname, name, 1 + e.leptonSFSystematic(             r, channel, setup).val )
-                      c.specifyUncertainty( "leptonTrackSF", binname, name, 1 + e.leptonTrackingSFSystematic(     r, channel, setup).val )
-                      c.specifyUncertainty( "photonSF",      binname, name, 1 + e.photonSFSystematic(             r, channel, setup).val )
-                      c.specifyUncertainty( "eVetoSF",       binname, name, 1 + e.photonElectronVetoSFSystematic( r, channel, setup).val )
-                      c.specifyUncertainty( "prefireSF",     binname, name, 1 + e.L1PrefireSystematic(            r, channel, setup).val )
+                        pu, jec, jer, sfb, sfl, trigger, lepSF, lepTrSF, phSF, eVetoSF, pfSF = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+#                        scale, pdf, isr = 0, 0, 0
+                        dyUnc, ttUnc, qcdUnc, misIDUnc = 0, 0, 0, 0
+                        if expected.val:
+                            for e in pList:
+                                y_scale   = e.expYield.val / expected.val
+                                pu       += y_scale * e.PUSystematic(                   r, channel, setup).val
+                                jec      += y_scale * e.JECSystematic(                  r, channel, setup).val
+                                jer      += y_scale * 0.03#e.JERSystematic(                  r, channel, setup).val
+                                sfb      += y_scale * e.btaggingSFbSystematic(          r, channel, setup).val
+                                sfl      += y_scale * e.btaggingSFlSystematic(          r, channel, setup).val
+#                                trigger  += y_scale * e.triggerSystematic(              r, channel, setup).val
+                                lepSF    += y_scale * e.leptonSFSystematic(             r, channel, setup).val
+                                lepTrSF  += y_scale * e.leptonTrackingSFSystematic(     r, channel, setup).val
+                                phSF     += y_scale * e.photonSFSystematic(             r, channel, setup).val
+                                eVetoSF  += y_scale * e.photonElectronVetoSFSystematic( r, channel, setup).val
+                                pfSF     += y_scale * e.L1PrefireSystematic(            r, channel, setup).val
+#                                scale    += y_scale * getScaleUncBkg( e.name, r, channel )
+#                                pdf      += y_scale * getPDFUnc(      e.name, r, channel )
+#                                isr      += y_scale * getISRUnc(      e.name, r, channel )
+                                if e.name.count( "DY" ):
+                                    dyUnc    += y_scale * default_DY_unc
+                                if e.name.count( "QCD" ):
+                                    qcdUnc   += y_scale * default_QCD_unc
+                                if e.name.count( "TT_pow" ):
+                                    ttUnc    += y_scale * default_TT_unc
+                                if e.name.count( "misID" ):
+                                    misIDUnc += y_scale * default_misID_unc
+
+
+                        c.specifyUncertainty( "PU",            binname, pName, 1 + pu )
+                        c.specifyUncertainty( "JEC",           binname, pName, 1 + jec )
+                        c.specifyUncertainty( "JER",           binname, pName, 1 + jer )
+                        c.specifyUncertainty( "SFb",           binname, pName, 1 + sfb )
+                        c.specifyUncertainty( "SFl",           binname, pName, 1 + sfl )
+#                        c.specifyUncertainty( "trigger",       binname, pName, 1 + trigger )
+                        c.specifyUncertainty( "leptonSF",      binname, pName, 1 + lepSF )
+                        c.specifyUncertainty( "leptonTrackSF", binname, pName, 1 + lepTrSF )
+                        c.specifyUncertainty( "photonSF",      binname, pName, 1 + phSF )
+                        c.specifyUncertainty( "eVetoSF",       binname, pName, 1 + eVetoSF )
+                        c.specifyUncertainty( "prefireSF",     binname, pName, 1 + pfSF )
                         
-#                      c.specifyUncertainty( "scale",   binname, name, 1 + getScaleUncBkg( e.name, r, channel ) )
-#                      c.specifyUncertainty( "PDF",     binname, name, 1 + getPDFUnc(      e.name, r, channel ) )
-#                      c.specifyUncertainty( "ISR",     binname, name, 1 + getISRUnc(      e.name, r, channel ) )
+#                        c.specifyUncertainty( "scale",   binname, pName, 1 + scale )
+#                        c.specifyUncertainty( "PDF",     binname, pName, 1 + pdf )
+#                        c.specifyUncertainty( "ISR",     binname, pName, 1 + isr )
 
-                      if e.name.count( "DY" ):
-                          c.specifyUncertainty( "DY",         binname, name, 1.5 )
+                        if dyUnc:
+                            c.specifyUncertainty( "DY",    binname, pName, 1 + dyUnc )
+                        if qcdUnc:
+                            c.specifyUncertainty( "QCD",   binname, pName, 1 + qcdUnc )
+                        if ttUnc:
+                            c.specifyUncertainty( "TT",    binname, pName, 1 + ttUnc )
+                        if misIDUnc:
+                            c.specifyUncertainty( "misID", binname, pName, 1 + misIDUnc )
 
-                      # MC bkg stat (some condition to neglect the smaller ones?)
-                      uname = "Stat_%s_%s"%(binname,name)
-                      c.addUncertainty( uname, "lnN" )
-                      c.specifyUncertainty( uname, binname, name, 1 + (expected.sigma/expected.val) if expected.val > 0 else 1 )
+                        # MC bkg stat (some condition to neglect the smaller ones?)
+                        uname = "Stat_%s_%s"%(binname,pName)
+                        c.addUncertainty( uname, "lnN" )
+                        c.specifyUncertainty( uname, binname, pName, 1 + (expected.sigma/expected.val) if expected.val > 0 else 1 )
 
-                  if args.expected:
-                      c.specifyObservation( binname, int( round( total_exp_bkg, 0 ) ) )
-                      logger.info( "Expected observation: %s", int( round( total_exp_bkg, 0 ) ) )
-                  else:
-                      c.specifyObservation( binname,  int( observation.cachedObservation(r, channel, setup).val ) )
-                      logger.info( "Observation: %s", int( observation.cachedObservation(r, channel, setup).val ) )
+                    if args.expected:
+                        c.specifyObservation( binname, int( round( total_exp_bkg, 0 ) ) )
+                        logger.info( "Expected observation: %s", int( round( total_exp_bkg, 0 ) ) )
+                    else:
+                        c.specifyObservation( binname,  int( observation.cachedObservation(r, channel, setup).val ) )
+                        logger.info( "Observation: %s", int( observation.cachedObservation(r, channel, setup).val ) )
 
-                  if mute and total_exp_bkg <= 0.01:
-                      c.muted[binname] = True
+                    if mute and total_exp_bkg <= 0.01:
+                        c.muted[binname] = True
 
+        # Flat luminosity uncertainty
         c.addUncertainty( "Lumi", "lnN" )
         c.specifyFlatUncertainty( "Lumi", 1.026 )
-        cardFileNameTxt     = c.writeToFile( cardFileName )
-        cardFileNameShape   = c.writeToShapeFile( cardFileName.replace( ".txt", "_shape.root" ) )
+
+        cardFileNameTxt     = c.writeToFile( cardFileNameTxt )
+        cardFileNameShape   = c.writeToShapeFile( cardFileNameShape )
         cardFileName        = cardFileNameTxt if args.useTxt else cardFileNameShape
 
     else:
-        print "File %s found. Reusing."%cardFileName
+        logger.info( "File %s found. Reusing."%cardFileName )
+        cardFileNameShape = cardFileNameShape.replace('.root', 'Card.txt')
+        cardFileName      = cardFileNameTxt if args.useTxt else cardFileNameShape
     
     sConfig = "_".join(regionNames)
 
@@ -243,7 +291,7 @@ def wrapper():
             res = signifCache.get( sConfig )
         else:
             res = c.calcSignif( cardFileName )
-            signifCache.add( sConfig, res )
+            signifCache.add( sConfig, res, overwrite=True )
     
     else:
         if useCache and not args.overwrite and limitCache.contains( sConfig ):
@@ -252,7 +300,7 @@ def wrapper():
             res = c.calcLimit( cardFileName )
             if not args.skipFitDiagnostics:
                 c.calcNuisances( cardFileName )
-            limitCache.add( sConfig, res )
+            limitCache.add( sConfig, res, overwrite=True )
 
     ###################
     # extract the SFs #
@@ -260,18 +308,38 @@ def wrapper():
     if not args.useTxt and not args.skipFitDiagnostics:
         # Would be a bit more complicated with the classical txt files, so only automatically extract the SF when using shape based datacards
         
-        print cardFileName
-        combineWorkspace = cardFileName.replace( "shapeCard.txt","shapeCard_FD.root" )
-        print "Extracting fit results from %s"%combineWorkspace
+        combineWorkspace = cardFileNameShape.replace( "shapeCard.txt","shapeCard_FD.root" )
+        logger.info( "Extracting fit results from %s"%combineWorkspace )
         
         postFitResults = getPrePostFitFromMLF( combineWorkspace )
         
-        DY_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["DY"]
-        DY_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["DY"]
+        DY_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["DY_LO"]
+        DY_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["DY_LO"]
 
-        print
-        print "## Scale Factors for backgrounds: ##"
-        print "{:20}{:4.2f}{:3}{:4.2f}".format( "Drell-Yan:",    (DY_postfit/DY_prefit).val,   "+/-",  DY_postfit.sigma/DY_postfit.val)
+        TT_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["TT_pow"]
+        TT_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["TT_pow"]
+
+#        QCD_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["QCD"]
+#        QCD_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["QCD"]
+
+        if not os.path.isdir("logs"): os.mkdir("logs")
+        write_time  = time.strftime("%Y %m %d %H:%M:%S", time.localtime())
+
+        with open("logs/scaleFactors.dat", "a") as f:
+            print
+            print "## Scale Factors for backgrounds: ##"
+
+            sf = "{:20}{:4.2f}{:3}{:4.2f}".format( "Drell-Yan:",    (DY_postfit/DY_prefit).val,   "+/-",  DY_postfit.sigma/DY_postfit.val)
+            print sf
+            f.write( write_time + ": " + "_".join( regionNames ) + ": " + sf + "\n" )
+
+            sf = "{:20}{:4.2f}{:3}{:4.2f}".format( "TT:",           (TT_postfit/TT_prefit).val,   "+/-",  TT_postfit.sigma/TT_postfit.val)
+            print sf
+            f.write( write_time + ": " + "_".join( regionNames ) + ": " + sf + "\n" )
+
+#            sf = "{:20}{:4.2f}{:3}{:4.2f}".format( "QCD:",          (QCD_postfit/QCD_prefit).val,   "+/-",  QCD_postfit.sigma/QCD_postfit.val)
+#            print sf
+#            f.write( write_time + ": " + "_".join( regionNames ) + ": " + sf + "\n" )
 
     if res: 
         sString = "-".join(regionNames)

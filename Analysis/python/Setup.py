@@ -2,10 +2,6 @@
 import copy
 import os
 
-# Logging
-import logging
-logger = logging.getLogger(__name__)
-
 # RootTools
 from RootTools.core.standard          import *
 
@@ -17,13 +13,26 @@ from TTGammaEFT.Analysis.SetupHelpers import *
 
 from Analysis.Tools.metFilters        import getFilterCut
 
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( "INFO", logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( "INFO", logFile=None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
+
 class Setup:
     def __init__(self, year=2016, photonSelection=False, checkOnly=False):
+
+        logger.info("Initializing Setup")
+
         self.analysis_results = analysis_results
         self.zMassRange       = zMassRange
         self.prefixes         = []
         self.externalCuts     = []
-        self.year = year
+        self.year             = year
 
         #Default cuts and requirements. Those three things below are used to determine the key in the cache!
         self.parameters   = {
@@ -34,6 +43,7 @@ class Setup:
             "nPhoton":      default_nPhoton,
             "invertLepIso": default_invLepIso,
             "addMisIDSF":   default_addMisIDSF,
+            "photonCat":    default_photonCat,
         }
 
 #        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
@@ -89,27 +99,33 @@ class Setup:
 
 
         if checkOnly:
-            self.samples = { sample:None for sample in default_sampleList }
-            self.samples["Data"] = None
+            self.processes = {}
+            self.processes.update( { sample:          None for sample in default_sampleList } )
+            self.processes.update( { sample+"_gen":   None for sample in default_sampleList } )
+            self.processes.update( { sample+"_misID": None for sample in default_sampleList } )
+            self.processes.update( { sample+"_had":   None for sample in default_sampleList } )
+            self.processes["Data"] = None
 
             self.lumi     = -1
             self.dataLumi = -1
         else:
             mc           = [ ttg, tt, DY, zg, wjets, wg, other, qcd, gjets ]
-            self.samples = { sample.name:sample for sample in mc }
-            self.samples["Data"] = data
+            self.processes = {}
+            self.processes.update( { sample.name:          sample for sample in mc } )
+            self.processes.update( { sample.name+"_gen":   sample for sample in mc } )
+            self.processes.update( { sample.name+"_misID": sample for sample in mc } )
+            self.processes.update( { sample.name+"_had":   sample for sample in mc } )
+            self.processes["Data"] = data
 
             self.lumi     = data.lumi
             self.dataLumi = data.lumi # get from data samples later
         
-#        dataPUHistForSignalPath = "$CMSSW_BASE/src/TTGammaEFT/Tools/data/puFastSimUncertainty/dataPU.root"
-#        self.dataPUHistForSignal = getObjFromFile(os.path.expandvars(dataPUHistForSignalPath), "data")
 
-    def prefix(self):
-        return "_".join(self.prefixes+[self.preselection("MC")["prefix"]])
+    def prefix(self, channel="all"):
+        return "_".join(self.prefixes+[self.preselection("MC", channel=channel)["prefix"]])
 
     def defaultCacheDir(self):
-        cacheDir = os.path.join(cache_dir, self.year, "estimates")
+        cacheDir = os.path.join(cache_dir, str(self.year), "estimates")
         logger.info("Default cache dir is: %s", cacheDir)
         return cacheDir
 
@@ -154,27 +170,39 @@ class Setup:
         return res
 
     def weightString(self, dataMC, addMisIDSF=False):
-        if   dataMC == "Data": return "(1)"
+        if   dataMC == "Data": _weightString = "weight"
         elif dataMC == "MC":
             _weightString = "*".join([self.sys["weight"]] + (self.sys["reweight"] if self.sys["reweight"] else []))
             if addMisIDSF: _weightString += "+%s*(PhotonGood0_photonCat==2)*(%f-1)" %(_weightString, default_misIDSF)
-            return _weightString
+        logger.debug("Using weight-string: %s", _weightString)
+        return _weightString
 
     def preselection(self, dataMC , channel="all"):
         """Get preselection  cutstring."""
-        return self.selection(dataMC, channel = channel, **self.parameters)
+        cut = self.selection(dataMC, channel = channel, **self.parameters)
+        logger.debug("Using cut-string: %s", cut)
+        return cut
 
     def selection(self, dataMC,
-                        dileptonic=False, invertLepIso=False, addMisIDSF=False,
+                        dileptonic=None, invertLepIso=None, addMisIDSF=None,
                         nJet=None, nBTag=None, nPhoton=None,
-                        zWindow="all",
-                        photonCat="all",
+                        zWindow=None,
+                        photonCat=None,
                         channel="all"):
         """Define full selection
            dataMC: "Data" or "MC"
            channel: all, e or mu, eetight, mumutight, SFtight
            zWindow: offZeg, onZeg, onZSFllTight or all
         """
+
+        if not dileptonic:   dileptonic   = self.parameters["dileptonic"]
+        if not invertLepIso: invertLepIso = self.parameters["invertLepIso"]
+        if not addMisIDSF:   addMisIDSF   = self.parameters["addMisIDSF"]
+        if not nJet:         nJet         = self.parameters["nJet"]
+        if not nBTag:        nBTag        = self.parameters["nBTag"]
+        if not nPhoton:      nPhoton      = self.parameters["nPhoton"]
+        if not zWindow:      zWindow      = self.parameters["zWindow"]
+        if not photonCat:    photonCat    = self.parameters["photonCat"]
 
         #Consistency checks
         assert dataMC in ["Data","MC"], "dataMC = Data or MC, got %r."%dataMC
@@ -204,9 +232,8 @@ class Setup:
 
         #Postfix for variables (only for MC and if we have a jme variation)
         sysStr = ""
-#        metStr = ""
-        if dataMC == "MC" and self.sys['selectionModifier'] in jmeVariations: sysStr = "_" + self.sys['selectionModifier']
-#        if dataMC == "MC" and self.sys['selectionModifier'] in metVariations: metStr = "_" + self.sys['selectionModifier']
+        if dataMC == "MC" and self.sys['selectionModifier'] in jmeVariations:
+            sysStr = "_" + self.sys['selectionModifier']
 
         res={"cuts":[], "prefixes":[]}
 
@@ -216,6 +243,7 @@ class Setup:
         res["cuts"].append( lepSel )
               
         #lepton channel or inv. iso lepton channel
+        res["prefixes"].append( channel )
         chStr = cutInterpreter.cutString( channel )
         res["cuts"].append(chStr)
 
@@ -245,8 +273,8 @@ class Setup:
 
             prefix = "nBTag"+str(nBTag[0])
             if nBTag[1]>=0:
-                if sysStr:             nbtstr+= "&&nBTag"+sysStr+"<="+str(nBTag[1])  # change that after next pp
-                else:                  nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])  # change that after next pp
+                if sysStr:             nbtstr+= "&&nBTag"+sysStr+"<="+str(nBTag[1])  # FIXME change that after next pp
+                else:                  nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])  # FIXME change that after next pp
                 if nBTag[1]!=nBTag[0]: prefix+=str(nBTag[1])
             else:
                 prefix+="p"
@@ -267,14 +295,14 @@ class Setup:
 
 
         #Z window
+        res["prefixes"].append( zWindow )
         preselZWindow = cutInterpreter.cutString( zWindow )
         res["cuts"].append( preselZWindow )
-        res["prefixes"].append( zWindow )
 
         #photon category
+        res["prefixes"].append( photonCat )
         photoncatCut = cutInterpreter.cutString( photonCat )
         res["cuts"].append( photoncatCut )
-        res["prefixes"].append( photonCat )
 
         #badEEVeto
         if self.year == 2017:
@@ -303,23 +331,23 @@ class Setup:
 
 if __name__ == "__main__":
     setup = Setup( year=2016 )
-    for reg in allCR:
+    for name, dict in allRegions.items():
         print
-        print reg["name"]
+        print name
         print
-        if reg["name"].startswith("DY"): channels = dilepChannels
-        else:                   channels = lepChannels
+        if name.startswith("DY"): channels = dilepChannels
+        else:                     channels = lepChannels
         for channel in channels:
             print
             print channel
             print
-            res = setup.selection("MC", channel=channel, **setup.defaultParameters( update=reg["parameters"] ))
+            res = setup.selection("MC", channel=channel, **setup.defaultParameters( update=dict["parameters"] ))
             print res["cut"]
             print res["prefix"]
             print res["weightStr"]
 
             print
-            res = setup.selection("Data", channel=channel, **setup.defaultParameters( update=reg["parameters"] ))
+            res = setup.selection("Data", channel=channel, **setup.defaultParameters( update=dict["parameters"] ))
             print res["cut"]
             print res["prefix"]
             print res["weightStr"]

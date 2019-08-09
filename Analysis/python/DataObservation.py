@@ -1,21 +1,27 @@
 import os
 import json
 
-# Logging
-import logging
-logger = logging.getLogger(__name__)
-
 from Analysis.Tools.u_float           import u_float
 from Analysis.Tools.DirDB             import DirDB
 from TTGammaEFT.Analysis.SetupHelpers import dilepChannels, lepChannels
 from TTGammaEFT.Analysis.Region       import Region
 from TTGammaEFT.Tools.user            import cache_directory
 
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( "INFO", logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( "INFO", logFile=None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
+
 class DataObservation():
 
-    def __init__(self, name, sample, cacheDir=None):
+    def __init__(self, name, process, cacheDir=None):
         self.name = name
-        self.sample = sample
+        self.process = process
         self.initCache(cacheDir)
 
     def initCache(self, cacheDir="dataObs"):
@@ -62,10 +68,11 @@ class DataObservation():
 
         else:
             preSelection = setup.preselection("Data", channel=channel)
-            cut = "&&".join([region.cutString(setup.sys["selectionModifier"]), preSelection["cut"]])
+            cut = "&&".join([region.cutString(setup.sys['selectionModifier']), preSelection['cut']])
 
             logger.debug( "Using cut %s"% cut )
 
-            if hasattr(setup, "blinding") and setup.blinding: weight = "weight*" + setup.blinding
-            else:                                             weight = "weight"
-            return u_float(**self.sample.getYieldFromDraw(selectionString = cut, weightString = weight) )
+            weight = preSelection['weightStr']
+            if hasattr(setup, "blinding") and setup.blinding: weight += "*" + setup.blinding
+
+            return u_float(**self.process.getYieldFromDraw(selectionString = cut, weightString = weight) )

@@ -7,7 +7,7 @@ from TTGammaEFT.Analysis.Setup           import Setup
 from TTGammaEFT.Analysis.EstimatorList   import EstimatorList
 from TTGammaEFT.Analysis.MCBasedEstimate import MCBasedEstimate
 from TTGammaEFT.Analysis.DataObservation import DataObservation
-from TTGammaEFT.Analysis.SetupHelpers    import dilepChannels, lepChannels, default_sampleList, allRegions
+from TTGammaEFT.Analysis.SetupHelpers    import dilepChannels, lepChannels, allProcesses, allRegions
 
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
 CRChoices     = allRegions.keys()
@@ -27,43 +27,37 @@ argParser.add_argument("--createExecFile",   action="store_true",               
 args = argParser.parse_args()
 
 # Logging
-if __name__=="__main__":
-    import Analysis.Tools.logger as logger
-    logger = logger.get_logger( args.logLevel, logFile=None)
-else:
-    import logging
-    logger = logging.getLogger(__name__)
+import Analysis.Tools.logger as logger
+logger = logger.get_logger(   args.logLevel, logFile = None )
+import RootTools.core.logger as logger_rt
+logger_rt = logger_rt.get_logger( args.logLevel, logFile = None )
 
-CR_para = {}
-if args.controlRegion:
-    CR_para = allRegions[args.controlRegion]["parameters"]
+logger.debug("Start run_estimate.py")
 
-photonSelection = not ("nPhoton" in CR_para and CR_para["nPhoton"][1] == 0)
+if not args.controlRegion:
+    logger.warning("ControlRegion not known")
+    sys.exit(0)
 
-setup          = Setup(year=args.year, photonSelection=photonSelection)
-estimators     = EstimatorList(setup)
-allEstimators  = estimators.constructEstimatorList( default_sampleList )
+parameters      = allRegions[args.controlRegion]["parameters"]
+channels        = allRegions[args.controlRegion]["channels"] 
+photonSelection = not allRegions[args.controlRegion]["noPhotonCR"]
+setup           = Setup( year=args.year, photonSelection=photonSelection )
 
 # Select estimate
 if args.selectEstimator == "Data":
-    estimate = DataObservation(name="Data", sample=setup.samples["Data"], cacheDir=setup.defaultCacheDir())
-    estimate.isSignal = False
-    estimate.isData   = True
+    estimate = DataObservation(name="Data", process=setup.processes["Data"], cacheDir=setup.defaultCacheDir())
+    estimate.isData = True
 else:
-    estimate = next((e for e in allEstimators if e.name == args.selectEstimator), None)
+    estimators = EstimatorList( setup, processes=[args.selectEstimator] )
+    estimate   = getattr( estimators, args.selectEstimator )
     estimate.isData = False
 
 if not estimate:
-    logger.warn(args.selectEstimator + " not known")
+    logger.warning(args.selectEstimator + " not known")
     sys.exit(0)
 
-
-if args.controlRegion:
-    setup = setup.sysClone(parameters=CR_para)
-
-allRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
-
-setup.verbose=True
+setup            = setup.sysClone( parameters=parameters )
+allPhotonRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
 
 def wrapper(arg):
         r,channel,setup = arg
@@ -73,17 +67,9 @@ def wrapper(arg):
 
 estimate.initCache(setup.defaultCacheDir())
 
-if args.controlRegion and args.controlRegion.startswith('DY'):
-    channels = dilepChannels
-    combChannel = 'SFtight'
-else:
-    channels = lepChannels
-    combChannel = 'all'
-
-if args.checkOnly: channels += [combChannel]
 jobs=[]
 for channel in channels:
-    for (i, r) in enumerate(allRegions):
+    for (i, r) in enumerate(allPhotonRegions):
         if args.selectRegion != i: continue
         jobs.append((r, channel, setup))
         if not estimate.isData and not args.noSystematics:
@@ -99,6 +85,7 @@ else:
     pool.close()
     pool.join()
 
+
 if args.checkOnly:
     for res in results:
         print args.selectEstimator, res[0][0], res[0][1], args.controlRegion, res[1].val
@@ -109,14 +96,4 @@ if args.createExecFile:
             with open( "missingEstimates.sh", "w" if args.overwrite else "a" ) as f:
                 f.write( " ".join( [ item for item in sys.argv if item not in ["--createExecFile", "--checkOnly"] ] ) + "\n" )
             sys.exit(0)
-
-if args.createExecFile or args.checkOnly: sys.exit(0)
-
-# Combine Channles
-for (i, r) in enumerate(allRegions):
-    if args.selectRegion != i: continue
-    logger.debug("Running estimate for region %s, channel %s in setup %s for estimator %s"%(r,combChannel, args.controlRegion if args.controlRegion else "None", args.selectEstimator if args.selectEstimator else "None"))
-    estimate.cachedEstimate(r, combChannel, setup, save=True, overwrite=args.overwrite, checkOnly=args.checkOnly)
-    if not estimate.isData and not args.noSystematics:
-        map(lambda arg:estimate.cachedEstimate(*arg, save=True, overwrite=args.overwrite, checkOnly=args.checkOnly), estimate.getBkgSysJobs(r, combChannel, setup))
 

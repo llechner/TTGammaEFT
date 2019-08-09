@@ -1,7 +1,7 @@
+from math import pi
+
 from TTGammaEFT.Analysis.Region import Region
 from TTGammaEFT.Analysis.Region import texString
-
-from math import pi
 
 def getRegionsFromThresholds(var, vals, gtLastThreshold = True):
     return [Region(var, (vals[i], vals[i+1])) for i in range(len(vals)-1)]
@@ -46,10 +46,12 @@ preFiringSumJet       = getRegionsFromThresholds( "Jet_phi", [-pi, -pi*(4./5), -
 
 pTG_thresh        = [ 20, 120, 220, -999 ]
 regionsTTG        = getRegionsFromThresholds( "PhotonGood0_pt", pTG_thresh )
-inclRegionsTTG    = [Region( "PhotonGood0_pt", (20,-1) )]
-noPhotonRegionTTG = [Region( "nPhotonGood", (0,0) )]
+inclRegionsTTG    = [Region( "PhotonGood0_pt", (20,-999) )]
+noPhotonRegionTTG = [Region( "nPhotonGood", (0,1) )]
 
 if __name__ == "__main__":
+    print inclRegionsTTG[0].cutString()
+
     for region in noPhotonRegionTTG+inclRegionsTTG+regionsTTG:
         print type(region.vals)
         for val0, val1 in region.vals.values():

@@ -1,11 +1,17 @@
-# Logging
-import logging
-logger = logging.getLogger(__name__)
-
 from TTGammaEFT.Analysis.SystematicEstimator import SystematicEstimator
 from TTGammaEFT.Analysis.Region              import Region
 from TTGammaEFT.Analysis.SetupHelpers        import dilepChannels, lepChannels
 from Analysis.Tools.u_float                  import u_float
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger( "INFO", logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( "INFO", logFile=None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 class SumEstimate(SystematicEstimator):
     def __init__(self, name, cacheDir=None):
