@@ -465,7 +465,7 @@ if isMC:
     read_variables += [ TreeVariable.fromString('genWeight/F') ]
     read_variables += [ TreeVariable.fromString('Pileup_nTrueInt/F') ]
     read_variables += [ TreeVariable.fromString('nGenPart/I'),
-                        VectorTreeVariable.fromString('GenPart[%s]'%readGenVarString) ]
+                        VectorTreeVariable.fromString('GenPart[%s]'%readGenVarString, nMax = 1000) ] # all needed for genMatching
     read_variables += [ TreeVariable.fromString('nGenJet/I'),
                         VectorTreeVariable.fromString('GenJet[%s]'%readGenJetVarString) ]
 
@@ -919,21 +919,24 @@ def filler( event ):
 
     addMissingVariables( allElectrons, readLeptonVariables )
     addMissingVariables( allMuons,     readLeptonVariables )
+
     addCorrRelIso( allElectrons, allMuons, allPhotons )
+
     convertUnits( allElectrons )
     convertUnits( allMuons )
 
     vetoMuons     = list( filter( lambda l: recoMuonSel_veto(l),     allMuons ) )
 
+
     # similar to Ghent, remove electrons in dR<0.02 to muons
     allElectrons = deltaRCleaning( allElectrons, vetoMuons, dRCut=0.02 )
+
     allLeptons = allElectrons + allMuons
     allLeptons.sort( key = lambda l: -l['pt'] )
 
-
     # Veto electrons with corrected relIso
     vetoCorrIsoElectrons = filter( lambda l: recoElectronSel_veto(l, removedCuts=["pfRelIso03_all"]), allElectrons )
-    vetoCorrIsoElectrons = filter( lambda l: l["pfRelIso03_all_corr"] < getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="veto" ), vetoCorrIsoElectrons )
+    vetoCorrIsoElectrons = filter( lambda l: l["pfRelIso03_all_corr"] <= getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="veto" ), vetoCorrIsoElectrons )
 
     # Filter leptons
     vetoElectrons = list( filter( lambda l: recoElectronSel_veto(l), allElectrons ) )
@@ -1028,11 +1031,12 @@ def filler( event ):
     # Store all Leptons
     fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons )
 
+    gPart.sort(key=lambda x: x["index"])
     # Photons
     if isMC:
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
-            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 else None
+            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] >= 0 else None
             g['photonCat'] = getPhotonCategory( genMatch, gPart )
     else:
         for g in allPhotons:

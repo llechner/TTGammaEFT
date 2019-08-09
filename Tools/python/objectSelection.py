@@ -304,17 +304,17 @@ def muonSelector( lepton_selection ):
 
 def getElectronIsoCutV2( pt, eta, id ):
     if id == "tight":
-        if eta <= 1.479: return 0.0287+0.506/pt
-        else:            return 0.0445+0.963/pt
+        if abs(eta) <= 1.479: return 0.0287+0.506/pt
+        else:                 return 0.0445+0.963/pt
     elif id == "medium":
-        if eta <= 1.479: return 0.0478+0.506/pt
-        else:            return 0.0658+0.963/pt
+        if abs(eta) <= 1.479: return 0.0478+0.506/pt
+        else:                 return 0.0658+0.963/pt
     elif id == "loose":
-        if eta <= 1.479: return 0.112+0.506/pt
-        else:            return 0.108+0.963/pt
+        if abs(eta) <= 1.479: return 0.112+0.506/pt
+        else:                 return 0.108+0.963/pt
     elif id == "veto":
-        if eta <= 1.479: return 0.198+0.506/pt
-        else:            return 0.203+0.963/pt
+        if abs(eta) <= 1.479: return 0.198+0.506/pt
+        else:                 return 0.203+0.963/pt
     else:
         raise (NotImplementedError, "Don't know what cut to use for electrons")
 
