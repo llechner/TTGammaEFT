@@ -16,7 +16,7 @@ genMass.append( Plot(
     texX      = 'gen M(ll) (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "mll/F" ),
-    binning   = [ 50, 0, 200 ],
+    binning   = [ 20, 0, 200 ],
 ))
 
 genMass.append( Plot(
@@ -24,7 +24,7 @@ genMass.append( Plot(
     texX      = 'gen M(ll#gamma) (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "mllgamma/F" ),
-    binning   = [ 50, 0, 200 ],
+    binning   = [ 20, 0, 200 ],
 ))
 
 genMass.append( Plot(
@@ -32,6 +32,6 @@ genMass.append( Plot(
     texX      = 'H_{T} (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "ht/F" ),
-    binning   = [ 20, 0, 600 ],
+    binning   = [ 10, 0, 600 ],
 ))
 
