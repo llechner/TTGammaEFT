@@ -13,7 +13,7 @@ from RootTools.core.standard             import *
 
 from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, inclRegionsTTG
 from TTGammaEFT.Analysis.Setup           import Setup
-from TTGammaEFT.Analysis.estimators      import *
+from TTGammaEFT.Analysis.EstimatorList   import EstimatorList
 from TTGammaEFT.Analysis.MCBasedEstimate import MCBasedEstimate
 from TTGammaEFT.Analysis.DataObservation import DataObservation
 from TTGammaEFT.Analysis.SetupHelpers    import *
@@ -62,10 +62,7 @@ if args.controlRegion.count("addDYSF"):
     addDYSF = True
     args.controlRegion = "-".join( [ item for item in args.controlRegion.split("-") if item != "addDYSF" ] )
 
-CR_para = {}
-if args.controlRegion:
-    CR_para = filter( lambda d: d["name"]==args.controlRegion, allSRCR )[0]["parameters"]
-
+CR_para = allRegions[args.controlRegion]["parameters"]
 hadFakeSel  = False #"NoChgIsoNoSieiePhoton" in args.selection
 photonSelection = not ("nPhoton" in CR_para and CR_para["nPhoton"][1] == 0) and not hadFakeSel
 #allRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
@@ -90,7 +87,7 @@ else:
     ptDict = {str(inclRegionsTTG[0]):"all", str(regionsTTG[0]):"lowPT", str(regionsTTG[1]):"medPT", str(regionsTTG[2]):"highPT"}
 
 setup          = Setup(year=args.year, photonSelection=photonSelection )#, checkOnly=True)
-estimators     = estimatorList(setup)
+estimators     = EstimatorList(setup)
 allEstimators  = estimators.constructEstimatorList( default_sampleList )
 mc  = [e.name for e in allEstimators]
 if not args.noData:

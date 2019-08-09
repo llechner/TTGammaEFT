@@ -70,7 +70,7 @@ read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval
                      'reweightL1Prefire/F', 'reweightL1PrefireUp/F', 'reweightL1PrefireDown/F',
                     ]
 
-weightString   = "1" #"%f*weight*reweightL1Prefire*reweightPU*reweightLepton2lSF*reweightLeptonTracking2lSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"%lumi_scale
+weightString   = "luminosity*weight*reweightL1Prefire*reweightPU*reweightLepton2lSF*reweightLeptonTracking2lSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
 ptSel     = ['all', 'lowPT', 'medPT', 'highPT']
 allYears  = ['2016', '2017', '2018']
@@ -82,9 +82,8 @@ noCat_sel = "all"
 allCats     = [noCat_sel] + catSel
 allModes    = allYears #ptSel
 
-args.selection = "triggerCut-METfilter-" + args.selection + "-overlapRemoval"
-allSel = ["entries"] + [ "-".join( args.selection.split("-")[:i+1] ) for i, _ in enumerate(args.selection.split("-")) ]
-print allSel
+#args.selection = "triggerCut-METfilter-" + args.selection + "-overlapRemoval"
+allWeights = ["1"] + [ "*".join( weightString.split("*")[:i+1] ) for i, _ in enumerate(weightString.split("*")) ]
 
 yields = {}
 for i_mode, mode in enumerate(allModes):
@@ -92,56 +91,33 @@ for i_mode, mode in enumerate(allModes):
     for i_cat, cat in enumerate(allCats):
         yields[mode][cat] = {}
         yields[mode][cat]["MC"] = 0
-        for sel in allSel:
-            yields[mode][cat][sel] = 0
+        for w in allWeights:
+            yields[mode][cat][w] = 0
 
 def calculation( arg ):
 
-    mode, cat, sel = arg
+    mode, cat, w = arg
 
-    if   mode == "2016": TTG = TTG_16
-    elif mode == "2017": TTG = TTG_17
-    elif mode == "2018": TTG = TTG_18
+    if   mode == "2016":
+        TTG = TTG_16
+        lumi_scale = 35.92
+    elif mode == "2017":
+        TTG = TTG_17
+        lumi_scale = 41.86
+    elif mode == "2018":
+        TTG = TTG_18
+        lumi_scale = 58.83
 
-    triggercut = False
-    filtercut  = False
-    overlapcut = False
-
-    selCut = sel
-    if selCut == "entries":
-        weight = "1"
-        selCut = "all"
-#    elif selCut == "genweight*lumi":
-#        weight = "%f*weight"%lumi_scale
-#        selCut = "all"
-#    elif selCut == "genweight*lumi*SF":
-#        weight = weightString
-#        selCut = "all"
-    else:
-        weight = weightString
-    if "triggerCut" in selCut:
-        selCut = selCut.replace("triggerCut","")
-        triggercut = True
-    if "METfilter" in selCut:
-        selCut = selCut.replace("METfilter","")
-        filtercut = True
-    if "overlapRemoval" in selCut:
-        selCut = selCut.replace("overlapRemoval","")
-        overlapcut = True
-    selCut = "-".join( [ cut for cut in selCut.split("-") if cut ] )
-
-    if not selCut: selCut = "all"
-    #print("Calcuating yield for mode %s and category %s and selection %s"%(mode,cat,sel))
-
+    selCut = args.selection
     selCuts = [ cutInterpreter.cutString( "-".join( [ selCut, cat ] ) ) ]
 
     filterCutMc   = getFilterCut( int(mode), isData=False, skipBadChargedCandidate=True )
     tr            = TriggerSelector( int(mode), singleLepton=args.selection.count("nLepTight1") )
     triggerCutMc  = tr.getSelection( "MC" )
 
-    if triggercut: selCuts += [triggerCutMc]
-    if filtercut:  selCuts += [filterCutMc]
-    if overlapcut: selCuts += ["overlapRemoval==1"]
+    selCuts += [triggerCutMc]
+    selCuts += [filterCutMc]
+#    if overlapcut: selCuts += ["overlapRemoval==1"]
 
     preSelectionSR = "&&".join( selCuts )
     if not args.useCorrectedIsoVeto: preSelectionSR = preSelectionSR.replace("nLeptonVetoIsoCorr","nLeptonVeto")
@@ -150,15 +126,15 @@ def calculation( arg ):
         yields[mode][cat][sel] = -1
         return
 
-    print TTG.getEventList( preSelectionSR ).GetN()
-    yields[mode][cat][sel] = TTG.getEventList( selectionString=preSelectionSR ).GetN() #int(round(TTG.getYieldFromDraw( selectionString=preSelectionSR, weightString=weight )['val']))
+#    print TTG.getEventList( preSelectionSR ).GetN()
+    yields[mode][cat][w] = TTG.getYieldFromDraw( selectionString=preSelectionSR, weightString=w.replace("luminosity", str(lumi_scale)) )['val']
 #    yields["incl"][cat][sel] += yields[mode][cat][sel]
     #print("Got yield of %f for selection %s and mode %s and category %s"%(yields[mode][cat][sel],sel,mode,cat))
 
 
 def printAllYieldTable():
 
-    with open("logs/cutFlow_%s.log"%(args.selection), "w") as f:
+    with open("logs/weightFlow_%s.log"%(args.selection), "w") as f:
     
         f.write("\\begin{frame}\n")
         f.write("\\frametitle{Yields - Cutflow Table FNAL Samples}\n\n")
@@ -198,9 +174,9 @@ def printAllYieldTable():
         f.write("        & \\textbf{entries} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{entries} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{entries} & $\gamma$ & had $\gamma$ & misID e & fake \\\\ \n")
         f.write("\\hline\n")
         f.write("\\hline\n")
-        for i_s, s in enumerate(allSel):
+        for i_s, s in enumerate(allWeights):
             f.write("\\hline\n")
-            f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( ["+ "+s.split("-")[-1] if i_s > 1 else s.split("-")[-1]] + [int(yields[mode][cat][s]) for mode in allModes for cat in allCats] ))
+            f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( ["$\\times$ "+s.split("*")[-1].replace("_","\_") if i_s > 0 else "events"] + [yields[mode][cat][s] for mode in allModes for cat in allCats] ))
 #        f.write("\\hline\n")
         f.write("\\hline\n")
     
@@ -217,7 +193,7 @@ def printAllYieldTable():
 
 
 
-input = [ (mode, cat, sel) for mode in allModes for cat in allCats for sel in allSel ]
+input = [ (mode, cat, sel) for mode in allModes for cat in allCats for sel in allWeights ]
 
 for inp in input:
     calculation( inp )

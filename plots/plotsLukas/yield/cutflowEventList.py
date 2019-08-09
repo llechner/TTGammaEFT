@@ -59,7 +59,7 @@ for year in [2016,2017,2018]:
     elif year == 2017: ttg = TTG_17
     elif year == 2018: ttg = TTG_18
 
-    filterCutMc   = getFilterCut( year, isData=False )
+    filterCutMc   = getFilterCut( year, isData=False, skipBadChargedCandidate=True )
     tr            = TriggerSelector( year, singleLepton=args.selection.count("nLepTight1") )
     triggerCutMc  = tr.getSelection( "MC" )
 

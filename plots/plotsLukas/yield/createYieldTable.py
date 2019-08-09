@@ -12,8 +12,8 @@ from math                                import isnan, ceil, pi
 from RootTools.core.standard             import *
 
 from TTGammaEFT.Tools.user               import cache_directory
-from Analysis.Tools.DirDB               import DirDB
-
+from Analysis.Tools.DirDB                import DirDB
+from TTGammaEFT.Analysis.SetupHelpers    import default_DYSF, default_misIDSF
 # Default Parameter
 loggerChoices = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "NOTSET"]
 
@@ -153,9 +153,9 @@ for sample in allSamples:
 
                         yields[sample][sieie][chgIso][pt][cat][mode] = int(round(float(yield_dirDB.get( frozenset(res.items()) ))))
                         if "DY" in sample and addDYSF:
-                            yields[sample][sieie][chgIso][pt][cat][mode] *= 1.17
+                            yields[sample][sieie][chgIso][pt][cat][mode] *= default_DYSF
                         if "2" in cat and addMisIDSF:
-                            diff = yields[sample][sieie][chgIso][pt][cat][mode] * 1.25
+                            diff = yields[sample][sieie][chgIso][pt][cat][mode] * (default_misIDSF - 1)
                             yields[sample][sieie][chgIso][pt][cat][mode]   += diff
                             yields[sample][sieie][chgIso][pt]["all"][mode] += diff
                             yields["MC"][sieie][chgIso][pt]["all"][mode]   += diff
