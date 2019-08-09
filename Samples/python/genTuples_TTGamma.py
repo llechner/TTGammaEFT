@@ -16,9 +16,9 @@ def get_parser():
 # Logging
 if __name__=="__main__":
     import Analysis.Tools.logger as logger
-    logger = logger.get_logger("DEBUG", logFile = None )
+    logger = logger.get_logger("INFO", logFile = None )
     import RootTools.core.logger as logger_rt
-    logger_rt = logger_rt.get_logger("DEBUG", logFile = None )
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
     options = get_parser().parse_args()
     ov = options.overwrite
 else:
@@ -216,6 +216,10 @@ ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp             = FWLiteSample.fro
 ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp.xSection    = 0.0342
 ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp.nEvents     = 795000
 
+ttGamma_NoFullyHad_newCentral_1Line_Herwig             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_newCentral_1Line_Herwig", "/ttGamma_1Line_NoFullyHad_Herwig_v2/llechner-ttGamma_1Line_NoFullyHad_Herwig_v2-d9fd44f63ec1bf900df78889a8ad4c5a/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_newCentral_1Line_Herwig.xSection    = 6.634
+ttGamma_NoFullyHad_newCentral_1Line_Herwig.nEvents     = 95000
+
 
 # Sample comparison VGamma
 WGamma_noPtj          = FWLiteSample.fromDAS("WGamma_noPtj", "/WGamma_noPtj_NLO_v1/llechner-WGamma_noPtj_NLO_v1-b5b2816dddfb90dc835a6661ec19164c/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
@@ -233,6 +237,41 @@ ZGamma_noPtj.nEvents  = 1000000
 ZGamma_central          = FWLiteSample.fromDAS("ZGamma_central", "/ZGamma_central_NLO_v1/llechner-ZGamma_central_NLO_v1-38c6460c023e7ff49f40e64c5d271665/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
 ZGamma_central.xSection = 77.79
 ZGamma_central.nEvents  = 990000
+
+#NLO
+ZGamma_central_NLO_01j_71X_CP5          = FWLiteSample.fromDAS("ZGamma_central_NLO_01j_71X_CP5", "/ZGamma_central_NLO_01j_CP5_71X_v3/llechner-ZGamma_central_NLO_01j_CP5_71X_v3-22355a42a8e0fc1ac349fb4a842bd3f0/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_NLO_01j_71X_CP5.xSection = 77.79
+ZGamma_central_NLO_01j_71X_CP5.nEvents  = 990000
+
+ZGamma_central_NLO_01j_71X_CUEP8M1          = FWLiteSample.fromDAS("ZGamma_central_NLO_01j_71X_CUEP8M1", "/ZGamma_central_NLO_01j_CUEP8M1_71X_v3/llechner-ZGamma_central_NLO_01j_CUEP8M1_71X_v3-5f8f767332b31bf8be45567618311087/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_NLO_01j_71X_CUEP8M1.xSection = 77.79
+ZGamma_central_NLO_01j_71X_CUEP8M1.nEvents  = 990000
+
+ZGamma_central_NLO_01j_93X_CP5          = FWLiteSample.fromDAS("ZGamma_central_NLO_01j_93X_CP5", "/ZGamma_central_NLO_01j_CP5_v4/llechner-ZGamma_central_NLO_01j_CP5_v4-93826f4c973f9f5e624a858e2ffbe517/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_NLO_01j_93X_CP5.xSection = 77.79
+ZGamma_central_NLO_01j_93X_CP5.nEvents  = 1000000
+
+ZGamma_central_NLO_01j_93X_CUEP8M1          = FWLiteSample.fromDAS("ZGamma_central_NLO_01j_93X_CUEP8M1", "/ZGamma_central_NLO_01j_CUEP8M1_v4/llechner-ZGamma_central_NLO_01j_CUEP8M1_v4-94741d2a2711d10d1036801d36d8ced4/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_NLO_01j_93X_CUEP8M1.xSection = 77.79
+ZGamma_central_NLO_01j_93X_CUEP8M1.nEvents  = 1000000
+
+
+#LO
+ZGamma_central_LO_0123j_71X_CP5          = FWLiteSample.fromDAS("ZGamma_central_LO_0123j_71X_CP5", "/ZGamma_LO_0123j_CP5_71X_v3/llechner-ZGamma_LO_0123j_CP5_71X_v3-f4661f471bfed3c8be086563ccbee2b3/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_LO_0123j_71X_CP5.xSection = 445.8
+ZGamma_central_LO_0123j_71X_CP5.nEvents  = 370000
+
+ZGamma_central_LO_0123j_71X_CUEP8M1          = FWLiteSample.fromDAS("ZGamma_central_LO_0123j_71X_CUEP8M1", "/ZGamma_LO_0123j_CUEP8M1_71X_v3/llechner-ZGamma_LO_0123j_CUEP8M1_71X_v3-0dfef519c394ad2df9404299bd61ecd6/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_LO_0123j_71X_CUEP8M1.xSection = 445.8
+ZGamma_central_LO_0123j_71X_CUEP8M1.nEvents  = 315000
+
+ZGamma_central_LO_0123j_93X_CP5          = FWLiteSample.fromDAS("ZGamma_central_LO_0123j_93X_CP5", "/ZGamma_LO_0123j_CP5_v4/llechner-ZGamma_LO_0123j_CP5_v4-24f94ee56646339fa19ae37b9b00f473/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_LO_0123j_93X_CP5.xSection = 445.8
+ZGamma_central_LO_0123j_93X_CP5.nEvents  = 410000
+
+ZGamma_central_LO_0123j_93X_CUEP8M1          = FWLiteSample.fromDAS("ZGamma_central_LO_0123j_93X_CUEP8M1", "/ZGamma_LO_0123j_CUEP8M1_v4/llechner-ZGamma_LO_0123j_CUEP8M1_v4-1777ab7bf30b66ec245d65a3a60ecdc9/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ZGamma_central_LO_0123j_93X_CUEP8M1.xSection = 445.8
+ZGamma_central_LO_0123j_93X_CUEP8M1.nEvents  = 300000
 
 
 SM = [
@@ -271,6 +310,7 @@ SM = [
     ttGamma_NoFullyHad_SM_ATLASrunCard_comp,
     ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp,
     ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp,
+    ttGamma_NoFullyHad_newCentral_1Line_Herwig,
 ]
 
 EFT = [
@@ -286,6 +326,14 @@ VGamma = [
     WGamma_central,
     ZGamma_noPtj,
     ZGamma_central,
+    ZGamma_central_NLO_01j_93X_CP5,
+    ZGamma_central_NLO_01j_93X_CUEP8M1,
+    ZGamma_central_NLO_01j_71X_CP5,
+    ZGamma_central_NLO_01j_71X_CUEP8M1,
+    ZGamma_central_LO_0123j_93X_CP5,
+    ZGamma_central_LO_0123j_93X_CUEP8M1,
+    ZGamma_central_LO_0123j_71X_CP5,
+    ZGamma_central_LO_0123j_71X_CUEP8M1,
 ]
 
 allSamples = SM + EFT + VGamma

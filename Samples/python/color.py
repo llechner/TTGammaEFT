@@ -28,3 +28,13 @@ color.TTG3           = ROOT.kCyan+1
 color.TTG4           = ROOT.kViolet
 color.TTG5           = ROOT.kBlue
 color.TTG6           = ROOT.kBlack
+
+
+color.VG1            = ROOT.kBlue+2
+color.VG2            = ROOT.kRed+1
+color.VG3            = ROOT.kGreen+3
+color.VG4            = ROOT.kOrange+1
+color.VG5            = ROOT.kBlack
+color.VG6            = ROOT.kCyan+1
+color.VG7            = ROOT.kViolet
+color.VG8            = ROOT.kYellow

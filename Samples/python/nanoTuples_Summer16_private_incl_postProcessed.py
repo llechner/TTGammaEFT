@@ -5,6 +5,15 @@ import ROOT
 # RootTools Imports
 from RootTools.core.Sample import Sample
 
+# Colors
+from TTGammaEFT.Samples.color import color
+
+# Data directory
+from TTGammaEFT.Tools.user import dpm_directory as data_directory
+data_directory += "postprocessed/"
+from TTGammaEFT.Samples.default_locations import postprocessing_locations
+postprocessing_directory = postprocessing_locations.MC2016_incl
+
 # Logging
 if __name__=="__main__":
     import Analysis.Tools.logger as logger
@@ -14,15 +23,6 @@ if __name__=="__main__":
 else:
     import logging
     logger = logging.getLogger(__name__)
-
-# Colors
-from TTGammaEFT.Samples.color import color
-
-# Data directory
-from TTGammaEFT.Tools.user import dpm_directory as data_directory
-data_directory += "postprocessed/"
-from TTGammaEFT.Samples.default_locations import postprocessing_locations
-postprocessing_directory = postprocessing_locations.MC2016_incl
 
 # Redirector
 try:
