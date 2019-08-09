@@ -174,7 +174,7 @@ else:
     data_sample.style          = styles.errorStyle( ROOT.kBlack )
     lumi_scale                 = data_sample.lumi * 0.001
     data_sample.setWeightString("weight")
-    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True ), cutInterpreter.cutString( args.selection ) ] )
+    data_sample.setSelectionString( [ getFilterCut( args.year, isData=True, skipBadChargedCandidate=True ), cutInterpreter.cutString( args.selection ) ] )
     allSamples = [data_sample] + mc
 
 w         = WeightInfo( signalSample.reweight_pkl )

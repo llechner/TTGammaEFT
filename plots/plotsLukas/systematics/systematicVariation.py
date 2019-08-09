@@ -260,8 +260,8 @@ dirDB = DirDB( os.path.join(cache_directory, "systematicPlots", str(args.year), 
 # QCD cache
 qcd_dirDB     = DirDB( os.path.join(cache_directory, "qcdHistos") )
 
-filterCutData = getFilterCut( args.year, isData=True )
-filterCutMc   = getFilterCut( args.year, isData=False )
+filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
+filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
 tr            = TriggerSelector( args.year, singleLepton=args.selection.count("nLepTight1") )
 triggerCutMc  = tr.getSelection( "MC" )
 preSelection  = cutInterpreter.cutString(args.selection)

@@ -62,8 +62,8 @@ def getYieldPlot( index ):
                 name      = 'yield',
                 texX      = 'yield',
                 texY      = 'Number of Events',
-                attribute = lambda event, sample: event.nGenElectron,
-                binning   = [ 2, 0, 2 ],
+                attribute = lambda event, sample: 0.5 + index,
+                binning   = [ 3, 0, 3 ],
                 )
 
 genJetVarString      = "pt/F,eta/F,phi/F,isMuon/I,isElectron/I,isPhoton/I,matchBParton/I"
@@ -89,11 +89,13 @@ read_variables  = ["weight/F",
                    "GenLepton[%s]"   %genLeptonVarString,
                    "nGenPhoton/I",
                    "GenPhoton[%s]"   %genPhotonVarString,
+                   "nGenMGPhoton/I",
+                   "GenMGPhoton[%s]"   %genPhotonVarString,
                    "nGenJet/I",
                    "GenJet[%s]"      %genJetVarString,
                    "nGenTop/I",
                    "GenTop[%s]"      %genTopVarString,
-                   "mll/F", "mllgamma/F", "ht/F",
+                   "mll/F", "mllgamma/F",
                   ]
 
 # Read variables and sequences
@@ -103,31 +105,31 @@ read_variables  += [
 #                   "nGenMuon/I",
 #                   "nGenElectron/I",
 #                   "GenMET_pt/F", "GenMET_phi/F",
-#                   "nGenAllLepton/I",
-#                   "GenAllLepton[%s]"   %genLeptonVarString,
-#                   "nGenAllPhoton/I",
-#                   "GenAllPhoton[%s]"   %genPhotonVarString,
-#                   "nGenMGAllPhoton/I",
-#                   "GenMGAllPhoton[%s]"   %genPhotonVarString,
+                   "nGenAllLepton/I",
+                   "GenAllLepton[%s]"   %genLeptonVarString,
+                   "nGenAllPhoton/I",
+                   "GenAllPhoton[%s]"   %genPhotonVarString,
+                   "nGenMGAllPhoton/I",
+                   "GenMGAllPhoton[%s]"   %genPhotonVarString,
 #                   "nGenPhotonAll/I",
 #                   "GenPhotonAll[%s]"   %genPhotonVarString,
 #                   "nGenPhotonPT/I",
 #                   "GenPhotonPT[%s]"   %genPhotonVarString,
-#                   "nGenAllJet/I",
-#                   "GenAllJet[%s]"      %genJetVarString,
+                   "nGenAllJet/I",
+                   "GenAllJet[%s]"      %genJetVarString,
 #                   "nGenTop/I",
 #                   "GenTop[%s]"      %genTopVarString,
 #                   "mll/F", "mllgamma/F",
-#                   "minDRjj/F",
-#                   "minDRbb/F",
-#                   "minDRll/F",
-#                   "minDRaa/F",
-#                   "minDRbj/F",
-#                   "minDRaj/F",
-#                   "minDRjl/F",
- #                  "minDRab/F",
- #                  "minDRbl/F",
- #                  "minDRal/F",
+                   "minDRjj/F",
+                   "minDRbb/F",
+                   "minDRll/F",
+                   "minDRaa/F",
+                   "minDRbj/F",
+                   "minDRaj/F",
+                   "minDRjl/F",
+                   "minDRab/F",
+                   "minDRbl/F",
+                   "minDRal/F",
                   ]
 
 read_variables += [ "GenBj0_" + var for var in genJetVarString.split(",") ]
@@ -176,9 +178,9 @@ def getStatusPhotons( event, sample ):
 #    event.GenMGPhoton_status[0] = GenMGAllPhotons[0]["status"] if GenMGAllPhotons else -999
 
 # Sequence
-sequence = []#getMinDR, getStatusPhotons]
+sequence = [getMinDR, getStatusPhotons]
 
-lumi_scale = 35.8
+lumi_scale = 136.6
 
 #comparisonSamples = [ [ttGamma_SingleLeptFromT_SM_1Line], [ttGamma_SingleLeptFromT_SM_central] ]
 #comparisonSamples = [ [ttGamma_SingleLeptFromTbar_SM_1Line], [ttGamma_SingleLeptFromTbar_SM_central] ]
@@ -189,15 +191,7 @@ lumi_scale = 35.8
 #comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_TTBar_RunCard_modified], [TTG_TTBar_RunCard], [TTG_TTBar_RunCard_mllOnly] ]
 #comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_NoFullyHad_newCentral_RunCard] ]
 
-#comparisonSamples  = [ [ZGamma_NLO_CUEP8M1_71X], [ZGamma_NLO_CP5_71X], [ZGamma_NLO_CUEP8M1_93X], [ZGamma_NLO_CP5_93X] ]
-#comparisonSamples += [ [ZGamma_LO_CUEP8M1_71X], [ZGamma_LO_CP5_71X], [ZGamma_LO_CUEP8M1_93X], [ZGamma_LO_CP5_93X] ]
-
-comparisonSamples  = [ [ZGamma_NLO_CUEP8M1_71X], [ZGamma_NLO_CP5_93X] ]
-comparisonSamples += [ [ZGamma_LO_CUEP8M1_71X], [ZGamma_LO_CP5_93X] ]
-
-#comparisonSamples = [ [ZGamma_NLO_CP5], [ZGamma_NLO_CUEP8M1] ]
-#comparisonSamples = [ [ZGamma_central], [ZGamma_noPtj] ]
-#comparisonSamples = [ [WGamma_central], [WGamma_noPtj] ]
+comparisonSamples = [ [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_Herwig] ]
 
 
 if args.normalize:
@@ -206,13 +200,13 @@ if args.normalize:
 # Plotting
 def drawPlots( plots, mode ):
     for log in [False, True]:
-        plot_directory_ = os.path.join( plot_directory, 'comparisonPlots', "VGamma_%s"%args.version, args.selection, mode, "log" if log else "lin" )
+        plot_directory_ = os.path.join( plot_directory, 'comparisonPlots', "runCardTest_%s"%args.version, args.selection, mode, "log" if log else "lin" )
 
         for plot in plots:
             if not max(l[0].GetMaximum() for l in plot.histos): 
                 continue # Empty plot
             postFix = " (legacy)"
-            extensions_ = ["pdf", "png", "root"] 
+            extensions_ = ["pdf", "png", "root"] if mode in ['all', 'SF', 'mue'] else ['png']
 
             plotting.draw( plot,
 	                       plot_directory = plot_directory_,
@@ -267,13 +261,190 @@ from plotLists import plotListDataMC as plotList
 # plotList
 addPlots = []
 
+addPlots.append( Plot(
+    name      = 'GenAllBJets0_pt',
+    texX      = 'p_{T}(b_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllBJets0Pt,
+    binning   = [ 20, 0, 200 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenAllBJets0_eta',
+    texX      = '#eta(b_{0})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllBJets0Eta,
+    binning   = [ 20, -5, 5 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenAllBJets1_pt',
+    texX      = 'p_{T}(b_{1})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllBJets1Pt,
+    binning   = [ 20, 0, 200 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenAllBJets1_eta',
+    texX      = '#eta(b_{1})',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllBJets1Eta,
+    binning   = [ 20, -5, 5 ],
+))
+
+
+addPlots.append( Plot(
+    name      = 'nGenLeptonAll',
+    texX      = 'N_{l}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenAllLepton,
+    binning   = [ 6, 0, 6 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenJetsAll',
+    texX      = 'N_{jets}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenAllJet,
+    binning   = [ 20, 0, 20 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenBJets',
+    texX      = 'N_{b-jets}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenBJets,
+    binning   = [4, 0, 4 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenNonBJets',
+    texX      = 'N_{non b-jets}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenNonBJets,
+    binning   = [10, 0, 10 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenAllBJets',
+    texX      = 'N_{b-jets}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenAllBJets,
+    binning   = [4, 0, 4 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenAllNonBJets',
+    texX      = 'N_{non b-jets}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenAllNonBJets,
+    binning   = [10, 0, 10 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenJetsLowPt',
+    texX      = 'N_{jets}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenJetlowPT,
+    binning   = [ 20, 0, 20 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenLeptonLowPT',
+    texX      = 'N_{#gamma}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenLeptonlowPT,
+    binning   = [ 6, 0, 6 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenPhotonAll0_pt',
+    texX      = 'p_{T}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllPhotonsPt,
+    binning   = [ 20, 0, 400 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenPhotonTopMother_pt',
+    texX      = 'p_{T}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllPhoton_pt[0] if abs(event.GenAllPhoton_motherPdgId[0]) == 6 else -999,
+    binning   = [ 40, 0, 200 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenPhotonAll0_eta',
+    texX      = '#eta',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenAllPhotonsEta,
+    binning   = [ 40, -5, 5 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenPhotonAll',
+    texX      = 'N_{#gamma}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenAllPhoton,
+    binning   = [ 8, 0, 8 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenPhotonLowPT',
+    texX      = 'N_{#gamma}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenPhotonlowPT,
+    binning   = [ 8, 0, 8 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenPhotonLowPT0_pt',
+    texX      = 'p_{T}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenPhotonlowPTPt,
+    binning   = [ 20, 0, 20 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenPhotonLowPT0_eta',
+    texX      = '#eta',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenPhotonlowPTEta,
+    binning   = [ 40, -5, 5 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenJetLowPT0_pt',
+    texX      = 'p_{T}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenJetlowPTPt,
+    binning   = [ 20, 0, 20 ],
+))
+
+addPlots.append( Plot(
+    name      = 'GenJetLowPT0_eta',
+    texX      = '#eta',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.GenJetlowPTEta,
+    binning   = [ 40, -5, 5 ],
+))
+
+addPlots.append( Plot(
+    name      = 'nGenPhotonAllLowPTDRclean',
+    texX      = 'N_{#gamma}',
+    texY      = 'Number of Events',
+    attribute = lambda event, sample: event.nGenPhotonlowPTDR,
+    binning   = [ 8, 0, 8 ],
+))
+
+
 # Loop over channels
 yields   = {}
 allPlots = {}
-#if args.selection.count("dilep"): allModes = [ "all", 'mumu', 'mue', 'ee', "SF" ]
-#elif args.selection.count("nLep"): allModes = [ "all", 'e', "mu" ]
-#else: allModes = [ "all" ]
-allModes = [ "all" ]
+if args.selection.count("dilep"): allModes = [ "all", 'mumu', 'mue', 'ee', "SF" ]
+elif args.selection.count("nLep"): allModes = [ "all", 'e', "mu" ]
+else: allModes = [ "all" ]
 
 for index, mode in enumerate( allModes ):
     logger.info( "Computing plots for mode %s", mode )
@@ -283,7 +454,7 @@ for index, mode in enumerate( allModes ):
     # always initialize with [], elso you get in trouble with pythons references!
     plots  = []
     plots += plotList
-    plots += addPlots
+#    plots += addPlots
 #    if mode != 'all': plots += [ getYieldPlot( index ) ]
 
     # Define 2l selections
@@ -298,8 +469,9 @@ for index, mode in enumerate( allModes ):
         if plot.name != "yield": continue
         for i, l in enumerate( plot.histos ):
             for j, h in enumerate( l ):
-                h.GetXaxis().SetBinLabel( 1, "#mu" )
-                h.GetXaxis().SetBinLabel( 2, "e" )
+                h.GetXaxis().SetBinLabel( 1, "#mu#mu" )
+                h.GetXaxis().SetBinLabel( 2, "#mue" )
+                h.GetXaxis().SetBinLabel( 3, "ee" )
 
     logger.info( "Plotting mode %s", mode )
     allPlots[mode] = copy.deepcopy(plots) # deep copy for creating SF/all plots afterwards!

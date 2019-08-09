@@ -29,6 +29,8 @@ from Analysis.Tools.u_float           import u_float
 from Analysis.Tools.mt2Calculator     import mt2Calculator
 from Analysis.Tools.overlapRemovalTTG import getParentIds
 
+from TTGammaEFT.Analysis.SetupHelpers    import default_DYSF, default_misIDSF
+
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
 photonCatChoices = [ "None", "PhotonGood0", "PhotonGood1", "PhotonMVA0", "PhotonNoChgIso0", "PhotonNoChgIsoNoSieie0", "PhotonNoSieie0" ]
@@ -50,7 +52,7 @@ argParser.add_argument('--addOtherBg',         action='store_true', default=Fals
 argParser.add_argument('--categoryPhoton',     action='store',      default="None", type=str, choices=photonCatChoices,                help="plot in terms of photon category, choose which photon to categorize!" )
 argParser.add_argument('--leptonCategory',     action='store_true', default=False,                                                     help="plot in terms of lepton category" )
 argParser.add_argument('--invLeptonIso',       action='store_true', default=False,                                                     help="plot QCD estimation plots with inv lepton iso and nBTag==0" )
-argParser.add_argument('--detailedMC',         action='store_true', default=False,                                                     help="Plot MC splitted in single processes" )
+argParser.add_argument('--replaceZG',          action='store_true', default=False,                                                     help="Plot DY instead of ZGamma" )
 argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all", "eetight", "mumutight", "SFtight", "muetight"], help="plot lepton mode" )
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                     help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                     help="Run only job i")
@@ -153,8 +155,8 @@ def drawPlots( plots, mode, dataMCScale ):
             sc = "lep_"
         elif args.invLeptonIso:
             sc = "invIso_"
-        elif args.detailedMC:
-            sc = "det_"
+        elif args.replaceZG:
+            sc = "dy_"
         else:
             sc = ""
         sc += "log" if log else "lin"
@@ -584,10 +586,10 @@ if args.year == 2016:
         TTbar    = TT_pow_16
         TTG      = TTG_priv_16
     else:
-        if args.detailedMC:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
+        if args.replaceZG:
+            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, rest_16 ]
         else:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, VG_16, WJets_16, rest_16]
+            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
         if not args.invLeptonIso: mc += [ QCD_16 ]
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
@@ -599,10 +601,10 @@ elif args.year == 2017:
         TTbar    = TT_pow_17
         TTG      = TTG_priv_17
     else:
-        if args.detailedMC:
-            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, ZG_17, rest_17 ]
+        if args.replaceZG:
+            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, rest_17 ]
         else:
-            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, VG_17, WJets_17, rest_17 ]
+            mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, ZG_17, rest_17 ]
         if not args.invLeptonIso: mc += [ QCD_17 ]
 elif args.year == 2018:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
@@ -614,10 +616,10 @@ elif args.year == 2018:
         TTbar    = TT_pow_18
         TTG      = TTG_priv_18
     else:
-        if args.detailedMC:
-            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, ZG_18, rest_18 ]
+        if args.replaceZG:
+            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, rest_18 ]
         else:
-            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, VG_18, WJets_18, rest_18 ]
+            mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, ZG_18, rest_18 ]
         if not args.invLeptonIso: mc += [ QCD_18 ]
 
 if categoryPlot:
@@ -717,7 +719,7 @@ else:
     stack                      = Stack( mc, data_sample )
 
 stack.extend( [ [s] for s in signals ] )
-sampleWeight = lambda event, sample: (2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(vGSF if ("WG" in sample.name or "ZG" in sample.name or "VG" in sample.name) and addVGSF else 1.)*(1.17 if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+sampleWeight = lambda event, sample: (default_misIDSF if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(vGSF if ("WG" in sample.name or "ZG" in sample.name or "VG" in sample.name) and addVGSF else 1.)*(default_DYSF if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 # no misIDSF included in weightString!!
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
@@ -1078,8 +1080,8 @@ else:
     allModes = [ 'mu', 'e' ] if not args.selection.count("nLepTight2") else ["mumutight","muetight","eetight","SFtight","all"]
 
 
-filterCutData = getFilterCut( args.year, isData=True )
-filterCutMc   = getFilterCut( args.year, isData=False )
+filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
+filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
 tr            = TriggerSelector( args.year )
 triggerCutMc  = tr.getSelection( "MC" )
 
@@ -1192,8 +1194,12 @@ for index, mode in enumerate( allModes ):
 
         all_noTT.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
     else:
-        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
-#        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
+        for sample in mc + signals:
+            if sample.name.startswith("DY") and args.replaceZG: #no ZG sample
+                sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
+            else:
+                sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
+#        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
     if args.invLeptonIso:
         preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), filterCutMc, isoleptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )

@@ -585,8 +585,8 @@ elif args.nJobs != 1:
 else:
     allModes = [ 'mumu', 'mue', 'ee' ] if "dilep" in args.selection else [ "mu", "e" ]
 
-filterCutData = getFilterCut( args.year, isData=True )
-filterCutMc   = getFilterCut( args.year, isData=False )
+filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
+filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
 tr            = TriggerSelector( args.year, singleLepton="nLepTight1" in args.selection )
 triggerCutMc  = tr.getSelection( "MC" )
 
