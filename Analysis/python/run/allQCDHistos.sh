@@ -1,0 +1,76 @@
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2-nBTag0-nPhoton1p       --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4-nBTag0-nPhoton1p       --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet5-nBTag0-nPhoton1p       --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet5-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet5-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p-onZeg  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p-offZeg  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet2-nBTag2-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag1p-NoChgIsoNoSieiePhoton  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-NoChgIsoNoSieiePhoton --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag1p-NoChgIsoNoSieiePhoton --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag1p-nPhoton1p  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag1p-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton0  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton0 --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton0 --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3-nBTag1p-nPhoton0  --plotFile all_1l #_noPhoton
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton0 --plotFile all_1l #_noPhoton
+python cache_QCDHistos.py  --overwrite --year 2016 --mode e --selection nLepTight1-nLepVeto1-nJet3p-nBTag1p-nPhoton0 --plotFile all_1l #_noPhoton
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2-nBTag0-nPhoton1p       --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4-nBTag0-nPhoton1p       --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet5-nBTag0-nPhoton1p       --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet5-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet5-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p-onZeg  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p-onZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton1p-offZeg  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2p-nBTag0-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet2-nBTag2-nPhoton1p-offZeg --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag1p-NoChgIsoNoSieiePhoton  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-NoChgIsoNoSieiePhoton --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag1p-NoChgIsoNoSieiePhoton --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag1p-nPhoton1p  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag1p-nPhoton1p --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag0-nPhoton0  --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag0-nPhoton0 --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag0-nPhoton0 --plotFile all_1l
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3-nBTag1p-nPhoton0  --plotFile all_1l #_noPhoton
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton0 --plotFile all_1l #_noPhoton
+python cache_QCDHistos.py  --overwrite --year 2016 --mode mu --selection nLepTight1-nLepVeto1-nJet3p-nBTag1p-nPhoton0 --plotFile all_1l #_noPhoton

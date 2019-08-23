@@ -2,7 +2,7 @@
 
 #
 # Example of usage:
-# submitCondor.py --execFile submit_estimates.sh --queue tomorrow allEstimates.sh
+# submitCondor.py --execFile submit_QCDHistos.sh --queue tomorrow allQCDHistos.sh
 #
 
 export USER=$(whoami)
