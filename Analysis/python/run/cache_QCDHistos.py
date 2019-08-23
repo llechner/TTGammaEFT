@@ -46,6 +46,8 @@ args = argParser.parse_args()
 if __name__=="__main__":
     import Analysis.Tools.logger as logger
     logger = logger.get_logger( args.logLevel, logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( args.logLevel, logFile=None )
 else:
     import logging
     logger = logging.getLogger(__name__)
@@ -288,13 +290,13 @@ if args.year == 2016 and not args.checkOnly:
     gjets = GJets_16
 
 elif args.year == 2017 and not args.checkOnly:
-    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, VG_17, rest_17 ]
+    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, rest_17 ]
     data_sample = Run2017
     qcd   = QCD_17
     gjets = GJets_17
 
 elif args.year == 2018 and not args.checkOnly:
-    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, VG_18, rest_18 ]
+    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, rest_18 ]
     data_sample = Run2018
     qcd   = QCD_18
     gjets = GJets_18
@@ -311,7 +313,6 @@ else:
     stack = Stack( mc )
 
 
-#sampleWeight = lambda event, sample: (1.5 if "ZG" in sample.name and args.year != 2016 else 1.)*(2.25 if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 else 1.)*(1.17 if "DY" in sample.name else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 sampleWeight = lambda event, sample: (event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)+(1.25*(event.nPhotonGood>0)*(event.PhotonGood0_photonCat==2)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
@@ -443,7 +444,11 @@ for index, mode in enumerate( allModes ):
     leptonSelection    = cutInterpreter.cutString( mode + "Inv" )
 
     data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
-    for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
+    for sample in mc + signals:
+        if sample.name.startswith("DY") and args.year != 2016: #no ZG sample in 17/18
+            sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
+        else:
+            sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )
 

@@ -31,6 +31,7 @@ argParser.add_argument( "--overwrite",          action="store_true",            
 argParser.add_argument( "--useRegions",         action="store",      nargs='*',       type=str, choices=allRegions.keys(),  help="Which regions to use?" )
 #argParser.add_argument( "--useChannel",         action="store",      default="all",   type=str, choices=["e", "mu", "all", "comb"], help="Which lepton channels to use?" )
 argParser.add_argument( "--addDYSF",            action="store_true",                                                        help="add default DY scale factor" )
+argParser.add_argument( "--addMisIDSF",         action="store_true",                                                        help="add default misID scale factor" )
 argParser.add_argument( "--keepCard",           action="store_true",                                                        help="Overwrite existing output files" )
 argParser.add_argument( "--expected",           action="store_true",                                                        help="Use sum of backgrounds instead of data." )
 argParser.add_argument( "--useTxt",             action="store_true",                                                        help="Use txt based cardFiles instead of root/shape based ones?" )
@@ -53,6 +54,7 @@ if args.keepCard:
 default_setup            = Setup( year=args.year )
 estimators               = EstimatorList( default_setup )
 regionNames              = []
+default_setup.data       = default_setup.processes["Data"]
 default_setup.processes  = estimators.constructProcessDict( processDict=default_processes )
 default_setup.addon      = ""
 default_setup.regions    = inclRegionsTTG if args.inclRegion else regionsTTG
@@ -62,6 +64,7 @@ if "SR3" in args.useRegions:
     signalSetup3             = default_setup.sysClone( parameters=signalRegions["SR3"]["parameters"] )
     signalSetup3.channels    = signalRegions["SR3"]["channels"] #default_setup.channels
     signalSetup3.regions     = signalRegions["SR3"]["regions"] if (not args.inclRegion) or signalRegions["SR3"]["noPhotonCR"] else inclRegionsTTG #default_setup.regions
+    signalSetup3.data        = default_setup.data
     signalSetup3.processes   = estimators.constructProcessDict( processDict=signalRegions["SR3"]["processes"] ) if "processes" in signalRegions["SR3"] else default_setup.processes
     signalSetup3.addon       = "_signal3"
     regionNames             += ["SR3"]
@@ -71,6 +74,7 @@ if "SR4p" in args.useRegions:
     signalSetup4p            = default_setup.sysClone( parameters=signalRegions["SR4p"]["parameters"] )
     signalSetup4p.channels   = signalRegions["SR4p"]["channels"] #default_setup.channels
     signalSetup4p.regions    = signalRegions["SR4p"]["regions"] if (not args.inclRegion) or signalRegions["SR4p"]["noPhotonCR"] else inclRegionsTTG #default_setup.regions
+    signalSetup4p.data       = default_setup.data
     signalSetup4p.processes  = estimators.constructProcessDict( processDict=signalRegions["SR4p"]["processes"] ) if "processes" in signalRegions["SR4p"] else default_setup.processes
     signalSetup4p.addon      = "_signal4p"
     regionNames             += ["SR4p"]
@@ -84,13 +88,16 @@ for key, val in controlRegions.items():
     locals()["setup"+key]            = default_setup.sysClone( parameters=val["parameters"] )
     locals()["setup"+key].channels   = val["channels"] #default_setup.channels
     locals()["setup"+key].regions    = val["regions"] if (not args.inclRegion) or val["noPhotonCR"] else inclRegionsTTG
+    locals()["setup"+key].data       = default_setup.data
     locals()["setup"+key].processes  = estimators.constructProcessDict( processDict=val["processes"] ) if "processes" in val else default_setup.processes
     locals()["setup"+key].addon      = "_control%s"%key
     setups.append(locals()["setup"+key])
 
 # use the regions as key for caches
 regionNames.sort()
-if args.addDYSF: regionNames.append("addDYSF")
+if args.addDYSF:    regionNames.append("addDYSF")
+if args.addMisIDSF: regionNames.append("addMisIDSF")
+if args.inclRegion: regionNames.append("incl")
 
 baseDir       = os.path.join( cache_dir, str(args.year), "limits" )
 limitDir      = os.path.join( baseDir, "cardFiles", args.label, "expected" if args.expected else "observed" )
@@ -156,13 +163,15 @@ def wrapper():
         c.addUncertainty( "ISR",        shapeString)
         # only in SRs
         # all regions, lnN
-        c.addUncertainty( "DY",         "lnN" )
-        c.addUncertainty( "TT",         "lnN" )
         c.addUncertainty( "QCD",        "lnN" )
-        c.addUncertainty( "misID",      "lnN" )
+        c.addUncertainty( "TT",         "lnN" )
+        if not args.addDYSF:
+            c.addUncertainty( "DY",         "lnN" )
+        if not args.addMisIDSF:
+            c.addUncertainty( "misID",      "lnN" )
 
         for setup in setups:
-            observation = DataObservation( name="Data", process=setup.processes["Data"], cacheDir=setup.defaultCacheDir() )
+            observation = DataObservation( name="Data", process=setup.data, cacheDir=setup.defaultCacheDir() )
             for pList in setup.processes.values():
                 for e in pList:
                     e.initCache( setup.defaultCacheDir() )
@@ -186,7 +195,10 @@ def wrapper():
                             exp_yield = e.cachedEstimate( r, channel, setup )
                             if e.name.count( "DY" ) and args.addDYSF:
                                 exp_yield *= default_DYSF
-                                logger.info( "Scaling DY background by %f", default_DYSF )
+                                logger.info( "Scaling DY background %s by %f"%(e.name,default_DYSF) )
+                            if e.name.count( "misID" ) and args.addMisIDSF:
+                                exp_yield *= default_misIDSF
+                                logger.info( "Scaling misID background %s by %f"%(e.name,default_misIDSF) )
                             e.expYield = exp_yield
                             expected  += exp_yield
 
@@ -197,8 +209,8 @@ def wrapper():
                         if signal and expected.val <= 0.01: mute = True
 
                         default_DY_unc    = 5.0
-                        default_TT_unc    = 5.0
-                        default_QCD_unc   = 5.0
+                        default_TT_unc    = 0.1
+                        default_QCD_unc   = 1.0 # 100%
                         default_misID_unc = 5.0
 
                         pu, jec, jer, sfb, sfl, trigger, lepSF, lepTrSF, phSF, eVetoSF, pfSF = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -221,13 +233,13 @@ def wrapper():
 #                                scale    += y_scale * getScaleUncBkg( e.name, r, channel )
 #                                pdf      += y_scale * getPDFUnc(      e.name, r, channel )
 #                                isr      += y_scale * getISRUnc(      e.name, r, channel )
-                                if e.name.count( "DY" ):
+                                if e.name.count( "DY" ) and not args.addDYSF:
                                     dyUnc    += y_scale * default_DY_unc
                                 if e.name.count( "QCD" ):
                                     qcdUnc   += y_scale * default_QCD_unc
                                 if e.name.count( "TT_pow" ):
                                     ttUnc    += y_scale * default_TT_unc
-                                if e.name.count( "misID" ):
+                                if e.name.count( "misID" ) and not args.addMisIDSF:
                                     misIDUnc += y_scale * default_misID_unc
 
 
@@ -313,14 +325,38 @@ def wrapper():
         
         postFitResults = getPrePostFitFromMLF( combineWorkspace )
         
-        DY_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["DY_LO"]
-        DY_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["DY_LO"]
+        try:
+            DY_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["DY"]
+            DY_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["DY"]
+        except:
+            logger.info("DY SF not found!")
+            DY_prefit  = u_float(1.,0.)
+            DY_postfit = u_float(1.,0.)
 
-        TT_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["TT_pow"]
-        TT_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["TT_pow"]
+        try:
+            TT_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["TT"]
+            TT_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["TT"]
+        except:
+            logger.info("TT SF not found!")
+            TT_prefit  = u_float(1.,0.)
+            TT_postfit = u_float(1.,0.)
 
-#        QCD_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["QCD"]
-#        QCD_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["QCD"]
+        try:
+            QCD_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["QCD"]
+            QCD_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["QCD"]
+        except:
+            logger.info("QCD SF not found!")
+            QCD_prefit  = u_float(1.,0.)
+            QCD_postfit = u_float(1.,0.)
+
+        try:
+            misID_prefit  = postFitResults["results"]["shapes_prefit"]["Bin0"]["misID"]
+            misID_postfit = postFitResults["results"]["shapes_fit_b"]["Bin0"]["misID"]
+        except:
+            logger.info("misID SF not found!")
+            misID_prefit  = u_float(1.,0.)
+            misID_postfit = u_float(1.,0.)
+
 
         if not os.path.isdir("logs"): os.mkdir("logs")
         write_time  = time.strftime("%Y %m %d %H:%M:%S", time.localtime())
@@ -334,6 +370,10 @@ def wrapper():
             f.write( write_time + ": " + "_".join( regionNames ) + ": " + sf + "\n" )
 
             sf = "{:20}{:4.2f}{:3}{:4.2f}".format( "TT:",           (TT_postfit/TT_prefit).val,   "+/-",  TT_postfit.sigma/TT_postfit.val)
+            print sf
+            f.write( write_time + ": " + "_".join( regionNames ) + ": " + sf + "\n" )
+
+            sf = "{:20}{:4.2f}{:3}{:4.2f}".format( "misID:",        (misID_postfit/misID_prefit).val,   "+/-",  misID_postfit.sigma/misID_postfit.val)
             print sf
             f.write( write_time + ": " + "_".join( regionNames ) + ": " + sf + "\n" )
 

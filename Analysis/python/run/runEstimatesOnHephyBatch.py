@@ -9,8 +9,8 @@ year = "2016"
 
 # Here, all the estimators are defined, if empty: CR specific estimators are used
 #estimators  = default_sampleList
-#estimators = ["Data"]
-estimators = []
+estimators = ["Data"]
+#estimators = []
 
 #submitCMD = "submitBatch.py --dpm "
 submitCMD = "echo "
@@ -25,7 +25,10 @@ option += " --year " + year
 
 #regions  = signalRegions
 #regions  = controlRegions
-crs       = allRegions
+#crs       = allRegions
+crs       = {"VG2":allRegions["VG2"], "VG4":allRegions["VG4"], "VG5":allRegions["VG5"]}
+#crs.update({"SR3onM3":allRegions["SR3onM3"], "SR3offM3":allRegions["SR3offM3"], "SR3lowIso":allRegions["SR3lowIso"], "SR3highIso":allRegions["SR3highIso"]})
+#crs.update({"SR4ponM3":allRegions["SR4ponM3"], "SR4poffM3":allRegions["SR4poffM3"], "SR4plowIso":allRegions["SR4plowIso"], "SR4phighIso":allRegions["SR4phighIso"]})
 
 if "--dryrun" in option or "--createExecFile" in option: submitCMD = ""
 

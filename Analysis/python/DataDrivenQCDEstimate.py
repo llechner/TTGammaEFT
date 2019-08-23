@@ -38,11 +38,15 @@ class DataDrivenQCDEstimate(SystematicEstimator):
                 logger.info("Estimate for QCD in dileptonic channels skipped: 0")
                 return u_float(0, 0)
 
-            weight_data  = setup.weightString( "Data" )
-            weight_MC    = setup.weightString( "MC", addMisIDSF=False )
-            weight_SF    = setup.weightString( "MC", addMisIDSF=True  )
+            selection_MC_SR   = setup.selection("MC",   channel=channel, **setup.defaultParameters())
+            selection_MC_CR   = setup.selection("MC",   channel=channel, **setup.defaultParameters( update=QCD_updates ))
+            selection_Data_CR = setup.selection("Data", channel=channel, **setup.defaultParameters( update=QCD_updates ))
 
-            cuts_MC_SR   = [ region.cutString(setup.sys["selectionModifier"]), setup.selection("MC",   channel=channel, **setup.defaultParameters())["cut"] ]
+            weight_Data_CR  = selection_Data_CR["weightStr"]
+            weight_MC_CR    = selection_MC_CR["weightStr"] # w/ misID SF
+            weight_MC_SR    = selection_MC_SR["weightStr"] # w/o misID SF
+
+            cuts_MC_SR   = [ region.cutString(setup.sys["selectionModifier"]), selection_MC_SR["cut"] ]
             if self.processCut:
                 cuts_MC_SR.append( self.processCut )
                 logger.info( "Adding process specific cut %s"%self.processCut )
@@ -50,30 +54,30 @@ class DataDrivenQCDEstimate(SystematicEstimator):
 
             # QCD CR with 0 bjets and inverted lepton isolation +  SF for DY and MisIDSF
             # Attention: change region.cutstring to invLepIso and nBTag0 if there are leptons or btags in regions!!!
-            cut_MC_CR    = "&&".join([ region.cutString(setup.sys["selectionModifier"]), setup.selection("MC",   channel=channel, **setup.defaultParameters( update=QCD_updates ))["cut"] ])
-            cut_data_CR  = "&&".join([ region.cutString(),                               setup.selection("Data", channel=channel, **setup.defaultParameters( update=QCD_updates ))["cut"] ])
+            cut_MC_CR    = "&&".join([ region.cutString(setup.sys["selectionModifier"]), selection_MC_CR["cut"] ])
+            cut_Data_CR  = "&&".join([ region.cutString(),                               selection_Data_CR["cut"] ])
 
             # Calculate yields for CR (normalized to data lumi)
-            yield_data    = self.yieldFromCache(setup, "Data",   channel, cut_data_CR, weight_data, overwrite=overwrite)
-            yield_other   = self.yieldFromCache(setup, "DY_LO",  channel, cut_MC_CR,   weight_SF,   overwrite=overwrite)*setup.dataLumi/1000.
+            yield_data    = self.yieldFromCache(setup, "Data",   channel, cut_Data_CR, weight_Data_CR, overwrite=overwrite)
+            yield_other   = self.yieldFromCache(setup, "DY_LO",  channel, cut_MC_CR,   weight_MC_CR,   overwrite=overwrite)*setup.dataLumi/1000.
             yield_other *= default_DYSF #add DY SF
 
-            yield_other  += sum(self.yieldFromCache(setup, s,    channel, cut_MC_CR,   weight_SF,   overwrite=overwrite) for s in default_sampleList if s not in ["DY_LO", "QCD-DD", "QCD", "GJets", "Data"])*setup.dataLumi/1000.
+            yield_other  += sum(self.yieldFromCache(setup, s,    channel, cut_MC_CR,   weight_MC_CR,   overwrite=overwrite) for s in default_sampleList if s not in ["DY_LO", "QCD-DD", "QCD", "GJets", "Data"])*setup.dataLumi/1000.
 
             # The QCD yield in the CR
-            yield_QCD     = self.yieldFromCache(setup, "QCD",    channel, cut_MC_CR,   weight_MC,   overwrite=overwrite)*setup.dataLumi/1000.
-            yield_QCD    += self.yieldFromCache(setup, "GJets",  channel, cut_MC_CR,   weight_MC,   overwrite=overwrite)*setup.dataLumi/1000.
+            yield_QCD_CR     = self.yieldFromCache(setup, "QCD",    channel, cut_MC_CR,   weight_MC_SR,   overwrite=overwrite)*setup.dataLumi/1000.
+            yield_QCD_CR    += self.yieldFromCache(setup, "GJets",  channel, cut_MC_CR,   weight_MC_SR,   overwrite=overwrite)*setup.dataLumi/1000.
 
             # The QCD yield in the signal regions
-            sr_QCD        = self.yieldFromCache(setup, "QCD",    channel, cut_MC_SR,   weight_MC,  overwrite=overwrite)*setup.lumi/1000.
-            sr_QCD       += self.yieldFromCache(setup, "GJets",  channel, cut_MC_SR,   weight_MC,  overwrite=overwrite)*setup.lumi/1000.
+            yield_QCD_SR     = self.yieldFromCache(setup, "QCD",    channel, cut_MC_SR,   weight_MC_SR,  overwrite=overwrite)*setup.lumi/1000.
+            yield_QCD_SR    += self.yieldFromCache(setup, "GJets",  channel, cut_MC_SR,   weight_MC_SR,  overwrite=overwrite)*setup.lumi/1000.
 
             normRegYield  = yield_data - yield_other
-            transferFac   = sr_QCD/yield_QCD if yield_QCD > 0 else 0
+            transferFac   = yield_QCD_SR/yield_QCD_CR if yield_QCD_CR > 0 else 0
             estimate      = normRegYield*transferFac
 
             logger.info("Calculating data-driven QCD normalization in channel " + channel + " using lumi " + str(setup.dataLumi) + ":")
-            logger.info("yield QCD + GJets:         " + str(yield_QCD))
+            logger.info("yield QCD + GJets:         " + str(yield_QCD_CR))
             logger.info("yield data:                " + str(yield_data))
             logger.info("yield other:               " + str(yield_other))
             logger.info("yield (data-other):        " + str(normRegYield))

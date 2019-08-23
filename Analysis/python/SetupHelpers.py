@@ -1,4 +1,4 @@
-import os
+import os, copy
 
 from TTGammaEFT.Tools.user       import results_directory, cache_directory
 from TTGammaEFT.Analysis.regions import regionsTTG, noPhotonRegionTTG, inclRegionsTTG
@@ -43,6 +43,134 @@ signalRegions["SR4p"] = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag
                                         }
                          }
 
+#lowChgIsolowSieie, highChgIsolowSieie, lowChgIsohighSieie, highChgIsohighSieie
+signalRegions["SR3onM3"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(1,-1), "nPhoton":(1,-1), "m3Window":"onM3" },
+                              "channels":   lepChannels,
+                              "regions":    regionsTTG,
+                              "noPhotonCR": False,
+                              "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                              "TTG_had": ["TTG_had"],
+                                              "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                              "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                              "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                              "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                          "other_gen","other_misID","other_had",
+                                                          "QCD-DD",
+                                                         ]
+                                            }
+                            }
+
+signalRegions["SR3offM3"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(1,-1), "nPhoton":(1,-1), "m3Window":"offM3" },
+                               "channels":   lepChannels,
+                               "regions":    regionsTTG,
+                               "noPhotonCR": False,
+                               "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                               "TTG_had": ["TTG_had"],
+                                               "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                               "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                               "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                               "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                           "other_gen","other_misID","other_had",
+                                                           "QCD-DD",
+                                                          ]
+                                             }
+                             }
+
+signalRegions["SR3lowIso"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"lowChgIsohighSieie" },
+                                "channels":   lepChannels,
+                                "regions":    regionsTTG,
+                                "noPhotonCR": False,
+                                "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                                "TTG_had": ["TTG_had"],
+                                                "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                                "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                                "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                                "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                            "other_gen","other_misID","other_had",
+                                                            "QCD-DD",
+                                                           ]
+                                              }
+                              }
+
+signalRegions["SR3highIso"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"highChgIsohighSieie" },
+                                 "channels":   lepChannels,
+                                 "regions":    regionsTTG,
+                                 "noPhotonCR": False,
+                                 "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                                 "TTG_had": ["TTG_had"],
+                                                 "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                                 "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                                 "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                                 "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                             "other_gen","other_misID","other_had",
+                                                             "QCD-DD",
+                                                            ]
+                                               }
+                               }
+
+signalRegions["SR4ponM3"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1), "m3Window":"onM3" },
+                              "channels":   lepChannels,
+                              "regions":    regionsTTG,
+                              "noPhotonCR": False,
+                              "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                              "TTG_had": ["TTG_had"],
+                                              "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                              "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                              "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                              "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                          "other_gen","other_misID","other_had",
+                                                          "QCD-DD",
+                                                         ]
+                                            }
+                            }
+
+signalRegions["SR4poffM3"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1), "m3Window":"offM3" },
+                               "channels":   lepChannels,
+                               "regions":    regionsTTG,
+                               "noPhotonCR": False,
+                               "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                               "TTG_had": ["TTG_had"],
+                                               "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                               "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                               "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                               "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                           "other_gen","other_misID","other_had",
+                                                           "QCD-DD",
+                                                          ]
+                                             }
+                             }
+
+signalRegions["SR4plowIso"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"lowChgIsohighSieie" },
+                                "channels":   lepChannels,
+                                "regions":    regionsTTG,
+                                "noPhotonCR": False,
+                                "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                                "TTG_had": ["TTG_had"],
+                                                "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                                "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                                "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                                "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                            "other_gen","other_misID","other_had",
+                                                            "QCD-DD",
+                                                           ]
+                                              }
+                              }
+
+signalRegions["SR4phighIso"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"highChgIsohighSieie" },
+                                 "channels":   lepChannels,
+                                 "regions":    regionsTTG,
+                                 "noPhotonCR": False,
+                                 "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                                 "TTG_had": ["TTG_had"],
+                                                 "DY":      ["DY_LO_gen","DY_LO_misID","DY_LO_had"],
+                                                 "TT":      ["TT_pow_gen","TT_pow_misID","TT_pow_had"],
+                                                 "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                                 "other":   ["WJets_gen","WJets_misID","WJets_had",
+                                                             "other_gen","other_misID","other_had",
+                                                             "QCD-DD",
+                                                            ]
+                                               }
+                               }
 
 default_SR = signalRegions["SR4p"]
 
@@ -55,6 +183,8 @@ default_dileptonic   = False
 default_invLepIso    = False
 default_addMisIDSF   = False
 default_photonCat    = "all"
+default_m3Window     = "all"
+default_photonIso    = "lowChgIsolowSieie"
 
 default_misIDSF      = 2.25
 default_DYSF         = 1.10
@@ -63,7 +193,7 @@ default_sampleList      = ["TTG","TT_pow","DY_LO","ZG","WG","WJets","other","QCD
 default_processes       = { p:[p] for p in default_sampleList } # defaults are pure samples
 
 # all processes are all samples + them splitted in photon categories
-allProcesses            = default_sampleList
+allProcesses            = copy.copy(default_sampleList)
 allProcesses           += [ s+"_gen"   for s in default_sampleList ]
 allProcesses           += [ s+"_misID" for s in default_sampleList ]
 allProcesses           += [ s+"_had"   for s in default_sampleList ]
@@ -175,18 +305,66 @@ controlRegions["WJets4p"] = { "parameters": { "zWindow":"all", "nJet":(4,-1), "n
 
 
 # nPhoton1p nBTag0 offZeg m(e,gamma) CR for V+Gamma
-controlRegions["VG3"]  = { "parameters": { "zWindow":"offZeg", "nJet":(3,3), "nBTag":(0,0), "nPhoton":(1,-1) },
+controlRegions["VG2"]  = { "parameters": { "zWindow":"offZeg", "nJet":(2,2), "nBTag":(0,0), "nPhoton":(1,-1) },
                            "channels":   lepChannels,
                            "regions":    regionsTTG,
                            "noPhotonCR": False,
                            "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
-                                           "TTG_had": ["TTG_had"],
                                            "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
                                            "QCD":     ["QCD-DD"],
                                            "other":   ["DY_LO_gen","DY_LO_misID","DY_LO_had",
                                                        "TT_pow_gen","TT_pow_misID","TT_pow_had",
                                                        "WJets_gen","WJets_misID","WJets_had",
                                                        "other_gen","other_misID","other_had",
+                                                       "TTG_had",
+                                                    ]
+                                         }
+                         }
+
+controlRegions["VG3"]  = { "parameters": { "zWindow":"offZeg", "nJet":(3,3), "nBTag":(0,0), "nPhoton":(1,-1) },
+                           "channels":   lepChannels,
+                           "regions":    regionsTTG,
+                           "noPhotonCR": False,
+                           "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                           "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                           "QCD":     ["QCD-DD"],
+                                           "other":   ["DY_LO_gen","DY_LO_misID","DY_LO_had",
+                                                       "TT_pow_gen","TT_pow_misID","TT_pow_had",
+                                                       "WJets_gen","WJets_misID","WJets_had",
+                                                       "other_gen","other_misID","other_had",
+                                                       "TTG_had",
+                                                    ]
+                                         }
+                         }
+
+controlRegions["VG4"]  = { "parameters": { "zWindow":"offZeg", "nJet":(4,4), "nBTag":(0,0), "nPhoton":(1,-1) },
+                           "channels":   lepChannels,
+                           "regions":    regionsTTG,
+                           "noPhotonCR": False,
+                           "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                           "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                           "QCD":     ["QCD-DD"],
+                                           "other":   ["DY_LO_gen","DY_LO_misID","DY_LO_had",
+                                                       "TT_pow_gen","TT_pow_misID","TT_pow_had",
+                                                       "WJets_gen","WJets_misID","WJets_had",
+                                                       "other_gen","other_misID","other_had",
+                                                       "TTG_had",
+                                                    ]
+                                         }
+                         }
+
+controlRegions["VG5"]  = { "parameters": { "zWindow":"offZeg", "nJet":(5,5), "nBTag":(0,0), "nPhoton":(1,-1) },
+                           "channels":   lepChannels,
+                           "regions":    regionsTTG,
+                           "noPhotonCR": False,
+                           "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
+                                           "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
+                                           "QCD":     ["QCD-DD"],
+                                           "other":   ["DY_LO_gen","DY_LO_misID","DY_LO_had",
+                                                       "TT_pow_gen","TT_pow_misID","TT_pow_had",
+                                                       "WJets_gen","WJets_misID","WJets_had",
+                                                       "other_gen","other_misID","other_had",
+                                                       "TTG_had",
                                                     ]
                                          }
                          }
@@ -196,13 +374,13 @@ controlRegions["VG4p"] = { "parameters": { "zWindow":"offZeg", "nJet":(4,-1), "n
                            "regions":    regionsTTG,
                            "noPhotonCR": False,
                            "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
-                                           "TTG_had": ["TTG_had"],
                                            "VG":      ["WG_gen","WG_misID","WG_had","ZG_gen","ZG_misID","ZG_had"],
                                            "QCD":     ["QCD-DD"],
                                            "other":   ["DY_LO_gen","DY_LO_misID","DY_LO_had",
                                                        "TT_pow_gen","TT_pow_misID","TT_pow_had",
                                                        "WJets_gen","WJets_misID","WJets_had",
                                                        "other_gen","other_misID","other_had",
+                                                       "TTG_had",
                                                       ]
                                          }
                          }
@@ -213,10 +391,8 @@ controlRegions["misDY2"]  = { "parameters": { "zWindow":"onZeg", "nJet":(2,2), "
                               "channels":   ["e"],
                               "regions":    regionsTTG,
                               "noPhotonCR": False,
-                              "processes":  { "signal":      ["TTG_gen","TTG_misID"], # Signal is always needed
-                                              "TTG_had":     ["TTG_had"],
-                                              "DY_misID":    ["DY_LO_misID"],
-                                              "other_misID": ["TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
+                              "processes":  { "signal":      ["TTG_gen"], # Signal is always needed
+                                              "misID":       ["TTG_misID", "DY_LO_misID","TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
                                               "QCD":         ["QCD-DD"],
                                               "other":       ["DY_LO_gen",  "DY_LO_had",
                                                               "TT_pow_gen", "TT_pow_had",
@@ -224,6 +400,7 @@ controlRegions["misDY2"]  = { "parameters": { "zWindow":"onZeg", "nJet":(2,2), "
                                                               "ZG_gen",     "ZG_had",
                                                               "WJets_gen",  "WJets_had",
                                                               "other_gen",  "other_had",
+                                                              "TTG_had",
                                                              ]
                                             }
                             }
@@ -232,10 +409,8 @@ controlRegions["misDY3"]  = { "parameters": { "zWindow":"onZeg", "nJet":(3,3), "
                               "channels":   ["e"],
                               "regions":    regionsTTG,
                               "noPhotonCR": False,
-                              "processes":  { "signal":      ["TTG_gen","TTG_misID"], # Signal is always needed
-                                              "TTG_had":     ["TTG_had"],
-                                              "DY_misID":    ["DY_LO_misID"],
-                                              "other_misID": ["TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
+                              "processes":  { "signal":      ["TTG_gen"], # Signal is always needed
+                                              "misID":       ["TTG_misID","DY_LO_misID","TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
                                               "QCD":         ["QCD-DD"],
                                               "other":       ["DY_LO_gen",  "DY_LO_had",
                                                               "TT_pow_gen", "TT_pow_had",
@@ -243,6 +418,7 @@ controlRegions["misDY3"]  = { "parameters": { "zWindow":"onZeg", "nJet":(3,3), "
                                                               "ZG_gen",     "ZG_had",
                                                               "WJets_gen",  "WJets_had",
                                                               "other_gen",  "other_had",
+                                                              "TTG_had",
                                                              ]
                                             }
                             }
@@ -251,10 +427,8 @@ controlRegions["misDY4"]  = { "parameters": { "zWindow":"onZeg", "nJet":(4,4), "
                               "channels":   ["e"],
                               "regions":    regionsTTG,
                               "noPhotonCR": False,
-                              "processes":  { "signal":      ["TTG_gen","TTG_misID"], # Signal is always needed
-                                              "TTG_had":     ["TTG_had"],
-                                              "DY_misID":    ["DY_LO_misID"],
-                                              "other_misID": ["TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
+                              "processes":  { "signal":      ["TTG_gen"], # Signal is always needed
+                                              "misID":       ["TTG_misID","DY_LO_misID","TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
                                               "QCD":         ["QCD-DD"],
                                               "other":       ["DY_LO_gen",  "DY_LO_had",
                                                               "TT_pow_gen", "TT_pow_had",
@@ -262,6 +436,7 @@ controlRegions["misDY4"]  = { "parameters": { "zWindow":"onZeg", "nJet":(4,4), "
                                                               "ZG_gen",     "ZG_had",
                                                               "WJets_gen",  "WJets_had",
                                                               "other_gen",  "other_had",
+                                                              "TTG_had",
                                                              ]
                                             }
                             }
@@ -270,10 +445,8 @@ controlRegions["misDY5"]  = { "parameters": { "zWindow":"onZeg", "nJet":(5,5), "
                               "channels":   ["e"],
                               "regions":    regionsTTG,
                               "noPhotonCR": False,
-                              "processes":  { "signal":      ["TTG_gen","TTG_misID"], # Signal is always needed
-                                              "TTG_had":     ["TTG_had"],
-                                              "DY_misID":    ["DY_LO_misID"],
-                                              "other_misID": ["TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
+                              "processes":  { "signal":      ["TTG_gen"], # Signal is always needed
+                                              "misID":       ["TTG_misID","DY_LO_misID","TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
                                               "QCD":         ["QCD-DD"],
                                               "other":       ["DY_LO_gen",  "DY_LO_had",
                                                               "TT_pow_gen", "TT_pow_had",
@@ -281,6 +454,7 @@ controlRegions["misDY5"]  = { "parameters": { "zWindow":"onZeg", "nJet":(5,5), "
                                                               "ZG_gen",     "ZG_had",
                                                               "WJets_gen",  "WJets_had",
                                                               "other_gen",  "other_had",
+                                                              "TTG_had",
                                                              ]
                                             }
                             }
@@ -289,10 +463,8 @@ controlRegions["misDY4p"] = { "parameters": { "zWindow":"onZeg", "nJet":(4,-1), 
                               "channels":   ["e"],
                               "regions":    regionsTTG,
                               "noPhotonCR": False,
-                              "processes":  { "signal":      ["TTG_gen","TTG_misID"], # Signal is always needed
-                                              "TTG_had":     ["TTG_had"],
-                                              "DY_misID":    ["DY_LO_misID"],
-                                              "other_misID": ["TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
+                              "processes":  { "signal":      ["TTG_gen"], # Signal is always needed
+                                              "misID":       ["TTG_misID","DY_LO_misID","TT_pow_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
                                               "QCD":         ["QCD-DD"],
                                               "other":       ["DY_LO_gen",  "DY_LO_had",
                                                               "TT_pow_gen", "TT_pow_had",
@@ -300,6 +472,7 @@ controlRegions["misDY4p"] = { "parameters": { "zWindow":"onZeg", "nJet":(4,-1), 
                                                               "ZG_gen",     "ZG_had",
                                                               "WJets_gen",  "WJets_had",
                                                               "other_gen",  "other_had",
+                                                              "TTG_had",
                                                              ]
                                             }
                             }
@@ -310,16 +483,15 @@ controlRegions["misTT2"] = { "parameters": { "zWindow":"offZeg", "nJet":(2,2), "
                              "channels":   lepChannels,
                              "regions":    regionsTTG,
                              "noPhotonCR": False,
-                             "processes":  { "signal":      ["TTG_gen","TTG_misID"], # Signal is always needed
-                                             "TTG_had":     ["TTG_had"],
-                                             "TT_misID":    ["TT_pow_misID"],
-                                             "other_misID": ["DY_LO_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
+                             "processes":  { "signal":      ["TTG_gen"], # Signal is always needed
+                                             "misID":       ["TTG_misID","TT_pow_misID", "DY_LO_misID","ZG_misID","WG_misID","WJets_misID","other_misID"],
                                              "other":       ["DY_LO_gen",  "DY_LO_had",
                                                              "TT_pow_gen", "TT_pow_had",
                                                              "WG_gen",     "WG_had",
                                                              "ZG_gen",     "ZG_had",
                                                              "WJets_gen",  "WJets_had",
                                                              "other_gen",  "other_had",
+                                                             "TTG_had",
                                                              "QCD-DD",
                                                             ]
                                             }

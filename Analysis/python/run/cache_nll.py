@@ -81,6 +81,8 @@ if nllCache is None: raise
 if __name__=="__main__":
     import Analysis.Tools.logger as logger
     logger = logger.get_logger( args.logLevel, logFile=None)
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger( args.logLevel, logFile=None )
 else:
     import logging
     logger = logging.getLogger(__name__)

@@ -43,7 +43,8 @@ class Setup:
             "nPhoton":      default_nPhoton,
             "invertLepIso": default_invLepIso,
             "addMisIDSF":   default_addMisIDSF,
-            "photonCat":    default_photonCat,
+            "m3Window":     default_m3Window,
+            "photonIso":    default_photonIso,
         }
 
 #        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
@@ -169,11 +170,11 @@ class Setup:
         res.update(update)
         return res
 
-    def weightString(self, dataMC, addMisIDSF=False):
+    def weightString(self, dataMC, photon="PhotonGood0", addMisIDSF=False):
         if   dataMC == "Data": _weightString = "weight"
         elif dataMC == "MC":
             _weightString = "*".join([self.sys["weight"]] + (self.sys["reweight"] if self.sys["reweight"] else []))
-            if addMisIDSF: _weightString += "+%s*(PhotonGood0_photonCat==2)*(%f-1)" %(_weightString, default_misIDSF)
+            if addMisIDSF: _weightString += "+%s*(%s0_photonCat==2)*(%f-1)" %(_weightString, photon, default_misIDSF)
         logger.debug("Using weight-string: %s", _weightString)
         return _weightString
 
@@ -186,15 +187,16 @@ class Setup:
     def selection(self, dataMC,
                         dileptonic=None, invertLepIso=None, addMisIDSF=None,
                         nJet=None, nBTag=None, nPhoton=None,
-                        zWindow=None,
-                        photonCat=None,
+                        zWindow=None, m3Window=None,
+                        photonIso=None,
                         channel="all"):
         """Define full selection
            dataMC: "Data" or "MC"
            channel: all, e or mu, eetight, mumutight, SFtight
            zWindow: offZeg, onZeg, onZSFllTight or all
+           m3Window: offM3, onM3 or all
+           photonIso: lowSieie, highSieie, lowChgIso, highChgIso, lowChgIsolowSieie, highChgIsolowSieie, lowChgIsohighSieie, highChgIsohighSieie
         """
-
         if not dileptonic:   dileptonic   = self.parameters["dileptonic"]
         if not invertLepIso: invertLepIso = self.parameters["invertLepIso"]
         if not addMisIDSF:   addMisIDSF   = self.parameters["addMisIDSF"]
@@ -202,14 +204,16 @@ class Setup:
         if not nBTag:        nBTag        = self.parameters["nBTag"]
         if not nPhoton:      nPhoton      = self.parameters["nPhoton"]
         if not zWindow:      zWindow      = self.parameters["zWindow"]
-        if not photonCat:    photonCat    = self.parameters["photonCat"]
+        if not m3Window:     m3Window     = self.parameters["m3Window"]
+        if not photonIso:    photonIso    = self.parameters["photonIso"]
 
         #Consistency checks
         assert dataMC in ["Data","MC"], "dataMC = Data or MC, got %r."%dataMC
         assert channel in allChannels, "channel must be one of "+",".join(allChannels)+". Got %r."%channel
         assert zWindow in ["offZeg", "onZeg", "onZSFllTight", "all"], "zWindow must be one of onZeg, offZeg, onZSFllTight, all. Got %r"%zWindow
+        assert m3Window in ["offM3", "onM3", "all"], "m3Window must be one of onM3, offM3, all. Got %r"%m3Window
+        assert photonIso in ["lowSieie", "highSieie", "lowChgIso", "highChgIso", "lowChgIsolowSieie", "highChgIsolowSieie", "lowChgIsohighSieie", "highChgIsohighSieie"], "PhotonIso must be one of lowSieie, highSieie, lowChgIso, highChgIso, lowChgIsolowSieie, highChgIsolowSieie, lowChgIsohighSieie, highChgIsohighSieie. Got %r"%photonIso
         if self.sys['selectionModifier']:
-#            assert self.sys['selectionModifier'] in jmeVariations+metVariations, "Don't know about systematic variation %r, take one of %s"%(self.sys['selectionModifier'], ",".join(jmeVariations+metVariations))
             assert self.sys['selectionModifier'] in jmeVariations, "Don't know about systematic variation %r, take one of %s"%(self.sys['selectionModifier'], ",".join(jmeVariations))
 
         # default lepton selections
@@ -224,9 +228,6 @@ class Setup:
             vetoLepton = "nNoIsoLepTight1"
 
         if dileptonic:
-#            if   channel == "e":   channel = "eetight"
-#            elif channel == "mu":  channel = "mumutight"
-#            elif channel == "all": channel = "SFtight"
             tightLepton = "nLepTight2-OStight"
             vetoLepton = "nLepVeto2"
 
@@ -281,13 +282,28 @@ class Setup:
             res["cuts"].append(nbtstr)
             res["prefixes"].append(prefix)
 
+        #photonIso of leading photon
+        if photonIso == "lowChgIsolowSieie":
+            photonCutVar = "nPhotonGood"
+            photonPrefix = "nPhoton"
+            # no special photon iso cut needed
+        else:
+            photonCutVar = "nPhotonNoChgIsoNoSieie"
+            photonPrefix = "nPhotonNoChgIsoNoSieie"
+                
+            res["prefixes"].append( photonIso )
+            preselphotonIso = cutInterpreter.cutString( photonIso )
+            res["cuts"].append( preselphotonIso )
+
+
+        #photon cut
         if nPhoton and not (nPhoton[0]==0 and nPhoton[1]<0):
             assert nPhoton[0]>=0 and (nPhoton[1]>=nPhoton[0] or nPhoton[1]<0), "Not a good nPhoton selection: %r"%nPhoton
-            nphotonsstr = "nPhotonGood>="+str(nPhoton[0])
-            prefix   = "nPhoton"+str(nPhoton[0])
+            nphotonsstr = photonCutVar+">="+str(nPhoton[0])
+            prefix   = photonPrefix+str(nPhoton[0])
             if nPhoton[1]>=0:
-                nphotonsstr+= "&&"+"nPhotonGood<="+str(nPhoton[1])
-                if nPhoton[1]!=nPhoton[0]: prefix+=str(nPhoton[1])
+                nphotonsstr+= "&&"+photonCutVar+"<="+str(nPhoton[1])
+                if nPhoton[1]!=nPhoton[0]: prefix+="To"+str(nPhoton[1])
             else:
                 prefix+="p"
             res["cuts"].append(nphotonsstr)
@@ -295,18 +311,20 @@ class Setup:
 
 
         #Z window
-        res["prefixes"].append( zWindow )
-        preselZWindow = cutInterpreter.cutString( zWindow )
-        res["cuts"].append( preselZWindow )
+        if zWindow != "all":
+            res["prefixes"].append( zWindow )
+            preselZWindow = cutInterpreter.cutString( zWindow )
+            res["cuts"].append( preselZWindow )
 
-        #photon category
-        res["prefixes"].append( photonCat )
-        photoncatCut = cutInterpreter.cutString( photonCat )
-        res["cuts"].append( photoncatCut )
+        #M3 window
+        if m3Window != "all":
+            res["prefixes"].append( m3Window )
+            preselM3Window = cutInterpreter.cutString( m3Window )
+            res["cuts"].append( preselM3Window )
 
         #badEEVeto
         if self.year == 2017:
-#            res["prefixes"].append("BadEEJetVeto")
+            res["prefixes"].append("BadEEJetVeto")
             badEEStr = cutInterpreter.cutString( "BadEEJetVeto" )
             res["cuts"].append( badEEStr )
 
@@ -327,7 +345,7 @@ class Setup:
 
         res["cuts"].extend(self.externalCuts)
 
-        return {"cut":"&&".join(res["cuts"]), "prefix":"-".join(res["prefixes"]), "weightStr": self.weightString(dataMC,addMisIDSF=addMisIDSF)}
+        return {"cut":"&&".join(res["cuts"]), "prefix":"-".join(res["prefixes"]), "weightStr": self.weightString(dataMC,photon=str(photonCutVar[1:]),addMisIDSF=addMisIDSF)}
 
 if __name__ == "__main__":
     setup = Setup( year=2016 )
