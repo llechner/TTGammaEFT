@@ -4,8 +4,13 @@
 # TTGamma Imports
 from Analysis.Tools.CutInterpreter import CutInterpreter
 
-mZ         = 91.1876
-zMassRange = 15
+mZ              = 91.1876
+mT              = 172.5
+zMassRange      = 15
+m3MassRange     = 50
+chgIsoThresh    = 1.141
+lowSieieThresh  = 0.01015
+highSieieThresh = 0.011
 
 special_cuts = {
     "OS":                "(LeptonGood0_pdgId*LeptonGood1_pdgId)<0",
@@ -68,6 +73,9 @@ special_cuts = {
     "SFtight":           "(nElectronTight==2||nMuonTight==2)",
     "trigger":           "(1)",
 
+    "onM3":              "abs(m3-%s)<=%s"%(mT, m3MassRange),
+    "offM3":             "abs(m3-%s)<=%s"%(mT, m3MassRange),
+
     "MVAPhoton":             "nPhotonMVA>=1",
     "NoSieiePhoton":         "nPhotonNoSieie>=1",
     "NoChgIsoPhoton":        "nPhotonNoChgIso>=1",
@@ -90,10 +98,15 @@ special_cuts = {
 
     "n12Jet":               "nJetGood==1||nJetGood==2",
 
-    "lowSieie":          "PhotonNoChgIsoNoSieie0_sieie<0.01015",
-    "highSieie":         "PhotonNoChgIsoNoSieie0_sieie>0.011",
-    "lowChgIso":         "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt<1.141",
-    "highChgIso":        "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt>1.141",
+    "lowSieie":          "PhotonNoSieie0_sieie<%f"%lowSieieThresh,
+    "highSieie":         "PhotonNoSieie0_sieie>%f"%highSieieThresh,
+    "lowChgIso":         "PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt<%f"%chgIsoThresh,
+    "highChgIso":        "PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt>%f"%chgIsoThresh,
+
+    "lowChgIsolowSieie":   "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt<%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,lowSieieThresh),
+    "highChgIsolowSieie":  "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt>%f&&PhotonNoChgIsoNoSieie0_sieie>%f"%(chgIsoThresh,lowSieieThresh),
+    "lowChgIsohighSieie":  "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt<%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,highSieieThresh),
+    "highChgIsohighSieie": "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt>%f&&PhotonNoChgIsoNoSieie0_sieie>%f"%(chgIsoThresh,highSieieThresh),
 
     "lowPT":             "PhotonGood0_pt>=20&&PhotonGood0_pt<120",
     "medPT":             "PhotonGood0_pt>=120&&PhotonGood0_pt<220",
