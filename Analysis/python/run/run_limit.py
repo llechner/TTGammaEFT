@@ -63,7 +63,7 @@ setups = []
 if "SR3" in args.useRegions:
     signalSetup3             = default_setup.sysClone( parameters=signalRegions["SR3"]["parameters"] )
     signalSetup3.channels    = signalRegions["SR3"]["channels"] #default_setup.channels
-    signalSetup3.regions     = signalRegions["SR3"]["regions"] if (not args.inclRegion) or signalRegions["SR3"]["noPhotonCR"] else inclRegionsTTG #default_setup.regions
+    signalSetup3.regions     = signalRegions["SR3"]["inclRegions" if args.inclRegion else "regions"]
     signalSetup3.data        = default_setup.data
     signalSetup3.processes   = estimators.constructProcessDict( processDict=signalRegions["SR3"]["processes"] ) if "processes" in signalRegions["SR3"] else default_setup.processes
     signalSetup3.addon       = "_signal3"
@@ -73,7 +73,7 @@ if "SR3" in args.useRegions:
 if "SR4p" in args.useRegions:
     signalSetup4p            = default_setup.sysClone( parameters=signalRegions["SR4p"]["parameters"] )
     signalSetup4p.channels   = signalRegions["SR4p"]["channels"] #default_setup.channels
-    signalSetup4p.regions    = signalRegions["SR4p"]["regions"] if (not args.inclRegion) or signalRegions["SR4p"]["noPhotonCR"] else inclRegionsTTG #default_setup.regions
+    signalSetup4p.regions    = signalRegions["SR4p"]["inclRegions" if args.inclRegion else "regions"]
     signalSetup4p.data       = default_setup.data
     signalSetup4p.processes  = estimators.constructProcessDict( processDict=signalRegions["SR4p"]["processes"] ) if "processes" in signalRegions["SR4p"] else default_setup.processes
     signalSetup4p.addon      = "_signal4p"
@@ -87,7 +87,7 @@ for key, val in controlRegions.items():
     regionNames                     += [key]
     locals()["setup"+key]            = default_setup.sysClone( parameters=val["parameters"] )
     locals()["setup"+key].channels   = val["channels"] #default_setup.channels
-    locals()["setup"+key].regions    = val["regions"] if (not args.inclRegion) or val["noPhotonCR"] else inclRegionsTTG
+    locals()["setup"+key].regions    = val["inclRegions" if args.inclRegion else "regions"]
     locals()["setup"+key].data       = default_setup.data
     locals()["setup"+key].processes  = estimators.constructProcessDict( processDict=val["processes"] ) if "processes" in val else default_setup.processes
     locals()["setup"+key].addon      = "_control%s"%key

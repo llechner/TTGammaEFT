@@ -41,7 +41,7 @@ if not args.controlRegion:
 parameters       = allRegions[args.controlRegion]["parameters"]
 channels         = allRegions[args.controlRegion]["channels"] 
 photonSelection  = not allRegions[args.controlRegion]["noPhotonCR"]
-allPhotonRegions = inclRegionsTTG + allRegions[args.controlRegion]["regions"] if photonSelection else allRegions[args.controlRegion]["regions"]
+allPhotonRegions = allRegions[args.controlRegion]["inclRegion"] + allRegions[args.controlRegion]["regions"] if photonSelection else allRegions[args.controlRegion]["regions"]
 setup            = Setup( year=args.year, photonSelection=photonSelection )
 
 # Select estimate
