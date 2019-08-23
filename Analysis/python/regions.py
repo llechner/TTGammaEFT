@@ -44,10 +44,12 @@ preFiringSumJetPt     = getRegionsFromThresholds( "Jet_pt",  [30, 40, 50, 60, 70
 preFiringSumJetPtLog  = getRegionsFromThresholds( "Jet_pt",  [30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, -999] )
 preFiringSumJet       = getRegionsFromThresholds( "Jet_phi", [-pi, -pi*(4./5), -pi*(3./5), -pi*(2./5), -pi*(1./5), 0., pi*(1./5), pi*(2./5), pi*(3./5), pi*(4./5), pi], gtLastThreshold=False )
 
-pTG_thresh        = [ 20, 120, 220, -999 ]
-regionsTTG        = getRegionsFromThresholds( "PhotonGood0_pt", pTG_thresh )
-inclRegionsTTG    = [Region( "PhotonGood0_pt", (20,-999) )]
-noPhotonRegionTTG = [Region( "nPhotonGood", (0,1) )]
+pTG_thresh         = [ 20, 120, 220, -999 ]
+regionsTTG         = getRegionsFromThresholds( "PhotonGood0_pt", pTG_thresh )
+inclRegionsTTG     = [Region( "PhotonGood0_pt", (20,-999) )]
+regionsTTGfake     = getRegionsFromThresholds( "PhotonNoChgIsoNoSieie0_pt", pTG_thresh )
+inclRegionsTTGfake = [Region( "PhotonNoChgIsoNoSieie0_pt", (20,-999) )]
+noPhotonRegionTTG  = [Region( "nPhotonGood", (0,1) )]
 
 if __name__ == "__main__":
     print inclRegionsTTG[0].cutString()

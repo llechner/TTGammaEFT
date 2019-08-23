@@ -1,7 +1,7 @@
 import os, copy
 
 from TTGammaEFT.Tools.user       import results_directory, cache_directory
-from TTGammaEFT.Analysis.regions import regionsTTG, noPhotonRegionTTG, inclRegionsTTG
+from TTGammaEFT.Analysis.regions import regionsTTG, noPhotonRegionTTG, inclRegionsTTG, inclRegionsTTGfake, regionsTTGfake
 
 lepChannels   = ["e", "mu"]
 dilepChannels = ["eetight", "mumutight"]
@@ -78,7 +78,7 @@ signalRegions["SR3offM3"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "n
 
 signalRegions["SR3lowIso"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"lowChgIsohighSieie" },
                                 "channels":   lepChannels,
-                                "regions":    regionsTTG,
+                                "regions":    regionsTTGfake,
                                 "noPhotonCR": False,
                                 "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
                                                 "TTG_had": ["TTG_had"],
@@ -94,7 +94,7 @@ signalRegions["SR3lowIso"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "
 
 signalRegions["SR3highIso"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"highChgIsohighSieie" },
                                  "channels":   lepChannels,
-                                 "regions":    regionsTTG,
+                                 "regions":    regionsTTGfake,
                                  "noPhotonCR": False,
                                  "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
                                                  "TTG_had": ["TTG_had"],
@@ -142,7 +142,7 @@ signalRegions["SR4poffM3"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), 
 
 signalRegions["SR4plowIso"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"lowChgIsohighSieie" },
                                 "channels":   lepChannels,
-                                "regions":    regionsTTG,
+                                "regions":    regionsTTGfake,
                                 "noPhotonCR": False,
                                 "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
                                                 "TTG_had": ["TTG_had"],
@@ -158,7 +158,7 @@ signalRegions["SR4plowIso"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1),
 
 signalRegions["SR4phighIso"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(1,-1), "nPhoton":(1,-1), "photonIso":"highChgIsohighSieie" },
                                  "channels":   lepChannels,
-                                 "regions":    regionsTTG,
+                                 "regions":    regionsTTGfake,
                                  "noPhotonCR": False,
                                  "processes":  { "signal":  ["TTG_gen","TTG_misID"], # Signal is always needed
                                                  "TTG_had": ["TTG_had"],

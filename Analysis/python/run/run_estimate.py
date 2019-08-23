@@ -2,7 +2,7 @@
 
 import sys
 
-from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, inclRegionsTTG
+from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, inclRegionsTTG, inclRegionsTTGfake, regionsTTGfake
 from TTGammaEFT.Analysis.Setup           import Setup
 from TTGammaEFT.Analysis.EstimatorList   import EstimatorList
 from TTGammaEFT.Analysis.MCBasedEstimate import MCBasedEstimate
@@ -38,10 +38,11 @@ if not args.controlRegion:
     logger.warning("ControlRegion not known")
     sys.exit(0)
 
-parameters      = allRegions[args.controlRegion]["parameters"]
-channels        = allRegions[args.controlRegion]["channels"] 
-photonSelection = not allRegions[args.controlRegion]["noPhotonCR"]
-setup           = Setup( year=args.year, photonSelection=photonSelection )
+parameters       = allRegions[args.controlRegion]["parameters"]
+channels         = allRegions[args.controlRegion]["channels"] 
+photonSelection  = not allRegions[args.controlRegion]["noPhotonCR"]
+allPhotonRegions = inclRegionsTTG + allRegions[args.controlRegion]["regions"] if photonSelection else allRegions[args.controlRegion]["regions"]
+setup            = Setup( year=args.year, photonSelection=photonSelection )
 
 # Select estimate
 if args.selectEstimator == "Data":
@@ -57,7 +58,6 @@ if not estimate:
     sys.exit(0)
 
 setup            = setup.sysClone( parameters=parameters )
-allPhotonRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
 
 def wrapper(arg):
         r,channel,setup = arg

@@ -9,7 +9,7 @@ from TTGammaEFT.Analysis.EstimatorList   import EstimatorList
 from TTGammaEFT.Analysis.Setup           import Setup
 from TTGammaEFT.Analysis.DataObservation import DataObservation
 from TTGammaEFT.Analysis.MCBasedEstimate import MCBasedEstimate
-from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, inclRegionsTTG
+from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, inclRegionsTTG, regionsTTGfake, inclRegionsTTGfake
 from TTGammaEFT.Analysis.SetupHelpers    import *
 
 from TTGammaEFT.Tools.user               import cache_directory, combineReleaseLocation
