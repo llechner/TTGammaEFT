@@ -35,7 +35,7 @@ aklog -d hephy.at
 echo "---------------------"
 
 echo "Executing:"
-echo ${@:2}
+echo ${@:2} --runOnLxPlus
 echo "---------------------"
 
-${@:2}
+${@:2} --runOnLxPlus

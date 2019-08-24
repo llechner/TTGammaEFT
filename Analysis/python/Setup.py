@@ -24,7 +24,7 @@ else:
     logger = logging.getLogger(__name__)
 
 class Setup:
-    def __init__(self, year=2016, photonSelection=False, checkOnly=False):
+    def __init__(self, year=2016, photonSelection=False, checkOnly=False, runOnLxPlus=False):
 
         logger.info("Initializing Setup")
 
@@ -50,6 +50,9 @@ class Setup:
 #        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
         self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
 
+        if runOnLxPlus:
+            # Set the redirector in the samples repository to the global redirector
+            from Samples.Tools.config import redirector_global as redirector
         os.environ["gammaSkim"] = str(photonSelection)
         if year == 2016 and not checkOnly:
             #define samples

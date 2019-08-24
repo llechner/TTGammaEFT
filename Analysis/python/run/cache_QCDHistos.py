@@ -40,6 +40,7 @@ argParser.add_argument('--year',               action='store',      default=None
 argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all"],              help="plot lepton mode" )
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                     help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                     help="Run only job i")
+argParser.add_argument("--runOnLxPlus",        action="store_true",                                                                    help="Change the global redirector of samples")
 args = argParser.parse_args()
 
 # Logging
@@ -57,6 +58,9 @@ dirDB = DirDB(cache_dir)
 if not dirDB: raise
 
 # Samples
+if options.runOnLxPlus:
+    # Set the redirector in the samples repository to the global redirector
+    from Samples.Tools.config import redirector_global as redirector
 os.environ["gammaSkim"]="False" #always false for QCD estimate
 if args.year == 2016 and not args.checkOnly:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *

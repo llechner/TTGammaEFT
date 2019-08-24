@@ -17,6 +17,7 @@ argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument("--logLevel",         action="store",  default="INFO",           choices=loggerChoices, help="Log level for logging")
 argParser.add_argument("--noSystematics",    action="store_true",                                              help="no systematics?")
 argParser.add_argument("--selectEstimator",  action="store",  default=None,   type=str,                        help="select estimator?")
+argParser.add_argument("--runOnLxPlus",      action="store_true",                                              help="Change the global redirector of samples")
 argParser.add_argument("--selectRegion",     action="store",  default=-1,     type=int,                        help="select region?")
 argParser.add_argument("--year",             action="store",  default=2016,   type=int,                        help="Which year?")
 argParser.add_argument("--cores",            action="store",  default=1,      type=int,                        help="How many threads?")
@@ -42,7 +43,7 @@ parameters       = allRegions[args.controlRegion]["parameters"]
 channels         = allRegions[args.controlRegion]["channels"] 
 photonSelection  = not allRegions[args.controlRegion]["noPhotonCR"]
 allPhotonRegions = allRegions[args.controlRegion]["inclRegion"] + allRegions[args.controlRegion]["regions"] if photonSelection else allRegions[args.controlRegion]["regions"]
-setup            = Setup( year=args.year, photonSelection=photonSelection )
+setup            = Setup( year=args.year, photonSelection=photonSelection, runOnLxPlus=args.runOnLxPlus )
 
 # Select estimate
 if args.selectEstimator == "Data":

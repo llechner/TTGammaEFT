@@ -38,6 +38,7 @@ argParser.add_argument( "--useTxt",             action="store_true",            
 argParser.add_argument( "--skipFitDiagnostics", action="store_true",                                                        help="Don't do the fitDiagnostics (this is necessary for pre/postfit plots, but not 2D scans)?" )
 argParser.add_argument( "--significanceScan",   action="store_true",                                                        help="Calculate significance instead?")
 argParser.add_argument( "--year",               action="store",      default=2016,   type=int,                              help="Which year?" )
+argParser.add_argument( "--runOnLxPlus"         action="store_true",                                                        help="Change the global redirector of samples")
 args=argParser.parse_args()
 
 # Logging
@@ -51,7 +52,7 @@ if args.keepCard:
     args.overwrite = False
 
 # Define estimators for CR
-default_setup            = Setup( year=args.year )
+default_setup            = Setup( year=args.year, runOnLxPlus=args.runOnLxPlus )
 estimators               = EstimatorList( default_setup )
 regionNames              = []
 default_setup.data       = default_setup.processes["Data"]
