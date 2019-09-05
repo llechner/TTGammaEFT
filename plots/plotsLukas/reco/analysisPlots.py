@@ -291,9 +291,9 @@ sequence = [ ]#\
 
 # Sample definition
 if args.year == 2016:
-    if args.onlyTTG and not categoryPlot: mc = [ TTG_priv_16 ]
+    if args.onlyTTG and not categoryPlot: mc = [ TTG_16 ]
     elif not categoryPlot:
-        mc = [ TTG_priv_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]
+        mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16 ]
         if args.addOtherBg: mc += [ other_16 ]
     elif categoryPlot:
         all = all_16 if args.addOtherBg else all_noOther_16

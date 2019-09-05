@@ -53,7 +53,7 @@ argParser.add_argument('--categoryPhoton',     action='store',      default="Non
 argParser.add_argument('--leptonCategory',     action='store_true', default=False,                                                     help="plot in terms of lepton category" )
 argParser.add_argument('--invLeptonIso',       action='store_true', default=False,                                                     help="plot QCD estimation plots with inv lepton iso and nBTag==0" )
 argParser.add_argument('--replaceZG',          action='store_true', default=False,                                                     help="Plot DY instead of ZGamma" )
-argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all", "eetight", "mumutight", "SFtight", "muetight"], help="plot lepton mode" )
+argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all", "eetight", "mumutight", "SFtight", "muetight", "muInv", "eInv", "muNoIso", "eNoIso"], help="plot lepton mode" )
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                     help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                     help="Run only job i")
 args = argParser.parse_args()
@@ -73,12 +73,12 @@ cache_dir = os.path.join(cache_directory, "qcdHistos")
 dirDB     = DirDB(cache_dir)
 
 # Selection Manipulation
-if args.year == 2017:
-    args.selection += "-BadEEJetVeto"
+selectionQCDcache = "-".join( [ item for item in args.selection.split("-") if item != "addMisIDSF" and item != "addDYSF" ] )
+#if args.year == 2017:
+#    args.selection += "-BadEEJetVeto"
 
 addMisIDSF = args.invLeptonIso # always true for QCD plots
 addDYSF = args.invLeptonIso #always true for QCD plots
-addVGSF = False
 selDir = args.selection
 if args.selection.count("addMisIDSF"):
     addMisIDSF = True
@@ -86,17 +86,6 @@ if args.selection.count("addMisIDSF"):
 if args.selection.count("addDYSF"):
     addDYSF = True
     args.selection = "-".join( [ item for item in args.selection.split("-") if item != "addDYSF" ] )
-if args.selection.count("addVGSF"):
-    addVGSF = True
-    if "nJet2" in args.selection:
-        vGSF = 1.3
-    elif "nJet3" in args.selection:
-        vGSF = 1.3
-    elif "nJet4" in args.selection:
-        vGSF = 1.44
-    elif "nJet5" in args.selection:
-        vGSF = 1.1
-    args.selection = "-".join( [ item for item in args.selection.split("-") if item != "addVGSF" ] )
 
 if args.small:           args.plot_directory += "_small"
 if args.noData:          args.plot_directory += "_noData"
@@ -578,18 +567,18 @@ sequence = []
 # Sample definition
 if args.year == 2016:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
-        mc = [ TTG_priv_16, QCD_16 ]
+        mc = [ TTG_16, QCD_16 ]
     elif categoryPlot:
         all = all_noQCD_16 #all_16 if args.addOtherBg else all_noOther_16
     elif args.leptonCategory:
         all_noTT = all_noTT_16# if args.addOtherBg else all_noOther_noTT_16
         TTbar    = TT_pow_16
-        TTG      = TTG_priv_16
+        TTG      = TTG_16
     else:
         if args.replaceZG:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, rest_16 ]
+            mc = [ TTG_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, rest_16 ]
         else:
-            mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
+            mc = [ TTG_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
         if not args.invLeptonIso: mc += [ QCD_16 ]
 elif args.year == 2017:
     if args.onlyTTG and not categoryPlot and not args.leptonCategory:
@@ -719,7 +708,7 @@ else:
     stack                      = Stack( mc, data_sample )
 
 stack.extend( [ [s] for s in signals ] )
-sampleWeight = lambda event, sample: (default_misIDSF if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(vGSF if ("WG" in sample.name or "ZG" in sample.name or "VG" in sample.name) and addVGSF else 1.)*(default_DYSF if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+sampleWeight = lambda event, sample: (default_misIDSF if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(default_DYSF if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 # no misIDSF included in weightString!!
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
@@ -737,7 +726,6 @@ if args.small:
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year, singleLepton="nLepTight1" in args.selection )
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
@@ -1082,7 +1070,8 @@ else:
 
 filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
 filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
-tr            = TriggerSelector( args.year )
+#tr            = TriggerSelector( args.year, singleLepton="nLepTight" in args.selection ) #use single lepton trigger also for DY CR
+tr            = TriggerSelector( args.year, singleLepton=True ) #single lepton trigger also for DY CR
 triggerCutMc  = tr.getSelection( "MC" )
 
 cat_sel0 = [ "%s_photonCat==0"%args.categoryPhoton ]
@@ -1195,23 +1184,25 @@ for index, mode in enumerate( allModes ):
         all_noTT.setSelectionString(  [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
     else:
         for sample in mc + signals:
-            if sample.name.startswith("DY") and args.replaceZG: #no ZG sample
+            if (sample.name.startswith("DY") and args.replaceZG) or "QCD" in sample.name: #no ZG sample
                 sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
             else:
                 sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 #        for sample in mc + signals: sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
     if args.invLeptonIso:
-        preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), filterCutMc, isoleptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
-        preSelectionCR = "&&".join( [ cutInterpreter.cutString( selection ),      filterCutMc, invIsoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
+        preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), filterCutMc, isoleptonSelection,    triggerCutMc ] )#, "overlapRemoval==1"  ] )
+        preSelectionCR = "&&".join( [ cutInterpreter.cutString( selection ),      filterCutMc, invIsoleptonSelection, triggerCutMc ] )#, "overlapRemoval==1"  ] )
 
+        print "SR", preSelectionSR
+        print "CR", preSelectionCR
 #        preSelectionSR = "&&".join( [ cutInterpreter.cutString( args.selection ), "weight<15", filterCutMc, isoleptonSelection,    triggerCutMc, "overlapRemoval==1"  ] )
 #        preSelectionCR = "&&".join( [ cutInterpreter.cutString( selection ),      "weight<15", filterCutMc, invIsoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
 
         yield_QCD_CR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
-        yield_QCD_CR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+#        yield_QCD_CR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionCR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
         yield_QCD_SR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
-        yield_QCD_SR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+#        yield_QCD_SR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionSR, weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
 
         transFacQCD = {}
         transFacQCD["incl"] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
@@ -1219,9 +1210,9 @@ for index, mode in enumerate( allModes ):
         if not "nPhoton0" in args.selection and transFacQCD["incl"].val > 0:
             for pt in ptSels:
                 yield_QCD_CR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
-                yield_QCD_CR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+#                yield_QCD_CR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
                 yield_QCD_SR  = u_float( qcd.getYieldFromDraw(   selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
-                yield_QCD_SR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
+#                yield_QCD_SR += u_float( gjets.getYieldFromDraw( selectionString=preSelectionSR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) ) )
 
                 transFacQCD[ptLabels[pt]] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR.val != 0 else u_float({"val":0, "sigma":0})
 
@@ -1248,19 +1239,19 @@ for index, mode in enumerate( allModes ):
             if categoryPlot:
                 for i_cat, cat in enumerate(photonCats):
                     for m in qcdModes:
-                        res = "_".join( ["qcdHisto", args.selection+cat, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
+                        res = "_".join( ["qcdHisto", selectionQCDcache+cat, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
                         if dirDB.contains(res):
-                            logger.info( "Adding QCD histogram from cache for plot %s and selection %s"%(plot.name, args.selection+cat) )
+                            logger.info( "Adding QCD histogram from cache for plot %s and selection %s"%(plot.name, selectionQCDcache+cat) )
                             qcdHist = copy.deepcopy(dirDB.get(res))
                             for h in plot.histos[0]:
                                 if "cat%i"%i_cat in h.GetName():
                                     h.Add(qcdHist)
                         else:
-                            logger.info( "No QCD histogram found for plot %s and selection %s"%(plot.name, args.selection+cat) )
+                            logger.info( "No QCD histogram found for plot %s and selection %s"%(plot.name, selectionQCDcache+cat) )
             else:
                 if "category" in plot.name: continue
                 for i_m, m in enumerate(qcdModes):
-                    res = "_".join( ["qcdHisto", args.selection, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
+                    res = "_".join( ["qcdHisto", selectionQCDcache, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
                     if dirDB.contains(res):
                         logger.info( "Adding QCD histogram from cache for plot %s"%plot.name )
                         if i_m == 0:

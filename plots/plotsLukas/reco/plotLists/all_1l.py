@@ -17,6 +17,7 @@ from TTGammaEFT.plots.cutsJetGood0             import cutsJetGood0
 from TTGammaEFT.plots.cutsJetGood1             import cutsJetGood1
 #from TTGammaEFT.plots.cutsLeptonGood0          import cutsLeptonGood0
 #from TTGammaEFT.plots.cutsLeptonGood1          import cutsLeptonGood1
+from TTGammaEFT.plots.cutsLepton0              import cutsLepton0
 from TTGammaEFT.plots.cutsLeptonTight0         import cutsLeptonTight0
 from TTGammaEFT.plots.cutsLeptonTight1         import cutsLeptonTight1
 from TTGammaEFT.plots.cutsPhotonGood0          import cutsPhotonGood0
@@ -64,6 +65,7 @@ plotListData += cutsJetGood0
 plotListData += cutsJetGood1
 #plotListData += cutsLeptonGood0
 #plotListData += cutsLeptonGood1
+plotListData += cutsLepton0
 plotListData += cutsLeptonTight0
 plotListData += cutsLeptonTight1
 plotListData += cutsPhotonGood0
