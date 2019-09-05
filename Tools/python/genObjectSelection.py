@@ -22,5 +22,5 @@ def isGoodGenPhoton( j ):
 def isGoodGenLepton( l ):
     ''' lepton object selection
     '''
-    return l['pt'] > 15 and abs( l['eta'] ) < 2.4 and abs( int(l['pdgId']) ) in [11,13] #eta < 2.5
+    return l['pt'] > 20 and abs( l['eta'] ) < 2.4 and abs( int(l['pdgId']) ) in [11,13] #eta < 2.5
 #    return l['pt'] > 0 and abs( l['eta'] ) < 5. and abs( int(l['pdgId']) ) in [11,13] #eta < 2.5

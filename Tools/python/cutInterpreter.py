@@ -74,7 +74,7 @@ special_cuts = {
     "trigger":           "(1)",
 
     "onM3":              "abs(m3-%s)<=%s"%(mT, m3MassRange),
-    "offM3":             "abs(m3-%s)<=%s"%(mT, m3MassRange),
+    "offM3":             "abs(m3-%s)>%s"%(mT, m3MassRange),
 
     "MVAPhoton":             "nPhotonMVA>=1",
     "NoSieiePhoton":         "nPhotonNoSieie>=1",
@@ -87,6 +87,9 @@ special_cuts = {
     "eInv":                 "nElectronTightInvIso==1",
     "allInv":               "(1)",
 
+    "muNoIso":                "nMuonTightNoIso==1",
+    "eNoIso":                 "nElectronTightNoIso==1",
+    
     "offZeg":               "((abs(mLtight0Gamma-%s)>%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
     "onZeg":                "((abs(mLtight0Gamma-%s)<=%s&&nElectronTight==1)||(nElectronTight==0))"%(mZ, zMassRange),             # Cut Z-Window only for egamma
     "mu":                   "nMuonTight==1",
@@ -99,14 +102,14 @@ special_cuts = {
     "n12Jet":               "nJetGood==1||nJetGood==2",
 
     "lowSieie":          "PhotonNoSieie0_sieie<%f"%lowSieieThresh,
-    "highSieie":         "PhotonNoSieie0_sieie>%f"%highSieieThresh,
-    "lowChgIso":         "PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt<%f"%chgIsoThresh,
-    "highChgIso":        "PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt>%f"%chgIsoThresh,
+    "highSieie":         "PhotonNoSieie0_sieie>=%f"%highSieieThresh,
+    "lowChgIso":         "(PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt)<%f"%chgIsoThresh,
+    "highChgIso":        "(PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt)>=%f"%chgIsoThresh,
 
-    "lowChgIsolowSieie":   "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt<%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,lowSieieThresh),
-    "highChgIsolowSieie":  "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt>%f&&PhotonNoChgIsoNoSieie0_sieie>%f"%(chgIsoThresh,lowSieieThresh),
-    "lowChgIsohighSieie":  "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt<%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,highSieieThresh),
-    "highChgIsohighSieie": "PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt>%f&&PhotonNoChgIsoNoSieie0_sieie>%f"%(chgIsoThresh,highSieieThresh),
+    "lowChgIsolowSieie":   "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)<%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,lowSieieThresh),
+    "highChgIsolowSieie":  "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)>=%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,lowSieieThresh),
+    "lowChgIsohighSieie":  "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)<%f&&PhotonNoChgIsoNoSieie0_sieie>=%f"%(chgIsoThresh,highSieieThresh),
+    "highChgIsohighSieie": "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)>=%f&&PhotonNoChgIsoNoSieie0_sieie>=%f"%(chgIsoThresh,highSieieThresh),
 
     "lowPT":             "PhotonGood0_pt>=20&&PhotonGood0_pt<120",
     "medPT":             "PhotonGood0_pt>=120&&PhotonGood0_pt<220",
@@ -134,7 +137,7 @@ special_cuts = {
 
   }
 
-continous_variables = [ ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
+continous_variables = [ ("mT", "mT"), ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
 discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepNoCorrVeto","nLeptonVeto"), ("nLepVeto","nLeptonVetoIsoCorr"), ("nNoIsoLepTight","nLeptonTightNoIso"), ("nInvLepTight","nLeptonTightInvIso"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 

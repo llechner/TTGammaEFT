@@ -29,7 +29,7 @@ if os.environ["USER"] in ["llechner"]:
 
     analysis_results                    = results_directory
     cache_directory                     = "/afs/hephy.at/data/llechner01/TTGammaEFT/cache/"
-    combineReleaseLocation              = "/afs/hephy.at/work/l/llechner/CMSSW_8_1_0/src/"
+    combineReleaseLocation              = "/afs/hephy.at/work/l/llechner/CMSSW_10_2_9/src/"
     cardfileLocation                    = "/afs/hephy.at/data/llechner01/TTGammaEFT/results/cardfiles/"
 
     dpm_directory                       = "/dpm/oeaw.ac.at/home/cms/store/user/llechner/"
