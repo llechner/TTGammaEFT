@@ -189,7 +189,7 @@ os.environ["gammaSkim"]="True" if ("hoton" in args.selection or "pTG" in args.se
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed  import *
     from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import *
-    mc  = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
+    mc  = [ TTG_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16 ]
     qcd = QCD_16
     dy  = DY_LO_16
 
