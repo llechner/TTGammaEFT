@@ -594,6 +594,7 @@ if isMC:
     new_variables += [ 'nGenW/I', 'nGenWJets/I', 'nGenWElectron/I', 'nGenWMuon/I','nGenWTau/I', 'nGenWTauJets/I', 'nGenWTauElectron/I', 'nGenWTauMuon/I' ]
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
+    new_variables += [ "reweightHEM/F" ]
 
     new_variables += [ 'reweightLepton2lSF/F', 'reweightLepton2lSFUp/F', 'reweightLepton2lSFDown/F' ]
     new_variables += [ 'reweightLeptonTracking2lSF/F', 'reweightLeptonTracking2lSFUp/F', 'reweightLeptonTracking2lSFDown/F' ]
@@ -1062,7 +1063,8 @@ def filler( event ):
         fill_vector( event, "MisIDElectron0", writeLeptonVarList, misIdElectron[0] )
 
     # Jets
-    allJets = getParticles( r, collVars=readJetVarList, coll="Jet" )
+    allJets  = getParticles( r, collVars=readJetVarList, coll="Jet" )
+    nHEMJets = len( filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.0 and j['phi']>-2.0 and j['phi']<-0.5, allJets ))
 
     if isMC:
         for j in allJets: BTagEff.addBTagEffToJet( j )
@@ -1077,6 +1079,7 @@ def filler( event ):
 #    jets = deltaRCleaning( jets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
 #    jets = deltaRCleaning( jets, mediumPhotons, dRCut=0.1 ) # clean all jets against analysis photons
     
+
     # Store jets
     event.nJet      = len(allGoodJets)
     event.nJetGood  = len(jets)
@@ -1343,6 +1346,11 @@ def filler( event ):
             setParticle(event, "neutrinoBar",    solution.neutrinoBar) 
             setParticle(event, "top",            solution.top) 
             setParticle(event, "topBar",         solution.topBar) 
+
+    if isData:
+        event.reweightHEM = (r.run>=319077 and nHEMJets==0) or r.run<319077
+    else:
+        event.reweightHEM = 1 if (nHEMJets==0 or options.year != 2018 ) else 0.3518 # 0.2% of Run2018B are HEM affected. Ignore that piece. Thus, if there is a HEM jet, scale the MC to 35.2% which is AB/ABCD
 
     # Reweighting
     if isMC:
