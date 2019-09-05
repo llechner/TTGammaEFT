@@ -109,7 +109,7 @@ sequence = []
 # Sample definition
 if "dilep" in args.selection:
     if args.year == 2016:
-            mc = [ TTG_priv_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
+            mc = [ TTG_16, DY_LO_16, TT_pow_16, singleTop_16, ZG_16, other_16 ]
     elif args.year == 2017:
             mc = [ TTG_priv_17, DY_LO_17, TT_pow_17, singleTop_17, ZG_17, other_17 ]
     elif args.year == 2018:
@@ -120,7 +120,7 @@ if "dilep" in args.selection:
 elif "nLepTight1" in args.selection:
     #print "selection"
     if args.year == 2016:
-        mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16, other_16 ]
+        mc = [ TTG_16, TT_pow_16, DY_LO_16, singleTop_16, WJets_16, TG_16, WG_NLO_16, ZG_16, other_16 ]
         if addQCD:
             qcd   = QCD_16
             gjets = GJets_16

@@ -9,12 +9,18 @@ selections=(
             "VG3","VGamma CR 3 Jets"
             "VG4p","VGamma CR geq 4 Jets"
 
+            "misDY2","MisID DY CR 2 Jets"
             "misDY3","MisID DY CR 3 Jets"
-#            "misDY3-addDYSF-addMisIDSF","MisID DY CR 3 Jets + SF"
+            "misDY4","MisID DY CR 4 Jets"
+            "misDY5","MisID DY CR 5 Jets"
             "misDY4p","MisID DY CR geq 4 Jets"
-#            "misDY4p-addDYSF-addMisIDSF","MisID DY CR geq 4 Jets + SF"
+            "misDY2-addDYSF-addMisIDSF","MisID DY CR 2 Jets + SF"
+            "misDY3-addDYSF-addMisIDSF","MisID DY CR 3 Jets + SF"
+            "misDY4-addDYSF-addMisIDSF","MisID DY CR 4 Jets + SF"
+            "misDY5-addDYSF-addMisIDSF","MisID DY CR 5 Jets + SF"
+            "misDY4p-addDYSF-addMisIDSF","MisID DY CR geq 4 Jets + SF"
             "misTT2","MisID TT CR"
-#            "misTT2-addMisIDSF","MisID TT CR + SF"
+            "misTT2-addMisIDSF","MisID TT CR + SF"
 )
 
 noPhotonSelections=(
@@ -24,9 +30,15 @@ noPhotonSelections=(
             "TT3","TT CR 3 Jets"
             "TT4p","TT CR geq 4 Jets"
 
+            "DY2","DY CR 2 Jets"
             "DY3","DY CR 3 Jets"
-            "DY3-addDYSF","DY CR 3 Jets + SF"
+            "DY4","DY CR 4 Jets"
+            "DY5","DY CR 5 Jets"
             "DY4p","DY CR geq 4 Jets"
+            "DY2-addDYSF","DY CR 2 Jets + SF"
+            "DY3-addDYSF","DY CR 3 Jets + SF"
+            "DY4-addDYSF","DY CR 4 Jets + SF"
+            "DY5-addDYSF","DY CR 5 Jets + SF"
             "DY4p-addDYSF","DY CR geq 4 Jets + SF"
 )
 

@@ -1,9 +1,9 @@
 cat header.dat > cutflowtables.dat
 echo " " >> cutflowtables.dat
 
-python cutflowtable.py --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p #--useCorrectedIsoVeto
-python cutflowtable.py --selection nLepTight1-e-nLepVeto1-nJet4p-nBTag1p-nPhoton1p #--useCorrectedIsoVeto
-python cutflowtable.py --selection nLepTight1-mu-nLepVeto1-nJet4p-nBTag1p-nPhoton1p #--useCorrectedIsoVeto
+python cutflowtable.py --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p --useCorrectedIsoVeto
+python cutflowtable.py --selection nLepTight1-e-nLepVeto1-nJet4p-nBTag1p-nPhoton1p --useCorrectedIsoVeto
+python cutflowtable.py --selection nLepTight1-mu-nLepVeto1-nJet4p-nBTag1p-nPhoton1p --useCorrectedIsoVeto
 #python cutflowtable.py --year 2017 --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p 
 #python cutflowtable.py --year 2018 --selection nLepTight1-nLepVeto1-nJet4p-nBTag1p-nPhoton1p 
 

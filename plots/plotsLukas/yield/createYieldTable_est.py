@@ -64,18 +64,19 @@ if args.controlRegion.count("addDYSF"):
 
 CR_para = allRegions[args.controlRegion]["parameters"]
 hadFakeSel  = False #"NoChgIsoNoSieiePhoton" in args.selection
-photonSelection = not ("nPhoton" in CR_para and CR_para["nPhoton"][1] == 0) and not hadFakeSel
+photonSelection = not allRegions[args.controlRegion]["noPhotonCR"]
 #allRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
-allRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
+allPhotonRegions = inclRegionsTTG + regionsTTG if photonSelection else noPhotonRegionTTG
 
-catSel    = ["all", "photoncat0", "photoncat1", "photoncat2", "photoncat3"]
+catSel = ["all","gen","had","misID"]
+#catSel    = ["all", "photoncat0", "photoncat1", "photoncat2", "photoncat3"]
 sieieSel  = ["all" ]
 chgSel    = ["all" ]
 noCat_sel = "all"
 
 if hadFakeSel:
     ptDict = {str(inclRegionsTTG[0]):"all", str(regionsTTG[0]):"lowhadPT", str(regionsTTG[1]):"medhadPT", str(regionsTTG[2]):"highhadPT"}
-    catSel = ["all", "photonhadcat0", "photonhadcat1", "photonhadcat2", "photonhadcat3"]
+#    catSel = ["all","gen","had","misID"]
     sieieSel  = ["lowSieie", "highSieie"]
     chgSel    = ["lowChgIso", "highChgIso"]
 
@@ -88,10 +89,11 @@ else:
 
 setup          = Setup(year=args.year, photonSelection=photonSelection )#, checkOnly=True)
 estimators     = EstimatorList(setup)
-allEstimators  = estimators.constructEstimatorList( default_sampleList )
-mc  = [e.name for e in allEstimators]
+allEstimators  = estimators.constructEstimatorList( allProcesses )
+mc  = list(set([e.name.split("_")[0] for e in allEstimators]))
+
 if not args.noData:
-    allEstimators += [DataObservation(name="Data", sample=setup.samples["Data"], cacheDir=setup.defaultCacheDir())]
+    allEstimators += [DataObservation(name="Data", process=setup.processes["Data"], cacheDir=setup.defaultCacheDir())]
 
 if args.controlRegion:
     setup = setup.sysClone(parameters=CR_para)
@@ -121,48 +123,52 @@ else:
 
 
 yields = {}
-for est in [e.name for e in allEstimators] + ["MC"]:
+for estName in [e.name for e in allEstimators] + ["MC","MC_gen","MC_had","MC_misID"]:
+#    cat = estName.split("_")[-1] if estName.split("_")[-1] in ["gen","had","misID"] else "all"
+    est = estName.split("_")[0]
     yields[est] = {}
     for i_sieie, sieie in enumerate(sieieSel):
         yields[est][sieie] = {}
         for i_chgIso, chgIso in enumerate(chgSel):
             yields[est][sieie][chgIso] = {}
-            for i_region, region in enumerate(allRegions):
+            for i_region, region in enumerate(allPhotonRegions):
                 yields[est][sieie][chgIso][ptDict[str(region)]] = {}
                 for i_cat, cat in enumerate(catSel):
                     yields[est][sieie][chgIso][ptDict[str(region)]][cat] = {}
                     for i_mode, mode in enumerate(channels + [allMode]):
-                        yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] = 0
+                        yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] = -1
 
 for estimator in allEstimators:
-    est = estimator.name
+    cat = estimator.name.split("_")[-1] if estimator.name.split("_")[-1] in ["gen","had","misID"] else "all"
+    est = estimator.name.split("_")[0]
     for i_sieie, sieie in enumerate(sieieSel):
         for i_chgIso, chgIso in enumerate(chgSel):
-            for i_region, region in enumerate(allRegions):
-                for i_cat, cat in enumerate(catSel):
+            for i_region, region in enumerate(allPhotonRegions):
+#                for i_cat, cat in enumerate(catSel):
                     for i_mode, mode in enumerate(channels):
 
-                        if cat == "all":
-                            try:
-                                yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] = int(round(wrapper( (region, mode, setup, estimator) )[1].val))
-#                                print yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
-                                if addDYSF and "DY" in est:
-                                    yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] *= default_DYSF
-                            except:
-                                yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] = 0#int(round(wrapper( (region, mode, setup, estimator) )[1].val))
-                                pass
-                        else:
-                            yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] = 0#int(round(wrapper( (region, mode, setup, estimator) )[1].val))
+                            y = wrapper( (region, mode, setup, estimator) )[1].val
+                            if y < 0: continue
 
-                        yields[est][sieie][chgIso][ptDict[str(region)]][cat][allMode] += yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
-                        if est != "Data":
-                            yields["MC"][sieie][chgIso][ptDict[str(region)]][cat][allMode] += yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
-                            yields["MC"][sieie][chgIso][ptDict[str(region)]][cat][mode] += yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
+                            yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] = y
+#                            print yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
+                            if addDYSF and "DY" in est:
+                                yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] *= default_DYSF
+
+                            if addMisIDSF and cat == "misID":
+                                yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] *= default_misIDSF
+
+                            if yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode] > 0:
+                                yields[est][sieie][chgIso][ptDict[str(region)]][cat][allMode] += yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
+                                if est != "Data":
+                                    yields["MC"][sieie][chgIso][ptDict[str(region)]][cat][allMode] += yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
+                                    yields["MC"][sieie][chgIso][ptDict[str(region)]][cat][mode]    += yields[est][sieie][chgIso][ptDict[str(region)]][cat][mode]
 
 
+mc.sort(key=lambda est: -yields[est]["all"]["all"][ptDict[str(allPhotonRegions[0])]]["all"][allMode])
 def printHadFakeYieldTable( m ):
 
-    with open("logs/%i_%s-%s.log"%(args.year,cr,m), "w") as f:
+    with open("logs/%s_%s-%s.log"%(args.year,cr,m), "w") as f:
         f.write("\\begin{frame}\n")
         f.write("\\frametitle{Yields - %s}\n\n"%args.label)
 
@@ -171,46 +177,46 @@ def printHadFakeYieldTable( m ):
 
         for lowPT, highPT in [ (20,120), (120,220), (220,-1) ]:
             f.write("\\resizebox{0.8\\textwidth}{!}{\n")
-            f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
+            f.write("\\begin{tabular}{c||c||c|c|c||c||c|c|c||c||c|c|c||c||c|c|c}\n")
 
             if lowPT == 20:
                 f.write("\\hline\n")
                 f.write("\\hline\n")
-                f.write("\\multicolumn{21}{c}{%s}\\\\ \n"%( ", ".join( [cr] + [m] ) ) )
+                f.write("\\multicolumn{17}{c}{%s}\\\\ \n"%( ", ".join( [cr] + [m] ) ) )
                 f.write("\\hline\n")
-                f.write("\\multicolumn{21}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
+                f.write("\\multicolumn{17}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
                 f.write("\\hline\n")
                 f.write("\\hline\n")
-                f.write("\\multicolumn{21}{c}{}\\\\ \n")
+                f.write("\\multicolumn{17}{c}{}\\\\ \n")
 
             f.write("\\hline\n")
             f.write("\\hline\n")
             if highPT == -1:
-                f.write("\\multicolumn{21}{c}{\\pT($\\gamma$) $>$ %i GeV}\\\\ \n"%(lowPT))
+                f.write("\\multicolumn{17}{c}{\\pT($\\gamma$) $>$ %i GeV}\\\\ \n"%(lowPT))
             else:
-                f.write("\\multicolumn{21}{c}{%i $\\leq$ \\pT($\\gamma$) $<$ %i GeV}\\\\ \n"%(lowPT, highPT))
+                f.write("\\multicolumn{17}{c}{%i $\\leq$ \\pT($\\gamma$) $<$ %i GeV}\\\\ \n"%(lowPT, highPT))
             f.write("\\hline\n")
-            f.write("Sample  & \\multicolumn{5}{c||}{low $\\sigma_{i\\eta i\\eta}$, low chg Iso (SR)} & \\multicolumn{5}{c||}{high $\\sigma_{i\\eta i\\eta}$, low chg Iso  (NN2)}   & \\multicolumn{5}{c||}{low $\\sigma_{i\\eta i\\eta}$, high chg Iso (NN1)}   & \\multicolumn{5}{c}{high $\\sigma_{i\\eta i\\eta}$, high chg Iso  (CR)} \\\\ \n")
+            f.write("Sample  & \\multicolumn{4}{c||}{low $\\sigma_{i\\eta i\\eta}$, low chg Iso (SR)} & \\multicolumn{4}{c||}{high $\\sigma_{i\\eta i\\eta}$, low chg Iso  (NN2)}   & \\multicolumn{4}{c||}{low $\\sigma_{i\\eta i\\eta}$, high chg Iso (NN1)}   & \\multicolumn{4}{c}{high $\\sigma_{i\\eta i\\eta}$, high chg Iso  (CR)} \\\\ \n")
             f.write("\\hline\n")
-            f.write("        & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake \\\\ \n")
+            f.write("        & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake \\\\ \n")
             f.write("\\hline\n")
             f.write("\\hline\n")
             for s in mc:
-                f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [s.replace("_","\_")] + [ int(yields[s][sieie][chgIso][pt][cat][m]) for lep, pt, sieie, chgIso, cat in regions]) )
+                f.write("%s & \\textbf{%s} & %s & %s & \\textbf{%s} & %s & %s & \\textbf{%s} & %s & %s & \\textbf{%s} & %s & %s & %s \\\\ \n" %tuple( [s] + [ str(int(round(yields[s][sieie][chgIso][pt][cat][m]))) if yields[s][sieie][chgIso][pt][cat][m]>=0 else "" for lep, pt, sieie, chgIso, cat in regions]) )
                 f.write("\\hline\n")
             f.write("\\hline\n")
-            f.write("MC total & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [int(yields["MC"][sieie][chgIso][pt][cat][m]) for lep, pt, sieie, chgIso, cat in regions] ))
+            f.write("MC total & \\textbf{%s} & %s & %s & \\textbf{%s} & %s & %s & \\textbf{%s} & %s & %s & \\textbf{%s} & %s & %s & %s \\\\ \n" %tuple( [str(int(round(yields["MC"][sieie][chgIso][pt][cat][m]))) if yields["MC"][sieie][chgIso][pt][cat][m]>=0 else "" for lep, pt, sieie, chgIso, cat in regions] ))
             f.write("\\hline\n")
             if not args.noData:
-                f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [int(yields["Data"][sieie][chgIso][pt][cat][m]) for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
+                f.write("data total & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c}{} \\\\ \n" %tuple( [str(int(round(yields["Data"][sieie][chgIso][pt][cat][m]))) if yields["Data"][sieie][chgIso][pt][cat][m]>=0 else "" for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
                 f.write("\\hline\n")
-                f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [float(yields["Data"][sieie][chgIso][pt][cat][m])/float(yields["MC"][sieie][chgIso][pt][cat][m]) if float(yields["MC"][sieie][chgIso][pt][cat][m]) > 0 else 1. for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
+                f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c}{} \\\\ \n" %tuple( [float(yields["Data"][sieie][chgIso][pt][cat][m])/float(yields["MC"][sieie][chgIso][pt][cat][m]) if float(yields["MC"][sieie][chgIso][pt][cat][m]) > 0 else 1. for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
                 f.write("\\hline\n")
             f.write("\\hline\n")
     
             if highPT == -1:
-                f.write("\\multicolumn{21}{c}{}\\\\ \n")
-                f.write("\\multicolumn{1}{c}{} & \\multicolumn{5}{c}{$\gamma$ = genuine photons} & \\multicolumn{5}{c}{had $\gamma$ = hadronic photons} & \\multicolumn{5}{c}{misID e = misID electrons} & \\multicolumn{5}{c}{fake = hadronic fakes} \\\\ \n")
+                f.write("\\multicolumn{17}{c}{}\\\\ \n")
+                f.write("\\multicolumn{1}{c}{} & \\multicolumn{4}{c}{$\gamma$ = genuine photons} & \\multicolumn{4}{c}{had $\gamma$ = hadronic photons} & \\multicolumn{4}{c}{misID e = misID electrons} & \\multicolumn{4}{c}{fake = hadronic fakes} \\\\ \n")
 
 
             f.write("\\end{tabular}\n")
@@ -234,40 +240,40 @@ def printYieldTable( m ):
         f.write("\\centering\n")
 
         f.write("\\resizebox{0.9\\textwidth}{!}{\n")
-        f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
+        f.write("\\begin{tabular}{c||c||c|c|c||c||c|c|c||c||c|c|c||c||c|c|c}\n")
 #        f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
 
         f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("\\multicolumn{21}{c}{%s}\\\\ \n"%( ", ".join( [cr] + [m] ) ) )
+        f.write("\\multicolumn{17}{c}{%s}\\\\ \n"%( ", ".join( [cr] + [m] ) ) )
         f.write("\\hline\n")
-        f.write("\\multicolumn{21}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
+        f.write("\\multicolumn{17}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
         f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("\\multicolumn{21}{c}{}\\\\ \n")
+        f.write("\\multicolumn{17}{c}{}\\\\ \n")
 
         f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("Sample  & \\multicolumn{5}{c||}{inclusive} & \\multicolumn{5}{c||}{%i $\\leq$ \\pT($\\gamma$) $<$ %i GeV} & \\multicolumn{5}{c||}{%i $\\leq$ \\pT($\\gamma$) $<$ %i GeV} & \\multicolumn{5}{c}{\\pT($\\gamma$) $>$ %i GeV}\\\\ \n"%(20,120,120,220,220))
+        f.write("Sample  & \\multicolumn{4}{c||}{inclusive} & \\multicolumn{4}{c||}{%i $\\leq$ \\pT($\\gamma$) $<$ %i GeV} & \\multicolumn{4}{c||}{%i $\\leq$ \\pT($\\gamma$) $<$ %i GeV} & \\multicolumn{4}{c}{\\pT($\\gamma$) $>$ %i GeV}\\\\ \n"%(20,120,120,220,220))
         f.write("\\hline\n")
-        f.write("        & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake \\\\ \n")
+        f.write("        & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake \\\\ \n")
         f.write("\\hline\n")
         f.write("\\hline\n")
         for s in mc:
-            f.write("%s & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [s.replace("_","\_")] + [ int(yields[s][sieie][chgIso][pt][cat][m]) for lep, pt, sieie, chgIso, cat in regions ]) )
+            f.write("%s & \\textbf{%s} & %s & %s & %s & \\textbf{%s} & %s & %s & %s & \\textbf{%s} & %s & %s & %s & \\textbf{%s} & %s & %s & %s \\\\ \n" %tuple( [s] + [ str(int(round(yields[s][sieie][chgIso][pt][cat][m]))) if yields[s][sieie][chgIso][pt][cat][m]>=0 else "" for lep, pt, sieie, chgIso, cat in regions ]) )
             f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("MC total & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i & \\textbf{%i} & %i & %i & %i & %i \\\\ \n" %tuple( [int(yields["MC"][sieie][chgIso][pt][cat][m]) for lep, pt, sieie, chgIso, cat in regions] ))
+        f.write("MC total & \\textbf{%s} & %s & %s & %s & \\textbf{%s} & %s & %s & %s & \\textbf{%s} & %s & %s & %s & \\textbf{%s} & %s & %s & %s \\\\ \n" %tuple( [str(int(round(yields["MC"][sieie][chgIso][pt][cat][m]))) if yields["MC"][sieie][chgIso][pt][cat][m] >= 0 else "" for lep, pt, sieie, chgIso, cat in regions] ))
         f.write("\\hline\n")
         if not args.noData:
-            f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [ int(yields["Data"][sieie][chgIso][pt][cat][m]) for lep, pt, sieie, chgIso, cat in regions if cat=="all"] ))
+            f.write("data total & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c}{} \\\\ \n" %tuple( [ str(int(round(yields["Data"][sieie][chgIso][pt][cat][m]))) if yields["Data"][sieie][chgIso][pt][cat][m] >= 0 else "" for lep, pt, sieie, chgIso, cat in regions if cat=="all"] ))
             f.write("\\hline\n")
-            f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [float(yields["Data"][sieie][chgIso][pt][cat][m])/float(yields["MC"][sieie][chgIso][pt][cat][m]) if float(yields["MC"][sieie][chgIso][pt][cat][m]) > 0 else 1. for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
+            f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c}{} \\\\ \n" %tuple( [float(yields["Data"][sieie][chgIso][pt][cat][m])/float(yields["MC"][sieie][chgIso][pt][cat][m]) if float(yields["MC"][sieie][chgIso][pt][cat][m]) > 0 else 1. for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
             f.write("\\hline\n")
         f.write("\\hline\n")
     
-        f.write("\\multicolumn{21}{c}{}\\\\ \n")
-        f.write("\\multicolumn{1}{c}{} & \\multicolumn{5}{c}{$\gamma$ = genuine photons} & \\multicolumn{5}{c}{had $\gamma$ = hadronic photons} & \\multicolumn{5}{c}{misID e = misID electrons} & \\multicolumn{5}{c}{fake = hadronic fakes} \\\\ \n")
+        f.write("\\multicolumn{17}{c}{}\\\\ \n")
+        f.write("\\multicolumn{1}{c}{} & \\multicolumn{4}{c}{$\gamma$ = genuine photons} & \\multicolumn{4}{c}{had $\gamma$ = hadronic photons} & \\multicolumn{4}{c}{misID e = misID electrons} & \\multicolumn{4}{c}{fake = hadronic fakes} \\\\ \n")
 
 
         f.write("\\end{tabular}\n")
@@ -292,41 +298,41 @@ def printNoPhotonYieldTable( ):
 
         f.write("\\resizebox{0.9\\textwidth}{!}{\n")
 #        f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
-        f.write("\\begin{tabular}{c||c||c|c|c|c||c||c|c|c|c||c||c|c|c|c}\n")
+        f.write("\\begin{tabular}{c||c||c|c|c||c||c|c|c||c||c|c|c}\n")
 
         f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("\\multicolumn{16}{c}{%s}\\\\ \n"%( ", ".join( [cr] ) ) )
+        f.write("\\multicolumn{13}{c}{%s}\\\\ \n"%( ", ".join( [cr] ) ) )
         f.write("\\hline\n")
-        f.write("\\multicolumn{16}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
+        f.write("\\multicolumn{13}{c}{%i: $\\mathcal{L}=%s$ fb$^{-1}$}\\\\ \n"%(args.year, "{:.2f}".format(lumi_scale)))
         f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("\\multicolumn{16}{c}{}\\\\ \n")
+        f.write("\\multicolumn{13}{c}{}\\\\ \n")
 
         f.write("\\hline\n")
         f.write("\\hline\n")
         if args.controlRegion.startswith("DY"):
-            f.write("Sample  & \\multicolumn{5}{c||}{ SF (ee/$\\mu\\mu$) channel } & \\multicolumn{5}{c||}{ee channel} & \\multicolumn{5}{c}{$\\mu\\mu$ channel}\\\\ \n")
+            f.write("Sample  & \\multicolumn{4}{c||}{ SF (ee/$\\mu\\mu$) channel } & \\multicolumn{4}{c||}{ee channel} & \\multicolumn{4}{c}{$\\mu\\mu$ channel}\\\\ \n")
         else:
-            f.write("Sample  & \\multicolumn{5}{c||}{ e/$\\mu$ channel } & \\multicolumn{5}{c||}{e channel} & \\multicolumn{5}{c}{$\\mu$ channel}\\\\ \n")
+            f.write("Sample  & \\multicolumn{4}{c||}{ e/$\\mu$ channel } & \\multicolumn{4}{c||}{e channel} & \\multicolumn{4}{c}{$\\mu$ channel}\\\\ \n")
         f.write("\\hline\n")
-        f.write("        & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake & \\textbf{events} & $\gamma$ & had $\gamma$ & misID e & fake \\\\ \n")
+        f.write("        & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake & \\textbf{events} & $\gamma$ & misID e & had $\gamma$ / fake \\\\ \n")
         f.write("\\hline\n")
         f.write("\\hline\n")
         for s in mc:
-            f.write("%s & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 \\\\ \n" %tuple( [s.replace("_","\_")] + [ int(yields[s][sieie][chgIso][pt][cat][lep]) for lep, pt, sieie, chgIso, cat in regions ]) )
+            f.write("%s & \\textbf{%s} &  &  &  & \\textbf{%s} &  &  &  & \\textbf{%s} &  &  &   \\\\ \n" %tuple( [s] + [ str(int(round(yields[s][sieie][chgIso][pt][cat][lep]))) if yields[s][sieie][chgIso][pt][cat][m] >= 0 else "" for lep, pt, sieie, chgIso, cat in regions ]) )
             f.write("\\hline\n")
         f.write("\\hline\n")
-        f.write("MC total & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 & \\textbf{%i} & 0 & 0 & 0 & 0 \\\\ \n" %tuple( [int(yields["MC"][sieie][chgIso][pt][cat][lep]) for lep, pt, sieie, chgIso, cat in regions] ))
+        f.write("MC total & \\textbf{%s} &  &  &  & \\textbf{%s} &  &  &  & \\textbf{%s} &  &  &   \\\\ \n" %tuple( [str(int(round(yields["MC"][sieie][chgIso][pt][cat][lep]))) if yields["MC"][sieie][chgIso][pt][cat][m] >= 0 else "" for lep, pt, sieie, chgIso, cat in regions] ))
         f.write("\\hline\n")
         if not args.noData:
-            f.write("data total & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c||}{} & \\textbf{%i} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [ int(yields["Data"][sieie][chgIso][pt][cat][lep]) for lep, pt, sieie, chgIso, cat in regions if cat=="all"] ))
+            f.write("data total & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c||}{} & \\textbf{%s} & \\multicolumn{3}{c}{} \\\\ \n" %tuple( [ str(int(round(yields["Data"][sieie][chgIso][pt][cat][lep]))) if yields["Data"][sieie][chgIso][pt][cat][m] >= 0 else "" for lep, pt, sieie, chgIso, cat in regions if cat=="all"] ))
             f.write("\\hline\n")
-            f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c||}{} & \\textbf{%.2f} & \\multicolumn{4}{c}{} \\\\ \n" %tuple( [float(yields["Data"][sieie][chgIso][pt][cat][lep])/float(yields["MC"][sieie][chgIso][pt][cat][lep]) if float(yields["MC"][sieie][chgIso][pt][cat][lep]) > 0 else 1. for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
+            f.write("data/MC    & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c||}{} & \\textbf{%.2f} & \\multicolumn{3}{c}{} \\\\ \n" %tuple( [float(yields["Data"][sieie][chgIso][pt][cat][lep])/float(yields["MC"][sieie][chgIso][pt][cat][lep]) if float(yields["MC"][sieie][chgIso][pt][cat][lep]) > 0 else 1. for lep, pt, sieie, chgIso, cat in regions if cat == "all"] ))
             f.write("\\hline\n")
         f.write("\\hline\n")
     
-#        f.write("\\multicolumn{16}{c}{}\\\\ \n")
+#        f.write("\\multicolumn{13}{c}{}\\\\ \n")
 
         f.write("\\end{tabular}\n")
         f.write("}\n\n") #resizebox
