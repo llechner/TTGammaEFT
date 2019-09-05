@@ -51,13 +51,24 @@
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_Had_newCentral_1Line #SPLIT50
 #python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v9 --sample ttGamma_NoFullyHad_newCentral_1Line #SPLIT50
 
-#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp  #SPLIT20
-#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp  #SPLIT20
-#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_newCentral_1Line_comp #SPLIT20
-#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ttGamma_NoFullyHad_SM_ATLASrunCard_comp  #SPLIT20
+#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp  #SPLIT20
+#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp  #SPLIT20
+python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ttGamma_NoFullyHad_newCentral_1Line_comp #SPLIT30
+#python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ttGamma_NoFullyHad_SM_ATLASrunCard_comp  #SPLIT20
+python genPostProcessingSampleComp.py --noCleaning --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ttGamma_NoFullyHad_newCentral_1Line_Herwig #SPLIT5
 
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample WGamma_noPtj #SPLIT10
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ZGamma_noPtj #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample WGamma_noPtj #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_noPtj #SPLIT10
 
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample WGamma_central #SPLIT10
-python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v12 --sample ZGamma_central #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample WGamma_central #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central #SPLIT10
+
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_NLO_01j_93X_CP5     #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_NLO_01j_93X_CUEP8M1 #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_NLO_01j_71X_CP5     #SPLIT10
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_NLO_01j_71X_CUEP8M1 #SPLIT10
+
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_LO_0123j_93X_CP5     #SPLIT5
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_LO_0123j_93X_CUEP8M1 #SPLIT5
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_LO_0123j_71X_CP5     #SPLIT5
+#python genPostProcessing.py --overwrite --processingEra TTGammaEFT_PP_GEN_TTG_v14 --sample ZGamma_central_LO_0123j_71X_CUEP8M1 #SPLIT5
