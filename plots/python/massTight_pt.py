@@ -138,7 +138,7 @@ massTight_pt.append( Plot(
     texX      = 'M_{3} (GeV)',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.m3 if event.PhotonGood0_pt < 120 else -999,
-    binning   = [ 50, 0, 250 ],
+    binning   = [ 70, 60, 500 ],
 ))
 
 massTight_pt.append( Plot(
@@ -146,7 +146,7 @@ massTight_pt.append( Plot(
     texX      = 'M_{3} (GeV)',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.m3 if event.PhotonGood0_pt > 120 and event.PhotonGood0_pt < 220 else -999,
-    binning   = [ 50, 0, 250 ],
+    binning   = [ 70, 60, 500 ],
 ))
 
 massTight_pt.append( Plot(
@@ -154,7 +154,7 @@ massTight_pt.append( Plot(
     texX      = 'M_{3} (GeV)',
     texY      = 'Number of Events',
     attribute = lambda event, sample: event.m3 if event.PhotonGood0_pt > 220 else -999,
-    binning   = [ 50, 0, 250 ],
+    binning   = [ 70, 60, 500 ],
 ))
 
 

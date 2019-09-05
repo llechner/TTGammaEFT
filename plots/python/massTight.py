@@ -82,7 +82,7 @@ massTight.append( Plot(
     texX      = 'M_{3} (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "m3/F" ),
-    binning   = [ 70, 0, 350 ],
+    binning   = [ 70, 60, 500 ],
 ))
 
 massTight.append( Plot(

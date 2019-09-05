@@ -32,7 +32,7 @@ massTight_noPhoton.append( Plot(
     texX      = 'M_{3} (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "m3/F" ),
-    binning   = [ 70, 0, 350 ],
+    binning   = [ 70, 60, 500 ],
 ))
 
 massTight_noPhoton.append( Plot(
@@ -40,7 +40,7 @@ massTight_noPhoton.append( Plot(
     texX      = 'M_{3} w/ 1 BJet (GeV)',
     texY      = 'Number of Events',
     attribute = TreeVariable.fromString( "m3wBJet/F" ),
-    binning   = [ 70, 0, 350 ],
+    binning   = [ 70, 60, 500 ],
 ))
 
 massTight_noPhoton.append( Plot(
