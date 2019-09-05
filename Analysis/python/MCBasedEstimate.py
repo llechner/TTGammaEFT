@@ -2,6 +2,7 @@ from Analysis.Tools.u_float                  import u_float
 
 from TTGammaEFT.Analysis.SystematicEstimator import SystematicEstimator
 from TTGammaEFT.Analysis.SetupHelpers        import dilepChannels, lepChannels
+from TTGammaEFT.Tools.cutInterpreter         import cutInterpreter
 
 # Logging
 if __name__=="__main__":
@@ -18,6 +19,10 @@ class MCBasedEstimate(SystematicEstimator):
         super(MCBasedEstimate, self).__init__(name, cacheDir=cacheDir)
         self.process = process
         
+    def _transferFactor(self, region, channel, setup, overwrite=False):
+        """Estimate transfer factor for QCD in "region" using setup"""
+        return u_float(0, 0)
+
     def _estimate(self, region, channel, setup, overwrite=False):
 
         ''' Concrete implementation of abstract method 'estimate' as defined in Systematic
@@ -36,11 +41,12 @@ class MCBasedEstimate(SystematicEstimator):
         else:
             preSelection = setup.preselection('MC', channel=channel)
             cuts         = [ region.cutString( setup.sys['selectionModifier'] ), preSelection['cut'] ]
+            if "high" in setup.parameters["photonIso"]:
+                self.processCut = self.processCut.replace("photoncat", "photonhadcat")
             if self.processCut:
-                cuts.append( self.processCut )
+                cuts.append( cutInterpreter.cutString(self.processCut) )
                 logger.info( "Adding process specific cut %s"%self.processCut )
             cut          = "&&".join( cuts )
-
             weight       = preSelection['weightStr']
             logger.debug( "Using cut %s and weight %s"%(cut, weight) )
 

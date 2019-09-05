@@ -27,5 +27,5 @@ class EstimatorList:
         return self.estimatorList
 
     def constructProcessDict(self, processDict):
-        self.processDict = { pName:self.constructEstimatorList( processes=pList ) for pName, pList in processDict.items() }
+        self.processDict = { pName:self.constructEstimatorList( processes=pList["process"] ) for pName, pList in processDict.items() }
         return self.processDict

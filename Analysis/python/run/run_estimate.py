@@ -43,7 +43,7 @@ parameters       = allRegions[args.controlRegion]["parameters"]
 channels         = allRegions[args.controlRegion]["channels"] 
 photonSelection  = not allRegions[args.controlRegion]["noPhotonCR"]
 allPhotonRegions = allRegions[args.controlRegion]["inclRegion"] + allRegions[args.controlRegion]["regions"] if photonSelection else allRegions[args.controlRegion]["regions"]
-setup            = Setup( year=args.year, photonSelection=photonSelection, runOnLxPlus=args.runOnLxPlus )
+setup            = Setup( year=args.year, photonSelection=photonSelection and not "QCD" in args.selectEstimator, runOnLxPlus=args.runOnLxPlus ) #photonselection always false for qcd estimate
 
 # Select estimate
 if args.selectEstimator == "Data":
@@ -73,7 +73,7 @@ for channel in channels:
     for (i, r) in enumerate(allPhotonRegions):
         if args.selectRegion != i: continue
         jobs.append((r, channel, setup))
-        if not estimate.isData and not args.noSystematics:
+        if not estimate.isData and not args.noSystematics and not "DD" in args.selectEstimator:
             jobs.extend(estimate.getBkgSysJobs(r, channel, setup))
 
 

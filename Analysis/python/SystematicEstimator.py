@@ -9,7 +9,6 @@ from Analysis.Tools.DirDB             import DirDB
 from Analysis.Tools.u_float           import u_float
 from TTGammaEFT.Tools.user            import cache_directory
 from TTGammaEFT.Analysis.SetupHelpers import allChannels
-from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 
 # Logging
 if __name__=="__main__":
@@ -30,9 +29,9 @@ class SystematicEstimator:
         self.initCache(cacheDir)
         self.processCut = None
 
-        if   "_gen"   in name: self.processCut = cutInterpreter.cutString( "photoncat0" )
-        elif "_misID" in name: self.processCut = cutInterpreter.cutString( "photoncat2" )
-        elif "_had"   in name: self.processCut = cutInterpreter.cutString( "photoncat13" )
+        if   "_gen"   in name: self.processCut = "photoncat0"
+        elif "_misID" in name: self.processCut = "photoncat2"
+        elif "_had"   in name: self.processCut = "photoncat13"
 
     def initCache(self, cacheDir="systematics"):
         logger.info("Initializing cache for %s in directory %s"%(self.name, cacheDir))
@@ -94,10 +93,36 @@ class SystematicEstimator:
             res = u_float(-1,0)
         return res if res > 0 or checkOnly else u_float(0,0)
 
+    def cachedTransferFactor(self, region, channel, setup, save=True, overwrite=False, checkOnly=False):
+        key =  self.uniqueKey(str(region)+"_TF", channel, setup)
+        if (self.cache and self.cache.contains(key)) and not overwrite:
+            res = self.cache.get(key)
+            logger.debug( "Loading cached %s result for %r : %r"%(self.name, key, res) )
+        elif self.cache and not checkOnly:
+            logger.debug( "Calculating %s result for %r"%(self.name, key) )
+            res = self._transferFactor( region, channel, setup, overwrite=overwrite )
+            _res = self.cache.add( key, res, overwrite=True )
+            logger.debug( "Adding cached %s result for %r : %r" %(self.name, key, res) )
+        elif not checkOnly:
+            res = self._transferFactor( region, channel, setup, overwrite=overwrite)
+        else:
+            res = u_float(-1,0)
+        return res if res > 0 or checkOnly else u_float(0,0)
+
     @abc.abstractmethod
     def _estimate(self, region, channel, setup, overwrite=False):
         """Estimate yield in "region" using setup"""
         return
+
+    def _transferFactor(self, region, channel, setup, overwrite=False):
+        """Estimate transfer factor for QCD in "region" using setup"""
+        return
+
+    def TransferFactorStatistic(self, region, channel, setup):
+        ref  = self.cachedTransferFactor(region, channel, setup)
+        up   = u_float(ref.val + ref.sigma)
+        down = u_float(ref.val - ref.sigma)
+        return abs(0.5*(up-down)/ref) if ref > 0 else max(up,down)
 
     def PUSystematic(self, region, channel, setup):
         ref  = self.cachedEstimate(region, channel, setup)

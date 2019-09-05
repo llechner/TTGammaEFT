@@ -17,6 +17,8 @@ from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
 
+from TTGammaEFT.Analysis.SetupHelpers import default_misIDSF, default_DYSF
+
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.u_float           import u_float
 from Analysis.Tools.DirDB             import DirDB
@@ -58,7 +60,7 @@ dirDB = DirDB(cache_dir)
 if not dirDB: raise
 
 # Samples
-if options.runOnLxPlus:
+if args.runOnLxPlus:
     # Set the redirector in the samples repository to the global redirector
     from Samples.Tools.config import redirector_global as redirector
 os.environ["gammaSkim"]="False" #always false for QCD estimate
@@ -230,6 +232,7 @@ read_variables  = ["weight/F",
                    "lpTight/F", "lpInvTight/F",
                    "nJet/I", "nBTag/I",
                    "Jet[%s]" %jetVarString,
+                   "Lepton[%s]" %leptonVarString,
                    "nLepton/I", "nElectron/I", "nMuon/I",
                    "nLeptonGood/I", "nElectronGood/I", "nMuonGood/I",
                    "nLeptonTight/I", "nElectronTight/I", "nMuonTight/I",
@@ -288,19 +291,19 @@ sequence = []
 
 # Sample definition
 if args.year == 2016 and not args.checkOnly:
-    mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, VG_16, rest_16 ]
+    mc = [ TTG_16, TT_pow_16, DY_LO_16, WJets_16, VG_16, rest_16 ]
     data_sample = Run2016
     qcd   = QCD_16
     gjets = GJets_16
 
 elif args.year == 2017 and not args.checkOnly:
-    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, WG_17, rest_17 ]
+    mc = [ TTG_priv_17, TT_pow_17, DY_LO_17, WJets_17, VG_17, rest_17 ]
     data_sample = Run2017
     qcd   = QCD_17
     gjets = GJets_17
 
 elif args.year == 2018 and not args.checkOnly:
-    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, WG_18, rest_18 ]
+    mc = [ TTG_priv_18, TT_pow_18, DY_LO_18, WJets_18, VG_18, rest_18 ]
     data_sample = Run2018
     qcd   = QCD_18
     gjets = GJets_18
@@ -317,14 +320,14 @@ else:
     stack = Stack( mc )
 
 
-sampleWeight = lambda event, sample: (event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)+(1.25*(event.nPhotonGood>0)*(event.PhotonGood0_photonCat==2)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)
+sampleWeight = lambda event, sample: (event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)+((default_misIDSF-1)*(event.nPhotonGood>0)*(event.PhotonGood0_photonCat==2)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)
 weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
 for sample in mc:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     if "DY" in sample.name:
-        sample.scale          *= 1.17
+        sample.scale     *= default_DYSF
     sample.weight         = sampleWeight
 
 if args.small and not args.checkOnly:
@@ -334,7 +337,6 @@ if args.small and not args.checkOnly:
         sample.scale /= sample.normalization
 
 weight_ = lambda event, sample: event.weight
-tr = TriggerSelector( args.year, singleLepton=True )
 
 selection = [ item if not "nBTag" in item else "nBTag0" for item in args.selection.split("-") ]
 #selection = [ item for item in selection if not "nLepVeto" in item ]
@@ -386,7 +388,7 @@ else:
 
 filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
 filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
-tr            = TriggerSelector( args.year )
+tr            = TriggerSelector( args.year, singleLepton=True )
 triggerCutMc  = tr.getSelection( "MC" )
 
 invPlotNames = { 
@@ -449,9 +451,6 @@ for index, mode in enumerate( allModes ):
 
     data_sample.setSelectionString( [ filterCutData, leptonSelection ] )
     for sample in mc + signals:
-        if sample.name.startswith("DY") and args.year != 2016: #no ZG sample in 17/18
-            sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc ] )
-        else:
             sample.setSelectionString( [ filterCutMc, leptonSelection, triggerCutMc, "overlapRemoval==1" ] )
 
     plotting.fill( plots, read_variables=read_variables, sequence=sequence )

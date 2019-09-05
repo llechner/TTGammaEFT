@@ -56,9 +56,9 @@ class Setup:
         os.environ["gammaSkim"] = str(photonSelection)
         if year == 2016 and not checkOnly:
             #define samples
-            from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed  import TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, QCD_16, GJets_16, rest_16
+            from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed  import TTG_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, QCD_16, GJets_16, rest_16
             from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import Run2016
-            ttg         = TTG_priv_16
+            ttg         = TTG_16
             tt          = TT_pow_16
             DY          = DY_LO_16
             zg          = ZG_16
@@ -286,7 +286,7 @@ class Setup:
             res["prefixes"].append(prefix)
 
         #photonIso of leading photon
-        if photonIso == "lowChgIsolowSieie":
+        if not "high" in photonIso:
             photonCutVar = "nPhotonGood"
             photonPrefix = "nPhoton"
             # no special photon iso cut needed
@@ -335,7 +335,8 @@ class Setup:
             res["cuts"].append( "overlapRemoval==1" )
 #            res["prefixes"].append( "overlapRemoval" )
 
-            tr            = TriggerSelector( self.year, singleLepton=(not dileptonic) )
+#            tr            = TriggerSelector( self.year, singleLepton=(not dileptonic) )
+            tr            = TriggerSelector( self.year, singleLepton=True )
             triggerCutMc  = tr.getSelection( "MC" )
 
             res["cuts"].append( triggerCutMc )
@@ -353,12 +354,11 @@ class Setup:
 if __name__ == "__main__":
     setup = Setup( year=2016 )
     for name, dict in allRegions.items():
+        if not "Iso" in name: continue
         print
         print name
         print
-        if name.startswith("DY"): channels = dilepChannels
-        else:                     channels = lepChannels
-        for channel in channels:
+        for channel in dict["channels"]:
             print
             print channel
             print
