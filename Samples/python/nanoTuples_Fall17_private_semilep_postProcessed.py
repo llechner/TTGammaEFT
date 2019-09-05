@@ -45,8 +45,10 @@ dirs["TTG_priv"]         = ["TTGLep_priv", "TTGSemi_priv", "TTGHad_priv"]
 dirs["TTG_NoFullyHad_priv"] = ["TTGNoFullyHad_priv"]
 
 dirs["ZGToLLG"]          = ["ZGToLLG"]
+dirs["ZG_lowMLL"]        = ["ZGToLLG_lowMLL"]
 dirs["TG"]               = ["TGJets"]
-dirs["WJets"]            = ["WJetsToLNu_comb"]
+#dirs["WJets"]            = ["WJetsToLNu_comb"]
+dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
 dirs["WG"]               = ["WGToLNuG"]
 dirs["WG_NLO"]           = ["WGToLNuG_amcatnlo"]
 
@@ -89,15 +91,15 @@ dirs["QCD"]             += [ "QCD_Ele_pt20to30", "QCD_Ele_pt30to50", "QCD_Ele_pt
 
 dirs["GJets"]            = ["GJets_HT40to100", "GJets_HT100to200", "GJets_HT200to400", "GJets_HT400to600", "GJets_HT600toInf"]
 
-dirs["all_noOther"]      = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGToLLG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] #+ dirs["QCD"] + dirs["GJets"]
+dirs["all_noOther"]      = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZG_lowMLL"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] #+ dirs["QCD"] + dirs["GJets"]
 dirs["all"]              = dirs["all_noOther"] + dirs["other"]
 
-dirs["all_noOther_noTT"] = dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGToLLG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"]# + dirs["QCD"] + dirs["GJets"]
+dirs["all_noOther_noTT"] = dirs["DY_LO"] + dirs["singleTop"] + dirs["ZG_lowMLL"] + dirs["TG"] + dirs["WJets"] + dirs["WG"]# + dirs["QCD"] + dirs["GJets"]
 dirs["all_noTT"]         = dirs["all_noOther_noTT"] + dirs["other"]
 
-dirs["all_noQCD"]        = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGToLLG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] +  dirs["other"]
+dirs["all_noQCD"]        = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZG_lowMLL"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] +  dirs["other"]
 
-dirs["VG"]               = dirs["ZGToLLG"] + dirs["WG"]
+dirs["VG"]               = dirs["ZG_lowMLL"] + dirs["WG"]
 dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["other"]
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
@@ -112,7 +114,7 @@ TTG_priv_17         = Sample.fromDPMDirectory(name="TTG",              treeName=
 
 TTG_NoFullyHad_priv_17 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True)
 
-ZG_17               = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZGToLLG"], noCheckProxy=True)
+ZG_17               = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZG_lowMLL"], noCheckProxy=True)
 TG_17               = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories["TG"], noCheckProxy=True)
 WJets_17            = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories["WJets"], noCheckProxy=True)
 WG_17               = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories["WG"], noCheckProxy=True)

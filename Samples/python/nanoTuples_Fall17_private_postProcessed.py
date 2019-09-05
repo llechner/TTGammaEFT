@@ -46,8 +46,10 @@ dirs['TTG_priv']         = ["TTGLep_priv", "TTGSemi_priv", "TTGHad_priv"]
 dirs["TTG_NoFullyHad_priv"] = ["TTGNoFullyHad_priv"]
 
 dirs['ZGToLLG']          = ["ZGToLLG"]
+dirs['ZG_lowMLL']        = ["ZGToLLG_lowMLL"]
 dirs['TG']               = ["TGJets"]
-dirs['WJets']            = ["WJetsToLNu_comb"]
+#dirs['WJets']            = ["WJetsToLNu_comb"]
+dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
 dirs['WG']               = ["WGToLNuG"]
 dirs['WG_NLO']           = ["WGToLNuG_amcatnlo"]
 
@@ -99,7 +101,7 @@ TTG_priv_17        = Sample.fromDPMDirectory(name="TTG",              treeName="
 
 TTG_NoFullyHad_priv_17 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG_NoFullyHad_priv'], noCheckProxy=True)
 
-ZG_17              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGToLLG'], noCheckProxy=True)
+ZG_17              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZG_lowMLL'], noCheckProxy=True)
 TG_17              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories['TG'], noCheckProxy=True)
 WJets_17           = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories['WJets'], noCheckProxy=True)
 WG_17              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'], noCheckProxy=True)

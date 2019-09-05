@@ -7,17 +7,25 @@ class color():
   pass
 
 color.data           = ROOT.kBlack
-color.DY             = ROOT.kCyan+2
+color.DY             = ROOT.kAzure+4 #ROOT.kCyan+2
 color.ZGamma         = ROOT.kBlue+2
 color.WGamma         = ROOT.kBlue
+color.VGamma         = ROOT.kAzure+3 #ROOT.kAzure
 color.TTG            = ROOT.kOrange
-color.Other          = ROOT.kViolet
-color.TT             = ROOT.kRed+1
+color.Other          = ROOT.kOrange+2 #ROOT.kViolet+5
+color.TT             = ROOT.kRed-3 #ROOT.kRed+1
 color.T              = ROOT.kOrange+1
 color.TGamma         = ROOT.kGray
 color.W              = ROOT.kCyan+1
-color.QCD            = ROOT.kGreen+3
+color.WJets          = ROOT.kCyan+1
+color.QCD            = ROOT.kGreen-2 #+3
 color.GJets          = ROOT.kGreen+4
+
+color.DY_misID       = ROOT.kAzure-8
+color.VGamma_misID   = ROOT.kAzure-2
+color.TTG_had        = ROOT.kOrange-9
+color.Other_misID    = ROOT.kOrange+6
+color.TT_misID       = ROOT.kRed-7
 
 color.TTG1L          = ROOT.kBlue+2
 color.TTG3LBuggy     = ROOT.kRed+1

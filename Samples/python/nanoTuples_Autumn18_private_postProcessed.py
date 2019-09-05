@@ -61,6 +61,7 @@ dirs['WZZ']              = ["WZZ"]
 dirs['ZZZ']              = ["ZZZ"]
 
 dirs['ZGToLLG']          = ["ZGToLLG"]
+dirs['ZG_lowMLL']        = ["ZGToLLG_lowMLL"] # no lepton pt cut
 dirs['TG']               = ["TGJets"]
 dirs['WJets']            = ["WJetsToLNu"]
 dirs['WG']               = ["WGToLNuG"]
@@ -83,7 +84,7 @@ dirs['other']           += dirs['VV']
 dirs['other']           += dirs['WW']   + dirs['WZ']  + dirs['ZZ']
 dirs['other']           += dirs['GluGlu']
 
-dirs['all_noOther']      = dirs['TTG_priv'] + dirs['TT_pow'] + dirs['DY_LO'] + dirs['singleTop'] + dirs['ZGToLLG']
+dirs['all_noOther']      = dirs['TTG_priv'] + dirs['TT_pow'] + dirs['DY_LO'] + dirs['singleTop'] + dirs['ZG_lowMLL'] #dirs['ZGToLLG']
 dirs['all']              = dirs['all_noOther'] + dirs['other']
 
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
@@ -99,7 +100,7 @@ TTG_priv_18        = Sample.fromDPMDirectory(name="TTG",              treeName="
 TTG_NoFullyHad_priv_18 = Sample.fromDPMDirectory(name="TTG",          treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories['TTG_NoFullyHad_priv'], noCheckProxy=True)
 
 WJets_18           = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories['WJets'], noCheckProxy=True)
-ZG_18              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZGToLLG'], noCheckProxy=True)
+ZG_18              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories['ZG_lowMLL'], noCheckProxy=True)
 TG_18              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories['TG'], noCheckProxy=True)
 WG_18              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG'], noCheckProxy=True)
 WG_NLO_18          = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories['WG_NLO'], noCheckProxy=True)

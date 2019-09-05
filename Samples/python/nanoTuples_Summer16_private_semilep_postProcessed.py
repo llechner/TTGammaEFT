@@ -15,6 +15,8 @@ from TTGammaEFT.Samples.default_locations import postprocessing_locations
 postprocessing_directory = postprocessing_locations.MC2016_semilep
 if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True": postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/")
 
+print postprocessing_directory
+
 # Redirector
 try:
     redirector = sys.modules["__main__"].redirector
@@ -36,22 +38,22 @@ logger.info( "Loading MC samples from directory %s", os.path.join( data_director
 # Directories
 dirs = {}
 
-# change ZGamma sample to 2LG soon
-
 dirs["DY_LO"]            = ["DYJetsToLL_M50_LO_ext1_comb", "DYJetsToLL_M10to50_LO" ]
 
 dirs["DY_HT"]            = ["DYJetsToLL_M50_HT70to100", "DYJetsToLL_M50_HT100to200_ext", "DYJetsToLL_M50_HT200to400_comb", "DYJetsToLL_M50_HT400to600_comb", "DYJetsToLL_M50_HT600to800", "DYJetsToLL_M50_HT800to1200", "DYJetsToLL_M50_HT1200to2500", "DYJetsToLL_M50_HT2500toInf" ]
 dirs["DY_HT"]           += ["DYJetsToLL_M5to50_HT70to100", "DYJetsToLL_M5to50_HT100to200_comb", "DYJetsToLL_M5to50_HT200to400_comb", "DYJetsToLL_M5to50_HT400to600_comb", "DYJetsToLL_M5to50_HT600toInf"]
 
-
 dirs["TT_pow"]           = ["TTLep_pow", "TTSingleLep_pow" ]
 
 dirs["TTGJets"]          = ["TTGJets_comb"]
-dirs["TTGSemiLep"]       = ["TTGSemiTbar", "TTGSemiT"] 
-dirs["TTGLep"]           = ["TTGLep"] 
-dirs["TTGSemiLep_priv"]  = ["TTGSemi_priv"] 
-dirs["TTGLep_priv"]      = ["TTGLep_priv"] 
-dirs["TTG"]              = ["TTGLep", "TTGSemiTbar", "TTGHad", "TTGSemiT"] 
+
+dirs["TTGLep"]           = ["TTGLep_LO"]
+dirs["TTGSemiLep"]       = ["TTGSingleLep_LO"]
+
+dirs["TTGLep_priv"]      = ["TTGLep_priv"]
+dirs["TTGSemiLep_priv"]  = ["TTGSemi_priv"]
+
+dirs["TTG"]              = ["TTGLep_LO", "TTGSingleLep_LO", "TTGHad_LO"]
 dirs["TTG_priv"]         = ["TTGLep_priv", "TTGSemi_priv", "TTGHad_priv"]
 dirs["TTG_NoFullyHad_priv"] = ["TTGNoFullyHad_priv"]
 
@@ -59,9 +61,11 @@ dirs["singleTop"]        = ["TBar_tWch_ext", "T_tWch_ext", "T_tch_pow", "TBar_tc
 
 dirs["ZGTo2LG"]          = ["ZGTo2LG_ext"]
 dirs["ZGToLLG"]          = ["ZGToLLG"]
+dirs["ZG_lowMLL"]        = ["ZGToLLG_lowMLL"]
 
 dirs["TG"]               = ["TGJets"]
-dirs["WJets"]            = ["WJetsToLNu_comb"]
+#dirs["WJets"]            = ["WJetsToLNu_comb"]
+dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
 dirs["WJets_HT"]         = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400_comb", "WJetsToLNu_HT400to600_comb", "WJetsToLNu_HT600to800_comb", "WJetsToLNu_HT800to1200_comb", "WJetsToLNu_HT1200to2500_comb", "WJetsToLNu_HT2500toInf_comb" ]
 dirs["WG"]               = ["WGToLNuG"]
 dirs["WG_NLO"]           = ["WGToLNuG_amcatnlo"]
@@ -107,18 +111,18 @@ dirs["other"]           += dirs["VV"]
 dirs["other"]           += dirs["WW"]   + dirs["WZ"]  + dirs["ZZ"]
 dirs["other"]           += dirs["GluGlu"]
 
-dirs["all_noOther_noTT"] = dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGTo2LG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"]# + dirs["QCD"] + dirs["GJets"]
+dirs["all_noOther_noTT"] = dirs["DY_LO"] + dirs["singleTop"] + dirs["ZG_lowMLL"] + dirs["TG"] + dirs["WJets"] + dirs["WG"]# + dirs["QCD"] + dirs["GJets"]
 dirs["all_noTT"]         = dirs["all_noOther_noTT"] + dirs["other"]
 
-dirs["all_noOther"]      = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGTo2LG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] + dirs["QCD"] + dirs["GJets"]
+dirs["all_noOther"]      = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZG_lowMLL"] + dirs["TG"] + dirs["WJets"] + dirs["WG"] + dirs["QCD"] + dirs["GJets"]
 dirs["all"]              = dirs["all_noOther"] + dirs["other"]
 
-dirs["all_noQCD_noOther"] = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZGTo2LG"] + dirs["TG"] + dirs["WJets"] + dirs["WG"]
+dirs["all_noQCD_noOther"] = dirs["TTG_priv"] + dirs["TT_pow"] + dirs["DY_LO"] + dirs["singleTop"] + dirs["ZG_lowMLL"] + dirs["TG"] + dirs["WJets"] + dirs["WG"]
 dirs["all_noQCD"]         = dirs["all_noQCD_noOther"] + dirs["other"]
 
 dirs["W"]                = dirs["WJets_HT"] + dirs["WG"]
 
-dirs["VG"]               = dirs["ZGTo2LG"] + dirs["WG"]
+dirs["VG"]               = dirs["ZG_lowMLL"] + dirs["WG"]
 dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["other"]
 
 
@@ -130,7 +134,7 @@ DY_LO_16           = Sample.fromDPMDirectory(name="DY_LO",            treeName="
 TT_pow_16          = Sample.fromDPMDirectory(name="TT_pow",           treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories["TT_pow"], noCheckProxy=True)
 singleTop_16       = Sample.fromDPMDirectory(name="singleTop",        treeName="Events", redirector=redirector, isData=False, color=color.T,               texName="single-t",          directory=directories["singleTop"], noCheckProxy=True)
 
-#TTG_16             = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG"], noCheckProxy=True)
+TTG_16             = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG"], noCheckProxy=True)
 #TTGSemiLep_16      = Sample.fromDPMDirectory(name="TTGSemiLep",       treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGSemiLep"], noCheckProxy=True)
 #TTGLep_16          = Sample.fromDPMDirectory(name="TTGLep",           treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGLep"], noCheckProxy=True)
 TTGSemiLep_priv_16 = Sample.fromDPMDirectory(name="TTGSemiLep",       treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGSemiLep_priv"], noCheckProxy=True)
@@ -141,7 +145,7 @@ TTG_NoFullyHad_priv_16 = Sample.fromDPMDirectory(name="TTG",              treeNa
 
 WJets_16           = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories["WJets"], noCheckProxy=True)
 WJets_HT_16        = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories["WJets_HT"], noCheckProxy=True)
-ZG_16              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZGTo2LG"], noCheckProxy=True)
+ZG_16              = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZG_lowMLL"], noCheckProxy=True)
 TG_16              = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories["TG"], noCheckProxy=True)
 WG_16              = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories["WG"], noCheckProxy=True)
 WG_NLO_16          = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories["WG_NLO"], noCheckProxy=True)
