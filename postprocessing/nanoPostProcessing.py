@@ -106,28 +106,34 @@ isDiLep        = options.skim.lower().startswith('dilep') and not isDiLepGamma
 isSemiLepGamma = options.skim.lower().startswith('semilepGamma')
 isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGamma
 
-semilepNoIsoCond_ele   = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1)>=1)"
-semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4)>=1)"
-semilepNoIsoCond       = "||".join( [semilepNoIsoCond_ele, semilepNoIsoCond_mu] )
-semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)"
-semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)"
-semilepCond            = "||".join( [semilepCond_ele, semilepCond_mu] )
-dilepCond_sublead      = "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2"
-dilepCond_lead         = "(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1"
+twoJetCond             = "(Sum$(Jet_pt>=29&&abs(Jet_eta)<=2.41)>=2)"
+
+semilepNoIsoCond_ele   = "(Sum$(Electron_pt>=34&&abs(Electron_eta)<=2.11)>=1)"
+semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=29&&abs(Muon_eta)<=2.41)>=1)"
+semilepNoIsoCond       = "(" + "||".join( [semilepNoIsoCond_ele, semilepNoIsoCond_mu] ) + ")"
+
+semilepCond_ele        = "(Sum$(Electron_pt>=34&&abs(Electron_eta)<=2.11&&Electron_cutBased>=4)>=1)"
+#semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)"
+semilepCond_mu         = "(Sum$(Muon_pt>=29&&abs(Muon_eta)<=2.41&&Muon_tightId&&Muon_pfRelIso04_all<=0.16)>=1)"
+#semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)"
+semilepCond            = "(" + "||".join( [semilepCond_ele, semilepCond_mu] ) + ")"
+
+dilepCond_sublead      = "(Sum$(Electron_pt>=14&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=14&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=2"
+dilepCond_lead         = "(Sum$(Electron_pt>=24&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=24&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=1"
 dilepCond              = "&&".join( [dilepCond_lead, dilepCond_sublead] )
-gammaCond              = "(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt&&(Photon_pfRelIso03_all-Photon_pfRelIso03_chg)*Photon_pt<=1.189+0.01512*Photon_pt+0.00002259*Photon_pt*Photon_pt)>=1)"
+gammaCond              = "(Sum$(Photon_pt>=19&&abs(Photon_eta)<=1.45)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt&&(Photon_pfRelIso03_all-Photon_pfRelIso03_chg)*Photon_pt<=1.189+0.01512*Photon_pt+0.00002259*Photon_pt*Photon_pt)>=1)"
 #gammaCond              = "(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_%s>=2)>=1)"%("cutBased" if options.year == 2016 else "cutBasedBitmap")
 
 skimConds = []
 if isDiLepGamma:
-    skimConds.append( "&&".join(dilepCond, gammaCond) )
+    skimConds.append( "&&".join( [dilepCond, gammaCond, twoJetCond] ) )
 elif isDiLep:
-    skimConds.append( dilepCond )
+    skimConds.append( "&&".join( [dilepCond, twoJetCond] ) )
 elif isSemiLepGamma:
-    skimConds.append( "&&".join(semilepCond, gammaCond) )  #performance: ~1.5k events left (1 ttbar semilep file)
+    skimConds.append( "&&".join( [semilepCond, gammaCond, twoJetCond] ) )  #performance: ~1.5k events left (1 ttbar semilep file)
 #    skimConds.append( "&&".join(semilepNoIsoCond, gammaCond) )  #performance: ~38k events left (1 ttbar semilep file)
 elif isSemiLep:
-    skimConds.append( semilepNoIsoCond ) #performance: ~75k events left (1 ttbar semilep file)
+    skimConds.append( "&&".join( [semilepNoIsoCond, twoJetCond] ) ) #performance: ~75k events left (1 ttbar semilep file)
 #    skimConds.append( semilepCond ) #performance: ~50k events left (1 ttbar semilep file)
 else:
     skimConds = ["(1)"]
@@ -461,7 +467,7 @@ if isMC:
     read_variables += [ TreeVariable.fromString('genWeight/F') ]
     read_variables += [ TreeVariable.fromString('Pileup_nTrueInt/F') ]
     read_variables += [ TreeVariable.fromString('nGenPart/I'),
-                        VectorTreeVariable.fromString('GenPart[%s]'%readGenVarString) ]
+                        VectorTreeVariable.fromString('GenPart[%s]'%readGenVarString, nMax = 1000) ] # all needed for genMatching
     read_variables += [ TreeVariable.fromString('nGenJet/I'),
                         VectorTreeVariable.fromString('GenJet[%s]'%readGenJetVarString) ]
 
@@ -505,6 +511,8 @@ new_variables += [ 'nLeptonGoodLead/I' ]
 new_variables += [ 'nLeptonTight/I']
 new_variables += [ 'nLeptonTightNoIso/I']
 new_variables += [ 'nLeptonTightInvIso/I']
+new_variables += [ 'nLeptonTightInvIsoLoose/I']
+new_variables += [ 'nLeptonTightInvIsoVeto/I']
 
 new_variables += [ 'nElectron/I',            'nMuon/I']
 new_variables += [ 'nElectronVeto/I',        'nMuonVeto/I']
@@ -515,6 +523,8 @@ new_variables += [ 'nElectronGoodLead/I',    'nMuonGoodLead/I']
 new_variables += [ 'nElectronTight/I',       'nMuonTight/I']
 new_variables += [ 'nElectronTightNoIso/I',  'nMuonTightNoIso/I']
 new_variables += [ 'nElectronTightInvIso/I', 'nMuonTightInvIso/I']
+new_variables += [ 'nElectronTightInvIsoLoose/I', 'nMuonTightInvIsoLoose/I']
+new_variables += [ 'nElectronTightInvIsoVeto/I', 'nMuonTightInvIsoVeto/I']
 
 new_variables += [ 'Lepton[%s]'     %writeLeptonVarString ]
 
@@ -553,7 +563,7 @@ new_variables += [ 'MET_pt_photonEstimated/F', 'MET_phi_photonEstimated/F', 'MET
 new_variables += [ 'MET_pt/F', 'MET_phi/F', 'MET_pt_min/F', 'METSig/F' ]
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
-        new_variables.extend( ['nJetGood_'+var+'/I', 'nBTag_'+var+'/I','ht_'+var+'/F'] )
+        new_variables.extend( ['nJetGood_'+var+'/I', 'nBTagGood_'+var+'/I','ht_'+var+'/F'] )
         new_variables.extend( ['MET_pt_'+var+'/F', 'MET_phi_'+var+'/F', 'METSig_'+var+'/F'] )
 
 new_variables += [ 'mll/F',  'mllgamma/F' ] 
@@ -582,7 +592,7 @@ if isMC:
     new_variables += [ 'GenElectron[%s]' %writeGenVarString ]
     new_variables += [ 'GenMuon[%s]'     %writeGenVarString ]
     new_variables += [ 'GenPhoton[%s]'   %writeGenVarString ]
-    new_variables += [ 'GenJet[%s]'      %writeGenJetVarString ]
+    new_variables += [ 'GenJets[%s]'      %writeGenJetVarString ]
     new_variables += [ 'GenBJet[%s]'     %writeGenJetVarString ]
     new_variables += [ 'GenTop[%s]'      %writeGenVarString ]
     new_variables += [ 'isTTGamma/I', 'isZWGamma/I', 'isTGamma/I', 'isGJets/I', 'overlapRemoval/I' ]
@@ -590,6 +600,7 @@ if isMC:
     new_variables += [ 'nGenW/I', 'nGenWJets/I', 'nGenWElectron/I', 'nGenWMuon/I','nGenWTau/I', 'nGenWTauJets/I', 'nGenWTauElectron/I', 'nGenWTauMuon/I' ]
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
+    new_variables += [ "reweightHEM/F" ]
 
     new_variables += [ 'reweightLepton2lSF/F', 'reweightLepton2lSFUp/F', 'reweightLepton2lSFDown/F' ]
     new_variables += [ 'reweightLeptonTracking2lSF/F', 'reweightLeptonTracking2lSFUp/F', 'reweightLeptonTracking2lSFDown/F' ]
@@ -780,7 +791,6 @@ def filler( event ):
 
         # GEN Particles
         gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
-        # GEN Jets
         gJets = getParticles( r, collVars=readGenJetVarList, coll="GenJet" )
 
         # Gen Leptons in ttbar/gamma decays
@@ -849,6 +859,27 @@ def filler( event ):
         else:
             event.overlapRemoval = 1 # all other events
 
+        # Gen Leptons in ttbar/gamma decays
+        # get Ws from top or MG matrix element (from gluon)
+        GenW = filter( lambda l: abs(l['pdgId']) == 24 and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenW = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"]) in [6,21], GenW )
+
+        # e/mu/tau with W mother
+        GenLepWMother    = filter( lambda l: abs(l['pdgId']) in [11,13,15] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenLepWMother    = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==24, GenLepWMother )
+        # e/mu with tau mother and tau has a W in parentsList
+        GenLepTauMother  = filter( lambda l: abs(l['pdgId']) in [11,13] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenLepTauMother  = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==15 and 24 in map( abs, getParentIds( gPart[l["genPartIdxMother"]], gPart)), GenLepTauMother )
+
+        GenWElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepWMother )
+        GenWMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepWMother )
+        GenWTau      = filter( lambda l: abs(l['pdgId']) == 15, GenLepWMother )
+
+        GenTauElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepTauMother )
+        GenTauMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepTauMother )
+
+        gPart.sort( key = lambda p: -p['pt'] )
+
         # Split gen particles
         # still needs improvement with filterGen function
         GenElectron = list( filter( lambda l: genLeptonSel(l), filterGenElectrons( gPart, status='last' ) ) )
@@ -863,14 +894,14 @@ def filler( event ):
         fill_vector_collection( event, "GenMuon",     writeGenVarList,    GenMuon[:20]     )
         fill_vector_collection( event, "GenPhoton",   writeGenVarList,    GenPhoton[:20]   )
         fill_vector_collection( event, "GenBJet",     writeGenJetVarList, GenBJet[:20]     )
-        fill_vector_collection( event, "GenJet",      writeGenJetVarList, GenJet[:20]      )
+        fill_vector_collection( event, "GenJets",      writeGenJetVarList, GenJet[:20]      )
         fill_vector_collection( event, "GenTop",      writeGenVarList,    GenTop[:20]      )
         
         event.nGenElectron = len(GenElectron)
         event.nGenMuon     = len(GenMuon)
         event.nGenPhoton   = len(GenPhoton)
         event.nGenBJet     = len(GenBJet)
-        event.nGenJet      = len(GenJet)
+        event.nGenJets     = len(GenJet)
         event.nGenTop      = len(GenTop)
 
         # can't find jets from W in gParts, so assume non-Leptonic W decays are hadronic W decays
@@ -882,6 +913,7 @@ def filler( event ):
         event.nGenWTauJets     = len(GenWTau)-len(GenLepTauMother) # W -> tau nu, tau -> q q nu
         event.nGenWTauElectron = len(GenTauElectron) # W -> tau nu, tau -> e nu nu
         event.nGenWTauMuon     = len(GenTauMuon) # W -> tau nu, tau -> mu nu nu
+
 
     elif isData:
         event.overlapRemoval = 1 # all other events
@@ -912,21 +944,24 @@ def filler( event ):
 
     addMissingVariables( allElectrons, readLeptonVariables )
     addMissingVariables( allMuons,     readLeptonVariables )
+
     addCorrRelIso( allElectrons, allMuons, allPhotons )
+
     convertUnits( allElectrons )
     convertUnits( allMuons )
 
     vetoMuons     = list( filter( lambda l: recoMuonSel_veto(l),     allMuons ) )
 
+
     # similar to Ghent, remove electrons in dR<0.02 to muons
     allElectrons = deltaRCleaning( allElectrons, vetoMuons, dRCut=0.02 )
+
     allLeptons = allElectrons + allMuons
     allLeptons.sort( key = lambda l: -l['pt'] )
 
-
     # Veto electrons with corrected relIso
     vetoCorrIsoElectrons = filter( lambda l: recoElectronSel_veto(l, removedCuts=["pfRelIso03_all"]), allElectrons )
-    vetoCorrIsoElectrons = filter( lambda l: l["pfRelIso03_all_corr"] < getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="veto" ), vetoCorrIsoElectrons )
+    vetoCorrIsoElectrons = filter( lambda l: l["pfRelIso03_all_corr"] <= getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="veto" ), vetoCorrIsoElectrons )
 
     # Filter leptons
     vetoElectrons = list( filter( lambda l: recoElectronSel_veto(l), allElectrons ) )
@@ -961,9 +996,21 @@ def filler( event ):
     tightNoIsoLeptons.sort( key = lambda l: -l['pt'] )
 
     tightInvIsoElectrons = list( filter( lambda l: l["pfRelIso03_all"]>getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="tight" ), tightNoIsoElectrons) )
-    tightInvIsoMuons     = list( filter( lambda l: l["pfRelIso03_all"]>muonRelIsoCut, tightNoIsoMuons ) )
+    tightInvIsoMuons     = list( filter( lambda l: l["pfRelIso04_all"]>muonRelIsoCut, tightNoIsoMuons ) )
     tightInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
     tightInvIsoLeptons.sort( key = lambda l: -l['pt'] )
+
+    # tight leptons with inverted loose rel iso cut
+    looseInvIsoElectrons = list( filter( lambda l: l["pfRelIso03_all"]>getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="loose" ), tightNoIsoElectrons) )
+    looseInvIsoMuons     = list( filter( lambda l: l["pfRelIso04_all"]>muonRelIsoCutVeto, tightNoIsoMuons ) )
+    looseInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
+    looseInvIsoLeptons.sort( key = lambda l: -l['pt'] )
+
+    # tight leptons with inverted veto rel iso cut
+    vetoInvIsoElectrons = list( filter( lambda l: l["pfRelIso03_all"]>getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="veto" ), tightNoIsoElectrons) )
+    vetoInvIsoMuons     = list( filter( lambda l: l["pfRelIso04_all"]>muonRelIsoCutVeto, tightNoIsoMuons ) )
+    vetoInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
+    vetoInvIsoLeptons.sort( key = lambda l: -l['pt'] )
 
     # Store lepton number
     event.nLepton           = len(allLeptons)
@@ -1002,6 +1049,14 @@ def filler( event ):
     event.nElectronTightInvIso = len(tightInvIsoElectrons)
     event.nMuonTightInvIso     = len(tightInvIsoMuons)
 
+    event.nLeptonTightInvIsoLoose   = len(looseInvIsoLeptons)
+    event.nElectronTightInvIsoLoose = len(looseInvIsoElectrons)
+    event.nMuonTightInvIsoLoose     = len(looseInvIsoMuons)
+
+    event.nLeptonTightInvIsoVeto   = len(vetoInvIsoLeptons)
+    event.nElectronTightInvIsoVeto = len(vetoInvIsoElectrons)
+    event.nMuonTightInvIsoVeto     = len(vetoInvIsoMuons)
+
     # Select one tight and one medium lepton, the tight is included in the medium collection
     selectedLeptons           = leptons2l[:2]
     selectedTightLepton       = tightLeptons[:1]
@@ -1021,11 +1076,12 @@ def filler( event ):
     # Store all Leptons
     fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons )
 
+    gPart.sort(key=lambda x: x["index"])
     # Photons
     if isMC:
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
-            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] > 0 else None
+            genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] >= 0 else None
             g['photonCat'] = getPhotonCategory( genMatch, gPart )
     else:
         for g in allPhotons:
@@ -1051,7 +1107,8 @@ def filler( event ):
         fill_vector( event, "MisIDElectron0", writeLeptonVarList, misIdElectron[0] )
 
     # Jets
-    allJets = getParticles( r, collVars=readJetVarList, coll="Jet" )
+    allJets  = getParticles( r, collVars=readJetVarList, coll="Jet" )
+    nHEMJets = len( filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.0 and j['phi']>-2.0 and j['phi']<-0.5, allJets ))
 
     if isMC:
         for j in allJets: BTagEff.addBTagEffToJet( j )
@@ -1066,17 +1123,19 @@ def filler( event ):
 #    jets = deltaRCleaning( jets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
 #    jets = deltaRCleaning( jets, mediumPhotons, dRCut=0.1 ) # clean all jets against analysis photons
     
+
     # Store jets
     event.nJet      = len(allGoodJets)
     event.nJetGood  = len(jets)
 
     # get nJet for jets cleaned against photons with relaxed cuts
-    goodJets = list( filter( lambda j: recoJetSel(j, ptVar=ptVar), allGoodJets ) )
-    goodJets = deltaRCleaning( goodJets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
+    goodJets                = list( filter( lambda j: recoJetSel(j, ptVar=ptVar), allGoodJets ) )
+    goodJets                = deltaRCleaning( goodJets, selectedLeptons if isDiLep else selectedTightLepton, dRCut=0.4 ) # clean all jets against analysis leptons
     goodMVAJets             = deltaRCleaning( goodJets, mvaPhotons, dRCut=0.1 ) 
     goodNoChgIsoJets        = deltaRCleaning( goodJets, mediumPhotonsNoChgIso, dRCut=0.1 ) 
     goodNoSieieJets         = deltaRCleaning( goodJets, mediumPhotonsNoSieie, dRCut=0.1 ) 
     goodNoChgIsoNoSieieJets = deltaRCleaning( goodJets, mediumPhotonsNoChgIsoNoSieie, dRCut=0.1 ) 
+    goodJets                = deltaRCleaning( goodJets, mediumPhotons, dRCut=0.1 ) 
 
     event.nJetGoodMVA             = len(goodMVAJets)
     event.nJetGoodNoChgIso        = len(goodNoChgIsoJets)
@@ -1293,9 +1352,9 @@ def filler( event ):
             bjets_sys[var]      = filter(lambda j: j["isBJet"], jets_sys[var])
             nonBjets_sys[var]   = filter(lambda j: not j["isBJet"], jets_sys[var])
 
-            setattr(event, "nJetGood_"+var, len(jets_sys[var]))
-            setattr(event, "ht_"+var,       sum([j['pt_'+var] for j in jets_sys[var]]))
-            setattr(event, "nBTag_"+var,    len(bjets_sys[var]))
+            setattr(event, "nJetGood_"+var,  len(jets_sys[var]))
+            setattr(event, "ht_"+var,        sum([j['pt_'+var] for j in jets_sys[var]]))
+            setattr(event, "nBTagGood_"+var, len(bjets_sys[var]))
 
         for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
             for i in ["", "_photonEstimated"]:
@@ -1331,6 +1390,11 @@ def filler( event ):
             setParticle(event, "neutrinoBar",    solution.neutrinoBar) 
             setParticle(event, "top",            solution.top) 
             setParticle(event, "topBar",         solution.topBar) 
+
+    if isData:
+        event.reweightHEM = (r.run>=319077 and nHEMJets==0) or r.run<319077
+    else:
+        event.reweightHEM = 1 if (nHEMJets==0 or options.year != 2018 ) else 0.3518 # 0.2% of Run2018B are HEM affected. Ignore that piece. Thus, if there is a HEM jet, scale the MC to 35.2% which is AB/ABCD
 
     # Reweighting
     if isMC:

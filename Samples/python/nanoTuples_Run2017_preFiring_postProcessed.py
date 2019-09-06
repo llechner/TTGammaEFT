@@ -8,16 +8,6 @@ from RootTools.core.Sample import Sample
 # TTGammaEFT Imports
 from TTGammaEFT.Samples.helpers import getDPMSample, getSample, merge
 
-# Logging
-if __name__=="__main__":
-    import Analysis.Tools.logger as logger
-    logger = logger.get_logger("INFO", logFile = None )
-    import RootTools.core.logger as logger_rt
-    logger_rt = logger_rt.get_logger("INFO", logFile = None )
-else:
-    import logging
-    logger = logging.getLogger(__name__)
-
 # Data directory
 data_directory                      = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
 postprocessing_directoryPrefiring   = "TTGammaEFT_PP_2017_TTG_prefiring_v1/dilep/"
@@ -28,6 +18,16 @@ try:
     redirector = sys.modules['__main__'].redirector
 except:
     from TTGammaEFT.Tools.user import redirector as redirector
+
+# Logging
+if __name__=="__main__":
+    import Analysis.Tools.logger as logger
+    logger = logger.get_logger("INFO", logFile = None )
+    import RootTools.core.logger as logger_rt
+    logger_rt = logger_rt.get_logger("INFO", logFile = None )
+else:
+    import logging
+    logger = logging.getLogger(__name__)
 
 logger.info( "Loading data samples from directory %s", os.path.join(data_directory, postprocessing_directory ) )
 
