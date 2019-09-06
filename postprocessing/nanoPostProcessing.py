@@ -678,9 +678,9 @@ if options.addPreFiringFlag:
 if not options.skipNanoTools:
     # prepare metsignificance and jes/jer
     MetSig = MetSignificance( sample, options.year, output_directory, fastSim=False )
-    newfiles = MetSig.getNewSampleFilenames()
     if not options.reuseNanoAOD or not all( map( os.path.exists, newfiles ) ):
         MetSig( "&&".join(skimConds) )
+    newfiles = MetSig.getNewSampleFilenames()
     sample.clear()
     sample.files = newfiles
     sample.name  = MetSig.name
