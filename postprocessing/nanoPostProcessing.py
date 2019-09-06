@@ -152,17 +152,17 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import *
-    from Samples.nanoAOD.Summer16_private           import *
+#    from Samples.nanoAOD.Summer16_private           import *
 #    from Samples.nanoAOD.Run2016_14Dec2018          import *
     from Samples.nanoAOD.Run2016_17Jul2018_private  import *
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import *
-    from Samples.nanoAOD.Fall17_private             import *
+#    from Samples.nanoAOD.Fall17_private             import *
 #    from Samples.nanoAOD.Run2017_14Dec2018          import *
     from Samples.nanoAOD.Run2017_31Mar2018_private  import *
 elif options.year == 2018:
     from Samples.nanoAOD.Autumn18_private_legacy_v1 import *
-    from Samples.nanoAOD.Autumn18_private           import *
+#    from Samples.nanoAOD.Autumn18_private           import *
 #    from Samples.nanoAOD.Run2018_14Dec2018          import *
     from Samples.nanoAOD.Run2018_17Sep2018_private  import *
 
@@ -791,10 +791,28 @@ def filler( event ):
 
         # GEN Particles
         gPart = getParticles( r, collVars=readGenVarList, coll="GenPart" )
-#        gPart.sort( key = lambda p: -p['pt'] )
-        # GEN Jets
         gJets = getParticles( r, collVars=readGenJetVarList, coll="GenJet" )
-#        gJets.sort( key = lambda p: -p['pt'] )
+
+        # Gen Leptons in ttbar/gamma decays
+        # get Ws from top or MG matrix element (from gluon)
+        GenW = filter( lambda l: abs(l['pdgId']) == 24 and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenW = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"]) in [6,21], GenW )
+        # e/mu/tau with W mother
+        GenLepWMother    = filter( lambda l: abs(l['pdgId']) in [11,13,15] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenLepWMother    = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==24, GenLepWMother )
+        # e/mu with tau mother and tau has a W in parentsList
+        GenLepTauMother  = filter( lambda l: abs(l['pdgId']) in [11,13] and l["genPartIdxMother"] >= 0 and l["genPartIdxMother"] < len(gPart), gPart )
+        GenLepTauMother  = filter( lambda l: abs(gPart[l["genPartIdxMother"]]["pdgId"])==15 and 24 in map( abs, getParentIds( gPart[l["genPartIdxMother"]], gPart)), GenLepTauMother )
+
+        GenWElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepWMother )
+        GenWMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepWMother )
+        GenWTau      = filter( lambda l: abs(l['pdgId']) == 15, GenLepWMother )
+
+        GenTauElectron = filter( lambda l: abs(l['pdgId']) == 11, GenLepTauMother )
+        GenTauMuon     = filter( lambda l: abs(l['pdgId']) == 13, GenLepTauMother )
+
+        gPart.sort( key = lambda p: -p['pt'] )
+        gJets.sort( key = lambda p: -p['pt'] )
 
         # Overlap removal flags for ttgamma/ttbar and Zgamma/DY
         GenPhoton                  = filterGenPhotons( gPart, status='last' )

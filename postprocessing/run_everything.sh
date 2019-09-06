@@ -1,3 +1,5 @@
+submitCondor.py $1 --dpm --hephyToken --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc16gs/   --queue testmatch nanoPostProcessing_Summer16_private_semilepGamma.sh
+
 submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc16gs/   --queue testmatch nanoPostProcessing_Summer16_private_semilepGamma.sh
 submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc17gs/   --queue testmatch nanoPostProcessing_Fall17_private_semilepGamma.sh
 submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc18gs/   --queue testmatch nanoPostProcessing_Autumn18_private_semilepGamma.sh
