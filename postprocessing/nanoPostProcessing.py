@@ -101,9 +101,9 @@ import Samples.Tools.logger as logger_samples
 logger_samples = logger_samples.get_logger(options.logLevel, logFile = None )
 
 # Flags 
-isDiLepGamma   = options.skim.lower().startswith('dilepGamma')
+isDiLepGamma   = options.skim.lower().startswith('dilepgamma')
 isDiLep        = options.skim.lower().startswith('dilep') and not isDiLepGamma
-isSemiLepGamma = options.skim.lower().startswith('semilepGamma')
+isSemiLepGamma = options.skim.lower().startswith('semilepgamma')
 isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGamma
 
 twoJetCond             = "(Sum$(Jet_pt>=29&&abs(Jet_eta)<=2.41)>=2)"
@@ -137,6 +137,8 @@ elif isSemiLep:
 #    skimConds.append( semilepCond ) #performance: ~50k events left (1 ttbar semilep file)
 else:
     skimConds = ["(1)"]
+
+print skimConds
 
 #Samples: Load samples
 maxNFiles = None
