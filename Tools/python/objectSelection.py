@@ -219,7 +219,8 @@ def jetSelector( year ):
         raise (NotImplementedError, "Don't know what cut to use for year %s"%year)
 
 #muonRelIsoCut = 0.12
-muonRelIsoCut = 0.15
+muonRelIsoCut     = 0.15
+muonRelIsoCutVeto = 0.25
 def muonSelector( lepton_selection ):
     # According to AN-2017/197
     if lepton_selection == 'tight':
@@ -292,7 +293,7 @@ def muonSelector( lepton_selection ):
 #            if not "vertex" in removedCuts:
 #                if not vertexSelector(l):                            return False #sync with FNAL
             if not "pfRelIso04_all" in removedCuts:
-                if l['pfRelIso04_all']  > 0.25:                      return False
+                if l['pfRelIso04_all']  > muonRelIsoCutVeto:                      return False
 #            if not "sip3d" in removedCuts:
 #                if l["sip3d"]           > 4:                         return False #sync with FNAL
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoVeryLoose']: return False

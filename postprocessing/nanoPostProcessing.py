@@ -106,32 +106,34 @@ isDiLep        = options.skim.lower().startswith('dilep') and not isDiLepGamma
 isSemiLepGamma = options.skim.lower().startswith('semilepGamma')
 isSemiLep      = options.skim.lower().startswith('semilep') and not isSemiLepGamma
 
-semilepNoIsoCond_ele   = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1)>=1)"
-semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4)>=1)"
-semilepNoIsoCond       = "||".join( [semilepNoIsoCond_ele, semilepNoIsoCond_mu] )
+twoJetCond             = "(Sum$(Jet_pt>=29&&abs(Jet_eta)<=2.41)>=2)"
 
-semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4)>=1)"
+semilepNoIsoCond_ele   = "(Sum$(Electron_pt>=34&&abs(Electron_eta)<=2.11)>=1)"
+semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=29&&abs(Muon_eta)<=2.41)>=1)"
+semilepNoIsoCond       = "(" + "||".join( [semilepNoIsoCond_ele, semilepNoIsoCond_mu] ) + ")"
+
+semilepCond_ele        = "(Sum$(Electron_pt>=34&&abs(Electron_eta)<=2.11&&Electron_cutBased>=4)>=1)"
 #semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)"
-semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso04_all<=0.15)>=1)"
+semilepCond_mu         = "(Sum$(Muon_pt>=29&&abs(Muon_eta)<=2.41&&Muon_tightId&&Muon_pfRelIso04_all<=0.16)>=1)"
 #semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)"
-semilepCond            = "||".join( [semilepCond_ele, semilepCond_mu] )
+semilepCond            = "(" + "||".join( [semilepCond_ele, semilepCond_mu] ) + ")"
 
-dilepCond_sublead      = "(Sum$(Electron_pt>=15&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=15&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=2"
-dilepCond_lead         = "(Sum$(Electron_pt>=25&&Electron_cutBased>=4&&abs(Electron_eta)<=2.4&&Electron_pfRelIso03_all<=0.12)+Sum$(Muon_pt>=25&&abs(Muon_eta)<=2.4&&Muon_mediumId&&Muon_pfRelIso03_all<=0.12))>=1"
+dilepCond_sublead      = "(Sum$(Electron_pt>=14&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=14&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=2"
+dilepCond_lead         = "(Sum$(Electron_pt>=24&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=24&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=1"
 dilepCond              = "&&".join( [dilepCond_lead, dilepCond_sublead] )
-gammaCond              = "(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt&&(Photon_pfRelIso03_all-Photon_pfRelIso03_chg)*Photon_pt<=1.189+0.01512*Photon_pt+0.00002259*Photon_pt*Photon_pt)>=1)"
+gammaCond              = "(Sum$(Photon_pt>=19&&abs(Photon_eta)<=1.45)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt&&(Photon_pfRelIso03_all-Photon_pfRelIso03_chg)*Photon_pt<=1.189+0.01512*Photon_pt+0.00002259*Photon_pt*Photon_pt)>=1)"
 #gammaCond              = "(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_%s>=2)>=1)"%("cutBased" if options.year == 2016 else "cutBasedBitmap")
 
 skimConds = []
 if isDiLepGamma:
-    skimConds.append( "&&".join(dilepCond, gammaCond) )
+    skimConds.append( "&&".join( [dilepCond, gammaCond, twoJetCond] ) )
 elif isDiLep:
-    skimConds.append( dilepCond )
+    skimConds.append( "&&".join( [dilepCond, twoJetCond] ) )
 elif isSemiLepGamma:
-    skimConds.append( "&&".join(semilepCond, gammaCond) )  #performance: ~1.5k events left (1 ttbar semilep file)
+    skimConds.append( "&&".join( [semilepCond, gammaCond, twoJetCond] ) )  #performance: ~1.5k events left (1 ttbar semilep file)
 #    skimConds.append( "&&".join(semilepNoIsoCond, gammaCond) )  #performance: ~38k events left (1 ttbar semilep file)
 elif isSemiLep:
-    skimConds.append( semilepNoIsoCond ) #performance: ~75k events left (1 ttbar semilep file)
+    skimConds.append( "&&".join( [semilepNoIsoCond, twoJetCond] ) ) #performance: ~75k events left (1 ttbar semilep file)
 #    skimConds.append( semilepCond ) #performance: ~50k events left (1 ttbar semilep file)
 else:
     skimConds = ["(1)"]
@@ -509,6 +511,8 @@ new_variables += [ 'nLeptonGoodLead/I' ]
 new_variables += [ 'nLeptonTight/I']
 new_variables += [ 'nLeptonTightNoIso/I']
 new_variables += [ 'nLeptonTightInvIso/I']
+new_variables += [ 'nLeptonTightInvIsoLoose/I']
+new_variables += [ 'nLeptonTightInvIsoVeto/I']
 
 new_variables += [ 'nElectron/I',            'nMuon/I']
 new_variables += [ 'nElectronVeto/I',        'nMuonVeto/I']
@@ -519,6 +523,8 @@ new_variables += [ 'nElectronGoodLead/I',    'nMuonGoodLead/I']
 new_variables += [ 'nElectronTight/I',       'nMuonTight/I']
 new_variables += [ 'nElectronTightNoIso/I',  'nMuonTightNoIso/I']
 new_variables += [ 'nElectronTightInvIso/I', 'nMuonTightInvIso/I']
+new_variables += [ 'nElectronTightInvIsoLoose/I', 'nMuonTightInvIsoLoose/I']
+new_variables += [ 'nElectronTightInvIsoVeto/I', 'nMuonTightInvIsoVeto/I']
 
 new_variables += [ 'Lepton[%s]'     %writeLeptonVarString ]
 
@@ -976,6 +982,18 @@ def filler( event ):
     tightInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
     tightInvIsoLeptons.sort( key = lambda l: -l['pt'] )
 
+    # tight leptons with inverted loose rel iso cut
+    looseInvIsoElectrons = list( filter( lambda l: l["pfRelIso03_all"]>getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="loose" ), tightNoIsoElectrons) )
+    looseInvIsoMuons     = list( filter( lambda l: l["pfRelIso04_all"]>muonRelIsoCutVeto, tightNoIsoMuons ) )
+    looseInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
+    looseInvIsoLeptons.sort( key = lambda l: -l['pt'] )
+
+    # tight leptons with inverted veto rel iso cut
+    vetoInvIsoElectrons = list( filter( lambda l: l["pfRelIso03_all"]>getElectronIsoCutV2( l["pt"], l["eta"]+l["deltaEtaSC"], id="veto" ), tightNoIsoElectrons) )
+    vetoInvIsoMuons     = list( filter( lambda l: l["pfRelIso04_all"]>muonRelIsoCutVeto, tightNoIsoMuons ) )
+    vetoInvIsoLeptons   = tightInvIsoElectrons + tightInvIsoMuons
+    vetoInvIsoLeptons.sort( key = lambda l: -l['pt'] )
+
     # Store lepton number
     event.nLepton           = len(allLeptons)
     event.nElectron         = len(allElectrons)
@@ -1012,6 +1030,14 @@ def filler( event ):
     event.nLeptonTightInvIso   = len(tightInvIsoLeptons)
     event.nElectronTightInvIso = len(tightInvIsoElectrons)
     event.nMuonTightInvIso     = len(tightInvIsoMuons)
+
+    event.nLeptonTightInvIsoLoose   = len(looseInvIsoLeptons)
+    event.nElectronTightInvIsoLoose = len(looseInvIsoElectrons)
+    event.nMuonTightInvIsoLoose     = len(looseInvIsoMuons)
+
+    event.nLeptonTightInvIsoVeto   = len(vetoInvIsoLeptons)
+    event.nElectronTightInvIsoVeto = len(vetoInvIsoElectrons)
+    event.nMuonTightInvIsoVeto     = len(vetoInvIsoMuons)
 
     # Select one tight and one medium lepton, the tight is included in the medium collection
     selectedLeptons           = leptons2l[:2]
