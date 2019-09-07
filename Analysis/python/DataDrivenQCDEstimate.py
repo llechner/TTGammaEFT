@@ -90,7 +90,6 @@ class DataDrivenQCDEstimate(SystematicEstimator):
 
             normRegYield  = yield_data - yield_other
             transferFac   = self.cachedTransferFactor(region, channel, setup, save=True, overwrite=overwrite, checkOnly=False)
-            print transferFac
             estimate      = normRegYield*transferFac
 
             logger.info("Calculating data-driven QCD normalization in channel " + channel + " using lumi " + str(setup.dataLumi) + ":")

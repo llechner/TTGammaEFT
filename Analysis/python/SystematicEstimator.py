@@ -48,12 +48,17 @@ class SystematicEstimator:
                 helperCacheDirName = os.path.join(cacheDir, self.name+"_helper")
                 self.helperCache = DirDB(helperCacheDirName)
                 if not self.helperCache: raise
+                tfCacheDirName = os.path.join(cacheDir, self.name+"_tf")
+                self.tfCache = DirDB(tfCacheDirName)
+                if not self.tfCache: raise
             else:
                 self.helperCache=None
+                self.tfCache=None
 
         else:
             self.cache=None
             self.helperCache=None
+            self.tfCache=None
 
     # For the datadriven subclasses which often need the same getYieldFromDraw we write those yields to a cache
     def yieldFromCache(self, setup, process, c, selectionString, weightString, overwrite=False):
@@ -94,17 +99,17 @@ class SystematicEstimator:
         return res if res > 0 or checkOnly else u_float(0,0)
 
     def cachedTransferFactor(self, region, channel, setup, save=True, overwrite=False, checkOnly=False):
-        key =  self.uniqueKey(str(region)+"_TF", channel, setup)
-        if (self.cache and self.cache.contains(key)) and not overwrite:
-            res = self.cache.get(key)
+        key =  self.uniqueKey(str(region), channel, setup)
+        if (self.tfCache and self.tfCache.contains(key)) and not overwrite:
+            res = self.tfCache.get(key)
             logger.debug( "Loading cached %s result for %r : %r"%(self.name, key, res) )
-        elif self.cache and not checkOnly:
+        elif self.tfCache and not checkOnly:
             logger.debug( "Calculating %s result for %r"%(self.name, key) )
             res = self._transferFactor( region, channel, setup, overwrite=overwrite )
-            _res = self.cache.add( key, res, overwrite=True )
-            logger.debug( "Adding cached %s result for %r : %r" %(self.name, key, res) )
+            _res = self.tfCache.add( key, res, overwrite=True )
+            logger.debug( "Adding cached transfer factor for %r : %r" %(key, res) )
         elif not checkOnly:
-            res = self._transferFactor( region, channel, setup, overwrite=overwrite)
+            res = self._transferFactor( region, channel, setup, overwrite=overwrite )
         else:
             res = u_float(-1,0)
         return res if res > 0 or checkOnly else u_float(0,0)

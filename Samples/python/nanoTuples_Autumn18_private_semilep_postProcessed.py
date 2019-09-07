@@ -62,7 +62,8 @@ dirs["ZZZ"]              = ["ZZZ"]
 dirs["ZGToLLG"]          = ["ZGToLLG"]
 dirs["ZG_lowMLL"]        = ["ZGToLLG_lowMLL"]
 dirs["TG"]               = ["TGJets"]
-dirs["WJets"]            = ["WJetsToLNu"]
+dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
+#dirs["WJets"]            = ["WJetsToLNu"]
 dirs["WG"]               = ["WGToLNuG"]
 dirs["WG_NLO"]           = ["WGToLNuG_amcatnlo_ext1"]
 
@@ -110,7 +111,7 @@ singleTop_18        = Sample.fromDPMDirectory(name="singleTop",        treeName=
 #TTGSemiLep_18       = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGSemiLep"], noCheckProxy=True)
 TTG_priv_18         = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_priv"], noCheckProxy=True)
 
-TTG_NoFullyHad_priv_18 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True)
+#TTG_NoFullyHad_priv_18 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True)
 
 WJets_18            = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories["WJets"], noCheckProxy=True)
 ZG_18               = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZG_lowMLL"], noCheckProxy=True)

@@ -172,7 +172,7 @@ elif args.year == 2018:
 
 # Sample definition
 if args.year == 2016:
-    mc = [ TTG_priv_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16]#, QCD_16 ]
+    mc = [ TTG_16, TT_pow_16, DY_LO_16, WJets_16, WG_16, ZG_16, rest_16]#, QCD_16 ]
 #    if not args.noQCD:
 #        all   = all_noQCD_16
 #        qcd   = QCD_16
@@ -196,7 +196,7 @@ elif args.year == 2018:
 
 filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
 filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
-tr = TriggerSelector( args.year, singleLepton=args.selection.count("nLepTight1") )
+tr = TriggerSelector( args.year, singleLepton=args.selection.count("nLepTight") )
 triggerCutMc  = tr.getSelection( "MC" )
 
 

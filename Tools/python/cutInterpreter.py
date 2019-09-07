@@ -6,7 +6,7 @@ from Analysis.Tools.CutInterpreter import CutInterpreter
 
 mZ              = 91.1876
 mT              = 172.5
-zMassRange      = 15
+zMassRange      = 10
 m3MassRange     = 50
 chgIsoThresh    = 1.141
 lowSieieThresh  = 0.01015
