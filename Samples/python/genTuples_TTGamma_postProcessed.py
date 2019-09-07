@@ -79,6 +79,11 @@ dirs["ttGamma_NoFullyHad_newCentral_pTG100To200_comp"]  = [ "ttGamma_NoFullyHad_
 dirs["ttGamma_NoFullyHad_newCentral_pTGgt200_comp"]     = [ "ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp" ]
 dirs["ttGamma_NoFullyHad_newCentral_Herwig"]            = [ "ttGamma_NoFullyHad_newCentral_1Line_Herwig" ]
 
+dirs["ttGamma_NoFullyHad_noLHE_Herwig"]     = [ "ttGamma_NoFullyHad_noLHE_1Line_Herwig" ]
+dirs["ttGamma_Had_noLHE_Herwig"]            = [ "ttGamma_Had_noLHE_1Line_Herwig" ]
+dirs["ttGamma_SemiLept_noLHE_Herwig"]       = [ "ttGamma_SemiLept_noLHE_1Line_Herwig" ]
+dirs["ttGamma_Dilept_noLHE_Herwig"]         = [ "ttGamma_Dilept_noLHE_1Line_Herwig" ]
+
 dirs["WGamma_noPtj"]   = [ "WGamma_noPtj" ]
 dirs["ZGamma_noPtj"]   = [ "ZGamma_noPtj" ]
 dirs["WGamma_central"] = [ "WGamma_central" ]
@@ -164,6 +169,11 @@ TTG_NoFullyHad_newCentral_RunCard_comp             = Sample.fromDirectory(name="
 #TTG_NoFullyHad_newCentral_RunCard_pTG100To200_comp = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_pTG100To200", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (100<p_{T}(#gamma)<200 GeV)",   directory=directories["ttGamma_NoFullyHad_newCentral_pTG100To200_comp"])
 #TTG_NoFullyHad_newCentral_RunCard_pTGgt200_comp    = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_pTGgt200", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (p_{T}(#gamma)>200 GeV)",   directory=directories["ttGamma_NoFullyHad_newCentral_pTGgt200_comp"])
 TTG_NoFullyHad_newCentral_RunCard_Herwig           = Sample.fromDirectory(name="TTG_NoFullyHad_newCentral_RunCard_Herwig", treeName="Events", isData=False, color=color.TTG6,        texName="tt#gamma (Herwig)",   directory=directories["ttGamma_NoFullyHad_newCentral_Herwig"])
+
+TTG_NoFullyHad_noLHE_RunCard_Herwig    = Sample.fromDirectory(name="TTG_NoFullyHad_noLHE_RunCard_Herwig", treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (no LHE)",   directory=directories["ttGamma_NoFullyHad_noLHE_Herwig"])
+TTG_Had_noLHE_RunCard_Herwig           = Sample.fromDirectory(name="TTG_Had_noLHE_RunCard_Herwig", treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (no LHE)",   directory=directories["ttGamma_Had_noLHE_Herwig"])
+TTG_SemiLept_noLHE_RunCard_Herwig      = Sample.fromDirectory(name="TTG_SemiLept_noLHE_RunCard_Herwig", treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (no LHE)",   directory=directories["ttGamma_SemiLept_noLHE_Herwig"])
+TTG_Dilept_noLHE_RunCard_Herwig        = Sample.fromDirectory(name="TTG_Dilept_noLHE_RunCard_Herwig", treeName="Events", isData=False, color=color.TTG4,        texName="tt#gamma (no LHE)",   directory=directories["ttGamma_Dilept_noLHE_Herwig"])
 
 #ZGamma_central  = Sample.fromDirectory(name="ZGamma_central", treeName="Events", isData=False, color=color.TTG3LBuggy,     texName="Z#gamma (p_{T}(jet)>10)", directory=directories["ZGamma_central"])
 #ZGamma_noPtj    = Sample.fromDirectory(name="ZGamma_noPtj",   treeName="Events", isData=False, color=color.TTG3LPatched,   texName="Z#gamma (p_{T}(jet)>0)",  directory=directories["ZGamma_noPtj"])

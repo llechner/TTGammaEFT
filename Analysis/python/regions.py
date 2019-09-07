@@ -51,6 +51,9 @@ regionsTTGfake     = getRegionsFromThresholds( "PhotonNoChgIsoNoSieie0_pt", pTG_
 inclRegionsTTGfake = [Region( "PhotonNoChgIsoNoSieie0_pt", (20,-999) )]
 noPhotonRegionTTG  = [Region( "nPhotonGood", (0,1) )]
 
+pTG_thresh         = [ 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 150, 180, 210, -999 ]
+photonBinRegions   = getRegionsFromThresholds( "PhotonGood0_pt", pTG_thresh )
+
 if __name__ == "__main__":
     print inclRegionsTTG[0].cutString()
 

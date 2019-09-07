@@ -43,7 +43,7 @@ parameters       = allRegions[args.controlRegion]["parameters"]
 channels         = allRegions[args.controlRegion]["channels"] 
 photonSelection  = not allRegions[args.controlRegion]["noPhotonCR"]
 allPhotonRegions = allRegions[args.controlRegion]["inclRegion"] + allRegions[args.controlRegion]["regions"] if photonSelection else allRegions[args.controlRegion]["regions"]
-setup            = Setup( year=args.year, photonSelection=photonSelection and not "QCD" in args.selectEstimator, runOnLxPlus=args.runOnLxPlus ) #photonselection always false for qcd estimate
+setup            = Setup( year=args.year, photonSelection=photonSelection and not "QCD" in args.selectEstimator, checkOnly=args.checkOnly, runOnLxPlus=args.runOnLxPlus ) #photonselection always false for qcd estimate
 
 # Select estimate
 if args.selectEstimator == "Data":

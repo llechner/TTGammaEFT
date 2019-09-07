@@ -626,7 +626,7 @@ controlRegions["misTT2"] = { "parameters": { "zWindow":"offZeg", "nJet":(2,2), "
 
 
 # updates for QCD estimation (else same settings)
-QCD_updates = {"invertLepIso":True, "nBTag":(0,0), "addMisIDSF":True}
+QCD_updates = {"invertLepIso":True, "nBTag":(0,0), "addMisIDSF":True, "zWindow":"all"}
 
 
 allRegions = copy.copy(controlRegions)

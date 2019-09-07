@@ -48,7 +48,7 @@ class Setup:
         }
 
 #        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
-        self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
+        self.sys = {"weight":"weight", "reweight":["reweightHEM", "reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
 
         if runOnLxPlus:
             # Set the redirector in the samples repository to the global redirector
@@ -110,8 +110,16 @@ class Setup:
             self.processes.update( { sample+"_had":   None for sample in default_sampleList } )
             self.processes["Data"] = None
 
-            self.lumi     = -1
-            self.dataLumi = -1
+            if year == 2016:
+                self.lumi     = 35.92*1000
+                self.dataLumi = 35.92*1000
+            elif year == 2017:
+                self.lumi     = 41.86*1000
+                self.dataLumi = 41.86*1000
+            elif year == 2018:
+                self.lumi     = 58.83*1000
+                self.dataLumi = 58.83*1000
+
         else:
             mc           = [ ttg, tt, DY, zg, wjets, wg, other, qcd, gjets ]
             self.processes = {}
@@ -343,10 +351,10 @@ class Setup:
 #            res["prefixes"].append( "trigger" )
 
 
-        res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year, skipBadChargedCandidate=True) )
-#        if dataMC=="Data" and self.year == 2018:
-#            res["cuts"].append("reweightHEM>0")
+        if dataMC=="Data" and self.year == 2018:
+            res["cuts"].append("reweightHEM>0")
 
+        res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year, skipBadChargedCandidate=True) )
         res["cuts"].extend(self.externalCuts)
 
         return {"cut":"&&".join(res["cuts"]), "prefix":"-".join(res["prefixes"]), "weightStr": self.weightString(dataMC,photon=str(photonCutVar[1:]),addMisIDSF=addMisIDSF)}

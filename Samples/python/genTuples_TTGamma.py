@@ -220,6 +220,24 @@ ttGamma_NoFullyHad_newCentral_1Line_Herwig             = FWLiteSample.fromDAS("t
 ttGamma_NoFullyHad_newCentral_1Line_Herwig.xSection    = 6.634
 ttGamma_NoFullyHad_newCentral_1Line_Herwig.nEvents     = 95000
 
+#noLHE
+ttGamma_NoFullyHad_noLHE_1Line_Herwig             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_noLHE_1Line_Herwig", "/ttGamma_1Line_NoFullyHad_noLHE_herwigpp/llechner-ttGamma_1Line_NoFullyHad_noLHE_herwigpp-707cf44a6e410b75d5faac48558a6059/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_noLHE_1Line_Herwig.xSection    = 6.634
+ttGamma_NoFullyHad_noLHE_1Line_Herwig.nEvents     = 100000
+
+ttGamma_Had_noLHE_1Line_Herwig             = FWLiteSample.fromDAS("ttGamma_Had_noLHE_1Line_Herwig", "/ttGamma_1Line_Had_noLHE_herwigpp/llechner-ttGamma_1Line_Had_noLHE_herwigpp-0800f6493e59eccc73b1b062e634a7a0/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Had_noLHE_1Line_Herwig.xSection    = 4.213
+ttGamma_Had_noLHE_1Line_Herwig.nEvents     = 100000
+
+ttGamma_SemiLept_noLHE_1Line_Herwig             = FWLiteSample.fromDAS("ttGamma_SemiLept_noLHE_1Line_Herwig", "/ttGamma_1Line_SemiLept_noLHE_herwigpp/llechner-ttGamma_1Line_SemiLept_noLHE_herwigpp-09d44212faaa12309ac65a8117b17d1e/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SemiLept_noLHE_1Line_Herwig.xSection    = 5.125
+ttGamma_SemiLept_noLHE_1Line_Herwig.nEvents     = 100000
+
+ttGamma_Dilept_noLHE_1Line_Herwig             = FWLiteSample.fromDAS("ttGamma_Dilept_noLHE_1Line_Herwig", "/ttGamma_1Line_Dilept_noLHE_herwigpp/llechner-ttGamma_1Line_Dilept_noLHE_herwigpp-b623c785839c36f2593f45f67ced4064/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Dilept_noLHE_1Line_Herwig.xSection    = 1.512
+ttGamma_Dilept_noLHE_1Line_Herwig.nEvents     = 100000
+
+
 
 # Sample comparison VGamma
 WGamma_noPtj          = FWLiteSample.fromDAS("WGamma_noPtj", "/WGamma_noPtj_NLO_v1/llechner-WGamma_noPtj_NLO_v1-b5b2816dddfb90dc835a6661ec19164c/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
@@ -311,6 +329,10 @@ SM = [
     ttGamma_NoFullyHad_newCentral_1Line_pTG100To200_comp,
     ttGamma_NoFullyHad_newCentral_1Line_pTGgt200_comp,
     ttGamma_NoFullyHad_newCentral_1Line_Herwig,
+    ttGamma_NoFullyHad_noLHE_1Line_Herwig,
+    ttGamma_Had_noLHE_1Line_Herwig,
+    ttGamma_SemiLept_noLHE_1Line_Herwig,
+    ttGamma_Dilept_noLHE_1Line_Herwig,
 ]
 
 EFT = [
