@@ -305,14 +305,6 @@ else:
 # Cross section for postprocessed sample
 xSection = samples[0].xSection if isMC else None
 
-# Trigger selection
-if isData and options.triggerSelection:
-    from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
-    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
-    triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
-    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
-    skimConds.append( triggerCond )
-
 # Reweighting, Scalefactors, Efficiencies
 from Analysis.Tools.LeptonSF import LeptonSF
 LeptonSFMedium = LeptonSF( year=options.year, ID="medium" )
@@ -687,6 +679,14 @@ if not options.skipNanoTools:
     if isMC: sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
     sample.isData = isData
     del MetSig
+
+# Trigger selection after nanotools
+if isData and options.triggerSelection:
+    from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
+    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
+    triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
+    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
+    skimConds.append( triggerCond )
 
 # Define a reader
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
