@@ -1078,9 +1078,9 @@ def filler( event ):
     # Store all Leptons
     fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons )
 
-    gPart.sort(key=lambda x: x["index"])
     # Photons
     if isMC:
+        gPart.sort(key=lambda x: x["index"])
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
             genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] >= 0 else None
