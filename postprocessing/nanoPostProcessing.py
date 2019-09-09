@@ -121,19 +121,19 @@ semilepCond            = "(" + "||".join( [semilepCond_ele, semilepCond_mu] ) + 
 dilepCond_sublead      = "(Sum$(Electron_pt>=14&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=14&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=2"
 dilepCond_lead         = "(Sum$(Electron_pt>=24&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=24&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=1"
 dilepCond              = "&&".join( [dilepCond_lead, dilepCond_sublead] )
-gammaCond              = "(Sum$(Photon_pt>=19&&abs(Photon_eta)<=1.45&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_pfRelIso03_all*Photon_pt<=2.08+0.004017*Photon_pt&&(Photon_pfRelIso03_all-Photon_pfRelIso03_chg)*Photon_pt<=1.189+0.01512*Photon_pt+0.00002259*Photon_pt*Photon_pt)>=1)"
-#gammaCond              = "(Sum$(Photon_pt>=20&&abs(Photon_eta)<=1.4442)&&Photon_electronVeto&&!Photon_pixelSeed&&Photon_%s>=2)>=1)"%("cutBased" if options.year == 2016 else "cutBasedBitmap")
+
+gammaCond              = "(Sum$(Photon_pt>=19&&abs(Photon_eta)<=1.5&&Photon_electronVeto&&Photon_pixelSeed==0)>=1)"
 
 skimConds = []
 if isDiLepGamma:
-    skimConds.append( "&&".join( [dilepCond, gammaCond, twoJetCond] ) )
+    skimConds += [dilepCond, gammaCond, twoJetCond]
 elif isDiLep:
-    skimConds.append( "&&".join( [dilepCond, twoJetCond] ) )
+    skimConds += [dilepCond, twoJetCond]
 elif isSemiLepGamma:
-    skimConds.append( "&&".join( [semilepCond, gammaCond, twoJetCond] ) )  #performance: ~1.5k events left (1 ttbar semilep file)
+    skimConds += [semilepCond, gammaCond, twoJetCond]  #performance: ~1.5k events left (1 ttbar semilep file)
 #    skimConds.append( "&&".join(semilepNoIsoCond, gammaCond) )  #performance: ~38k events left (1 ttbar semilep file)
 elif isSemiLep:
-    skimConds.append( "&&".join( [semilepNoIsoCond, twoJetCond] ) ) #performance: ~75k events left (1 ttbar semilep file)
+    skimConds += [semilepNoIsoCond, twoJetCond] #performance: ~75k events left (1 ttbar semilep file)
 #    skimConds.append( semilepCond ) #performance: ~50k events left (1 ttbar semilep file)
 else:
     skimConds = ["(1)"]
@@ -668,7 +668,7 @@ if options.addPreFiringFlag:
 # Trigger selection
 if isData:
     from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
-    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
+    Ts          = TriggerSelector( options.year, singleLepton=(isSemiLep or isSemiLepGamma) )
     triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
     logger.info("Sample will have the following trigger skim: %s"%triggerCond)
     skimConds.append( triggerCond )
@@ -678,16 +678,16 @@ if not options.skipNanoTools:
     MetSig = MetSignificance( sample, options.year, output_directory, fastSim=False )
     MetSig( "&&".join(skimConds) )
     newfiles = MetSig.getNewSampleFilenames()
-    sample.clear()
+#    sample.clear()
     sample.files = copy.copy(newfiles)
-    sample.name  = MetSig.name
+#    sample.name  = MetSig.name
     if isMC: sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
-    sample.isData = isData
-    del MetSig
+#    sample.isData = isData
+#    del MetSig
 
 # Define a reader
-sel = "&&".join(skimConds) if options.skipNanoTools else "(1)"
-reader = sample.treeReader( variables=read_variables, selectionString=sel )
+#sel = "&&".join(skimConds) if options.skipNanoTools else "(1)"
+reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
 
 def getMetPhotonEstimated( met_pt, met_phi, photon ):
   met = ROOT.TLorentzVector()
