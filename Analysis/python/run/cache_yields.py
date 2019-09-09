@@ -17,7 +17,7 @@ from TTGammaEFT.Tools.cutInterpreter    import cutInterpreter
 from TTGammaEFT.Tools.Cache             import Cache
 from TTGammaEFT.Analysis.regions        import recoTTGammaRegions as regions
 from Analysis.Tools.metFilters          import getFilterCut
-from Analysis.Tools.DirDB               import DirDB
+from Analysis.Tools.MergingDirDB               import MergingDirDB
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -64,7 +64,7 @@ else:
     regions = ["manual"]
 
 cache_dir = os.path.join(cache_directory, "yields", str(args.year))
-yield_dirDB = DirDB( cache_dir )
+yield_dirDB = MergingDirDB( cache_dir )
 if not yield_dirDB: raise
 
 #res = "_".join( ["sample", args.selection, "small" if args.small else "full"] )
@@ -88,7 +88,7 @@ if (not args.overwrite) and cached_QCD:
 elif not args.noQCD:
     # load cached qcd histograms
     qcd_cachedir = os.path.join(cache_directory, "qcdHistos")
-    qcd_dirDB    = DirDB(qcd_cachedir)
+    qcd_dirDB    = MergingDirDB(qcd_cachedir)
     if not qcd_dirDB: raise
 
     if "low" in args.ptBin:

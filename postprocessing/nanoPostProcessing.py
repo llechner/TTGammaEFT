@@ -138,8 +138,6 @@ elif isSemiLep:
 else:
     skimConds = ["(1)"]
 
-print skimConds
-
 #Samples: Load samples
 maxNFiles = None
 if options.small:
@@ -667,14 +665,21 @@ if options.addPreFiringFlag:
     unPreFirableEvents = [ (event, run) for event, run, lumi in PreFire.getUnPreFirableEvents() ]
     del PreFire
 
+# Trigger selection
+if isData:
+    from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
+    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
+    triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
+    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
+    skimConds.append( triggerCond )
+
 if not options.skipNanoTools:
     # prepare metsignificance and jes/jer
     MetSig = MetSignificance( sample, options.year, output_directory, fastSim=False )
-    if not options.reuseNanoAOD or not all( map( os.path.exists, newfiles ) ):
-        MetSig( "&&".join(skimConds) )
+    MetSig( "&&".join(skimConds) )
     newfiles = MetSig.getNewSampleFilenames()
     sample.clear()
-    sample.files = newfiles
+    sample.files = copy.copy(newfiles)
     sample.name  = MetSig.name
     if isMC: sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
     sample.isData = isData
@@ -689,7 +694,8 @@ if isData and options.triggerSelection:
     skimConds.append( triggerCond )
 
 # Define a reader
-reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
+sel = "&&".join(skimConds) if options.skipNanoTools else "(1)"
+reader = sample.treeReader( variables=read_variables, selectionString=sel )
 
 def getMetPhotonEstimated( met_pt, met_phi, photon ):
   met = ROOT.TLorentzVector()

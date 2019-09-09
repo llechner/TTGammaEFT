@@ -5,7 +5,7 @@ from math import sqrt
 import json
 
 # Framework imports
-from Analysis.Tools.DirDB             import DirDB
+from Analysis.Tools.MergingDirDB             import MergingDirDB
 from Analysis.Tools.u_float           import u_float
 from TTGammaEFT.Tools.user            import cache_directory
 from TTGammaEFT.Analysis.SetupHelpers import allChannels
@@ -41,15 +41,15 @@ class SystematicEstimator:
             except: pass
 
             cacheDirName       = os.path.join(cacheDir, self.name)
-            self.cache = DirDB(cacheDirName)
+            self.cache = MergingDirDB(cacheDirName)
             if not self.cache: raise
 
             if self.name.count("DD"):
                 helperCacheDirName = os.path.join(cacheDir, self.name+"_helper")
-                self.helperCache = DirDB(helperCacheDirName)
+                self.helperCache = MergingDirDB(helperCacheDirName)
                 if not self.helperCache: raise
                 tfCacheDirName = os.path.join(cacheDir, self.name+"_tf")
-                self.tfCache = DirDB(tfCacheDirName)
+                self.tfCache = MergingDirDB(tfCacheDirName)
                 if not self.tfCache: raise
             else:
                 self.helperCache=None

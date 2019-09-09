@@ -13,7 +13,7 @@ from TTGammaEFT.Analysis.regions         import regionsTTG, noPhotonRegionTTG, i
 from TTGammaEFT.Analysis.SetupHelpers    import *
 
 from TTGammaEFT.Tools.user               import cache_directory, combineReleaseLocation, cardfileLocation
-from Analysis.Tools.DirDB                import DirDB
+from Analysis.Tools.MergingDirDB                import MergingDirDB
 from Analysis.Tools.u_float              import u_float
 from Analysis.Tools.cardFileWriter       import cardFileWriter
 from Analysis.Tools.getPostFit           import getPrePostFitFromMLF, getFitResults
@@ -120,22 +120,22 @@ limitDir      = os.path.join( baseDir, "cardFiles", args.label, "expected" if ar
 if not os.path.exists( limitDir ): os.makedirs( limitDir )
 
 cacheFileName   = os.path.join( limitDir, "calculatedLimits" )
-limitCache      = DirDB( cacheFileName )
+limitCache      = MergingDirDB( cacheFileName )
 
 cacheFileName   = os.path.join( limitDir, "calculatedSignifs" )
-signifCache     = DirDB( cacheFileName )
+signifCache     = MergingDirDB( cacheFileName )
 
 cacheFileName   = os.path.join( limitDir, "systematics", "systematics" )
-scaleUncCache   = DirDB( cacheFileName )
+scaleUncCache   = MergingDirDB( cacheFileName )
 
 cacheFileName   = os.path.join( limitDir, "systematics", "isr" )
-isrUncCache     = DirDB( cacheFileName )
+isrUncCache     = MergingDirDB( cacheFileName )
 
 cacheFileName   = os.path.join( limitDir, "systematics", "scale" )
-scaleUncCache   = DirDB( cacheFileName )
+scaleUncCache   = MergingDirDB( cacheFileName )
 
 cacheFileName   = os.path.join( limitDir, "systematics", "pdf" )
-pdfUncCache     = DirDB( cacheFileName )
+pdfUncCache     = MergingDirDB( cacheFileName )
 
 def getScaleUnc( name, r, channel ):
     if scaleUncCache.contains( (name, r, channel) ): max( 0.01, scaleUncCache.get( (name, r, channel) ) )

@@ -21,7 +21,7 @@ from TTGammaEFT.Analysis.SetupHelpers import default_misIDSF, default_DYSF
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.u_float           import u_float
-from Analysis.Tools.DirDB             import DirDB
+from Analysis.Tools.MergingDirDB             import MergingDirDB
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -56,7 +56,7 @@ else:
     logger = logging.getLogger(__name__)
 
 cache_dir = os.path.join(cache_directory, "qcdHistos")
-dirDB = DirDB(cache_dir)
+dirDB = MergingDirDB(cache_dir)
 if not dirDB: raise
 
 # Samples
