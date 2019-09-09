@@ -278,15 +278,10 @@ class Setup:
 
         if nBTag and not (nBTag[0]==0 and nBTag[1]<0):
             assert nBTag[0]>=0 and (nBTag[1]>=nBTag[0] or nBTag[1]<0), "Not a good nBTag selection: %r"% nBTag
-
-            # change that after next pp
-            if sysStr: nbtstr = "nBTag"+sysStr+">="+str(nBTag[0])
-            else:      nbtstr = "nBTagGood"+sysStr+">="+str(nBTag[0])
-
+            nbtstr = "nBTagGood"+sysStr+">="+str(nBTag[0])
             prefix = "nBTag"+str(nBTag[0])
             if nBTag[1]>=0:
-                if sysStr:             nbtstr+= "&&nBTag"+sysStr+"<="+str(nBTag[1])  # FIXME change that after next pp
-                else:                  nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])  # FIXME change that after next pp
+                nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])
                 if nBTag[1]!=nBTag[0]: prefix+=str(nBTag[1])
             else:
                 prefix+="p"

@@ -2,7 +2,7 @@ import os
 import json
 
 from Analysis.Tools.u_float           import u_float
-from Analysis.Tools.DirDB             import DirDB
+from Analysis.Tools.MergingDirDB             import MergingDirDB
 from TTGammaEFT.Analysis.SetupHelpers import dilepChannels, lepChannels
 from TTGammaEFT.Analysis.Region       import Region
 from TTGammaEFT.Tools.user            import cache_directory
@@ -31,7 +31,7 @@ class DataObservation():
             except: pass
 
             cacheDirName       = os.path.join(cacheDir, self.name)
-            self.cache = DirDB(cacheDirName)
+            self.cache = MergingDirDB(cacheDirName)
             if not self.cache: raise
 
         else:

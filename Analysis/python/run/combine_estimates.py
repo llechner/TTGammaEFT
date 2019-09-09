@@ -16,7 +16,7 @@ from TTGammaEFT.Tools.TriggerSelector   import TriggerSelector
 from TTGammaEFT.Tools.cutInterpreter    import cutInterpreter
 from TTGammaEFT.Tools.Cache             import Cache
 from Analysis.Tools.metFilters          import getFilterCut
-from Analysis.Tools.DirDB               import DirDB
+from Analysis.Tools.MergingDirDB               import MergingDirDB
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -56,7 +56,7 @@ else:
 
 
 cache_dir = os.path.join(cache_directory, "yields", str(args.year))
-yield_dirDB = DirDB( cache_dir )
+yield_dirDB = MergingDirDB( cache_dir )
 if not yield_dirDB: raise
 
 res = {"sample":None, "selection":args.selection, "mode":args.mode, "ptBin":args.ptBin, "cat":args.gammaCat, "sieie":args.sieie, "chgIso":args.chgIso, "small":args.small}

@@ -138,8 +138,6 @@ elif isSemiLep:
 else:
     skimConds = ["(1)"]
 
-print skimConds
-
 #Samples: Load samples
 maxNFiles = None
 if options.small:
@@ -304,14 +302,6 @@ else:
 
 # Cross section for postprocessed sample
 xSection = samples[0].xSection if isMC else None
-
-# Trigger selection
-if isData and options.triggerSelection:
-    from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
-    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
-    triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
-    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
-    skimConds.append( triggerCond )
 
 # Reweighting, Scalefactors, Efficiencies
 from Analysis.Tools.LeptonSF import LeptonSF
@@ -590,6 +580,7 @@ mt2Calculator = mt2Calculator()
 
 if options.addPreFiringFlag: new_variables += [ 'unPreFirableEvent/I' ]
 
+new_variables += [ "reweightHEM/F" ]
 if isMC:
     new_variables += [ 'GenElectron[%s]' %writeGenVarString ]
     new_variables += [ 'GenMuon[%s]'     %writeGenVarString ]
@@ -602,7 +593,6 @@ if isMC:
     new_variables += [ 'nGenW/I', 'nGenWJets/I', 'nGenWElectron/I', 'nGenWMuon/I','nGenWTau/I', 'nGenWTauJets/I', 'nGenWTauElectron/I', 'nGenWTauMuon/I' ]
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
-    new_variables += [ "reweightHEM/F" ]
 
     new_variables += [ 'reweightLepton2lSF/F', 'reweightLepton2lSFUp/F', 'reweightLepton2lSFDown/F' ]
     new_variables += [ 'reweightLeptonTracking2lSF/F', 'reweightLeptonTracking2lSFUp/F', 'reweightLeptonTracking2lSFDown/F' ]
@@ -675,21 +665,29 @@ if options.addPreFiringFlag:
     unPreFirableEvents = [ (event, run) for event, run, lumi in PreFire.getUnPreFirableEvents() ]
     del PreFire
 
+# Trigger selection
+if isData:
+    from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
+    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
+    triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
+    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
+    skimConds.append( triggerCond )
+
 if not options.skipNanoTools:
     # prepare metsignificance and jes/jer
     MetSig = MetSignificance( sample, options.year, output_directory, fastSim=False )
-    if not options.reuseNanoAOD or not all( map( os.path.exists, newfiles ) ):
-        MetSig( "&&".join(skimConds) )
+    MetSig( "&&".join(skimConds) )
     newfiles = MetSig.getNewSampleFilenames()
     sample.clear()
-    sample.files = newfiles
+    sample.files = copy.copy(newfiles)
     sample.name  = MetSig.name
     if isMC: sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
     sample.isData = isData
     del MetSig
 
 # Define a reader
-reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
+sel = "&&".join(skimConds) if options.skipNanoTools else "(1)"
+reader = sample.treeReader( variables=read_variables, selectionString=sel )
 
 def getMetPhotonEstimated( met_pt, met_phi, photon ):
   met = ROOT.TLorentzVector()
@@ -1078,9 +1076,9 @@ def filler( event ):
     # Store all Leptons
     fill_vector_collection( event, "Lepton", writeLeptonVarList, allLeptons )
 
-    gPart.sort(key=lambda x: x["index"])
     # Photons
     if isMC:
+        gPart.sort(key=lambda x: x["index"])
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
             genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] >= 0 else None
