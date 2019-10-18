@@ -17,7 +17,7 @@ from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from TTGammaEFT.Tools.Variables       import NanoVariables
 
-from TTGammaEFT.Analysis.SetupHelpers import default_misIDSF, default_DYSF
+from TTGammaEFT.Analysis.SetupHelpers import misIDSF_val, DYSF_val
 
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.u_float           import u_float
@@ -43,6 +43,8 @@ argParser.add_argument('--mode',               action='store',      default="Non
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                     help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                     help="Run only job i")
 argParser.add_argument("--runOnLxPlus",        action="store_true",                                                                    help="Change the global redirector of samples")
+argParser.add_argument('--noBadEEJetVeto',     action='store_true',                                                                    help='remove BadEEJetVeto', )
+argParser.add_argument('--noHEMweight',        action='store_true',                                                                    help='remove HEMweight', )
 args = argParser.parse_args()
 
 # Logging
@@ -54,6 +56,10 @@ if __name__=="__main__":
 else:
     import logging
     logger = logging.getLogger(__name__)
+
+
+if args.year == 2017 and not args.noBadEEJetVeto:
+    args.selection += "-BadEEJetVeto"
 
 cache_dir = os.path.join(cache_directory, "qcdHistos")
 dirDB = MergingDirDB(cache_dir)
@@ -247,6 +253,7 @@ read_variables  = ["weight/F",
                    "ltight0GammadR/F", "ltight0GammadPhi/F",
                    "m3/F", "m3wBJet/F", "mT/F", "mT2lg/F", "mTinv/F", "mT2linvg/F",
                    "photonJetdR/F", "tightLeptonJetdR/F",
+                   "reweightHEM/F",
                   ]
 
 read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
@@ -320,14 +327,17 @@ else:
     stack = Stack( mc )
 
 
-sampleWeight = lambda event, sample: (event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)+((default_misIDSF-1)*(event.nPhotonGood>0)*(event.PhotonGood0_photonCat==2)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)
-weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
+sampleWeight = lambda event, sample: (event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)+((misIDSF_val[args.year]-1)*(event.nPhotonGood>0)*(event.PhotonGood0_photonCat==2)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF)
+if args.noHEMweight:
+    weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
+else:
+    weightString = "reweightHEM*reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
 for sample in mc:
     sample.read_variables = read_variables_MC
     sample.scale          = lumi_scale
     if "DY" in sample.name:
-        sample.scale     *= default_DYSF
+        sample.scale     *= DYSF_val[args.year]
     sample.weight         = sampleWeight
 
 if args.small and not args.checkOnly:
@@ -336,7 +346,10 @@ if args.small and not args.checkOnly:
         sample.reduceFiles( factor=20 )
         sample.scale /= sample.normalization
 
-weight_ = lambda event, sample: event.weight
+if args.noHEMweight:
+    weight_ = lambda event, sample: event.weight
+else:
+    weight_ = lambda event, sample: event.weight*event.reweightHEM
 
 selection = [ item if not "nBTag" in item else "nBTag0" for item in args.selection.split("-") ]
 #selection = [ item for item in selection if not "nLepVeto" in item ]
@@ -345,6 +358,7 @@ preSelection = "&&".join( [ cutInterpreter.cutString( selection ) ] )#, "weight<
 
 if "nPhoton0" in args.selection:
     catSel = None
+    ptSels = ["lowPT", "medPT", "highPT"]
 elif "NoChgIsoNoSieiePhoton" in args.selection:
     catSel = "photonhadcat" 
     ptSels = ["lowhadPT", "medhadPT", "highhadPT"]
@@ -439,7 +453,7 @@ for index, mode in enumerate( allModes ):
         if plot.name in invPlotNames.keys(): plot.name = invPlotNames[plot.name]
 
     if not args.overwrite:
-        plots = [ plot for plot in plots if not dirDB.contains("_".join( ["qcdHisto", args.selection, plot.name, str(args.year), mode, "small" if args.small else "full"] + map( str, plot.binning ) )) ]
+        plots = [ plot for plot in plots if not dirDB.contains("_".join( ["qcdHisto_noHEM" if args.noHEMweight else "qcdHisto", args.selection, plot.name, str(args.year), mode, "small" if args.small else "full"] + map( str, plot.binning ) )) ]
         if plots and args.checkOnly:
             print("Plot for year %i and selection %s and mode %s not cached!"%(args.year, args.selection, mode))
             continue
@@ -477,7 +491,7 @@ for index, mode in enumerate( allModes ):
         else:
             transFacQCD["incl_cat"+str(i)] = 0.
 
-    if not "nPhoton0" in args.selection and transFacQCD["incl"] > 0:
+    if transFacQCD["incl"] > 0:
         for pt in ptSels:
             yield_QCD_CR  = qcd.getYieldFromDraw(   selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
             yield_QCD_CR += gjets.getYieldFromDraw( selectionString=preSelectionCR + "&&" + cutInterpreter.cutString( pt ), weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
@@ -487,14 +501,15 @@ for index, mode in enumerate( allModes ):
             transFacQCD[pt] = yield_QCD_SR / yield_QCD_CR if yield_QCD_CR != 0 else 0.
 
             # Transfer factor for photon category plots
-            for i in range(4):
-                if catSel and yield_QCD_CR != 0:
-                    preSelectionSR_cat = "&&".join( [ cutInterpreter.cutString( "-".join([args.selection, pt, catSel+str(i)]) ), filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
-                    yield_QCD_SR_cat   = qcd.getYieldFromDraw(   selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
-                    yield_QCD_SR_cat  += gjets.getYieldFromDraw( selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
-                    transFacQCD[pt+"_cat"+str(i)] = yield_QCD_SR_cat / yield_QCD_CR
-                else:
-                    transFacQCD[pt+"_cat"+str(i)] = 0
+            if not "nPhoton0" in args.selection:
+                for i in range(4):
+                    if catSel and yield_QCD_CR != 0:
+                        preSelectionSR_cat = "&&".join( [ cutInterpreter.cutString( "-".join([args.selection, pt, catSel+str(i)]) ), filterCutMc, isoleptonSelection, triggerCutMc, "overlapRemoval==1"  ] )
+                        yield_QCD_SR_cat   = qcd.getYieldFromDraw(   selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                        yield_QCD_SR_cat  += gjets.getYieldFromDraw( selectionString=preSelectionSR_cat, weightString="weight*%f*%s"%(lumi_scale,weightString) )["val"]
+                        transFacQCD[pt+"_cat"+str(i)] = yield_QCD_SR_cat / yield_QCD_CR
+                    else:
+                        transFacQCD[pt+"_cat"+str(i)] = 0
 
     for plot in plots:
         qcdHist = copy.deepcopy(plot.histos[1][0])
@@ -532,7 +547,7 @@ for index, mode in enumerate( allModes ):
             qcdHist_cat2.Scale( transFacQCD[fac+"_cat2"] )
             qcdHist_cat3.Scale( transFacQCD[fac+"_cat3"] )
 
-        cacheName = "_".join( ["qcdHisto", args.selection, plot.name, str(args.year), mode, "small" if args.small else "full"] + map( str, plot.binning ) )
+        cacheName = "_".join( ["qcdHisto_noHEM" if args.noHEMweight else "qcdHisto", args.selection, plot.name, str(args.year), mode, "small" if args.small else "full"] + map( str, plot.binning ) )
         logger.info( "Adding QCD plot for %s for mode %s"%(plot.name, mode) )
         dirDB.add( cacheName, qcdHist, overwrite=True )
         if catSel:
