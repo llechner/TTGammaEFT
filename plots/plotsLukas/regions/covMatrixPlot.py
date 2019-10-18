@@ -33,7 +33,7 @@ argParser.add_argument("--overwrite",            action="store_true",           
 argParser.add_argument("--postFit",              action="store_true",                            help="Apply pulls?")
 argParser.add_argument("--preliminary",          action="store_true",                            help="Run expected?")
 argParser.add_argument("--year",                 action="store",      type=int, default=2016,    help="Which year?")
-argParser.add_argument("--carddir",              action='store',                default='2016/limits/cardFiles/defaultSetup/observed',      help="which cardfile directory?")
+argParser.add_argument("--carddir",              action='store',                default='limits/cardFiles/defaultSetup/observed',      help="which cardfile directory?")
 argParser.add_argument("--cardfile",             action='store',                default='',      help="which cardfile?")
 args = argParser.parse_args()
 
@@ -49,7 +49,8 @@ if args.year == 2016:   lumi_scale = 35.92
 elif args.year == 2017: lumi_scale = 41.86
 elif args.year == 2018: lumi_scale = 58.83
 
-cardFile = os.path.join( cache_directory, args.carddir, args.cardfile+".txt" )
+
+cardFile = os.path.join( cache_directory, "analysis", str(args.year), args.carddir, args.cardfile+".txt" )
 logger.info("Plotting from cardfile %s"%cardFile)
 
 def convPTLabel( lab ):
