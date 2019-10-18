@@ -41,13 +41,17 @@ class MCBasedEstimate(SystematicEstimator):
         else:
             preSelection = setup.preselection('MC', channel=channel)
             cuts         = [ region.cutString( setup.sys['selectionModifier'] ), preSelection['cut'] ]
-            if "high" in setup.parameters["photonIso"]:
+            if setup.parameters["photonIso"] and setup.parameters["photonIso"] != "lowChgIsolowSieie":
                 self.processCut = self.processCut.replace("photoncat", "photonhadcat")
             if self.processCut:
                 cuts.append( cutInterpreter.cutString(self.processCut) )
                 logger.info( "Adding process specific cut %s"%self.processCut )
             cut          = "&&".join( cuts )
             weight       = preSelection['weightStr']
+
+            print cut
+            print
+            print weight
             logger.debug( "Using cut %s and weight %s"%(cut, weight) )
 
             return setup.lumi/1000.*u_float(**self.process.getYieldFromDraw(selectionString = cut, weightString = weight) )
