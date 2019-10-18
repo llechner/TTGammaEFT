@@ -9,9 +9,9 @@ python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 201
 python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTBar --sample TTSingleLep_pow #SPLIT20
 
 #python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGNoFullyHad_priv #SPLIT1
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGHad_priv #SPLIT5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGSemi_priv #SPLIT5
-python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGLep_priv #SPLIT5
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGHad_priv #SPLIT10
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGSemi_priv #SPLIT10
+python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGLep_priv #SPLIT10
 
 #python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGJets TTGJets_ext #SPLIT30
 #python nanoPostProcessing.py --topReco --writeToDPM --skim dilepGamma --year 2016 --processingEra TTGammaEFT_PP_2016_TTG_private_v19 --fileBasedSplitting --flagTTGamma --sample TTGHad #SPLIT15
