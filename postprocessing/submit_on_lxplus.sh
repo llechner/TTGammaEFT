@@ -27,7 +27,7 @@ eval `scramv1 runtime -sh`
 # github repos
 git cms-init
 
-git clone -b "ppv19" --single-branch --depth 1 https://github.com/llechner/TTGammaEFT.git
+git clone -b "ppv20" --single-branch --depth 1 https://github.com/llechner/TTGammaEFT.git
 git clone -b "ppv19" --single-branch --depth 1 https://github.com/llechner/Samples.git
 git clone -b "ppv19" --single-branch --depth 1 https://github.com/llechner/Analysis.git
 git clone -b "ppv19" --single-branch --depth 1 https://github.com/llechner/RootTools.git
