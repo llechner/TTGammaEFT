@@ -19,7 +19,7 @@ from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
 from Analysis.Tools.helpers           import deltaPhi, add_histos
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.puReweighting     import getReweightingFunction
-from Analysis.Tools.DirDB             import DirDB
+from Analysis.Tools.MergingDirDB      import MergingDirDB
 
 from TTGammaEFT.Analysis.SetupHelpers import default_misIDSF, default_DYSF
 from TTGammaEFT.Samples.color         import color
@@ -63,12 +63,11 @@ def jetSelectionModifier( sys, returntype = "func"):
     if returntype == "func":
         def changeCut_( string ):
             for s in variiedJetObservables:
-                s_rep = s.replace("nBTagGood", "nBTag") # change that after next pp
-                string = string.replace(s, s_rep+"_"+sys)
+                string = string.replace(s, s+"_"+sys)
             return string
         return changeCut_
     elif returntype == "list":
-        return [ v.replace("nBTagGood", "nBTag")+"_"+sys for v in variiedJetObservables ] # change that after next pp
+        return [ v+"_"+sys for v in variiedJetObservables ] # change that after next pp
 
 def metSelectionModifier( sys, returntype = 'func'):
     #Need to make sure all MET variations of the following observables are in the ntuple
@@ -130,8 +129,8 @@ variations = {
     "PhotonSFDown"              : {"replaceWeight":("reweightPhotonSF","reweightPhotonSFDown"),                           "read_variables" : [ "%s/F"%v for v in nominalMCWeights + ["reweightPhotonSFDown"]]},
     "PhotonElectronVetoSFUp"    : {"replaceWeight":("reweightPhotonElectronVetoSF","reweightPhotonElectronVetoSFUp"),     "read_variables" : [ "%s/F"%v for v in nominalMCWeights + ["reweightPhotonElectronVetoSFUp"]]},
     "PhotonElectronVetoSFDown"  : {"replaceWeight":("reweightPhotonElectronVetoSF","reweightPhotonElectronVetoSFDown"),   "read_variables" : [ "%s/F"%v for v in nominalMCWeights + ["reweightPhotonElectronVetoSFDown"]]},
-    "jerUp"                     : {"selectionModifier":jetSelectionModifier("jerUp"),                                     "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("jerUp","list")]},
-    "jerDown"                   : {"selectionModifier":jetSelectionModifier("jerDown"),                                   "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("jerDown","list")]},
+#    "jerUp"                     : {"selectionModifier":jetSelectionModifier("jerUp"),                                     "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("jerUp","list")]},
+#    "jerDown"                   : {"selectionModifier":jetSelectionModifier("jerDown"),                                   "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("jerDown","list")]},
     "jesTotalUp"                : {"selectionModifier":jetSelectionModifier("jesTotalUp"),                                "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("jesTotalUp","list")]},
     "jesTotalDown"              : {"selectionModifier":jetSelectionModifier("jesTotalDown"),                              "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("jesTotalDown","list")]},
 #    "unclustEnUp"               : {"selectionModifier":metSelectionModifier("unclustEnUp"),                               "read_variables" : [ "%s/F"%v for v in nominalMCWeights + jetSelectionModifier("unclustEnUp","list")]},
@@ -169,7 +168,7 @@ read_variables  = ["weight/F",
                    "PhotonGood0[pt/F]",
                    "mlltight/F", "mllgammatight/F",
                    "mLtight0Gamma/F",
-                   "m3/F", 
+                   "m3/F", "ht/F",
                   ]
 read_variables_MC = ["isTTGamma/I", "isZWGamma/I", "isTGamma/I", "overlapRemoval/I",
                      "reweightPU/F", "reweightPUDown/F", "reweightPUUp/F", "reweightPUVDown/F", "reweightPUVUp/F",
@@ -255,10 +254,10 @@ allPlots   = {}
 logger.info("Working on modes: %s", ",".join(modes))
 
 # Fire up the cache
-dirDB = DirDB( os.path.join(cache_directory, "systematicPlots", str(args.year), args.selection))
+dirDB = MergingDirDB( os.path.join(cache_directory, "systematicPlots", str(args.year), args.selection))
 
 # QCD cache
-qcd_dirDB     = DirDB( os.path.join(cache_directory, "qcdHistos") )
+qcd_dirDB     = MergingDirDB( os.path.join(cache_directory, "qcdHistos") )
 
 filterCutData = getFilterCut( args.year, isData=True, skipBadChargedCandidate=True )
 filterCutMc   = getFilterCut( args.year, isData=False, skipBadChargedCandidate=True )
@@ -293,6 +292,30 @@ for mode in modes:
     stack_data = Stack( data_sample )
 
     plots      = []
+
+    if args.variation == "central":
+        plots.append( Plot(
+            name      = 'PhotonGood0_pt_data',
+            texX      = 'p_{T}(#gamma_{0}) (GeV)',
+            texY      = 'Number of Events',
+            attribute = TreeVariable.fromString( "PhotonGood0_pt/F" ),
+            binning   = [ 19, 20, 115 ],
+            stack     = stack_data,
+            weight    = data_weight,
+        ))
+
+    plots.append( Plot(
+        name      = 'PhotonGood0_pt_mc',
+        texX      = 'p_{T}(#gamma_{0}) (GeV)',
+        texY      = 'Number of Events',
+        attribute = TreeVariable.fromString( "PhotonGood0_pt/F" ),
+        binning   = [ 19, 20, 115 ],
+        stack     = stack_mc,
+        selectionString = selectionModifier(cutInterpreter.cutString(args.selection)) if selectionModifier is not None else None,
+        weight    = mc_weight,
+    ))
+    qcdPlotNames["PhotonGood0_pt_mc"] = {}
+    qcdPlotNames["PhotonGood0_pt_mc"]["incl"]  = "PhotonGood0_pt"
 
     if args.variation == "central":
         plots.append( Plot(
@@ -422,6 +445,31 @@ for mode in modes:
     qcdPlotNames["m3_mc"]["pTG120To220"] = "m3_120ptG220_coarse"
     qcdPlotNames["m3_mc"]["pTG220"]      = "m3_220ptGinf_coarse"
 
+    if args.variation == "central":
+        plots.append( Plot(
+            name      = 'ht_data',
+            texX      = 'H_{T} (GeV)',
+            texY      = 'Number of Events',
+            stack     = stack_data,
+            attribute = TreeVariable.fromString('ht/F'),
+            binning   = [ 20, 0, 600 ],
+            weight    = data_weight,
+        ))
+
+    plots.append( Plot(
+        name      = 'ht_mc',
+        texX      = 'H_{T} (GeV)',
+        texY      = 'Number of Events',
+        attribute = TreeVariable.fromString('ht/F') if args.variation not in selection_systematics else TreeVariable.fromString( "ht_%s/I" % args.variation ),
+        binning   = [ 20, 0, 600 ],
+        stack     = stack_mc,
+        selectionString = selectionModifier(cutInterpreter.cutString(args.selection)) if selectionModifier is not None else None,
+        weight    = mc_weight,
+    ))
+    qcdPlotNames["ht_mc"] = {}
+    qcdPlotNames["ht_mc"]["incl"] = "ht"
+
+
     if args.variation is not None:
         key  = (str(args.year), mode, args.variation, "small" if args.small else "full")
         if dirDB.contains(key) and not args.overwrite:
@@ -458,7 +506,7 @@ if args.variation is not None:
     sys.exit(0)
 
 systematics = [\
-    {"name":"JER",              "pair":("jerDown", "jerUp"),},
+#    {"name":"JER",              "pair":("jerDown", "jerUp"),},
     {"name":"JEC",              "pair":("jesTotalDown", "jesTotalUp")},
 #    {"name":"Unclustered",      "pair":("unclustEnDown", "unclustEnUp") },
     {"name":"PU",               "pair":("PUDown", "PUUp")},
@@ -568,6 +616,18 @@ qcdSelection = "-".join( [ sel for sel in args.selection.split("-") if not "pTG"
 qcdPtSelection = [ sel for sel in args.selection.split("-") if "pTG" in sel ]
 if qcdPtSelection: qcdPtSelection = qcdPtSelection[0]
 else:              qcdPtSelection = "incl"
+
+def histmodification(log):
+    def histmod(h):
+#        h.GetXaxis().SetTitleOffset( 1.06 )
+        h.GetYaxis().SetTitleOffset( 1.6 if log else 1.85 )
+
+#        h.GetXaxis().SetTitleSize( 0.045 )
+#        h.GetYaxis().SetTitleSize( 0.045 )
+
+#        h.GetXaxis().SetLabelSize( 0.04 )
+#        h.GetYaxis().SetLabelSize( 0.04 )
+    return histmod
 
 # We plot now. 
 for mode in all_modes:
@@ -681,18 +741,19 @@ for mode in all_modes:
         for log in [False, True]:
             plot_directory_ = os.path.join(plot_directory, "systematicPlots", str(args.year), plot_subdirectory, selDir, mode, "log" if log else "lin")
             #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
-            if    mode == "all": plot.histos[1][0].legendText = "Data (%s)"%str(args.year)
-            else:                plot.histos[1][0].legendText = "Data (%s, %s)"%(args.mode, str(args.year))
+            if    mode == "all": plot.histos[1][0].legendText = "Data (%i)"%args.year
+            else:                plot.histos[1][0].legendText = "Data (%s, %i)"%(mode, args.year)
 
             _drawObjects = []
 
             plotting.draw(plot,
               plot_directory = plot_directory_,
               ratio = {"yRange":(0.1,1.9), "drawObjects":ratio_boxes},
-              logX = False, logY = log, sorting = False,
+              logX = False, logY = log, sorting = True,
               yRange = (0.03, "auto") if log else (0.001, "auto"),
               #scaling = {0:1},
               legend = ( (0.18,0.88-0.03*sum(map(len, plot.histos)),0.9,0.88), 3),
               drawObjects = drawObjects() + boxes,
               copyIndexPHP = True, extensions = ["png", "pdf"],
+              histModifications = [histmodification(log)],
             )         
