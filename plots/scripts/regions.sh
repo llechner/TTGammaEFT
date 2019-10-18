@@ -1,5 +1,5 @@
 path="${CMSSW_BASE}/src/TTGammaEFT/plots/plotsLukas/regions"
-cdir="2016/limits/cardFiles/defaultSetup/observed"
+cdir="limits/cardFiles/defaultSetup/observed"
 
 runNotifier.sh "python ${path}/signalRegionPlot.py --cardfile ${1} --carddir ${cdir} --year 2016"
 runNotifier.sh "python ${path}/signalRegionPlot.py --cardfile ${1} --carddir ${cdir} --year 2016 --postFit"
