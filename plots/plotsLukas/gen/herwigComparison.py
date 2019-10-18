@@ -191,7 +191,8 @@ lumi_scale = 136.6
 #comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_TTBar_RunCard_modified], [TTG_TTBar_RunCard], [TTG_TTBar_RunCard_mllOnly] ]
 #comparisonSamples = [ [TTG_ATLAS_RunCard], [TTG_CMS_RunCard], [TTG_NoFullyHad_newCentral_RunCard] ]
 
-comparisonSamples = [ [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_Herwig] ]
+comparisonSamples = [ [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_noLHE_RunCard_Herwig], [TTG_NoFullyHad_noLHE_RunCard_Herwig7] ]
+#comparisonSamples = [ [TTG_NoFullyHad_newCentral_RunCard_comp], [TTG_NoFullyHad_newCentral_RunCard_Herwig], [TTG_NoFullyHad_noLHE_RunCard_Herwig], [TTG_NoFullyHad_noLHE_RunCard_Herwig7] ]
 
 
 if args.normalize:
