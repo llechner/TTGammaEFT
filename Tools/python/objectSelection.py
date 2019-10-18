@@ -252,8 +252,8 @@ def muonSelector( lepton_selection ):
             if not l["mediumId"]:                        return False
             if not "vertex" in removedCuts:
                 if not vertexSelector(l):                return False
-            if not "pfRelIso03_all" in removedCuts:
-                if l['pfRelIso03_all']  > muonRelIsoCut: return False
+            if not "pfRelIso04_all" in removedCuts:
+                if l['pfRelIso04_all']  > muonRelIsoCut: return False
             if not "sip3d" in removedCuts:
                 if l["sip3d"]           > 4:             return False
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoMedium']: return False
@@ -272,8 +272,8 @@ def muonSelector( lepton_selection ):
                 if not ( l["isGlobal"] or l["isTracker"] ):          return False
             if not "vertex" in removedCuts:
                 if not vertexSelector(l):                            return False
-            if not "pfRelIso03_all" in removedCuts:
-                if l['pfRelIso03_all']  > 0.4:                       return False
+            if not "pfRelIso04_all" in removedCuts:
+                if l['pfRelIso04_all']  > 0.4:                       return False
             if not "sip3d" in removedCuts:
                 if l["sip3d"]           > 4:                         return False
 #            if l['pfIsoId']        <  muonPfIsoId['PFIsoVeryLoose']: return False

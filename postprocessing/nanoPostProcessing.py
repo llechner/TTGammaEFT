@@ -991,7 +991,7 @@ def filler( event ):
     tightLeptons.sort( key = lambda l: -l['pt'] )
 
     tightNoIsoElectrons = list( filter( lambda l: recoElectronSel_tight(l, removedCuts=["pfRelIso03_all"]), allElectrons ) )
-    tightNoIsoMuons     = list( filter( lambda l: recoMuonSel_tight(l,     removedCuts=["pfRelIso03_all"]), allMuons ) )
+    tightNoIsoMuons     = list( filter( lambda l: recoMuonSel_tight(l,     removedCuts=["pfRelIso04_all"]), allMuons ) )
     tightNoIsoLeptons   = tightNoIsoElectrons + tightNoIsoMuons
     tightNoIsoLeptons.sort( key = lambda l: -l['pt'] )
 
