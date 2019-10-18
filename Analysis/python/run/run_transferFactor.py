@@ -2,7 +2,7 @@
 
 import sys
 
-from TTGammaEFT.Analysis.regions         import photonBinRegions, regionsTTG
+from TTGammaEFT.Analysis.regions         import photonBinRegions, regionsTTG, noPhotonRegionTTG, inclRegionsTTG
 from TTGammaEFT.Analysis.Setup           import Setup
 from TTGammaEFT.Analysis.EstimatorList   import EstimatorList
 from TTGammaEFT.Analysis.MCBasedEstimate import MCBasedEstimate
@@ -41,7 +41,8 @@ if not args.controlRegion:
 
 parameters       = allRegions[args.controlRegion]["parameters"]
 channels         = allRegions[args.controlRegion]["channels"] 
-regions          = regionsTTG + photonBinRegions
+#regions          = inclRegionsTTG + regionsTTG + photonBinRegions if not allRegions[args.controlRegion]["noPhotonCR"] else noPhotonRegionTTG
+regions          = inclRegionsTTG + regionsTTG if not allRegions[args.controlRegion]["noPhotonCR"] else noPhotonRegionTTG
 setup            = Setup( year=args.year, photonSelection=False, checkOnly=args.checkOnly, runOnLxPlus=args.runOnLxPlus ) #photonselection always false for qcd estimate
 
 estimators = EstimatorList( setup, processes=["QCD-DD"] )
