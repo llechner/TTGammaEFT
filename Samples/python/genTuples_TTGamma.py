@@ -238,6 +238,23 @@ ttGamma_Dilept_noLHE_1Line_Herwig.xSection    = 1.512
 ttGamma_Dilept_noLHE_1Line_Herwig.nEvents     = 100000
 
 
+#noLHE
+ttGamma_NoFullyHad_noLHE_1Line_Herwig7             = FWLiteSample.fromDAS("ttGamma_NoFullyHad_noLHE_1Line_Herwig7", "/ttGamma_1Line_NoFullyHad_noLHE_herwig7_v2/llechner-ttGamma_1Line_NoFullyHad_noLHE_herwig7_v2-c80c20745a948dbf72f366ad0ee0b641/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_NoFullyHad_noLHE_1Line_Herwig7.xSection    = 6.634
+ttGamma_NoFullyHad_noLHE_1Line_Herwig7.nEvents     = 100000
+
+ttGamma_Had_noLHE_1Line_Herwig7             = FWLiteSample.fromDAS("ttGamma_Had_noLHE_1Line_Herwig7", "/ttGamma_1Line_Had_noLHE_herwig7_v2/llechner-ttGamma_1Line_Had_noLHE_herwig7_v2-bb4b6865b1fd542d7d80efc375f508b5/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Had_noLHE_1Line_Herwig7.xSection    = 4.213
+ttGamma_Had_noLHE_1Line_Herwig7.nEvents     = 100000
+
+ttGamma_SemiLept_noLHE_1Line_Herwig7             = FWLiteSample.fromDAS("ttGamma_SemiLept_noLHE_1Line_Herwig7", "/ttGamma_1Line_SemiLept_noLHE_herwig7_v2/llechner-ttGamma_1Line_SemiLept_noLHE_herwig7_v2-2fdcce1e5ac57a9c8a58534f88e90f6f/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_SemiLept_noLHE_1Line_Herwig7.xSection    = 5.125
+ttGamma_SemiLept_noLHE_1Line_Herwig7.nEvents     = 100000
+
+ttGamma_Dilept_noLHE_1Line_Herwig7             = FWLiteSample.fromDAS("ttGamma_Dilept_noLHE_1Line_Herwig7", "/ttGamma_1Line_Dilept_noLHE_herwig7_v2/llechner-ttGamma_1Line_Dilept_noLHE_herwig7_v2-5e9d62dd5f4ef18a2ce456209db108bb/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
+ttGamma_Dilept_noLHE_1Line_Herwig7.xSection    = 1.512
+ttGamma_Dilept_noLHE_1Line_Herwig7.nEvents     = 100000
+
 
 # Sample comparison VGamma
 WGamma_noPtj          = FWLiteSample.fromDAS("WGamma_noPtj", "/WGamma_noPtj_NLO_v1/llechner-WGamma_noPtj_NLO_v1-b5b2816dddfb90dc835a6661ec19164c/USER", "phys03", dbFile=dbFile, overwrite=ov, prefix='root://hephyse.oeaw.ac.at/')
@@ -333,6 +350,10 @@ SM = [
     ttGamma_Had_noLHE_1Line_Herwig,
     ttGamma_SemiLept_noLHE_1Line_Herwig,
     ttGamma_Dilept_noLHE_1Line_Herwig,
+    ttGamma_NoFullyHad_noLHE_1Line_Herwig7,
+    ttGamma_Had_noLHE_1Line_Herwig7,
+    ttGamma_SemiLept_noLHE_1Line_Herwig7,
+    ttGamma_Dilept_noLHE_1Line_Herwig7,
 ]
 
 EFT = [

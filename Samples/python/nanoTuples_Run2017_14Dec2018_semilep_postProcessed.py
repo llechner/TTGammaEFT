@@ -13,7 +13,7 @@ from TTGammaEFT.Tools.user import dpm_directory as data_directory
 data_directory += "postprocessed/"
 from TTGammaEFT.Samples.default_locations import postprocessing_locations
 postprocessing_directory = postprocessing_locations.Run2017_semilep
-if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True": postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/")
+if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True": postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/").replace("v20","v19")
 
 # Redirector
 try:

@@ -63,8 +63,8 @@ dirs['ZZZ']              = ["ZZZ"]
 dirs['ZGToLLG']          = ["ZGToLLG"]
 dirs['ZG_lowMLL']        = ["ZGToLLG_lowMLL"] # no lepton pt cut
 dirs['TG']               = ["TGJets"]
-dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
-#dirs['WJets']            = ["WJetsToLNu"]
+#dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
+dirs['WJets']            = ["WJetsToLNu"]
 dirs['WG']               = ["WGToLNuG"]
 dirs['WG_NLO']           = ["WGToLNuG_amcatnlo_ext1"]
 
