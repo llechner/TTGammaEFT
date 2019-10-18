@@ -3,6 +3,7 @@
 import os
 import ROOT
 import shutil
+import uuid
 
 from TTGammaEFT.Tools.user  import analysis_results, plot_directory, combineReleaseLocation, cache_directory
 
@@ -12,7 +13,7 @@ argParser.add_argument("--logLevel",       action="store", default="INFO",      
 argParser.add_argument("--label",          action="store", default="defaultSetup",  type=str,                               help="Label of results directory" )
 argParser.add_argument("--keepDir",        action="store_true",                                                             help="Keep the directory in the combine release after study is done?")
 argParser.add_argument("--expected",       action="store_true",                                                             help="Use expected results?")
-argParser.add_argument("--carddir",        action="store", default="2016/limits/cardFiles/defaultSetup/observed",              nargs="?",                              help="which cardfile directory?")
+argParser.add_argument("--carddir",        action="store", default="limits/cardFiles/defaultSetup/observed",              nargs="?",                              help="which cardfile directory?")
 argParser.add_argument("--cardfile",       action="store", default="",              nargs="?",                              help="which cardfile?")
 argParser.add_argument("--cores",          action="store", default=1,               type=int,                               help="Run on n cores in parallel")
 argParser.add_argument("--year",           action="store", default=2016,            type=int,                               help="Which year?")
@@ -29,10 +30,10 @@ logger_rt = logger_rt.get_logger(args.logLevel, logFile = None )
 def wrapper( cardDir, cardName ):
     logger.info("Processing mass point %s"%cardName)
     cardFile       = "%s_shapeCard.txt"%cardName
-    baseDir        = os.path.join( cache_directory, str(args.year), "limits" )
+    baseDir        = os.path.join( cache_directory, "analysis", str(args.year), "limits" )
     limitDir       = os.path.join( baseDir, "cardFiles", args.label, "expected" if args.expected else "observed" )
     cardFilePath   = os.path.join( limitDir, cardFile)
-    combineDirname = os.path.join( combineReleaseLocation, cardName )
+    combineDirname = os.path.join( combineReleaseLocation, str(args.year), cardName )
     logger.info("Creating %s"%combineDirname)
     if not os.path.isdir(combineDirname): os.makedirs(combineDirname)
     shutil.copyfile(cardFilePath,combineDirname+"/"+cardFile)
