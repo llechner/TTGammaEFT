@@ -6,14 +6,27 @@ import ROOT
 from RootTools.core.Sample import Sample
 
 # TTGammaEFT Imports
-from TTGammaEFT.Samples.helpers import getDPMSample, merge
+from TTGammaEFT.Samples.helpers import getDataSample, merge
 
 # Data directory
-from TTGammaEFT.Tools.user import dpm_directory as data_directory
-data_directory += "postprocessed/"
-from TTGammaEFT.Samples.default_locations import postprocessing_locations
-postprocessing_directory = postprocessing_locations.Run2018
-if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True": postprocessing_directory = postprocessing_directory.replace("/dilep/", "/dilepGamma/")
+try:
+    data_directory = sys.modules['__main__'].data_directory
+except:
+    from TTGammaEFT.Tools.user import dpm_directory as data_directory
+    data_directory += "postprocessed/"
+try:
+    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
+except:
+    from TTGammaEFT.Samples.default_locations import postprocessing_locations
+    postprocessing_directory = postprocessing_locations.Run2018
+
+try:
+    fromDPM = sys.modules['__main__'].fromEOS != "True"
+except:
+    fromDPM = True
+
+if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True":
+    postprocessing_directory = postprocessing_directory.replace("/dilep/", "/dilepGamma/")
 
 # Redirector
 try:
@@ -52,7 +65,7 @@ for key in dirs:
 
 allSamples_Data25ns  = []
 for pd in allSamples:
-    vars()[ pd + '_Run2018' ] = getDPMSample( pd, 'Run2018', lumi*1000, dirs, redirector )
+    vars()[ pd + '_Run2018' ] = getDataSample( pd, 'Run2018', lumi*1000, dirs, redirector=redirector, fromDPM=fromDPM )
     allSamples_Data25ns += [ vars()[ pd + '_Run2018' ] ]
 
 Run2018      = Sample.combine( "Run2018", allSamples_Data25ns, texName = "Data" )

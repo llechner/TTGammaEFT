@@ -7,13 +7,28 @@ from RootTools.core.Sample import Sample
 
 # Colors
 from TTGammaEFT.Samples.color import color
+from TTGammaEFT.Samples.helpers import getMCSample
 
 # Data directory
-from TTGammaEFT.Tools.user import dpm_directory as data_directory
-data_directory += "postprocessed/"
-from TTGammaEFT.Samples.default_locations import postprocessing_locations
-postprocessing_directory = postprocessing_locations.MC2018_semilep
-if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True": postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/").replace("v20","v19")
+try:
+    data_directory = sys.modules['__main__'].data_directory
+except:
+    from TTGammaEFT.Tools.user import dpm_directory as data_directory
+    data_directory += "postprocessed/"
+try:
+    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
+except:
+    from TTGammaEFT.Samples.default_locations import postprocessing_locations
+    postprocessing_directory = postprocessing_locations.MC2018_semilep
+
+try:
+    fromDPM = sys.modules['__main__'].fromEOS != "True"
+except:
+    fromDPM = True 
+
+if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True":
+    postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/")
+    if fromDPM: postprocessing_directory = postprocessing_directory.replace("v20","v19")
 
 # Redirector
 try:
@@ -104,32 +119,32 @@ dirs["rest"]             = dirs["singleTop"] + dirs["TG"] + dirs["other"]
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
-DY_LO_18            = Sample.fromDPMDirectory(name="DY_LO",            treeName="Events", redirector=redirector, isData=False, color=color.DY,              texName="DY (LO)",           directory=directories["DY_LO"], noCheckProxy=False)
-TT_pow_18           = Sample.fromDPMDirectory(name="TT_pow",           treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="t#bar{t}",          directory=directories["TT_pow"], noCheckProxy=True)
-singleTop_18        = Sample.fromDPMDirectory(name="singleTop",        treeName="Events", redirector=redirector, isData=False, color=color.T,               texName="single-t",          directory=directories["singleTop"], noCheckProxy=True)
-#TTG_18              = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG"], noCheckProxy=True)
-#TTGSemiLep_18       = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGSemiLep"], noCheckProxy=True)
-TTG_priv_18         = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_priv"], noCheckProxy=True)
+DY_LO_18            = getMCSample(name="DY_LO",            redirector=redirector, color=color.DY,              texName="DY (LO)",           directory=directories["DY_LO"], noCheckProxy=False, fromDPM=fromDPM)
+TT_pow_18           = getMCSample(name="TT_pow",           redirector=redirector, color=color.TT,              texName="t#bar{t}",          directory=directories["TT_pow"], noCheckProxy=True, fromDPM=fromDPM)
+singleTop_18        = getMCSample(name="singleTop",        redirector=redirector, color=color.T,               texName="single-t",          directory=directories["singleTop"], noCheckProxy=True, fromDPM=fromDPM)
+#TTG_18              = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG"], noCheckProxy=True, fromDPM=fromDPM)
+#TTGSemiLep_18       = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGSemiLep"], noCheckProxy=True, fromDPM=fromDPM)
+TTG_priv_18         = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_priv"], noCheckProxy=True, fromDPM=fromDPM)
 
-#TTG_NoFullyHad_priv_18 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True)
+#TTG_NoFullyHad_priv_18 = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True, fromDPM=fromDPM)
 
-WJets_18            = Sample.fromDPMDirectory(name="WJets",            treeName="Events", redirector=redirector, isData=False, color=color.W,               texName="W+jets",            directory=directories["WJets"], noCheckProxy=True)
-ZG_18               = Sample.fromDPMDirectory(name="ZG",               treeName="Events", redirector=redirector, isData=False, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZG_lowMLL"], noCheckProxy=True)
-TG_18               = Sample.fromDPMDirectory(name="TG",               treeName="Events", redirector=redirector, isData=False, color=color.TGamma,          texName="t#gamma",           directory=directories["TG"], noCheckProxy=True)
-WG_18               = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories["WG"], noCheckProxy=True)
-WG_NLO_18           = Sample.fromDPMDirectory(name="WG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="W#gamma",           directory=directories["WG_NLO"], noCheckProxy=True)
-other_18            = Sample.fromDPMDirectory(name="other",            treeName="Events", redirector=redirector, isData=False, color=color.Other,           texName="other",             directory=directories["other"], noCheckProxy=True)
-QCD_18             = Sample.fromDPMDirectory(name="QCD",              treeName="Events", redirector=redirector, isData=False, color=color.QCD,             texName="multijets",         directory=directories["QCD"], noCheckProxy=True)
-GJets_18           = Sample.fromDPMDirectory(name="GJets",            treeName="Events", redirector=redirector, isData=False, color=color.GJets,           texName="#gamma+jets",       directory=directories["GJets"], noCheckProxy=True)
+WJets_18            = getMCSample(name="WJets",            redirector=redirector, color=color.W,               texName="W+jets",            directory=directories["WJets"], noCheckProxy=True, fromDPM=fromDPM)
+ZG_18               = getMCSample(name="ZG",               redirector=redirector, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZG_lowMLL"], noCheckProxy=True, fromDPM=fromDPM)
+TG_18               = getMCSample(name="TG",               redirector=redirector, color=color.TGamma,          texName="t#gamma",           directory=directories["TG"], noCheckProxy=True, fromDPM=fromDPM)
+WG_18               = getMCSample(name="WG",               redirector=redirector, color=color.WGamma,          texName="W#gamma",           directory=directories["WG"], noCheckProxy=True, fromDPM=fromDPM)
+WG_NLO_18           = getMCSample(name="WG",               redirector=redirector, color=color.WGamma,          texName="W#gamma",           directory=directories["WG_NLO"], noCheckProxy=True, fromDPM=fromDPM)
+other_18            = getMCSample(name="other",            redirector=redirector, color=color.Other,           texName="other",             directory=directories["other"], noCheckProxy=True, fromDPM=fromDPM)
+QCD_18             = getMCSample(name="QCD",              redirector=redirector, color=color.QCD,             texName="multijets",         directory=directories["QCD"], noCheckProxy=True, fromDPM=fromDPM)
+GJets_18           = getMCSample(name="GJets",            redirector=redirector, color=color.GJets,           texName="#gamma+jets",       directory=directories["GJets"], noCheckProxy=True, fromDPM=fromDPM)
 
-VG_18              = Sample.fromDPMDirectory(name="VG",               treeName="Events", redirector=redirector, isData=False, color=color.WGamma,          texName="V+#gamma",          directory=directories["VG"], noCheckProxy=True)
-rest_18            = Sample.fromDPMDirectory(name="other",             treeName="Events", redirector=redirector, isData=False, color=color.Other,          texName="other",             directory=directories["rest"], noCheckProxy=True)
+VG_18              = getMCSample(name="VG",               redirector=redirector, color=color.WGamma,          texName="V+#gamma",          directory=directories["VG"], noCheckProxy=True, fromDPM=fromDPM)
+rest_18            = getMCSample(name="other",             redirector=redirector, color=color.Other,          texName="other",             directory=directories["rest"], noCheckProxy=True, fromDPM=fromDPM)
 
-all_18              = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories["all"], noCheckProxy=True)
-all_noOther_18      = Sample.fromDPMDirectory(name="all_noOther",      treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all_noOther",       directory=directories["all_noOther"], noCheckProxy=True)
-all_noQCD_18        = Sample.fromDPMDirectory(name="all",              treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all",               directory=directories["all_noQCD"], noCheckProxy=True)
-all_noTT_18         = Sample.fromDPMDirectory(name="all_noTT",         treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all_noTT",          directory=directories["all_noTT"], noCheckProxy=True)
-all_noOther_noTT_18 = Sample.fromDPMDirectory(name="all_noOther_noTT", treeName="Events", redirector=redirector, isData=False, color=color.TT,              texName="all_noOther_noTT",  directory=directories["all_noOther_noTT"], noCheckProxy=True)
+all_18              = getMCSample(name="all",              redirector=redirector, color=color.TT,              texName="all",               directory=directories["all"], noCheckProxy=True, fromDPM=fromDPM)
+all_noOther_18      = getMCSample(name="all_noOther",      redirector=redirector, color=color.TT,              texName="all_noOther",       directory=directories["all_noOther"], noCheckProxy=True, fromDPM=fromDPM)
+all_noQCD_18        = getMCSample(name="all",              redirector=redirector, color=color.TT,              texName="all",               directory=directories["all_noQCD"], noCheckProxy=True, fromDPM=fromDPM)
+all_noTT_18         = getMCSample(name="all_noTT",         redirector=redirector, color=color.TT,              texName="all_noTT",          directory=directories["all_noTT"], noCheckProxy=True, fromDPM=fromDPM)
+all_noOther_noTT_18 = getMCSample(name="all_noOther_noTT", redirector=redirector, color=color.TT,              texName="all_noOther_noTT",  directory=directories["all_noOther_noTT"], noCheckProxy=True, fromDPM=fromDPM)
 
 signals = []
 
@@ -178,7 +193,7 @@ if __name__ == "__main__":
     files = []
     for path in pathes:
         try:
-            sample = Sample.fromDPMDirectory(name="sample", treeName="Events", redirector=redirector, directory=path)
+            sample = getMCSample(name="sample", redirector=redirector, directory=path)
             files += sample.files
             del sample
         except:

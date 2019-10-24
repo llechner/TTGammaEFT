@@ -6,7 +6,7 @@ import ROOT
 from RootTools.core.Sample import Sample 
 
 # TTGammaEFT Imports
-from TTGammaEFT.Samples.helpers import getDPMSample, getSample, merge
+from TTGammaEFT.Samples.helpers import getDataSample, merge
 
 # Data directory
 data_directory                      = "/afs/hephy.at/data/llechner01/TTGammaEFT/nanoTuples/"
@@ -49,8 +49,7 @@ for key in dirs:
 
 allSamples_Data25ns  = []
 for pd in allSamples:
-    vars()[ pd + '_Run2017' ] = getSample( pd, 'Run2017', lumi*1000, dirs )
-#    vars()[ pd + '_Run2017' ] = getDPMSample( pd, 'Run2017', lumi*1000, dirs )
+    vars()[ pd + '_Run2017' ] = getDataSample( pd, 'Run2017', lumi*1000, dirs, fromDPM=False )
     allSamples_Data25ns += [ vars()[ pd + '_Run2017' ] ]
 
 Run2017      = Sample.combine( "Run2017", allSamples_Data25ns, texName = "Data" )
