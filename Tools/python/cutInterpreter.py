@@ -101,8 +101,8 @@ special_cuts = {
 
     "n12Jet":               "nJetGood==1||nJetGood==2",
 
-    "lowSieie":          "PhotonNoSieie0_sieie<%f"%lowSieieThresh,
-    "highSieie":         "PhotonNoSieie0_sieie>=%f"%highSieieThresh,
+    "lowSieie":          "PhotonNoChgIsoNoSieie0_sieie<%f"%lowSieieThresh,
+    "highSieie":         "PhotonNoChgIsoNoSieie0_sieie>=%f"%highSieieThresh,
     "lowChgIso":         "(PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt)<%f"%chgIsoThresh,
     "highChgIso":        "(PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt)>=%f"%chgIsoThresh,
 

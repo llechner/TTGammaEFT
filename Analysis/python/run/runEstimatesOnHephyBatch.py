@@ -5,14 +5,15 @@ from TTGammaEFT.Analysis.SetupHelpers import *
 from TTGammaEFT.Analysis.regions      import regionsTTG, inclRegionsTTG, noPhotonRegionTTG
 
 allPhotonRegions = regionsTTG
-year = "2016"
+year = "2017"
 
 # Here, all the estimators are defined, if empty: CR specific estimators are used
 #estimators  = default_sampleList
 #estimators = ["WJets"]
 #estimators = ["QCD-DD"]
-estimators = ["Data"]
-#estimators = []
+#estimators = ["DY_LO"]
+#estimators = ["Data"]
+estimators = []
 
 #submitCMD = "submitBatch.py --dpm "
 submitCMD = "echo "
@@ -21,34 +22,38 @@ submitCMD = "echo "
 option  = ""
 #option += " --noSystematics"
 option += " --year " + year
-#option += " --overwrite"
+option += " --overwrite"
 #option += " --checkOnly"
 #option += " --createExecFile"
 
 #regions  = signalRegions
-#regions  = controlRegions
-#crs       = allRegions
-#crs       = {"WJets3":allRegions["WJets3"], "WJets4p":allRegions["WJets4p"]}
-crs       = {"VG3":allRegions["VG3"]}
-#crs       = {"SR3lowIso":allRegions["SR3lowIso"], "SR3highIso":allRegions["SR3highIso"], "SR4plowIso":allRegions["SR4plowIso"], "SR4phighIso":allRegions["SR4phighIso"]}
+#crs  = controlRegions
+crs       = allRegions
+#crs       = {"DY3":allRegions["DY3"], "DY4p":allRegions["DY4p"]}
+#crs       = {"VG3":allRegions["VG3"], "VG4p":allRegions["VG4p"], "misDY3":allRegions["misDY3"], "misDY4p":allRegions["misDY4p"], "DY3":allRegions["DY3"], "DY4p":allRegions["DY4p"]}
+#crs       = {"SR4pIso":allRegions["SR4pIso"], "SR4pM3":allRegions["SR4pM3"], "VG3":allRegions["VG3"], "misDY3":allRegions["misDY3"], "VG5":allRegions["VG5"], "VG2":allRegions["VG2"], "VG4":allRegions["VG4"]}
+#
+#crs       = {"SR4pIso":allRegions["SR4pIso"], "SR4pM3":allRegions["SR4pM3"], "SR3Iso":allRegions["SR3Iso"], "SR3M3":allRegions["SR3M3"]}
 #crs       = {"SR4poffM3":allRegions["SR4poffM3"]}
 #crs.update({"SR4ponM3":allRegions["SR4ponM3"], "SR4poffM3":allRegions["SR4poffM3"], "SR4plowIso":allRegions["SR4plowIso"], "SR4phighIso":allRegions["SR4phighIso"]})
 
-if "--dryrun" in option or "--createExecFile" in option: submitCMD = ""
+#if "--dryrun" in option or "--createExecFile" in option: submitCMD = ""
 
 for name, cr in crs.items():
 
-    if cr["noPhotonCR"]: continue
+#    if not cr["noPhotonCR"]: continue
+#    if not "fake" in name and not "M3" in name: continue
 
     est = copy.copy(estimators)
     if not est and not "processes" in cr: est = default_sampleList
-    elif not est:                         est = [ e for eList in cr["processes"].values() for e in eList["process"] ]
+    elif not est:                         est = [ e for eList in cr["processes"].values() for e in eList["process"] ] + ["Data"]
 
     for estimator in est:
         opt = option if not "DD" in estimator else option + " --noSystematics"
         title = " --title est%s_%s"%(year[2:], estimator) if submitCMD.count("submit") else ""
-        if "DD" in estimator: continue # safe time for qcd estimate
-#        if not "DD" in estimator and control: continue # qcd estimate only
+#        if "DD" in estimator: continue # safe time for qcd estimate
+#        if not "WJets" in estimator: continue # safe time for qcd estimate
+        if not "DD" in estimator: continue # qcd estimate only
 #        if not cr["noPhotonCR"]: continue
 #        if not "TTG" in estimator: continue
 
@@ -57,5 +62,5 @@ for name, cr in crs.items():
         for j, region in enumerate( photonRegions ):
             if submitCMD.count("submit") or submitCMD.count("echo"):
                 os.system( submitCMD + title + ' "python run_estimate.py --cores 1 --selectRegion %i --controlRegion %s --selectEstimator '%(j,name) + estimator + opt + '"' )
-            else:
-                os.system( "python run_estimate.py --cores 1 --selectRegion %i --selectEstimator "%j + estimator + controlString + opt )
+                if submitCMD.count("submit"):
+                    time.sleep(12)

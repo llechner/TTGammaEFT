@@ -15,6 +15,7 @@ if os.environ["USER"] in ["schoef", "rschoefbeck", "schoefbeck"]:
 
     mva_directory                       = "/afs/hephy.at/data/llechner01/TTGammaEFT/mva/"
     dpm_directory                       = "/dpm/oeaw.ac.at/home/cms/store/user/llechner/"
+    eos_directory                       = "/eos/cms/store/group/phys_susy/hephy/"
 
 if os.environ["USER"] in ["llechner"]:
     tmp_directory                       = "/afs/hephy.at/data/llechner01/Top_tmp/"
@@ -33,3 +34,4 @@ if os.environ["USER"] in ["llechner"]:
     cardfileLocation                    = "/afs/hephy.at/data/llechner01/TTGammaEFT/results/cardfiles/"
 
     dpm_directory                       = "/dpm/oeaw.ac.at/home/cms/store/user/llechner/"
+    eos_directory                       = "/eos/cms/store/group/phys_susy/hephy/"

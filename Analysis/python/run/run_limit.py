@@ -41,6 +41,8 @@ argParser.add_argument( "--year",               action="store",      default=201
 argParser.add_argument( "--runOnLxPlus",        action="store_true",                                                        help="Change the global redirector of samples")
 argParser.add_argument( "--misIDPOI",           action="store_true",                                                        help="Change POI to misID SF")
 argParser.add_argument( "--checkOnly",          action="store_true",                                                        help="Check the SF only")
+argParser.add_argument( "--bkgOnly",            action="store_true",                                                        help="background only")
+argParser.add_argument( "--unblind",            action="store_true",                                                        help="unblind 2017/2018")
 args=argParser.parse_args()
 
 # Logging
@@ -89,13 +91,14 @@ for key, val in allRegions.items():
         locals()["setup"+key] = None
         continue
 
-    locals()["setup"+key]            = default_setup.sysClone( parameters=val["parameters"] ) if val["noPhotonCR"] else default_photon_setup.sysClone( parameters=val["parameters"] )
-    estimators                       = EstimatorList( locals()["setup"+key] )
-    locals()["setup"+key].channels   = val["channels"] #default_setup.channels
-    locals()["setup"+key].noPhotonCR = val["noPhotonCR"]
-    locals()["setup"+key].regions    = val["inclRegion" if args.inclRegion else "regions"]
-    locals()["setup"+key].data       = default_setup.data if val["noPhotonCR"] else default_photon_setup.data
-    locals()["setup"+key].processes  = estimators.constructProcessDict( processDict=val["processes"] ) if "processes" in val else default_setup.processes if val["noPhotonCR"] else default_photon_setup.processes
+    locals()["setup"+key]              = default_setup.sysClone( parameters=val["parameters"] ) if val["noPhotonCR"] else default_photon_setup.sysClone( parameters=val["parameters"] )
+    estimators                         = EstimatorList( locals()["setup"+key] )
+    locals()["setup"+key].channels     = val["channels"] #default_setup.channels
+    locals()["setup"+key].noPhotonCR   = val["noPhotonCR"]
+    locals()["setup"+key].signalregion = "SR" in key and not "Iso" in key
+    locals()["setup"+key].regions      = val["inclRegion" if args.inclRegion else "regions"]
+    locals()["setup"+key].data         = default_setup.data if val["noPhotonCR"] else default_photon_setup.data
+    locals()["setup"+key].processes    = estimators.constructProcessDict( processDict=val["processes"] ) if "processes" in val else default_setup.processes if val["noPhotonCR"] else default_photon_setup.processes
     locals()["setup"+key].processes["Data"] = locals()["setup"+key].data
     
 #    locals()["setup"+key].processes["Data"] = locals()["setup"+key].data
@@ -115,7 +118,7 @@ if args.addMisIDSF: regionNames.append("addMisIDSF")
 if args.inclRegion: regionNames.append("incl")
 if args.misIDPOI:   regionNames.append("misIDPOI")
 
-baseDir       = os.path.join( cache_directory, str(args.year), "limits" )
+baseDir       = os.path.join( cache_directory, "analysis",  str(args.year), "limits" )
 limitDir      = os.path.join( baseDir, "cardFiles", args.label, "expected" if args.expected else "observed" )
 if not os.path.exists( limitDir ): os.makedirs( limitDir )
 
@@ -180,20 +183,26 @@ def wrapper():
         c.addUncertainty( "eVetoSF",       shapeString)
         c.addUncertainty( "prefireSF",     shapeString)
         # theory (PDF, scale, ISR)
-        c.addUncertainty( "scale",      shapeString)
-        c.addUncertainty( "PDF",        shapeString)
-        c.addUncertainty( "ISR",        shapeString)
+#        c.addUncertainty( "scale",      shapeString)
+#        c.addUncertainty( "PDF",        shapeString)
+#        c.addUncertainty( "ISR",        shapeString)
         # only in SRs
         # all regions, lnN
 #        c.addUncertainty( "QCD_p0",     shapeString )
 #        c.addUncertainty( "QCD_p1",     shapeString )
         c.addUncertainty( "QCD",        shapeString )
-        c.addUncertainty( "QCD_TF",     shapeString )
-        c.addUncertainty( "TT",         shapeString )
+        if not args.inclRegion: c.addUncertainty( "QCD_TF",     shapeString )
+#        c.addUncertainty( "misID_pt",   shapeString )
+
+        if any( ["TT" in name for name in args.useRegions] ):
+            c.addUncertainty( "TT",         shapeString )
+            c.addUncertainty( "hadFakes",   shapeString )
+
         c.addUncertainty( "VG",         shapeString )
         c.addUncertainty( "other",      shapeString )
-        c.addUncertainty( "WJets",      shapeString )
-        c.addUncertainty( "hadFakes",   shapeString )
+
+        if any( ["WJet" in name for name in args.useRegions] ):
+            c.addUncertainty( "WJets",      shapeString )
 
         if not args.addDYSF:
             c.addUncertainty( "DY",     shapeString )
@@ -208,7 +217,17 @@ def wrapper():
                 for e in pList:
                     e.initCache( setup.defaultCacheDir() )
 
+            if not setup.noPhotonCR:
+                pt_Norm = float( sum( [1./r.vals.values()[0][0] if r.vals.values()[0][0] else 0. for r in setup.regions] ) )
             for r in setup.regions:
+                if not setup.noPhotonCR:
+                    # average photon pt in region for misID pt dependence scaling (misID from tracker). scale with 1/pt
+                    # for simplicity take only lower value
+                    av_pt = 1. / (pt_Norm * r.vals.values()[0][0]) if pt_Norm and r.vals.values()[0][0] else 0.
+                else:
+                    av_pt = 0
+
+                print av_pt
                 for channel in setup.channels:
                     niceName      = " ".join( [ channel, str(r), setup.addon ] )
                     binname       = "Bin%i"%counter
@@ -234,11 +253,11 @@ def wrapper():
                         for e in pList:
                             exp_yield = e.cachedEstimate( r, channel, setup )
                             if e.name.count( "DY" ) and args.addDYSF:
-                                exp_yield *= default_DYSF
-                                logger.info( "Scaling DY background %s by %f"%(e.name,default_DYSF) )
+                                exp_yield *= DYSF_val[args.year]
+                                logger.info( "Scaling DY background %s by %f"%(e.name,DYSF_val[args.year]) )
                             if e.name.count( "misID" ) and args.addMisIDSF:
-                                exp_yield *= default_misIDSF
-                                logger.info( "Scaling misID background %s by %f"%(e.name,default_misIDSF) )
+                                exp_yield *= misIDSF_val[args.year]
+                                logger.info( "Scaling misID background %s by %f"%(e.name,misIDSF_val[args.year]) )
                             e.expYield = exp_yield
                             expected  += exp_yield
 
@@ -250,33 +269,35 @@ def wrapper():
                         else:
                             c.specifyExpectation( binname, pName, expected.val )
 
-                        if not signal: total_exp_bkg += expected.val
+#                        if not signal: total_exp_bkg += expected.val
+                        total_exp_bkg += expected.val
                         if signal and expected.val <= 0.01: mute = True
 
                         default_DY_unc       = 0.2
-                        default_TT_unc       = 0.1
-                        default_VG_unc       = 0.2
+                        default_TT_unc       = 0.2
+                        default_VG_unc       = 0.35
                         default_Other_unc    = 0.35
-                        default_WJets_unc    = 0.35
+                        default_WJets_unc    = 0.7
                         default_QCD_unc      = 0.5 # 50%
 #                        default_misID_unc    = 4.0
                         default_HadFakes_unc = 0.3
+                        default_misIDPt_unc = 1.0
 
                         tf, pu, jec, jer, sfb, sfl, trigger, lepSF, lepTrSF, phSF, eVetoSF, pfSF = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 #                        scale, pdf, isr = 0, 0, 0
-                        dyUnc, ttUnc, vgUnc, wjetsUnc, otherUnc, qcdUnc, misIDUnc, hadFakesUnc = 0, 0, 0, 0, 0, 0, 0, 0
+                        dyUnc, ttUnc, vgUnc, wjetsUnc, otherUnc, qcdUnc, misIDUnc, hadFakesUnc, misIDPtUnc = 0, 0, 0, 0, 0, 0, 0, 0, 0
                         if expected.val:
                             for e in pList:
                                 y_scale   = e.expYield.val / expected.val
 
                                 if e.name.count( "QCD" ):
                                     qcdUnc   += y_scale * default_QCD_unc
-                                    tf       += y_scale * e.TransferFactorStatistic( r, channel, setup ).val
+                                    if not args.inclRegion: tf       += y_scale * e.TransferFactorStatistic( r, channel, setup ).val
                                     continue # no systematics for data-driven QCD
 
                                 if e.name.count( "DY" ) and not args.addDYSF:
                                     dyUnc    += y_scale * default_DY_unc
-                                if e.name.count( "TT_pow" ):
+                                if e.name.count( "TT_pow" ) and not e.name.count( "misID" ):
                                     ttUnc    += y_scale * default_TT_unc
                                 if e.name.count( "ZG" ) or e.name.count("WG"):
                                     vgUnc    += y_scale * default_VG_unc
@@ -286,6 +307,8 @@ def wrapper():
                                     otherUnc += y_scale * default_Other_unc
                                 if e.name.count( "_had" ):
                                     hadFakesUnc += y_scale * default_HadFakes_unc
+                                if e.name.count( "misID" ) or (args.misIDPOI and signal):
+                                    misIDPtUnc += y_scale * default_misIDPt_unc * av_pt
 
                                 pu       += y_scale * e.PUSystematic(                   r, channel, setup).val
                                 jec      += y_scale * e.JECSystematic(                  r, channel, setup).val
@@ -317,7 +340,7 @@ def wrapper():
                                 if pName.count( "other" ):
                                     otherUnc    += default_Other_unc
                                 if pName.count( "_had" ):
-                                    hadFakesUnc += default_HadFakes_unc
+                                    hadFakesUnc += default_HadFakes_unc * av_pt
 
                         def addUnc( c, name, binname, pName, unc, unc_yield, signal ):
                             if args.misIDPOI and signal:
@@ -366,23 +389,26 @@ def wrapper():
                         if qcdUnc:
                             addUnc( c, "QCD", binname, pName, qcdUnc, expected.val, signal )
 #                            c.specifyUncertainty( "QCD_p0",   binname, pName, 1 + qcdUnc )
-                        if tf:
+                        if tf and not args.inclRegion:
                             addUnc( c, "QCD_TF", binname, pName, tf, expected.val, signal )
 #                            c.specifyUncertainty( "QCD_p0",   binname, pName, 1 + qcdUnc )
-                        if ttUnc:
+                        if ttUnc and any( ["TT" in name for name in args.useRegions] ):
                             addUnc( c, "TT", binname, pName, ttUnc, expected.val, signal )
 #                            c.specifyUncertainty( "TT",       binname, pName, 1 + ttUnc )
                         if vgUnc:
                             addUnc( c, "VG", binname, pName, vgUnc, expected.val, signal )
 #                            c.specifyUncertainty( "VG",       binname, pName, 1 + vgUnc )
-                        if wjetsUnc:
+                        if wjetsUnc and any( ["WJets" in name for name in args.useRegions] ):
                             addUnc( c, "WJets", binname, pName, wjetsUnc, expected.val, signal )
 #                            c.specifyUncertainty( "WJets",    binname, pName, 1 + wjetsUnc )
                         if otherUnc:
                             addUnc( c, "other", binname, pName, otherUnc, expected.val, signal )
 #                            c.specifyUncertainty( "other",    binname, pName, 1 + otherUnc )
-                        if hadFakesUnc:
+                        if hadFakesUnc and any( ["TT" in name for name in args.useRegions] ):
                             addUnc( c, "hadFakes", binname, pName, hadFakesUnc, expected.val, signal )
+#                            c.specifyUncertainty( "hadFakes", binname, pName, 1 + hadFakesUnc )
+#                        if misIDPtUnc:
+#                            addUnc( c, "misID_pt", binname, pName, misIDPtUnc, expected.val, signal )
 #                            c.specifyUncertainty( "hadFakes", binname, pName, 1 + hadFakesUnc )
 
                         # MC bkg stat (some condition to neglect the smaller ones?)
@@ -400,7 +426,7 @@ def wrapper():
                             for key, val in sigUnc.items():
                                 c.specifyUncertainty( key, binname, "signal", 1 + val.sigma/sigExp.val )
 
-                    if args.expected:
+                    if args.expected or (args.year in [2017,2018] and not args.unblind and setup.signalregion):
                         c.specifyObservation( binname, int( round( total_exp_bkg, 0 ) ) )
                         logger.info( "Expected observation: %s", int( round( total_exp_bkg, 0 ) ) )
                     else:
@@ -429,7 +455,7 @@ def wrapper():
         cardFileName      = cardFileNameTxt if args.useTxt else cardFileNameShape
     
     sConfig = "_".join(regionNames)
-
+    res = None
     if args.significanceScan:
         if useCache and not args.overwrite and signifCache.contains( sConfig ):
             res = signifCache.get( sConfig )
@@ -441,10 +467,12 @@ def wrapper():
         if useCache and not args.overwrite and limitCache.contains( sConfig ):
             res = limitCache.get( sConfig )
         else:
+#            if not args.bkgOnly:
             res = c.calcLimit( cardFileName )
             if not args.skipFitDiagnostics:
-                c.calcNuisances( cardFileName )
-            limitCache.add( sConfig, res, overwrite=True )
+                c.calcNuisances( cardFileName, bonly=args.bkgOnly )
+            if not args.bkgOnly:
+                limitCache.add( sConfig, res, overwrite=True )
 
     ###################
     # extract the SFs #
@@ -467,6 +495,9 @@ def wrapper():
 
         if not os.path.isdir("logs"): os.mkdir("logs")
         write_time  = time.strftime("%Y %m %d %H:%M:%S", time.localtime())
+
+        with open("logs/cardFiles.dat", "a") as f:
+            f.write( cardFileNameTxt + "\n" )
 
         with open("logs/scaleFactors.dat", "a") as f:
             f.write( "\n\n" + cardFileNameTxt + ", Fit Status: %i\n"%postFit["fit_status"] )

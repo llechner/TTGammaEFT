@@ -57,7 +57,9 @@ logger_rt = logger_rt.get_logger(args.logLevel, logFile = None)
 # Samples
 #from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import ZG_16
 #from Samples.nanoAOD.Summer16_private_legacy_v1 import ZGToLLG as ZG_16
-from Samples.nanoAOD.Summer16_private_legacy_v1 import ZGTo2LG_ext as ZG_16
+#from Samples.nanoAOD.Summer16_private_legacy_v1 import ZGTo2LG_ext as ZG_16
+#from Samples.nanoAOD.Summer16_private_legacy_v1 import ZGToLLG_lowMLL as ZG_16
+from Samples.nanoAOD.Fall17_private_legacy_v1 import ZGToLLG_lowMLL as ZG_16
 
 def drawObjects( lumi_scale ):
     tex = ROOT.TLatex()
@@ -156,6 +158,6 @@ allplots.append( Plot2D(
     read_variables = read_variables,
 ))
 
-plotting.fill( allplots, read_variables=read_variables, sequence=sequence, max_events=150000 )
+plotting.fill( allplots, read_variables=read_variables, sequence=sequence, max_events=200000 )
 
 drawPlots( allplots )

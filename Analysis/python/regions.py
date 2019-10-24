@@ -51,14 +51,29 @@ regionsTTGfake     = getRegionsFromThresholds( "PhotonNoChgIsoNoSieie0_pt", pTG_
 inclRegionsTTGfake = [Region( "PhotonNoChgIsoNoSieie0_pt", (20,-999) )]
 noPhotonRegionTTG  = [Region( "nPhotonGood", (0,1) )]
 
+m3_thresh = [0, 140, 210, 280, 350, -999]
+#m3_thresh = [0, 70, 140, 210, 280, -999]
+m3Regions   = getRegionsFromThresholds( "m3", m3_thresh )
+m3PtRegions = getRegions2D( "PhotonGood0_pt", pTG_thresh, "m3", m3_thresh )
+
+chgIso_thresh = [0, 1.141, 4, 9, 16, -999]
+chgIsoRegions   = getRegionsFromThresholds( "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
+chgIsoPtRegions = getRegions2D( "PhotonNoChgIsoNoSieie0_pt", pTG_thresh, "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
+
+chgIso_thresh = [1.141, 4, 9, 16, -999]
+chgIsoNoSRRegions   = getRegionsFromThresholds( "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
+chgIsoNoSRPtRegions = getRegions2D( "PhotonNoChgIsoNoSieie0_pt", pTG_thresh, "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
+
 pTG_thresh         = [ 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 150, 180, 210, -999 ]
 photonBinRegions   = getRegionsFromThresholds( "PhotonGood0_pt", pTG_thresh )
 
 if __name__ == "__main__":
-    print inclRegionsTTG[0].cutString()
+#    print inclRegionsTTG[0].cutString()
 
-    for region in noPhotonRegionTTG+inclRegionsTTG+regionsTTG:
+    for region in m3PtRegions:
+        print str(region)
+        print region.cutString()
         print type(region.vals)
         for val0, val1 in region.vals.values():
-            print val0
+            print val0, val1
         print val1

@@ -47,8 +47,11 @@ class Setup:
             "photonIso":    default_photonIso,
         }
 
+        self.isPhotonSelection = default_nPhoton[0] != 0
+
 #        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
         self.sys = {"weight":"weight", "reweight":["reweightHEM", "reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
+#        self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
 
         if runOnLxPlus:
             # Set the redirector in the samples repository to the global redirector
@@ -108,7 +111,7 @@ class Setup:
             self.processes.update( { sample+"_gen":   None for sample in default_sampleList } )
             self.processes.update( { sample+"_misID": None for sample in default_sampleList } )
             self.processes.update( { sample+"_had":   None for sample in default_sampleList } )
-            self.processes["Data"] = None
+            self.processes["Data"] = "Run%i"%self.year
 
             if year == 2016:
                 self.lumi     = 35.92*1000
@@ -173,6 +176,7 @@ class Setup:
             for k in parameters.keys():
                 res.parameters[k] = parameters[k]
 
+        res.isPhotonSelection = res.parameters["nPhoton"][0] != 0
         return res
 
     def defaultParameters(self, update={} ):
@@ -182,10 +186,10 @@ class Setup:
         return res
 
     def weightString(self, dataMC, photon="PhotonGood0", addMisIDSF=False):
-        if   dataMC == "Data": _weightString = "weight"
+        if   dataMC == "Data": _weightString = "weight*reweightHEM"
         elif dataMC == "MC":
             _weightString = "*".join([self.sys["weight"]] + (self.sys["reweight"] if self.sys["reweight"] else []))
-            if addMisIDSF: _weightString += "+%s*(%s0_photonCat==2)*(%f-1)" %(_weightString, photon, default_misIDSF)
+            if addMisIDSF: _weightString += "+%s*(%s0_photonCat==2)*(%f-1)" %(_weightString, photon, misIDSF_val[self.year])
         logger.debug("Using weight-string: %s", _weightString)
         return _weightString
 
@@ -223,7 +227,7 @@ class Setup:
         assert channel in allChannels, "channel must be one of "+",".join(allChannels)+". Got %r."%channel
         assert zWindow in ["offZeg", "onZeg", "onZSFllTight", "all"], "zWindow must be one of onZeg, offZeg, onZSFllTight, all. Got %r"%zWindow
         assert m3Window in ["offM3", "onM3", "all"], "m3Window must be one of onM3, offM3, all. Got %r"%m3Window
-        assert photonIso in ["lowSieie", "highSieie", "lowChgIso", "highChgIso", "lowChgIsolowSieie", "highChgIsolowSieie", "lowChgIsohighSieie", "highChgIsohighSieie"], "PhotonIso must be one of lowSieie, highSieie, lowChgIso, highChgIso, lowChgIsolowSieie, highChgIsolowSieie, lowChgIsohighSieie, highChgIsohighSieie. Got %r"%photonIso
+        assert photonIso in [None, "lowSieie", "highSieie", "lowChgIso", "highChgIso", "lowChgIsolowSieie", "highChgIsolowSieie", "lowChgIsohighSieie", "highChgIsohighSieie"], "PhotonIso must be one of lowSieie, highSieie, lowChgIso, highChgIso, lowChgIsolowSieie, highChgIsolowSieie, lowChgIsohighSieie, highChgIsohighSieie. Got %r"%photonIso
         if self.sys['selectionModifier']:
             assert self.sys['selectionModifier'] in jmeVariations, "Don't know about systematic variation %r, take one of %s"%(self.sys['selectionModifier'], ",".join(jmeVariations))
 
@@ -278,10 +282,12 @@ class Setup:
 
         if nBTag and not (nBTag[0]==0 and nBTag[1]<0):
             assert nBTag[0]>=0 and (nBTag[1]>=nBTag[0] or nBTag[1]<0), "Not a good nBTag selection: %r"% nBTag
-            nbtstr = "nBTagGood"+sysStr+">="+str(nBTag[0])
+            if sysStr: nbtstr = "nBTagGood"+sysStr+">="+str(nBTag[0])
+            else:      nbtstr = "nBTagGood"+sysStr+">="+str(nBTag[0])
             prefix = "nBTag"+str(nBTag[0])
             if nBTag[1]>=0:
-                nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])
+                if sysStr: nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])
+                else:      nbtstr+= "&&nBTagGood"+sysStr+"<="+str(nBTag[1])
                 if nBTag[1]!=nBTag[0]: prefix+=str(nBTag[1])
             else:
                 prefix+="p"
@@ -289,7 +295,7 @@ class Setup:
             res["prefixes"].append(prefix)
 
         #photonIso of leading photon
-        if not "high" in photonIso:
+        if not photonIso or photonIso == "lowChgIsolowSieie":
             photonCutVar = "nPhotonGood"
             photonPrefix = "nPhoton"
             # no special photon iso cut needed
@@ -315,6 +321,9 @@ class Setup:
             res["cuts"].append(nphotonsstr)
             res["prefixes"].append(prefix)
 
+        # remove default zwindow cut in qcd estimation for non photon regions
+        if nPhoton and (nPhoton[0]==0 and nPhoton[1]==0):
+            zWindow = "all"
 
         #Z window
         if zWindow != "all":
@@ -352,7 +361,7 @@ class Setup:
         res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year, skipBadChargedCandidate=True) )
         res["cuts"].extend(self.externalCuts)
 
-        return {"cut":"&&".join(res["cuts"]), "prefix":"-".join(res["prefixes"]), "weightStr": self.weightString(dataMC,photon=str(photonCutVar[1:]),addMisIDSF=addMisIDSF)}
+        return {"cut":"&&".join(res["cuts"]), "prefix":"-".join(res["prefixes"]), "weightStr": self.weightString(dataMC,photon=str(photonCutVar[1:]),addMisIDSF=addMisIDSF and self.isPhotonSelection)}
 
 if __name__ == "__main__":
     setup = Setup( year=2016 )

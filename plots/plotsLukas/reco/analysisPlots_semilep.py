@@ -22,14 +22,15 @@ from TTGammaEFT.Tools.objectSelection import isBJet, photonSelector, vidNestedWP
 # Colors
 from TTGammaEFT.Samples.color         import color
 
-from Analysis.Tools.DirDB             import DirDB
+from Analysis.Tools.MergingDirDB      import MergingDirDB
 from Analysis.Tools.metFilters        import getFilterCut
 from Analysis.Tools.helpers           import getCollection, deltaR
 from Analysis.Tools.u_float           import u_float
 from Analysis.Tools.mt2Calculator     import mt2Calculator
 from Analysis.Tools.overlapRemovalTTG import getParentIds
+from Analysis.Tools.runUtils          import prepareTokens, useToken
 
-from TTGammaEFT.Analysis.SetupHelpers    import default_DYSF, default_misIDSF
+from TTGammaEFT.Analysis.SetupHelpers    import misIDSF_val, DYSF_val
 
 # Default Parameter
 loggerChoices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET']
@@ -56,6 +57,10 @@ argParser.add_argument('--replaceZG',          action='store_true', default=Fals
 argParser.add_argument('--mode',               action='store',      default="None", type=str, choices=["mu", "e", "all", "eetight", "mumutight", "SFtight", "muetight", "muInv", "eInv", "muNoIso", "eNoIso"], help="plot lepton mode" )
 argParser.add_argument('--nJobs',              action='store',      default=1,      type=int, choices=[1,2,3,4,5],                     help="Maximum number of simultaneous jobs.")
 argParser.add_argument('--job',                action='store',      default=0,      type=int, choices=[0,1,2,3,4],                     help="Run only job i")
+argParser.add_argument('--noHEMweight',        action='store_true', default=False,                                                     help="remove HEMWeight" )
+argParser.add_argument('--noBadEEJetVeto',     action='store_true', default=False,                                                     help="remove BadEEJetVeto" )
+argParser.add_argument('--noQCDDD',            action='store_true', default=False,                                                     help="no data driven QCD" )
+argParser.add_argument('--useEOS',             action='store_true', default=False,                                                     help="use lxplus with EOS space" )
 args = argParser.parse_args()
 
 # Logger
@@ -69,13 +74,10 @@ ptLabels = {"lowPT":"20ptG120", "medPT":"120ptG220", "highPT":"220ptGinf"}
 
 categoryPlot = args.categoryPhoton != "None"
 
-cache_dir = os.path.join(cache_directory, "qcdHistos")
-dirDB     = DirDB(cache_dir)
-
 # Selection Manipulation
+if args.year == 2017 and not args.noBadEEJetVeto:
+    args.selection += "-BadEEJetVeto"
 selectionQCDcache = "-".join( [ item for item in args.selection.split("-") if item != "addMisIDSF" and item != "addDYSF" ] )
-#if args.year == 2017:
-#    args.selection += "-BadEEJetVeto"
 
 addMisIDSF = args.invLeptonIso # always true for QCD plots
 addDYSF = args.invLeptonIso #always true for QCD plots
@@ -93,23 +95,39 @@ if args.signal:          args.plot_directory += "_signal_"+args.signal
 if args.onlyTTG:         args.plot_directory += "_onlyTTG"
 if args.normalize:       args.plot_directory += "_normalize"
 
+if args.useEOS:
+    from TTGammaEFT.Tools.user import eos_directory
+    data_directory = os.path.join( eos_directory, "nanoTuples" )
+    fromEOS = "True"
+    prepareTokens()
+    useToken("hephy")
+
 # Samples
 os.environ["gammaSkim"]="True" if ("hoton" in args.selection or "pTG" in args.selection) and not args.invLeptonIso else "False"
 #os.environ["gammaSkim"]="False"
 if args.year == 2016:
+    if args.useEOS: postprocessing_directory = "2016/MC_v20/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
     if not args.noData:
+        if args.useEOS: postprocessing_directory = "2016/Data_v20/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import *
 
 elif args.year == 2017:
+    if args.useEOS: postprocessing_directory = "2017/MC_v20/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Fall17_private_semilep_postProcessed        import *
     if not args.noData:
+        if args.useEOS: postprocessing_directory = "2017/Data_v20/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_semilep_postProcessed import *
 
 elif args.year == 2018:
+    if args.useEOS: postprocessing_directory = "2018/MC_v20/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed      import *
     if not args.noData:
+        if args.useEOS: postprocessing_directory = "2018/Data_v20/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_semilep_postProcessed import *
+
+cache_dir = os.path.join(cache_directory, "qcdHistos")
+dirDB     = MergingDirDB(cache_dir)
 
 # Text on the plots
 def drawObjects( plotData, dataMCScale, lumi_scale ):
@@ -148,6 +166,8 @@ def drawPlots( plots, mode, dataMCScale ):
             sc = "dy_"
         else:
             sc = ""
+        if args.noHEMweight:
+            sc += "noHEM_"
         sc += "log" if log else "lin"
         plot_directory_ = os.path.join( plot_directory, 'analysisPlots', str(args.year), args.plot_directory, selDir, mode, sc )
 
@@ -162,7 +182,7 @@ def drawPlots( plots, mode, dataMCScale ):
                 logger.info( "Empty plot!" )
                 continue # Empty plot
 
-            if not args.leptonCategory and not categoryPlot and not args.invLeptonIso and plot.name not in invPlotNames.values():
+            if not args.noQCDDD and not args.leptonCategory and not categoryPlot and not args.invLeptonIso and plot.name not in invPlotNames.values():
                 for h in plot.histos[0]:
                     if not "datadrivenQCD" in h.GetName(): continue
                     h.style      = styles.fillStyle( color.QCD )
@@ -323,6 +343,7 @@ read_variables  = ["weight/F",
                    "ltight0GammadR/F", "ltight0GammadPhi/F",
                    "m3/F", "m3wBJet/F", "mT/F", "mT2lg/F", "mTinv/F", "mT2linvg/F",
                    "photonJetdR/F", "tightLeptonJetdR/F",
+                   "reweightHEM/F",
                   ]
 
 read_variables += [ "%s_photonCat/I"%item for item in photonCatChoices if item != "None" ]
@@ -708,9 +729,13 @@ else:
     stack                      = Stack( mc, data_sample )
 
 stack.extend( [ [s] for s in signals ] )
-sampleWeight = lambda event, sample: (default_misIDSF if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(default_DYSF if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+#sampleWeight = lambda event, sample: (misIDSF_val[args.year] if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(DYSF_val[args.year] if "DY" in sample.name and addDYSF else 1.)*event.reweightHEM*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
+sampleWeight = lambda event, sample: (misIDSF_val[args.year] if event.nPhotonGood>0 and event.PhotonGood0_photonCat==2 and addMisIDSF else 1.)*(DYSF_val[args.year] if "DY" in sample.name and addDYSF else 1.)*event.reweightL1Prefire*event.reweightPU*event.reweightLeptonTightSF*event.reweightLeptonTrackingTightSF*event.reweightPhotonSF*event.reweightPhotonElectronVetoSF*event.reweightBTag_SF
 # no misIDSF included in weightString!!
-weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
+if args.noHEMweight:
+    weightString = "reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
+else:
+    weightString = "reweightHEM*reweightL1Prefire*reweightPU*reweightLeptonTightSF*reweightLeptonTrackingTightSF*reweightPhotonSF*reweightPhotonElectronVetoSF*reweightBTag_SF"
 
 for sample in mc + signals:
     sample.read_variables = read_variables_MC
@@ -725,7 +750,10 @@ if args.small:
         sample.reduceFiles( factor=20 )
         sample.scale /= sample.normalization
 
-weight_ = lambda event, sample: event.weight
+if args.noHEMweight:
+    weight_ = lambda event, sample: event.weight
+else:
+    weight_ = lambda event, sample: event.weight*event.reweightHEM
 
 # Use some defaults (set defaults before you create/import list of Plots!!)
 #preSelection = "&&".join( [ cutInterpreter.cutString( args.selection ), "overlapRemoval==1"] )
@@ -1231,7 +1259,7 @@ for index, mode in enumerate( allModes ):
     else:
         qcdModes = [mode]
 
-    if not args.invLeptonIso:
+    if not args.invLeptonIso and not args.noQCDDD:
         for plot in plots:
 #            if "nBJet" in plot.name or "nElectron" in plot.name or "nMuon" in plot.name or "yield" in plot.name: continue
             if "nBJet" in plot.name: continue
@@ -1239,8 +1267,8 @@ for index, mode in enumerate( allModes ):
             if categoryPlot:
                 for i_cat, cat in enumerate(photonCats):
                     for m in qcdModes:
-                        res = "_".join( ["qcdHisto", selectionQCDcache+cat, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
-                        if dirDB.contains(res):
+                        res = "_".join( ["qcdHisto_noHEM" if args.noHEMweight else "qcdHisto", selectionQCDcache+cat, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
+                        if dirDB.contains(res) and not args.noQCDDD:
                             logger.info( "Adding QCD histogram from cache for plot %s and selection %s"%(plot.name, selectionQCDcache+cat) )
                             qcdHist = copy.deepcopy(dirDB.get(res))
                             for h in plot.histos[0]:
@@ -1251,8 +1279,8 @@ for index, mode in enumerate( allModes ):
             else:
                 if "category" in plot.name: continue
                 for i_m, m in enumerate(qcdModes):
-                    res = "_".join( ["qcdHisto", selectionQCDcache, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
-                    if dirDB.contains(res):
+                    res = "_".join( ["qcdHisto_noHEM" if args.noHEMweight else "qcdHisto", selectionQCDcache, plot.name, str(args.year), m, "small" if args.small else "full"] + map( str, plot.binning ) )
+                    if dirDB.contains(res) and not args.noQCDDD:
                         logger.info( "Adding QCD histogram from cache for plot %s"%plot.name )
                         if i_m == 0:
                             qcdHist = copy.deepcopy(dirDB.get(res))

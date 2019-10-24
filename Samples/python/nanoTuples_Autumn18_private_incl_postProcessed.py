@@ -6,13 +6,25 @@ import ROOT
 from RootTools.core.Sample import Sample
 
 # Colors
-from TTGammaEFT.Samples.color import color
+from TTGammaEFT.Samples.color   import color
+from TTGammaEFT.Samples.helpers import getMCSample
 
 # Data directory
-from TTGammaEFT.Tools.user import dpm_directory as data_directory
-data_directory += "postprocessed/"
-from TTGammaEFT.Samples.default_locations import postprocessing_locations
-postprocessing_directory = postprocessing_locations.MC2018_incl
+try:
+    data_directory = sys.modules['__main__'].data_directory
+except:
+    from TTGammaEFT.Tools.user import dpm_directory as data_directory
+    data_directory += "postprocessed/"
+try:
+    postprocessing_directory = sys.modules['__main__'].postprocessing_directory
+except:
+    from TTGammaEFT.Samples.default_locations import postprocessing_locations
+    postprocessing_directory = postprocessing_locations.MC2018_incl
+
+try:
+    fromDPM = sys.modules['__main__'].fromEOS != "True"
+except:
+    fromDPM = True
 
 # Redirector
 try:
@@ -40,6 +52,6 @@ dirs["TTG_NoFullyHad_fnal"] = ["TTGNoFullyHad_fnal"]
 directories = { key : [ os.path.join( data_directory, postprocessing_directory, dir) for dir in dirs[key] ] for key in dirs.keys() }
 
 # Samples
-TTG_NoFullyHad_priv_18 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True)
-TTG_NoFullyHad_fnal_18 = Sample.fromDPMDirectory(name="TTG",              treeName="Events", redirector=redirector, isData=False, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_fnal"], noCheckProxy=True)
+TTG_NoFullyHad_priv_18 = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_priv"], noCheckProxy=True, fromDPM=fromDPM)
+TTG_NoFullyHad_fnal_18 = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG_NoFullyHad_fnal"], noCheckProxy=True, fromDPM=fromDPM)
 

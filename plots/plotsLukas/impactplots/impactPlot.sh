@@ -1,13 +1,12 @@
-#cardfile="VG5_misDY5_addDYSF"
-#cardfile="DY4p_VG4p_misDY4p"
-carddir="2016/limits/cardFiles/defaultSetup/observed"
-cachedir="/afs/hephy.at/data/llechner01/TTGammaEFT/cache"
+year="2016"
+carddir="limits/cardFiles/defaultSetup/observed"
+cachedir="/afs/hephy.at/data/llechner01/TTGammaEFT/cache/analysis/"
 
-cardpath=${cachedir}/${carddir}
+cardpath=${cachedir}/${year}/${carddir}
 for FILE in ${cardpath}/*.txt; do
     if [[ $FILE == *"shape"* ]]; then continue; fi
     card="$(basename -- $FILE)"
     card=${card%.txt}
 
-    python impactPlot.py $@ --carddir ${carddir} --cardfile ${card} --year 2016 --cores 6
+    python impactPlot.py $@ --carddir ${carddir} --cardfile ${card} --year ${year} --cores 6 #--bkgOnly
 done

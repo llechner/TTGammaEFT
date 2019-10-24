@@ -41,6 +41,7 @@ class SystematicEstimator:
             except: pass
 
             cacheDirName       = os.path.join(cacheDir, self.name)
+            print cacheDirName
             self.cache = MergingDirDB(cacheDirName)
             if not self.cache: raise
 
@@ -84,6 +85,7 @@ class SystematicEstimator:
 
     def cachedEstimate(self, region, channel, setup, save=True, overwrite=False, checkOnly=False):
         key =  self.uniqueKey(region, channel, setup)
+#        if (self.cache and self.cache.contains(key) and self.cache.get(key) > 0) and not overwrite:
         if (self.cache and self.cache.contains(key)) and not overwrite:
             res = self.cache.get(key)
             logger.debug( "Loading cached %s result for %r : %r"%(self.name, key, res) )
