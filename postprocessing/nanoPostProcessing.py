@@ -685,6 +685,14 @@ if not options.skipNanoTools:
 #    sample.isData = isData
 #    del MetSig
 
+# Trigger selection after nanotools
+if isData and options.triggerSelection:
+    from TTGammaEFT.Tools.TriggerSelector import TriggerSelector
+    Ts          = TriggerSelector( options.year, singleLepton=isSemiLep )
+    triggerCond = Ts.getSelection( options.samples[0] if isData else "MC" )
+    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
+    skimConds.append( triggerCond )
+
 # Define a reader
 #sel = "&&".join(skimConds) if options.skipNanoTools else "(1)"
 reader = sample.treeReader( variables=read_variables, selectionString="&&".join(skimConds) )
