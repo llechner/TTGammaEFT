@@ -137,7 +137,7 @@ res.update( {var:0 for var in args.variables} )
 
 def isInDatabase( pointDict ):
     resCheck = copy.copy(res)
-    resCheck.update( { key:valf or key, val in pointDict.iteritems() } )
+    resCheck.update( { key:val for key, val in pointDict.iteritems() } )
     return dirDB.contains( resCheck )
 
 def chunks( l, n ):
@@ -261,7 +261,7 @@ def calculation( pointDict ):
     rmtree(uniqueDir)
 
     resResult = copy.copy(res)
-    resResult.update( { key:valf or key, val in pointDict.iteritems() } )
+    resResult.update( { key:val for key, val in pointDict.iteritems() } )
 
     logger.info( "NLL limit for %s: nll_prefit = %f, nll_postfit = %f"%( ", ".join( ["%s = %s"%(key, val) for key, val in pointDict.iteritems() ] ), nll_prefit, nll_postfit) )
     nllCacheWrite.add( resResult, nll_prefit, overwrite=True )
