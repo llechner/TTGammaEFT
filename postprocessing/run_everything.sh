@@ -16,10 +16,6 @@ submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 -
 submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/data17s/ --queue testmatch nanoPostProcessing_Run2017_private_semilep.sh
 submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/data18s/ --queue testmatch nanoPostProcessing_Run2018_private_semilep.sh
 
-
-
-
-
 #submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc16/   --queue tomorrow nanoPostProcessing_Summer16_private_dilep.sh
 #submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc17/   --queue tomorrow nanoPostProcessing_Fall17_private_dilep.sh
 #submitCondor.py $1 --dpm --maxRetries 10 --resubmitFailedJobs --discSpace 5000 --execFile submit_on_lxplus.sh --output /afs/cern.ch/work/l/llechner/public/condor_logs/mc18/   --queue tomorrow nanoPostProcessing_Autumn18_private_dilep.sh
