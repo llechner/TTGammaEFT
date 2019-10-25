@@ -27,6 +27,9 @@ eval `scramv1 runtime -sh`
 # github repos
 git cms-init
 
+echo JetMETCorrections/Modules/ >> .git/info/sparse-checkout
+git checkout
+
 git clone -b "ppv21" --single-branch --depth 1 https://github.com/llechner/TTGammaEFT.git
 git clone -b "ppv21" --single-branch --depth 1 https://github.com/llechner/Samples.git
 git clone -b "ppv21" --single-branch --depth 1 https://github.com/llechner/Analysis.git
