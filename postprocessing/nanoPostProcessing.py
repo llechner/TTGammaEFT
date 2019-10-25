@@ -26,7 +26,7 @@ from TTGammaEFT.Tools.user                       import cache_directory
 from TTGammaEFT.Tools.objectSelection            import *
 from TTGammaEFT.Tools.Variables                  import NanoVariables
 
-from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory
+from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory, hasLeptonMother
 from Analysis.Tools.puProfileCache               import puProfile
 from Analysis.Tools.L1PrefireWeight              import L1PrefireWeight
 from Analysis.Tools.mt2Calculator                import mt2Calculator
@@ -675,7 +675,7 @@ if isData:
 
 if not options.skipNanoTools:
     # prepare metsignificance and jes/jer
-    MetSig = MetSignificance( sample, options.year, output_directory, fastSim=False )
+    MetSig = MetSignificance( sample, options.year, output_directory )
     MetSig( "&&".join(skimConds) )
     newfiles = MetSig.getNewSampleFilenames()
 #    sample.clear()
@@ -1082,10 +1082,12 @@ def filler( event ):
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
             genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] >= 0 else None
-            g['photonCat'] = getPhotonCategory( genMatch, gPart )
+            g['photonCat']    = getPhotonCategory( genMatch, gPart )
+            g['leptonMother'] = hasLeptonMother( genMatch, gPart )
     else:
         for g in allPhotons:
             g['photonCat'] = -1
+            g['leptonMother'] = -1
 
     mediumPhotons                = list( filter( lambda g: recoPhotonSel_medium(g),                                          allPhotons ) )
     mvaPhotons                   = list( filter( lambda g: recoPhotonSel_mva(g),                                             allPhotons ) )

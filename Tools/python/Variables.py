@@ -210,6 +210,7 @@ class NanoVariables:
                                 Variable( "genPartFlav",       "b", read=True,  write=False,  inData=False, inPlot=False, isSyst=False ),
                                 Variable( "genPartFlav",       "I", read=False, write=True,  inData=False, inPlot=False, isSyst=False ),
                                 Variable( "photonCat",         "I", read=False, write=True,  inData=True,  inPlot=True, isSyst=False ),
+                                Variable( "leptonMother",      "I", read=False, write=True,  inData=True,  inPlot=True, isSyst=False ),
 
                                 Variable( "index",             "I", read=False, write=True,  inData=True, inPlot=False, isSyst=False ),
                                ]

@@ -103,8 +103,8 @@ special_cuts = {
 
     "lowSieie":          "PhotonNoChgIsoNoSieie0_sieie<%f"%lowSieieThresh,
     "highSieie":         "PhotonNoChgIsoNoSieie0_sieie>=%f"%highSieieThresh,
-    "lowChgIso":         "(PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt)<%f"%chgIsoThresh,
-    "highChgIso":        "(PhotonNoChgIso0_pfRelIso03_chg*PhotonNoChgIso0_pt)>=%f"%chgIsoThresh,
+    "lowChgIso":         "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)<%f"%chgIsoThresh,
+    "highChgIso":        "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)>=%f"%chgIsoThresh,
 
     "lowChgIsolowSieie":   "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)<%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,lowSieieThresh),
     "highChgIsolowSieie":  "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)>=%f&&PhotonNoChgIsoNoSieie0_sieie<%f"%(chgIsoThresh,lowSieieThresh),
