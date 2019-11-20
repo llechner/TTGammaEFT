@@ -26,7 +26,7 @@ from TTGammaEFT.Tools.user                       import cache_directory
 from TTGammaEFT.Tools.objectSelection            import *
 from TTGammaEFT.Tools.Variables                  import NanoVariables
 
-from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory, hasLeptonMother, getPhotonMother
+from Analysis.Tools.overlapRemovalTTG            import photonFromTopDecay, hasMesonMother, getParentIds, isIsolatedPhoton, getPhotonCategory, hasLeptonMother, getPhotonMother, getGenPartIdx
 from Analysis.Tools.puProfileCache               import puProfile
 from Analysis.Tools.L1PrefireWeight              import L1PrefireWeight
 from Analysis.Tools.mt2Calculator                import mt2Calculator
@@ -69,6 +69,7 @@ def get_parser():
     argParser.add_argument('--flagSingleTopTch',            action='store_true',                                                                                        help="Check overlap removal for singleTop t-channel")
     argParser.add_argument('--flagGJets',                   action='store_true',                                                                                        help="Check overlap removal for GJets")
     argParser.add_argument('--flagQCD',                     action='store_true',                                                                                        help="Check overlap removal for QCD")
+    argParser.add_argument('--skipSF',                      action='store_true',                                                                                        help="Skip scale factors")
     argParser.add_argument('--skipNanoTools',               action='store_true',                                                                                        help="Skip nanoTools")
     argParser.add_argument('--skipSystematicVariations',    action='store_true',                                                                                        help="Skip syst var")
     argParser.add_argument('--reuseNanoAOD',                action='store_true',                                                                                        help="Keep nanoAOD output?")
@@ -113,9 +114,7 @@ semilepNoIsoCond_mu    = "(Sum$(Muon_pt>=29&&abs(Muon_eta)<=2.41)>=1)"
 semilepNoIsoCond       = "(" + "||".join( [semilepNoIsoCond_ele, semilepNoIsoCond_mu] ) + ")"
 
 semilepCond_ele        = "(Sum$(Electron_pt>=34&&abs(Electron_eta)<=2.11&&Electron_cutBased>=4)>=1)"
-#semilepCond_ele        = "(Sum$(Electron_pt>=35&&abs(Electron_eta)<=2.1&&Electron_cutBased>=4&&Electron_pfRelIso03_all<=0.12)>=1)"
 semilepCond_mu         = "(Sum$(Muon_pt>=29&&abs(Muon_eta)<=2.41&&Muon_tightId&&Muon_pfRelIso04_all<=0.16)>=1)"
-#semilepCond_mu         = "(Sum$(Muon_pt>=30&&abs(Muon_eta)<=2.4&&Muon_tightId&&Muon_pfRelIso03_all<=0.12)>=1)"
 semilepCond            = "(" + "||".join( [semilepCond_ele, semilepCond_mu] ) + ")"
 
 dilepCond_sublead      = "(Sum$(Electron_pt>=14&&Electron_cutBased>=4&&abs(Electron_eta)<=2.41&&Electron_pfRelIso03_all<=0.13)+Sum$(Muon_pt>=14&&abs(Muon_eta)<=2.41&&Muon_mediumId&&Muon_pfRelIso03_all<=0.13))>=2"
@@ -124,17 +123,20 @@ dilepCond              = "&&".join( [dilepCond_lead, dilepCond_sublead] )
 
 gammaCond              = "(Sum$(Photon_pt>=19&&abs(Photon_eta)<=1.5&&Photon_electronVeto&&Photon_pixelSeed==0)>=1)"
 
+# additional conditions for testing
+addCond                = "(1)"
+#addCond                = "(Sum$(Photon_genPartIdx<0)>0)"
+#addCond                = "(Photon_genPartIdx<0)"
+
 skimConds = []
 if isDiLepGamma:
-    skimConds += [dilepCond, gammaCond, twoJetCond]
+    skimConds += [dilepCond, gammaCond, addCond]
 elif isDiLep:
-    skimConds += [dilepCond, twoJetCond]
+    skimConds += [dilepCond, addCond]
 elif isSemiLepGamma:
-    skimConds += [semilepCond, gammaCond, twoJetCond]  #performance: ~1.5k events left (1 ttbar semilep file)
-#    skimConds.append( "&&".join(semilepNoIsoCond, gammaCond) )  #performance: ~38k events left (1 ttbar semilep file)
+    skimConds += [semilepCond, gammaCond, addCond]  #performance: ~1.5k events left (1 ttbar semilep file)
 elif isSemiLep:
-    skimConds += [semilepNoIsoCond, twoJetCond] #performance: ~75k events left (1 ttbar semilep file)
-#    skimConds.append( semilepCond ) #performance: ~50k events left (1 ttbar semilep file)
+    skimConds += [semilepNoIsoCond, addCond] #performance: ~75k events left (1 ttbar semilep file)
 else:
     skimConds = ["(1)"]
 
@@ -303,64 +305,66 @@ else:
 # Cross section for postprocessed sample
 xSection = samples[0].xSection if isMC else None
 
-# Reweighting, Scalefactors, Efficiencies
-from Analysis.Tools.LeptonSF import LeptonSF
-LeptonSFMedium = LeptonSF( year=options.year, ID="medium" )
-LeptonSFTight = LeptonSF( year=options.year, ID="tight" )
+if not options.skipSF:
+    # Reweighting, Scalefactors, Efficiencies
+    from Analysis.Tools.LeptonSF import LeptonSF
+    LeptonSFMedium = LeptonSF( year=options.year, ID="medium" )
+    LeptonSFTight = LeptonSF( year=options.year, ID="tight" )
 
-from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
-LeptonTrackingSF = LeptonTrackingEfficiency( year=options.year )
+    from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
+    LeptonTrackingSF = LeptonTrackingEfficiency( year=options.year )
 
-from Analysis.Tools.PhotonSF import PhotonSF as PhotonSF_
-PhotonSF = PhotonSF_( year=options.year )
+    from Analysis.Tools.PhotonSF import PhotonSF as PhotonSF_
+    PhotonSF = PhotonSF_( year=options.year )
 
-# not used anymore
-#from Analysis.Tools.PhotonReconstructionEfficiency import PhotonReconstructionEfficiency
-#PhotonRecEff = PhotonReconstructionEfficiency( year=options.year )
+    # not used anymore
+    #from Analysis.Tools.PhotonReconstructionEfficiency import PhotonReconstructionEfficiency
+    #PhotonRecEff = PhotonReconstructionEfficiency( year=options.year )
 
-# Update to other years when available
-from Analysis.Tools.PhotonElectronVetoEfficiency import PhotonElectronVetoEfficiency
-PhotonElectronVetoSF = PhotonElectronVetoEfficiency( year=options.year )
+    # Update to other years when available
+    from Analysis.Tools.PhotonElectronVetoEfficiency import PhotonElectronVetoEfficiency
+    PhotonElectronVetoSF = PhotonElectronVetoEfficiency( year=options.year )
 
-from TTGammaEFT.Tools.TriggerEfficiency import TriggerEfficiency
-TriggerEff_withBackup = TriggerEfficiency( with_backup_triggers = True,  year=options.year )
-TriggerEff            = TriggerEfficiency( with_backup_triggers = False, year=options.year )
+    from TTGammaEFT.Tools.TriggerEfficiency import TriggerEfficiency
+    TriggerEff_withBackup = TriggerEfficiency( with_backup_triggers = True,  year=options.year )
+    TriggerEff            = TriggerEfficiency( with_backup_triggers = False, year=options.year )
 
-# Update to other years when available
-from Analysis.Tools.BTagEfficiency import BTagEfficiency
-BTagEff = BTagEfficiency( year=options.year, tagger=tagger ) # default medium WP
+    # Update to other years when available
+    from Analysis.Tools.BTagEfficiency import BTagEfficiency
+    BTagEff = BTagEfficiency( year=options.year, tagger=tagger ) # default medium WP
 
-# PrefiringWeight
-L1PW = L1PrefireWeight( options.year )
+    # PrefiringWeight
+    L1PW = L1PrefireWeight( options.year )
 
-if isMC:
-    from Analysis.Tools.puReweighting import getReweightingFunction
-    if options.year == 2016:
-        nTrueInt_puRW       = getReweightingFunction(data="PU_2016_35920_XSecCentral",  mc="Summer16")
-        nTrueInt_puRWDown   = getReweightingFunction(data="PU_2016_35920_XSecDown",     mc="Summer16")
-        nTrueInt_puRWUp     = getReweightingFunction(data="PU_2016_35920_XSecUp",       mc="Summer16")
-        nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2016_35920_XSecVDown",    mc="Summer16")
-        nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2016_35920_XSecVUp",      mc="Summer16")
-    elif options.year == 2017:
-        # messed up MC PU profiles
-        puProfiles          = puProfile( source_sample=sampleForPU )
-        mcHist              = puProfiles.cachedTemplate( selection="( 1 )", weight='genWeight', overwrite=False ) # use genWeight for amc@NLO samples. No problems encountered so far
-        nTrueInt_puRW       = getReweightingFunction(data="PU_2017_41860_XSecCentral",  mc=mcHist)
-        nTrueInt_puRWDown   = getReweightingFunction(data="PU_2017_41860_XSecDown",     mc=mcHist)
-        nTrueInt_puRWUp     = getReweightingFunction(data="PU_2017_41860_XSecUp",       mc=mcHist)
-        nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2017_41860_XSecVDown",    mc=mcHist)
-        nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2017_41860_XSecVUp",      mc=mcHist)
-    elif options.year == 2018:
-        nTrueInt_puRW       = getReweightingFunction(data="PU_2018_58830_XSecCentral",  mc="Autumn18")
-        nTrueInt_puRWDown   = getReweightingFunction(data="PU_2018_58830_XSecDown",     mc="Autumn18")
-        nTrueInt_puRWUp     = getReweightingFunction(data="PU_2018_58830_XSecUp",       mc="Autumn18")
-        nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2018_58830_XSecVDown",    mc="Autumn18")
-        nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
+    if isMC:
+        from Analysis.Tools.puReweighting import getReweightingFunction
+        if options.year == 2016:
+            nTrueInt_puRW       = getReweightingFunction(data="PU_2016_35920_XSecCentral",  mc="Summer16")
+            nTrueInt_puRWDown   = getReweightingFunction(data="PU_2016_35920_XSecDown",     mc="Summer16")
+            nTrueInt_puRWUp     = getReweightingFunction(data="PU_2016_35920_XSecUp",       mc="Summer16")
+            nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2016_35920_XSecVDown",    mc="Summer16")
+            nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2016_35920_XSecVUp",      mc="Summer16")
+        elif options.year == 2017:
+            # messed up MC PU profiles
+            puProfiles          = puProfile( source_sample=sampleForPU )
+            mcHist              = puProfiles.cachedTemplate( selection="( 1 )", weight='genWeight', overwrite=False ) # use genWeight for amc@NLO samples. No problems encountered so far
+            nTrueInt_puRW       = getReweightingFunction(data="PU_2017_41860_XSecCentral",  mc=mcHist)
+            nTrueInt_puRWDown   = getReweightingFunction(data="PU_2017_41860_XSecDown",     mc=mcHist)
+            nTrueInt_puRWUp     = getReweightingFunction(data="PU_2017_41860_XSecUp",       mc=mcHist)
+            nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2017_41860_XSecVDown",    mc=mcHist)
+            nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2017_41860_XSecVUp",      mc=mcHist)
+        elif options.year == 2018:
+            nTrueInt_puRW       = getReweightingFunction(data="PU_2018_58830_XSecCentral",  mc="Autumn18")
+            nTrueInt_puRWDown   = getReweightingFunction(data="PU_2018_58830_XSecDown",     mc="Autumn18")
+            nTrueInt_puRWUp     = getReweightingFunction(data="PU_2018_58830_XSecUp",       mc="Autumn18")
+            nTrueInt_puRWVDown  = getReweightingFunction(data="PU_2018_58830_XSecVDown",    mc="Autumn18")
+            nTrueInt_puRWVUp    = getReweightingFunction(data="PU_2018_58830_XSecVUp",      mc="Autumn18")
 
 #branches to be kept for data and MC
 branchKeepStrings_DATAMC = [\
     "run", "luminosityBlock", "event",
     "PV_npvs", "PV_npvsGood",
+    "fixed*",
     "MET_*",
     "Flag_*", "HLT_*",
 ]
@@ -594,26 +598,27 @@ if isMC:
 
     new_variables += [ 'reweightPU/F', 'reweightPUDown/F', 'reweightPUUp/F', 'reweightPUVDown/F', 'reweightPUVUp/F' ]
 
-    new_variables += [ 'reweightLepton2lSF/F', 'reweightLepton2lSFUp/F', 'reweightLepton2lSFDown/F' ]
-    new_variables += [ 'reweightLeptonTracking2lSF/F', 'reweightLeptonTracking2lSFUp/F', 'reweightLeptonTracking2lSFDown/F' ]
-    new_variables += [ 'reweightLeptonMediumSF/F', 'reweightLeptonMediumSFUp/F', 'reweightLeptonMediumSFDown/F' ]
-#    new_variables += [ 'reweightLeptonTrackingMediumSF/F', 'reweightLeptonTrackingMediumSFUp/F', 'reweightLeptonTrackingMediumSFDown/F' ]
-    new_variables += [ 'reweightLeptonTightSF/F', 'reweightLeptonTightSFUp/F', 'reweightLeptonTightSFDown/F' ]
-    new_variables += [ 'reweightLeptonTrackingTightSF/F', 'reweightLeptonTrackingTightSFUp/F', 'reweightLeptonTrackingTightSFDown/F' ]
+    if not options.skipSF:
+        new_variables += [ 'reweightLepton2lSF/F', 'reweightLepton2lSFUp/F', 'reweightLepton2lSFDown/F' ]
+        new_variables += [ 'reweightLeptonTracking2lSF/F', 'reweightLeptonTracking2lSFUp/F', 'reweightLeptonTracking2lSFDown/F' ]
+        new_variables += [ 'reweightLeptonMediumSF/F', 'reweightLeptonMediumSFUp/F', 'reweightLeptonMediumSFDown/F' ]
+#        new_variables += [ 'reweightLeptonTrackingMediumSF/F', 'reweightLeptonTrackingMediumSFUp/F', 'reweightLeptonTrackingMediumSFDown/F' ]
+        new_variables += [ 'reweightLeptonTightSF/F', 'reweightLeptonTightSFUp/F', 'reweightLeptonTightSFDown/F' ]
+        new_variables += [ 'reweightLeptonTrackingTightSF/F', 'reweightLeptonTrackingTightSFUp/F', 'reweightLeptonTrackingTightSFDown/F' ]
 
-    new_variables += [ 'reweightDilepTrigger/F', 'reweightDilepTriggerUp/F', 'reweightDilepTriggerDown/F' ]
-    new_variables += [ 'reweightDilepTriggerBackup/F', 'reweightDilepTriggerBackupUp/F', 'reweightDilepTriggerBackupDown/F' ]
+        new_variables += [ 'reweightDilepTrigger/F', 'reweightDilepTriggerUp/F', 'reweightDilepTriggerDown/F' ]
+        new_variables += [ 'reweightDilepTriggerBackup/F', 'reweightDilepTriggerBackupUp/F', 'reweightDilepTriggerBackupDown/F' ]
 
-    new_variables += [ 'reweightPhotonSF/F', 'reweightPhotonSFUp/F', 'reweightPhotonSFDown/F' ]
-    new_variables += [ 'reweightPhotonElectronVetoSF/F', 'reweightPhotonElectronVetoSFUp/F', 'reweightPhotonElectronVetoSFDown/F' ]
-#    new_variables += [ 'reweightPhotonReconstructionSF/F' ]
+        new_variables += [ 'reweightPhotonSF/F', 'reweightPhotonSFUp/F', 'reweightPhotonSFDown/F' ]
+        new_variables += [ 'reweightPhotonElectronVetoSF/F', 'reweightPhotonElectronVetoSFUp/F', 'reweightPhotonElectronVetoSFDown/F' ]
+#        new_variables += [ 'reweightPhotonReconstructionSF/F' ]
 
-    new_variables += [ 'reweightL1Prefire/F', 'reweightL1PrefireUp/F', 'reweightL1PrefireDown/F' ]
+        new_variables += [ 'reweightL1Prefire/F', 'reweightL1PrefireUp/F', 'reweightL1PrefireDown/F' ]
 
-    # Btag weights Method 1a
-    for var in BTagEff.btagWeightNames:
-        if var!='MC':
-            new_variables += [ 'reweightBTag_'+var+'/F' ]
+        # Btag weights Method 1a
+        for var in BTagEff.btagWeightNames:
+            if var!='MC':
+                new_variables += [ 'reweightBTag_'+var+'/F' ]
 
 # TopReco
 if options.topReco:
@@ -1089,10 +1094,13 @@ def filler( event ):
         gPart.sort(key=lambda x: x["index"])
         # match photon with gen-particle and get its photon category -> reco Photon categorization
         for g in allPhotons:
+            g["genPartIdx"] = getGenPartIdx( g, gPart, coneSize=0.4, ptCut=5., excludedPdgIds=[ 12, -12, 14, -14, 16, -16 ] )
             genMatch = filter( lambda p: p['index'] == g['genPartIdx'], gPart )[0] if g['genPartIdx'] >= 0 else None
             g['photonCat']    = getPhotonCategory( genMatch, gPart )
             g['leptonMother'] = hasLeptonMother( genMatch, gPart )
-            g['mother']       = getPhotonMother(genMatch, gPart )
+            g['mother']       = getPhotonMother( genMatch, gPart )
+            if genMatch == -2: # categorize conversions by hand as hadronic
+                g['photonCat'] = 1
     else:
         for g in allPhotons:
             g['photonCat']    = -1
@@ -1122,7 +1130,7 @@ def filler( event ):
     allJets  = getParticles( r, collVars=readJetVarList, coll="Jet" )
     nHEMJets = len( filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.0 and j['phi']>-2.0 and j['phi']<-0.5, allJets ))
 
-    if isMC:
+    if isMC and not options.skipSF:
         for j in allJets: BTagEff.addBTagEffToJet( j )
 
     # Loose jets w/o pt/eta requirement
@@ -1354,7 +1362,7 @@ def filler( event ):
     bjets_sys     = {}
     nonBjets_sys  = {}
 
-    if addSystematicVariations and not options.skipNanoTools:
+    if addSystematicVariations and not options.skipNanoTools and not options.skipSF:
         jets_sys["jesTotalUp"]   = filter(lambda j: recoJetSel(j, ptVar="pt_jesTotalUp")   and j["clean"], allGoodJets)
         jets_sys["jesTotalDown"] = filter(lambda j: recoJetSel(j, ptVar="pt_jesTotalDown") and j["clean"], allGoodJets)
         jets_sys["jerUp"]        = filter(lambda j: recoJetSel(j, ptVar="pt_jerUp")        and j["clean"], allGoodJets)
@@ -1409,7 +1417,7 @@ def filler( event ):
         event.reweightHEM = 1 if (nHEMJets==0 or options.year != 2018 ) else 0.3518 # 0.2% of Run2018B are HEM affected. Ignore that piece. Thus, if there is a HEM jet, scale the MC to 35.2% which is AB/ABCD
 
     # Reweighting
-    if isMC:
+    if isMC and not options.skipSF:
         # PU reweighting
         event.reweightPU      = nTrueInt_puRW      ( r.Pileup_nTrueInt )
         event.reweightPUDown  = nTrueInt_puRWDown  ( r.Pileup_nTrueInt )
@@ -1627,7 +1635,7 @@ else:
     else:
         logger.info( "Corrupt rootfile! Removing file: %s"%outputFilePath )
         os.remove( outputFilePath )
-        raise Exception("Corrupt rootfile! File not copied: %s"%source )
+        raise Exception("Corrupt rootfile! File not copied: %s"%outputFilePath )
 
 # There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
 # Thus the job is resubmitted on condor even if the output is ok
