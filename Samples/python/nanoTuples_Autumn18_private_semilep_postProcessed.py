@@ -28,7 +28,6 @@ except:
 
 if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True":
     postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/")
-    if fromDPM: postprocessing_directory = postprocessing_directory.replace("v20","v19")
 
 # Redirector
 try:
@@ -52,6 +51,8 @@ dirs = {}
 dirs["DY_LO"]            = ["DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO"]
 
 dirs["TT_pow"]           = ["TTLep_pow", "TTSingleLep_pow"]#, "TTHad_pow" ]
+dirs["TT_Lep"]           = ["TTLep_pow"]
+dirs["TT_SemiLep"]       = ["TTSingleLep_pow"]
 
 dirs["TTG"]              = ["TTGLep", "TTGSemiTbar", "TTGSemiT", "TTGHad"]
 dirs["TTG_priv"]         = ["TTGLep_priv", "TTGSemi_priv", "TTGHad_priv"]
@@ -80,7 +81,7 @@ dirs["TG"]               = ["TGJets"]
 dirs["WJets"]            = ["W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"]
 #dirs["WJets"]            = ["WJetsToLNu"]
 dirs["WG"]               = ["WGToLNuG"]
-dirs["WG_NLO"]           = ["WGToLNuG_amcatnlo_ext1"]
+#dirs["WG_NLO"]           = ["WGToLNuG_amcatnlo_ext1"]
 
 dirs["VV"]               = ["VVTo2L2Nu"]
 
@@ -121,6 +122,8 @@ directories = { key : [ os.path.join( data_directory, postprocessing_directory, 
 # Samples
 DY_LO_18            = getMCSample(name="DY_LO",            redirector=redirector, color=color.DY,              texName="DY (LO)",           directory=directories["DY_LO"], noCheckProxy=False, fromDPM=fromDPM)
 TT_pow_18           = getMCSample(name="TT_pow",           redirector=redirector, color=color.TT,              texName="t#bar{t}",          directory=directories["TT_pow"], noCheckProxy=True, fromDPM=fromDPM)
+TT_Lep_18           = getMCSample(name="TT_pow",           redirector=redirector, color=color.TT,              texName="t#bar{t}",          directory=directories["TT_Lep"], noCheckProxy=True, fromDPM=fromDPM)
+TT_SemiLep_18       = getMCSample(name="TT_pow",           redirector=redirector, color=color.TT,              texName="t#bar{t}",          directory=directories["TT_SemiLep"], noCheckProxy=True, fromDPM=fromDPM)
 singleTop_18        = getMCSample(name="singleTop",        redirector=redirector, color=color.T,               texName="single-t",          directory=directories["singleTop"], noCheckProxy=True, fromDPM=fromDPM)
 #TTG_18              = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTG"], noCheckProxy=True, fromDPM=fromDPM)
 #TTGSemiLep_18       = getMCSample(name="TTG",              redirector=redirector, color=color.TTG,             texName="t#bar{t}#gamma",    directory=directories["TTGSemiLep"], noCheckProxy=True, fromDPM=fromDPM)
@@ -132,7 +135,7 @@ WJets_18            = getMCSample(name="WJets",            redirector=redirector
 ZG_18               = getMCSample(name="ZG",               redirector=redirector, color=color.ZGamma,          texName="Z#gamma",           directory=directories["ZG_lowMLL"], noCheckProxy=True, fromDPM=fromDPM)
 TG_18               = getMCSample(name="TG",               redirector=redirector, color=color.TGamma,          texName="t#gamma",           directory=directories["TG"], noCheckProxy=True, fromDPM=fromDPM)
 WG_18               = getMCSample(name="WG",               redirector=redirector, color=color.WGamma,          texName="W#gamma",           directory=directories["WG"], noCheckProxy=True, fromDPM=fromDPM)
-WG_NLO_18           = getMCSample(name="WG",               redirector=redirector, color=color.WGamma,          texName="W#gamma",           directory=directories["WG_NLO"], noCheckProxy=True, fromDPM=fromDPM)
+#WG_NLO_18           = getMCSample(name="WG",               redirector=redirector, color=color.WGamma,          texName="W#gamma",           directory=directories["WG_NLO"], noCheckProxy=True, fromDPM=fromDPM)
 other_18            = getMCSample(name="other",            redirector=redirector, color=color.Other,           texName="other",             directory=directories["other"], noCheckProxy=True, fromDPM=fromDPM)
 QCD_18             = getMCSample(name="QCD",              redirector=redirector, color=color.QCD,             texName="multijets",         directory=directories["QCD"], noCheckProxy=True, fromDPM=fromDPM)
 GJets_18           = getMCSample(name="GJets",            redirector=redirector, color=color.GJets,           texName="#gamma+jets",       directory=directories["GJets"], noCheckProxy=True, fromDPM=fromDPM)

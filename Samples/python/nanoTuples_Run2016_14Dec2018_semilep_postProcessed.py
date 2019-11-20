@@ -16,9 +16,11 @@ except:
     data_directory += "postprocessed/"
 try:
     postprocessing_directory = sys.modules['__main__'].postprocessing_directory
+    print "def", postprocessing_directory
 except:
     from TTGammaEFT.Samples.default_locations import postprocessing_locations
     postprocessing_directory = postprocessing_locations.Run2016_semilep
+    print postprocessing_directory
 
 try:
     fromDPM = sys.modules['__main__'].fromEOS != "True"
@@ -27,7 +29,6 @@ except:
 
 if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True":
     postprocessing_directory = postprocessing_directory.replace("/semilep/", "/semilepGamma/")
-    if fromDPM: postprocessing_directory = postprocessing_directory.replace("v20","v19")
 
 # Redirector
 try:
