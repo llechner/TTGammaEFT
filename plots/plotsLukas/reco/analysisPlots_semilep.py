@@ -109,6 +109,7 @@ if args.year == 2016:
     if args.useEOS: postprocessing_directory = "2016/MC_v20/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
     if not args.noData:
+        del postprocessing_directory
         if args.useEOS: postprocessing_directory = "2016/Data_v20/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import *
 
@@ -116,6 +117,7 @@ elif args.year == 2017:
     if args.useEOS: postprocessing_directory = "2017/MC_v20/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Fall17_private_semilep_postProcessed        import *
     if not args.noData:
+        del postprocessing_directory
         if args.useEOS: postprocessing_directory = "2017/Data_v20/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_semilep_postProcessed import *
 
@@ -123,6 +125,7 @@ elif args.year == 2018:
     if args.useEOS: postprocessing_directory = "2018/MC_v20/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed      import *
     if not args.noData:
+        del postprocessing_directory
         if args.useEOS: postprocessing_directory = "2018/Data_v20/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_semilep_postProcessed import *
 

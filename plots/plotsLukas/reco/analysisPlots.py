@@ -66,16 +66,19 @@ os.environ["gammaSkim"]="False"
 if args.year == 2016:
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_postProcessed      import *
     if not args.noData:
+        del postprocessing_directory
         from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_postProcessed import *
 
 elif args.year == 2017:
     from TTGammaEFT.Samples.nanoTuples_Fall17_private_postProcessed        import *
     if not args.noData:
+        del postprocessing_directory
         from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
 
 elif args.year == 2018:
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_postProcessed      import *
     if not args.noData:
+        del postprocessing_directory
         from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_postProcessed import *
 
 # Text on the plots

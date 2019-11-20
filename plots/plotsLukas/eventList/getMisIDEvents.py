@@ -1,3 +1,10 @@
+
+# Logger
+import Analysis.Tools.logger as logger
+import RootTools.core.logger as logger_rt
+logger    = logger.get_logger(   "INFO", logFile = None)
+logger_rt = logger_rt.get_logger("INFO", logFile = None)
+
 from TTGammaEFT.Tools.cutInterpreter  import cutInterpreter
 
 #from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
