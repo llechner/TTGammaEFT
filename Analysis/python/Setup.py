@@ -50,8 +50,8 @@ class Setup:
         self.isPhotonSelection = default_nPhoton[0] != 0
 
 #        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
-        self.sys = {"weight":"weight", "reweight":["reweightHEM", "reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
-#        self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
+#        self.sys = {"weight":"weight", "reweight":["reweightHEM", "reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
+        self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
 
         if runOnLxPlus:
             # Set the redirector in the samples repository to the global redirector
@@ -186,7 +186,7 @@ class Setup:
         return res
 
     def weightString(self, dataMC, photon="PhotonGood0", addMisIDSF=False):
-        if   dataMC == "Data": _weightString = "weight*reweightHEM"
+        if   dataMC == "Data": _weightString = "weight"#*reweightHEM"
         elif dataMC == "MC":
             _weightString = "*".join([self.sys["weight"]] + (self.sys["reweight"] if self.sys["reweight"] else []))
             if addMisIDSF: _weightString += "+%s*(%s0_photonCat==2)*(%f-1)" %(_weightString, photon, misIDSF_val[self.year])
@@ -309,7 +309,8 @@ class Setup:
 
 
         #photon cut
-        if nPhoton and not (nPhoton[0]==0 and nPhoton[1]<0):
+        photonSel = nPhoton and not (nPhoton[0]==0 and nPhoton[1]<0)
+        if photonSel:
             assert nPhoton[0]>=0 and (nPhoton[1]>=nPhoton[0] or nPhoton[1]<0), "Not a good nPhoton selection: %r"%nPhoton
             nphotonsstr = photonCutVar+">="+str(nPhoton[0])
             prefix   = photonPrefix+str(nPhoton[0])
@@ -322,7 +323,7 @@ class Setup:
             res["prefixes"].append(prefix)
 
         # remove default zwindow cut in qcd estimation for non photon regions
-        if nPhoton and (nPhoton[0]==0 and nPhoton[1]==0):
+        if (nPhoton and (nPhoton[0]==0 and nPhoton[1]==0)) or (photonCutVar=="nPhotonNoChgIsoNoSieie"):
             zWindow = "all"
 
         #Z window
@@ -338,7 +339,7 @@ class Setup:
             res["cuts"].append( preselM3Window )
 
         #badEEVeto
-        if self.year == 2017:
+        if self.year == 2017 and photonSel:
             res["prefixes"].append("BadEEJetVeto")
             badEEStr = cutInterpreter.cutString( "BadEEJetVeto" )
             res["cuts"].append( badEEStr )
@@ -355,8 +356,8 @@ class Setup:
 #            res["prefixes"].append( "trigger" )
 
 
-        if dataMC=="Data" and self.year == 2018:
-            res["cuts"].append("reweightHEM>0")
+#        if dataMC=="Data" and self.year == 2018:
+#            res["cuts"].append("reweightHEM>0")
 
         res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year, skipBadChargedCandidate=True) )
         res["cuts"].extend(self.externalCuts)

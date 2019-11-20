@@ -60,7 +60,7 @@ chgIso_thresh = [0, 1.141, 4, 9, 16, -999]
 chgIsoRegions   = getRegionsFromThresholds( "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
 chgIsoPtRegions = getRegions2D( "PhotonNoChgIsoNoSieie0_pt", pTG_thresh, "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
 
-chgIso_thresh = [1.141, 4, 9, 16, -999]
+chgIso_thresh = chgIso_thresh[1:]
 chgIsoNoSRRegions   = getRegionsFromThresholds( "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
 chgIsoNoSRPtRegions = getRegions2D( "PhotonNoChgIsoNoSieie0_pt", pTG_thresh, "(PhotonNoChgIsoNoSieie0_pfRelIso03_chg*PhotonNoChgIsoNoSieie0_pt)", chgIso_thresh )
 

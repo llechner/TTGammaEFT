@@ -26,10 +26,6 @@ class DataDrivenQCDEstimate(SystematicEstimator):
         selection_MC_SR   = setup.selection("MC",   channel=channel, **setup.defaultParameters())
         selection_MC_CR   = setup.selection("MC",   channel=channel, **setup.defaultParameters( update=QCD_updates ))
 
-        print selection_MC_SR
-        print
-        print selection_MC_CR
-
         cuts_MC_SR   = [ region.cutString(setup.sys["selectionModifier"]), selection_MC_SR["cut"] ]
         if self.processCut:
             cuts_MC_SR.append( self.processCut )
@@ -43,21 +39,17 @@ class DataDrivenQCDEstimate(SystematicEstimator):
         # Attention: change region.cutstring to invLepIso and nBTag0 if there are leptons or btags in regions!!!
         cut_MC_CR    = "&&".join([ region.cutString(setup.sys["selectionModifier"]), selection_MC_CR["cut"] ])
 
-        print cut_MC_SR
-        print
-        print cut_MC_CR
-
         # The QCD yield in the CR with SR weight (sic)
         yield_QCD_CR     = self.yieldFromCache(setup, "QCD",    channel, cut_MC_CR,   weight_MC,   overwrite=overwrite)*setup.dataLumi/1000.
-        print "QCD, CR", yield_QCD_CR
+        print "QCD, CR", channel, yield_QCD_CR
         yield_QCD_CR    += self.yieldFromCache(setup, "GJets",  channel, cut_MC_CR,   weight_MC,   overwrite=overwrite)*setup.dataLumi/1000.
-        print "QCD+gjets, CR", yield_QCD_CR
+        print "QCD+gjets, CR", channel, yield_QCD_CR
 
         # The QCD yield in the signal regions
         yield_QCD_SR     = self.yieldFromCache(setup, "QCD",    channel, cut_MC_SR,   weight_MC,  overwrite=overwrite)*setup.lumi/1000.
-        print "QCD, SR", yield_QCD_SR
+        print "QCD, SR", channel, yield_QCD_SR
         yield_QCD_SR    += self.yieldFromCache(setup, "GJets",  channel, cut_MC_SR,   weight_MC,  overwrite=overwrite)*setup.lumi/1000.
-        print "QCD+gjets, SR", yield_QCD_SR
+        print "QCD+gjets, SR", channel, yield_QCD_SR
 
         transferFac = yield_QCD_SR/yield_QCD_CR if yield_QCD_CR > 0 else u_float(0, 0)
 
@@ -86,8 +78,6 @@ class DataDrivenQCDEstimate(SystematicEstimator):
 
             selection_MC_CR   = setup.selection("MC",   channel=channel, **setup.defaultParameters( update=QCD_updates ))
             selection_Data_CR = setup.selection("Data", channel=channel, **setup.defaultParameters( update=QCD_updates ))
-
-            print selection_MC_CR
 
             weight_Data_CR  = selection_Data_CR["weightStr"]
             weight_MC_CR    = selection_MC_CR["weightStr"] # w/ misID SF

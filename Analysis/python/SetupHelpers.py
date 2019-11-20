@@ -163,6 +163,11 @@ misIDSF_val[2016] = 2.24
 misIDSF_val[2017] = 2.03
 misIDSF_val[2018] = 1.43
 
+fakeSF_val = {}
+fakeSF_val[2016] = 0.92
+fakeSF_val[2017] = 0.92
+fakeSF_val[2018] = 0.92
+
 DYSF_val = {}
 DYSF_val[2016] = 1.09
 DYSF_val[2017] = 1.09
@@ -365,6 +370,22 @@ controlRegions["VG4p"] = { "parameters": { "zWindow":"offZeg", "nJet":(4,-1), "n
                          }
 
 
+controlRegions["VGmis3"]  = { "parameters": { "zWindow":"all", "nJet":(3,3), "nBTag":(0,0), "nPhoton":(1,-1) },
+                              "channels":   lepChannels,
+                              "regions":    regionsTTG,
+                              "inclRegion": inclRegionsTTG,
+                              "noPhotonCR": False,
+                              "processes":  processes,
+                            }
+
+controlRegions["VGmis4p"]  = { "parameters": { "zWindow":"all", "nJet":(4,-1), "nBTag":(0,0), "nPhoton":(1,-1) },
+                               "channels":   lepChannels,
+                               "regions":    regionsTTG,
+                               "inclRegion": inclRegionsTTG,
+                               "noPhotonCR": False,
+                               "processes":  processes,
+                             }
+
 # nPhoton1p nBTag0 onZeg m(e,gamma) CR for misID ScaleFactor DY
 controlRegions["misDY2"]  = { "parameters": { "zWindow":"onZeg", "nJet":(2,2), "nBTag":(0,0), "nPhoton":(1,-1) },
                               "channels":   ["e"],
@@ -419,6 +440,7 @@ controlRegions["misTT2"] = { "parameters": { "zWindow":"offZeg", "nJet":(2,2), "
 
 # updates for QCD estimation (else same settings)
 QCD_updates = {"invertLepIso":True, "nBTag":(0,0), "addMisIDSF":True, "zWindow":"offZeg"}
+#QCD_updates = {"invertLepIso":True, "nBTag":(0,0), "addMisIDSF":False}
 
 
 allRegions = copy.copy(controlRegions)
