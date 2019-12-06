@@ -49,9 +49,6 @@ class MCBasedEstimate(SystematicEstimator):
             cut          = "&&".join( cuts )
             weight       = preSelection['weightStr']
 
-            print cut
-            print
-            print weight
             logger.debug( "Using cut %s and weight %s"%(cut, weight) )
 
             return setup.lumi/1000.*u_float(**self.process.getYieldFromDraw(selectionString = cut, weightString = weight) )

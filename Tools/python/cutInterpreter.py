@@ -133,11 +133,21 @@ special_cuts = {
     "photonhadcat3":        "PhotonNoChgIsoNoSieie0_photonCat==3",
     "photonhadcat13":       "(PhotonNoChgIsoNoSieie0_photonCat==1||PhotonNoChgIsoNoSieie0_photonCat==3)",
 
+    "looseGenMatch":          "PhotonNoChgIsoNoSieie0_genPartIdx>=0",
+    "genMatch":               "PhotonGood0_genPartIdx>=0",
+    "noLooseGenMatch":        "PhotonNoChgIsoNoSieie0_genPartIdx<0",
+    "noGenMatch":             "PhotonGood0_genPartIdx<0",
+
+    "looseLeptonMother":       "PhotonNoChgIsoNoSieie0_leptonMother==1",
+    "noLooseLeptonMother":     "PhotonNoChgIsoNoSieie0_leptonMother==0",
+    "leptonMother":            "PhotonGood0_leptonMother==1",
+    "noLeptonMother":          "PhotonGood0_leptonMother==0",
+
     "BadEEJetVeto":        "Sum$((2.6<abs(Jet_eta)&&abs(Jet_eta)<3&&Jet_pt>30))==0",
 
   }
 
-continous_variables = [ ("mT", "mT"), ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
+continous_variables = [ ("glDR","photonLepdR"), ("mT", "mT"), ("metSig", "METSig"), ("mll", "mll"), ("mllgamma", "mllgamma"), ("mlgamma", "mLtight0Gamma"), ("met", "MET_pt"), ("pTG","PhotonGood0_pt"), ("pTj","Jet_pt[0]"), ("etaj","abs(Jet_eta[0])") ]
 discrete_variables  = [ ("nAllJet", "nJet"), ("nJet", "nJetGood"), ("nBTag", "nBTagGood"), ("nLepNoCorrVeto","nLeptonVeto"), ("nLepVeto","nLeptonVetoIsoCorr"), ("nNoIsoLepTight","nLeptonTightNoIso"), ("nInvLepTight","nLeptonTightInvIso"), ("nLepTight","nLeptonTight"), ("nLep","nLeptonGood"), ("nPhoton","nPhotonGood") ]
 cutInterpreter = CutInterpreter( continous_variables, discrete_variables, special_cuts)
 

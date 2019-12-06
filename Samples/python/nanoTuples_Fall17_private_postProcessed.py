@@ -28,7 +28,6 @@ except:
 
 if "gammaSkim" in os.environ and os.environ["gammaSkim"] == "True":
     postprocessing_directory = postprocessing_directory.replace("/dilep/", "/dilepGamma/")
-    if fromDPM: postprocessing_directory = postprocessing_directory.replace("v20","v19")
 
 # Redirector
 try:

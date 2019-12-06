@@ -127,4 +127,3 @@ python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processin
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v22 --fileBasedSplitting --flagGJets --sample GJets_HT200to400 #SPLIT5
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v22 --fileBasedSplitting --flagGJets --sample GJets_HT400to600 #SPLIT5
 python nanoPostProcessing.py --writeToDPM --skim semilep --year 2017 --processingEra TTGammaEFT_PP_2017_TTG_private_v22 --fileBasedSplitting --flagGJets --sample GJets_HT600toInf #SPLIT5
-

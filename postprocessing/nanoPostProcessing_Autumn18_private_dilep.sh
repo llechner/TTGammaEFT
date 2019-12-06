@@ -86,5 +86,3 @@ python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingE
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v22 --fileBasedSplitting --sample GluGluToContinToZZTo4e #SPLIT10
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v22 --fileBasedSplitting --sample GluGluToContinToZZTo4mu #SPLIT10
 python nanoPostProcessing.py --writeToDPM --skim dilep --year 2018 --processingEra TTGammaEFT_PP_2018_TTG_private_v22 --fileBasedSplitting --sample GluGluToContinToZZTo4tau #SPLIT10
-
-

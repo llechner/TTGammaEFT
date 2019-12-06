@@ -152,6 +152,11 @@ def convLabel( lab ):
         if "pfRelIso" in lab:
             label += ", " + convChgIsoLabel( lab )
         return label
+    elif "m3" in lab:
+        label = convM3Label( lab )
+        if "pfRelIso" in lab:
+            label += ", " + convChgIsoLabel( lab )
+        return label
     else:
         return ""
 
