@@ -106,24 +106,24 @@ if args.useEOS:
 os.environ["gammaSkim"]="True" if ("hoton" in args.selection or "pTG" in args.selection) and not args.invLeptonIso else "False"
 #os.environ["gammaSkim"]="False"
 if args.year == 2016:
-    if args.useEOS: postprocessing_directory = "2016/MC_v20/semilep/"
+    if args.useEOS: postprocessing_directory = "2016/MC_v21/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Summer16_private_semilep_postProcessed      import *
     if not args.noData:
-        if args.useEOS: postprocessing_directory = "2016/Data_v20/semilep/"
+        if args.useEOS: postprocessing_directory = "2016/Data_v21/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2016_14Dec2018_semilep_postProcessed import *
 
 elif args.year == 2017:
-    if args.useEOS: postprocessing_directory = "2017/MC_v20/semilep/"
+    if args.useEOS: postprocessing_directory = "2017/MC_v21/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Fall17_private_semilep_postProcessed        import *
     if not args.noData:
-        if args.useEOS: postprocessing_directory = "2017/Data_v20/semilep/"
+        if args.useEOS: postprocessing_directory = "2017/Data_v21/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2017_14Dec2018_semilep_postProcessed import *
 
 elif args.year == 2018:
-    if args.useEOS: postprocessing_directory = "2018/MC_v20/semilep/"
+    if args.useEOS: postprocessing_directory = "2018/MC_v21/semilep/"
     from TTGammaEFT.Samples.nanoTuples_Autumn18_private_semilep_postProcessed      import *
     if not args.noData:
-        if args.useEOS: postprocessing_directory = "2018/Data_v20/semilep/"
+        if args.useEOS: postprocessing_directory = "2018/Data_v21/semilep/"
         from TTGammaEFT.Samples.nanoTuples_Run2018_14Dec2018_semilep_postProcessed import *
 
 cache_dir = os.path.join(cache_directory, "qcdHistos")
